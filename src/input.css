@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.cookie-regular {
+    font-family: "Cookie", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.card {
+    @apply w-3/4 mx-auto  p-4 rounded-lg flex justify-between h-40 items-center bg-emerald-950 ;
+}
