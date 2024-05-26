@@ -20,3 +20,7 @@
 .card {
     @apply w-3/4 mx-auto  p-4 rounded-lg flex justify-between h-40 items-center bg-emerald-950 ;
 }
+
+.mobile-nav {
+    display: none;
+}
