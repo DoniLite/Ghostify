@@ -35,7 +35,9 @@ window.setInterval(()=>{
     const minutes = date.getMinutes();
     const secondes = date.getSeconds();
     const time = `${hours}H : ${minutes}m ${secondes}s`
-    handler.innerHTML = `${time} <br> ${date.getDate()} ${getMonthWithDate(date.getMonth())} ${date.getFullYear()}`
+    handler.innerHTML = `${time} <br> ${date.getDate()} ${getMonthWithDate(
+      date.getMonth()
+    )} ${date.getFullYear()}`;
     console.log(time);
 }, 1000);
 
