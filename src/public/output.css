@@ -1157,6 +1157,12 @@ video {
   text-decoration-line: underline;
 }
 
+@media (min-width: 640px){
+  .sm\:hidden{
+    display: none;
+  }
+}
+
 @media (min-width: 768px){
   .md\:text-3xl{
     font-size: 1.875rem;
