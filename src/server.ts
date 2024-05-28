@@ -147,5 +147,6 @@ server.listen({ port: port }, (err, address) => {
     process.exit(1);
   }
   console.log(`Server listening at ${address}`);
-  console.log(__dirname);
 });
+
+process.env.PORT = '4000'
