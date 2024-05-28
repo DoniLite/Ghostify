@@ -1,0 +1,38 @@
+name: setup github actions for the Repo
+run-name: ${{ github.actor }} 's' GitHub Actions
+on: 
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:    
+      - main
+      - 'mona/octocat'
+      - 'releases/**'
+    # Sequence of patterns matched against refs/tags
+    tags:        
+      - v2
+      - v1.*
+  pull_request:
+    branches:    
+      - main
+      - 'octocat/**'
+  schedule:
+    - cron: '30 5 * * 1,3'
+    - cron: '30 5 * * 2,4'
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install -g bats
+      - run: bats -v
+      - name: run build
+        run: npm run build
+      - name: Deploy with gh-pages
+        run: |
+         git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+         npm run deploy -- -u "github-actions-bot <support+actions@github.com>"
+        env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
