@@ -24,7 +24,7 @@ server.register(session, {
 });
 
 server.get("/", async (req, res) => {
-  res.statusCode = 200;
+  res.status(200);
   return res.view("/src/views/loader.ejs", { pagination: 0, activeIndex: 0 });
 });
 server.post("/home", async (req, res) => {
