@@ -7,30 +7,48 @@
       ></h1>
       <div class="p-3">
         <p class="text-gray-500 font-bold">
-          <span class=" text-gray-500 font-bold text-9xl relative top-12 italic">"</span>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi atque
-          impedit provident consectetur cupiditate suscipit eos deleniti
-          quibusdam iusto voluptatum, tempore vitae laborum hic dolore beatae
-          eum est amet repudiandae dicta pariatur, modi sint! Laboriosam
-          obcaecati incidunt autem optio ad explicabo esse sit laborum
-          inventore. Unde rem dolore odit pariatur!
+          <span class="text-gray-500 font-bold text-9xl relative top-12 italic"
+            >"</span
+          >
+          <%= quote.content %>
         </p>
         <p class="text-gray-500 font-bold text-2xl font-mono italic mt-2">
-          Author
+          <%= quote.author %>
         </p>
       </div>
     </div>
   </div>
-  <div class=" text-gray-500 font-bold absolute right-20 top-40">
-    <%= weatherData.city %>
+  <div class="text-gray-500 font-bold absolute right-20 top-36 w-1/5 -z-20">
+    <div class="flex w-full p-3 justify-between items-center">
+      <img
+        src="<%= weatherData.flag %>"
+        alt="country flag"
+        class="w-12 h-8 rounded"
+      />
+      <p class="text-2xl"><%= weatherData.city %></p>
+    </div>
+    <div class="flex w-full p-3 justify-between items-center">
+      <img
+        src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/1st%20Set%20-%20Color/<%= weatherData.icon %>.png"
+        class="w-12 h-12"
+        alt=""
+      />
+      <p class="text-xl"><%= weatherData.conditions %></p>
+    </div>
+    <div class="flex w-full p-3 justify-between items-center">
+      <div class="flex gap-4">
+        <i class="fa-solid fa-temperature-low text-3xl"></i>
+        <p class="text-xl">Min <%= weatherData.tempmin %></p>
+      </div>
+      <div class="flex gap-4">
+        <i class="fa-solid fa-temperature-high text-3xl"></i>
+        <p class="text-xl">Max <%= weatherData.tempmax %></p>
+      </div>
+    </div> 
   </div>
   <div class="absolute bottom-3 flex gap-6 right-12">
     <p class="font-bold text-white">By :</p>
-    <img 
-      src="/static/img/ts.jpg" 
-      class="w-10 h-10" 
-      alt="type script image" 
-    />
+    <img src="/static/img/ts.jpg" class="w-10 h-10" alt="type script image" />
     <img
       src="/static/img/tailwind.jpeg"
       class="w-10 h-10"
