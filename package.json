@@ -12,7 +12,7 @@
 		"start": "node build/server.js",
 		"tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
 		"tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
-		"deploy": "gh-pages -d build"
+		"deploy": " git config --global user.email \"yaomessan13@outlook.com\" \"\" git config --global user.name \"DoniLite\" \" \"gh-pages -d build\""
 	},
 	"dependencies": {
 		"@fastify/cookie": "^9.3.1",
