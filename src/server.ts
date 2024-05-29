@@ -1,4 +1,5 @@
-import fastify from "fastify";
+import fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import { Server, IncomingMessage, ServerResponse } from "http";
 import view from "@fastify/view";
 import ejs from "ejs";
 import staticPlugin from "@fastify/static";
@@ -7,7 +8,35 @@ import session from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import path from "node:path";
 import { client } from "./config/db";
-const server = fastify();
+import { Quote } from "./";
+import { index } from "./routes";
+import { WeatherData, EssentialWeatherData } from "./";
+import cors from "@fastify/cors";
+
+
+const server : FastifyInstance = fastify();
+
+const opts: RouteShorthandOptions = {
+  schema: {
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          pong: {
+            type: "string",
+          },
+        },
+      },
+    },
+  },
+};
+
+server.register(cors, {
+  // put your options here
+  origin: "*",
+  credentials: true,
+  cacheControl: "Cache-Control: ${fully}",
+});
 server.register(view, {
   engine: {
     ejs: ejs,
@@ -23,20 +52,8 @@ server.register(session, {
   secret: "This is the Server of @DoniLiteGhost",
 });
 
-server.get("/", async (req, res) => {
-  return res.view("/src/views/loader.ejs", { pagination: 0, activeIndex: 0 });
-});
+server.get("/", index);
 server.post("/home", async (req, res) => {
-
-  interface Quote {
-    _id: string;
-    content: string;
-    author: string;
-    tags: string[];
-    authorSlug: string;
-    length: number;
-  }
-
 
   async function fetchRandomQuote(): Promise<Quote> {
     const response = await fetch("https://api.quotable.io/random");
@@ -54,54 +71,8 @@ server.post("/home", async (req, res) => {
     author: quote.author,
     authorSlug: quote.authorSlug,
   });
-  interface WeatherData {
-    datetime: string;
-    datetimeEpoch: number;
-    tempmax: number;
-    tempmin: number;
-    temp: number;
-    feelslikemax: number;
-    feelslikemin: number;
-    feelslike: number;
-    dew: number;
-    humidity: number;
-    precip: number;
-    precipprob: number;
-    precipcover: number;
-    preciptype: any[];
-    snow: number;
-    snowdepth: number;
-    windgust: number;
-    windspeed: number;
-    winddir: number;
-    pressure: number;
-    cloudcover: number;
-    visibility: number;
-    solarradiation: number;
-    solarenergy: number;
-    uvindex: number;
-    severerisk: number;
-    sunrise: string;
-    sunriseEpoch: number;
-    sunset: string;
-    sunsetEpoch: number;
-    moonphase: number;
-    conditions: string;
-    description: string;
-    icon: string;
-    stations: any;
-    source: string;
-    hours: any[];
-  }
+  
 
-  interface EssentialWeatherData {
-    datetime: string;
-    tempmax: number;
-    tempmin: number;
-    conditions: string;
-    description: string;
-    icon: string;
-  }
 
   function extractEssentialWeatherData(
     data: WeatherData
@@ -136,6 +107,8 @@ server.get("/home", async (req, res) => {
   return res.view("/src/views/index.ejs", { pagination: 1, activeIndex: 0, weatherData: value, quote: quote });
 });
 
+server.get("/api/", index)
+
 server.get('/blog', (req, res) => {
   return res.view("/src/views/blogOne.ejs", { pagination: 1, activeIndex: 3 });
 })
@@ -148,5 +121,3 @@ server.listen({ port: port }, (err, address) => {
   }
   console.log(`Server listening at ${address}`);
 });
-
-process.env.PORT = '4000'
