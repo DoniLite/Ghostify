@@ -65,7 +65,7 @@ server.get('/blog', (req, res) => {
 })
 
 const port = parseInt(process.env.PORT) || 3081;
-server.listen({ port: port }, (err, address) => {
+server.listen({ port: port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
