@@ -58,7 +58,7 @@ server.get('/blog', (req, res) => {
     return res.view("/src/views/blogOne.ejs", { pagination: 1, activeIndex: 3 });
 });
 const port = parseInt(process.env.PORT) || 3081;
-server.listen({ port: port }, (err, address) => {
+server.listen({ port: port, host: '0.0.0.0' }, (err, address) => {
     if (err) {
         console.error(err);
         process.exit(1);
