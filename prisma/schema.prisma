@@ -10,19 +10,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Contact {
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  name    String?
+  message String?
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  title String @unique
+  post  Post[]
 }
 
 model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  id         Int       @id @default(autoincrement())
+  title      String
+  date       String
+  content    String?
+  published  Boolean   @default(false)
+  slug       String
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+
   @@map("posts")
+}
+
+model Project {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  github      String
+  gitLab      String
+  bitbucket   String
+  license     String
 }

@@ -92,3 +92,17 @@ const swiper = new Swiper(".swiper", {
   //     el: '.swiper-scrollbar',
   // },
 });
+
+const mobileNav = document.querySelector(".mobile-nav");
+const mobileNavBtn = document.querySelector(".mobile-nav-icon");
+const closerBtn = document.querySelector(".close-btn");
+
+mobileNavBtn.addEventListener('click', () => {
+  mobileNav.classList.remove('hide')
+  mobileNav.classList.add('show')
+})
+
+closerBtn.addEventListener("click", () => {
+  mobileNav.classList.remove("show");
+  mobileNav.classList.add("hide");
+});
