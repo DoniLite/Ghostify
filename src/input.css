@@ -1,26 +1,86 @@
-@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
 .cookie-regular {
-    font-family: "Cookie", cursive;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Cookie", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .pacifico-regular {
-    font-family: "Pacifico", cursive;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .card {
-    @apply w-3/4 mx-auto  p-4 rounded-lg flex justify-between h-40 items-center bg-emerald-950 ;
+  @apply w-3/4 mx-auto p-4 rounded-lg flex justify-between h-40 items-center bg-emerald-950;
 }
 
 .mobile-nav {
-    display: none;
+  @apply absolute top-0 left-0 w-3/4 p-3 bg-white z-50;
+}
+
+@keyframes showing-nav {
+  0% {
+    transform: translateX(-80%);
+    opacity: 0.2;
+  }
+
+  25% {
+    transform: translateX(-60%);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateX(-40%);
+    opacity: 0.6;
+  }
+
+  75% {
+    transform: translateX(-20%);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes hiding-nav {
+  0% {
+    transform: translateX(0%);
+    opacity: 0.8;
+  }
+
+  25% {
+    transform: translateX(-20%);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateX(-60%);
+    opacity: 0.4;
+  }
+
+  75% {
+    transform: translateX(-80%);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.hide {
+    animation: hiding-nav .2s ease-out forwards;
+}
+.show {
+    animation: showing-nav .2s ease-out forwards;
 }

@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { createClient } from "redis";
 
 export const client = createClient({
@@ -15,3 +16,5 @@ client.connect()
 .catch(err => {
     console.log(err);
 });
+
+export const prismaClient = new PrismaClient()

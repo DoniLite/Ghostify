@@ -14,6 +14,7 @@ import { WeatherData, EssentialWeatherData } from "./";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
+import { blog } from "./routes/blog";
 
 
 const server : FastifyInstance = fastify();
@@ -60,12 +61,10 @@ server.get("/home", home);
 
 server.get("/api/", index)
 
-server.get('/blog', (req, res) => {
-  return res.view("/src/views/blogOne.ejs", { pagination: 1, activeIndex: 3 });
-})
+server.get('/blog', blog)
 
 const port = parseInt(process.env.PORT) || 3081;
-server.listen({ port: port }, (err, address) => {
+server.listen({ port: port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
