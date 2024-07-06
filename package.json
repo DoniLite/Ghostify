@@ -10,13 +10,13 @@
     "typescript": "^5.4.4"
   },
   "scripts": {
-    "build": "npm run tailwind && tsc --outDir build",
+    "build": "npm run tailwind && tsc --outDir build && npx prisma migrate dev --dev init",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
     "start": "node build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "deploy": "gh-pages -d build",
-    "migrate": "pnpx prisma migrate dev",
+    "migrate": "pnpx prisma migrate dev --dev",
     "push": "pnpx prisma db push",
     "test": "pnpm exec playwright test",
     "dbTest": "nodemon ./temp/test.spec.js",
