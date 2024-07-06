@@ -1,9 +1,11 @@
-import { Quote, EssentialWeatherData, WeatherData } from "../index";
+import { Quote, EssentialWeatherData, WeatherData, BodyData } from "../index";
 import { client } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
 
 export const homeControler: RouteHandlerMethod = async (req, res) => {
   const url = "https://quotes15.p.rapidapi.com/quotes/random/?language_code=fr";
+  const debordedText = `L'amour naturel veut voir l'être aimé pour soi, et autant que possible le posséder sans partage. Le Christ est venu pour ramener au Père l'humanité égarée; or qui aime de son amour veut les hommes pour Dieu et non pour lui même. Tel est d'ailleurs le plus sûr moyen de le posséder pour toujours, car si nous avons confié un homme à la garde de Dieu, nous sommes en lui un en Dieu; alors que la soif de posséder conduit souvent - en fait tôt ou tard- à tout perdre. Ceci vaut pour l'âme d'autrui comme pour la nôtre, comme pour tout bien extérieur. Qui veut s'enrichir et conserver dans le monde, perdra. Qui abandonne à Dieu, l'emportera`;
+  const debordedLength = debordedText.length;
   const options = {
     method: "GET",
     headers: {
@@ -29,12 +31,6 @@ export const homeControler: RouteHandlerMethod = async (req, res) => {
     const { datetime, tempmax, tempmin, conditions, description, icon } = data;
     return { datetime, tempmax, tempmin, conditions, description, icon };
   }
-  type BodyData = {
-    data?: {
-      country_capital: string;
-      country_flag: string;
-    };
-  };
   const bodyData: BodyData = req.body;
   const { data } = bodyData;
   const userTown = data.country_capital;

@@ -1,8 +1,12 @@
 import { Logger } from "concurrently";
-import { FastifyInstance, FastifyReply, FastifyRequest, FastifyTypeProvider } from "fastify";
+import {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  FastifyTypeProvider,
+} from "fastify";
 import { ReplyDefault, RequestBodyDefault } from "fastify/types/utils";
 import { Server } from "http";
-
 
 export interface EssentialWeatherData {
   datetime: string;
@@ -12,7 +16,6 @@ export interface EssentialWeatherData {
   description: string;
   icon: string;
 }
-
 
 export interface WeatherData {
   datetime: string;
@@ -86,3 +89,9 @@ export interface IReply {
   "4xx": { error: string };
 }
 
+export interface BodyData  {
+  data?: {
+    country_capital: string;
+    country_flag: string;
+  };
+}

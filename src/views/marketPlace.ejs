@@ -1,3 +1,45 @@
-<div class="w-full overflow-y-scroll h-full">
-    <iframe src="https://github.com/DoniLite" class=" mx-auto w-3/4 h-96" frameborder="1.5"></iframe>
+<div
+  class="w-full overflow-y-scroll h-full bg-gradient-to-tr from-gray-900 to-blue-500"
+>
+  <h1
+    class="anton-sc-regular mx-auto text-center lg:mt-24 text-white"
+    style="font-size: 40px"
+  >
+    Put your web site in the time 🛸
+  </h1>
+  <form class="mx-auto w-3/4 mt-8" id="urlForm">
+    <div class="lg:ml-8 w-full flex gap-x-16">
+      <div class="flex flex-col w-3/5">
+        <input
+          type="text"
+          name="site"
+          id="site"
+          class="bg-transparent text-white font-bold w-full outline-none p-3 placeholder:text-white placeholder:font-bold"
+          placeholder="Ajouter votre site à notre référenciel ⚡"
+        />
+        <div class="w-full bg-white" style="height: 2px"></div>
+      </div>
+      <button type="submit" title="Send it!" class=" p-5 bg-blue-900 transition-all hover:bg-gray-400 font-bold flex justify-center items-center rounded-full">
+        <i class="fa-solid fa-rocket hover:text-red-900 transition-all text-white self-end"></i>
+      </button>
+    </div>
+    <p id="submitMessage" class=" text-white text-center my-2 font-bold"></p>
+  </form>
+  <p class="mt-12 text-center text-white mx-8 font-bold">
+    Notre référenciel contient des milliers de sites et utilise un algorithme performant afin de veuiller à la mise à jour des données. <br>
+    Ces données sont récupérer depuis vos sites et utilisés selon certaines <a href="#">conditions légales</a>. Nous vous donnons autant un moyen de vous faire de découvrir au monde entier et de nous aider à développer nos outils de scraping et de crawling à travers le web pour vous propser davantage de meilleurs ressources pour votre business.
+  </p>
+  <div class="mt-8 p-3 flex gap-x-8">
+    <iframe
+    src="https://github.com/DoniLite"
+    class="mx-auto w-3/4 h-96 flex-none"
+    frameborder="1.5"
+  ></iframe>
+  <iframe
+    src="https://exemple.com"
+    class="mx-auto w-1/5 h-96 flex-none"
+    frameborder="1.5"
+  ></iframe>
+  </div>
 </div>
+<script type="module" src="/static/script/uploader.js"></script>

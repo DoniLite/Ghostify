@@ -16,6 +16,7 @@ import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
 import { blog } from "./routes/blog";
 import dotEnv from "dotenv"
+import { siteUrls } from "./contoler/siteUrls";
 
 dotEnv.config()
 const server : FastifyInstance = fastify();
@@ -60,6 +61,7 @@ server.register(session, {
 server.get("/", index);
 server.post("/home", homeControler);
 server.get("/home", home);
+server.post("/sitesUpload", siteUrls);
 
 server.get("/api/", index)
 
