@@ -1,5 +1,8 @@
 name: setup github actions for the Repo
 run-name: ${{ github.actor }} 's' GitHub Actions
+env:
+  DATABASE_URL: "file:./dev.db"
+
 on: 
   push:
     # Sequence of patterns matched against refs/heads
