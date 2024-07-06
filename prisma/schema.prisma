@@ -45,3 +45,9 @@ model Project {
   bitbucket   String
   license     String
 }
+
+model GeneratorData {
+  name  String @id
+  email String?
+  url   String?
+}

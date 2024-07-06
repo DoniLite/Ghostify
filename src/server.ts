@@ -1,5 +1,4 @@
 import fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-import { Server, IncomingMessage, ServerResponse } from "http";
 import view from "@fastify/view";
 import ejs from "ejs";
 import staticPlugin from "@fastify/static";
@@ -7,8 +6,8 @@ import fromBody from "@fastify/formbody";
 import session from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import path from "node:path";
-import { client } from "./config/db";
-import { Quote } from "./";
+import { client, prismaClient } from "./config/db";
+import { Quote, ReqParams } from "./";
 import { index } from "./routes";
 import { WeatherData, EssentialWeatherData } from "./";
 import cors from "@fastify/cors";
@@ -16,7 +15,12 @@ import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
 import { blog } from "./routes/blog";
 import dotEnv from "dotenv"
+import { siteUrls } from "./contoler/siteUrls";
+import fastifyJwt from "@fastify/jwt";
+import { store } from "./contoler/store";
+import { notifications } from "./contoler/notifications";
 
+const protectedRoutes = ["/api/v1", "/api/notifications", "/api/store"];
 dotEnv.config()
 const server : FastifyInstance = fastify();
 
@@ -33,6 +37,26 @@ const opts: RouteShorthandOptions = {
       },
     },
   },
+};
+
+server.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET,
+})
+
+server.addHook("onRequest", async (req, res) => {
+  const url = req.raw.url;
+  if (protectedRoutes.includes(url)) {
+    try {
+      await req.jwtVerify();
+    } catch (err) {
+      res.send(err);
+    }
+  }
+});
+
+const tokenGenerator = (payload: string) =>  {
+  const token = server.jwt.sign({ payload });
+  return token
 };
 
 server.register(cors, {
@@ -60,8 +84,33 @@ server.register(session, {
 server.get("/", index);
 server.post("/home", homeControler);
 server.get("/home", home);
-
-server.get("/api/", index)
+server.post("/sitesUpload", siteUrls);
+server.get('/api/token', async (req, res) => {
+  const {generator, email, url}: ReqParams = req.query;
+  if(!generator) {
+    throw new Error('generator is missing in the query string');
+  }
+  const tokenChecked = await prismaClient.generatorData.findUnique({
+    where: {
+      name: generator.toLowerCase(),
+    },
+  });
+  if(tokenChecked) {
+    return res.send(JSON.stringify({tokenError: 'Invalid token Attribute'}));
+  }
+  const newTokenHandler = await prismaClient.generatorData.create({
+    data: {
+      name: generator.toLowerCase(),
+      email: email,
+      url: url,
+    }
+  })
+  console.log(newTokenHandler)
+  const token = tokenGenerator(generator);
+  res.send(JSON.stringify({token}));
+})
+server.post('/api/store', store)
+server.post("/api/notifications", notifications)
 
 server.get('/blog', blog)
 
