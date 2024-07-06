@@ -17,7 +17,9 @@
     "tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "deploy": "gh-pages -d build",
     "migrate": "pnpx prisma migrate dev",
-    "push": "pnpx prisma db push"
+    "push": "pnpx prisma db push",
+    "test": "pnpm exec playwright test",
+    "show-reporter": "pnpm exec playwright show-report"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
@@ -28,6 +30,7 @@
     "@fastify/view": "^9.0.0",
     "@prisma/client": "5.15.0",
     "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
     "fastify": "^4.26.2",
     "gh-pages": "^6.1.1",

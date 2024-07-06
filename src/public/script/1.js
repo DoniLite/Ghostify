@@ -46,7 +46,8 @@ window.setInterval(()=>{
 // }
 // const swiper = new Swiper(...)
 const activeIndex = document.querySelector("#activeInputNav");
-const navLinks = document.querySelectorAll("nav ul li");
+const navLinks = document.querySelectorAll(".default-nav ul li");
+const mobileNavLinks = document.querySelectorAll(".mobile-nav ul li");
 const linkGroup = document.querySelector("nav ul");
 const scrollParent = document.querySelectorAll(".swiper-slide");
 scrollParent.forEach((el) => {
@@ -55,7 +56,14 @@ scrollParent.forEach((el) => {
     console.log("scroll");
   });
 });
-navLinks.forEach((el, index, list) => {
+
+/**
+ * 
+ * @param {Element} el 
+ * @param {number} index 
+ * @param {NodeListOf<Element>} list 
+ */
+const slideNavigation = (el, index, list) => {
   el.addEventListener("click", (e) => {
     e.preventDefault();
     let element = e.currentTarget;
@@ -67,8 +75,11 @@ navLinks.forEach((el, index, list) => {
     console.log(element.dataset.index);
   });
   el.setAttribute("data-index", index);
-  const i = document.createElement('button')
-});
+  const i = document.createElement("button");
+};
+
+navLinks.forEach(slideNavigation);
+mobileNavLinks.forEach(slideNavigation);
 // init Swiper:
 const swiper = new Swiper(".swiper", {
   // Optional parameters

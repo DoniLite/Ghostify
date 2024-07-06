@@ -15,8 +15,9 @@ import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
 import { blog } from "./routes/blog";
+import dotEnv from "dotenv"
 
-
+dotEnv.config()
 const server : FastifyInstance = fastify();
 
 const opts: RouteShorthandOptions = {
@@ -37,6 +38,7 @@ const opts: RouteShorthandOptions = {
 server.register(cors, {
   // put your options here
   origin: "*",
+  methods:['GET', 'PUT', 'POST'],
   credentials: true,
   cacheControl: "Cache-Control: ${fully}",
 });
