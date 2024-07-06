@@ -55,11 +55,19 @@ export interface WeatherData {
 }
 
 export interface Quote {
-  _id: string;
+  id: string;
   content: string;
-  author: string;
+  originator: {
+    id: number;
+    language_code: string;
+    description?: string;
+    master_id: number;
+    name: string;
+    url: string;
+  };
+  language_code: string;
+  url: string;
   tags: string[];
-  authorSlug: string;
   length: number;
 }
 

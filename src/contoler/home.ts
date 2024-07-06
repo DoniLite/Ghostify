@@ -3,21 +3,24 @@ import { client } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
 
 export const homeControler: RouteHandlerMethod = async (req, res) => {
-  async function fetchRandomQuote(): Promise<Quote> {
-    const response = await fetch("https://api.quotable.io/random");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data: Quote = await response.json();
-    console.log(`"${data.content}" —${data.author}`);
-    return data;
+  const url = "https://quotes15.p.rapidapi.com/quotes/random/?language_code=fr";
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "a99ad72beemsh9ee10723dabbfc3p1fc57cjsn26e34074a217",
+      "x-rapidapi-host": "quotes15.p.rapidapi.com",
+    },
+  };
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
   }
-  const quote = await fetchRandomQuote();
+  const quote: Quote = await response.json();
+  console.log(`"${quote.content}" —${quote.originator.name}`);
   client.hSet("Quote", {
-    _id: quote._id,
+    _id: quote.id,
     content: quote.content,
-    author: quote.author,
-    authorSlug: quote.authorSlug,
+    author: quote.originator.name,
   });
 
   function extractEssentialWeatherData(
@@ -36,13 +39,14 @@ export const homeControler: RouteHandlerMethod = async (req, res) => {
   const { data } = bodyData;
   const userTown = data.country_capital;
   const flag = data.country_flag;
-  console.log(data);
   const WeatherResponse = await fetch(
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${userTown}?unitGroup=metric&key=FLJ2SXSD4HVS6KL7Z6KFGCH8Y&contentType=json`
   );
+  if(!WeatherResponse.ok){
+    throw new Error(WeatherResponse.statusText);
+  }
   const weatherData = await WeatherResponse.json();
   const weather: WeatherData = weatherData.days[0];
-  console.log(weatherData);
   client.hSet("Weather", {
     ...extractEssentialWeatherData(weather),
     flag: flag,
