@@ -95,3 +95,9 @@ export interface BodyData  {
     country_flag: string;
   };
 }
+
+export interface ReqParams {
+  generator?: string;
+  email?: string;
+  url?: string;
+}
