@@ -10,7 +10,7 @@
     "typescript": "^5.4.4"
   },
   "scripts": {
-    "build": "npm run tailwind && tsc --outDir build && npx prisma migrate dev --dev init",
+    "build": "npm run tailwind && tsc --outDir build && npx prisma migrate deploy",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
     "start": "node build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
