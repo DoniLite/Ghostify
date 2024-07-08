@@ -1,6 +1,7 @@
 import { RouteHandlerMethod } from "fastify";
-import { BodyData } from "../index";
+import { BodyData } from "../types/index";
 
 export const notifications: RouteHandlerMethod = async (req, res) => {
-    const {}: BodyData = req.body;
+    const data: BodyData = req.body;
+    console.log(data);
 };

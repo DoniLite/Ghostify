@@ -31,6 +31,7 @@
     "@fastify/static": "^7.0.3",
     "@fastify/view": "^9.0.0",
     "@prisma/client": "5.15.0",
+    "apify-client": "^2.9.4",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",

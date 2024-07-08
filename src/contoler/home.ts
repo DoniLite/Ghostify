@@ -1,4 +1,4 @@
-import { Quote, EssentialWeatherData, WeatherData, BodyData } from "../index";
+import { Quote, EssentialWeatherData, WeatherData, BodyData } from "../types/index";
 import { client } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
 

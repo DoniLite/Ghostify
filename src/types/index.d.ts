@@ -1,12 +1,10 @@
-import { Logger } from "concurrently";
+import { ActorBuildOptions, ActorCallOptions, ActorLastRunOptions, ActorStartOptions, Build, BuildCollectionClient, DatasetClient, RunClient, RunCollectionClient, StoreCollectionClient } from "apify-client";
+import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
 import {
-  FastifyInstance,
   FastifyReply,
   FastifyRequest,
   FastifyTypeProvider,
 } from "fastify";
-import { ReplyDefault, RequestBodyDefault } from "fastify/types/utils";
-import { Server } from "http";
 
 export interface EssentialWeatherData {
   datetime: string;
@@ -87,6 +85,47 @@ export interface IReply {
   200: FastifyReply;
   302: { url: string };
   "4xx": { error: string };
+}
+
+export interface CrawlerClient {
+
+  runActorsAndGetOutputs<T>(input: CrawlerInput, runtimeOptions?: RuntimeOptions): Promise<T[]>;
+
+  run<T>(input: CrawlerInput, runOptions?: RunOptions): Promise<T[]>;
+
+  crawlerBuilder(versionNumber: string, options?: ActorBuildOptions): Promise<Build>
+
+  getLastRunClient(options?: ActorLastRunOptions): RunClient;
+
+  getBuildsCollection(): BuildCollectionClient;
+
+  getRunsCollection(): RunCollectionClient;
+
+  getVersionClient(versionNumber: string): ActorVersionClient;
+
+  getDataset<T extends keyof unknown>(): Promise<Dataset<T>>;
+
+}
+
+export type Dataset<T extends keyof unknown> = {
+  data: T;
+  dataSetClient?: DatasetClient<T>;
+};
+export interface RunOptions extends ActorStartOptions {
+
+}
+
+export interface RuntimeOptions extends ActorCallOptions {
+  iterateToConsole?: boolean;
+}
+
+export type CrawlerOutPuts<T extends keyof unknown> = Record<string | number, T>
+
+export interface CrawlerInput {
+  startUrls: {
+    url: string;
+  }[];
+  maxRequestsPerCrawl: number;
 }
 
 export interface BodyData  {
