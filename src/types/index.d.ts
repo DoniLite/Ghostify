@@ -1,4 +1,4 @@
-import { ActorBuildOptions, ActorCallOptions, ActorLastRunOptions, ActorStartOptions, Build, BuildCollectionClient, DatasetClient, RunClient, RunCollectionClient, StoreCollectionClient } from "apify-client";
+import { ActorBuildOptions, ActorCallOptions, ActorLastRunOptions, ActorStartOptions, Build, BuildClient, BuildCollectionClient, DatasetClient, KeyValueClientListKeysOptions, KeyValueListItem, KeyValueStoreClient, PaginatedList, RequestQueueClient, RequestQueueCollectionClient, RequestQueueUserOptions, RunClient, RunCollectionClient, StoreCollectionClient } from "apify-client";
 import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
 import {
   FastifyReply,
@@ -93,24 +93,47 @@ export interface CrawlerClient {
 
   run<T>(input: CrawlerInput, runOptions?: RunOptions): Promise<T[]>;
 
-  crawlerBuilder(versionNumber: string, options?: ActorBuildOptions): Promise<Build>
+  crawlerBuilder(versionNumber: string, options?: ActorBuildOptions): Promise<Builder>
 
-  getLastRunClient(options?: ActorLastRunOptions): RunClient;
+  getLastRunClient(options?: ActorLastRunOptions): Promise<RunClient>;
 
-  getBuildsCollection(): BuildCollectionClient;
+  getRequestQueueCollection(): Promise<RequestQueueCollectionClient>;
 
-  getRunsCollection(): RunCollectionClient;
+  getRequestQueue(id: string, options?: RequestQueueUserOptions): Promise<RequestQueueClient>;
 
-  getVersionClient(versionNumber: string): ActorVersionClient;
+  getBuildsCollection(): Promise<BuildCollectionClient>;
 
-  getDataset<T extends keyof unknown>(): Promise<Dataset<T>>;
+  getRunsCollection(): Promise<RunCollectionClient>;
+
+  getVersionClient(actorId: string, versionNumber: string): Promise<ActorVersionClient>;
+
+  getDataset<T extends DatasetRecord>(id: string): Promise<Dataset<T>>;
+
+  getKeyList(id: string, options?: KeyValueClientListKeysOptions): Promise<KeyValueListItem[]>;
+
+  getStoreValue<T extends keyof unknown>(id: string, key: string): Promise<StoreValue<T> | undefined>;
 
 }
 
-export type Dataset<T extends keyof unknown> = {
-  data: T;
+
+export type Builder = {
+  build: Build;
+  buildInstance: BuildClient;
+};
+
+export type Dataset<T extends DatasetRecord> = {
+  data: T[];
   dataSetClient?: DatasetClient<T>;
 };
+
+export type DatasetRecord = {
+  [key: string]: string | number | symbol;
+};
+
+export type StoreValue<T extends keyof unknown> = {
+  data: T;
+  storeClient: KeyValueStoreClient;
+}
 export interface RunOptions extends ActorStartOptions {
 
 }
