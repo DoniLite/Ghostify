@@ -1,5 +1,5 @@
 import { RouteHandlerMethod } from "fastify";
-import { BodyData } from "../index";
+import { BodyData } from "../types/index";
 
 
 export const store: RouteHandlerMethod = (req, res) => {

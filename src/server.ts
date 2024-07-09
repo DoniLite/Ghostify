@@ -7,9 +7,9 @@ import session from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import path from "node:path";
 import { client, prismaClient } from "./config/db";
-import { Quote, ReqParams } from "./";
+import { Quote, ReqParams } from "./types";
 import { index } from "./routes";
-import { WeatherData, EssentialWeatherData } from "./";
+import { WeatherData, EssentialWeatherData } from "./types";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
@@ -19,6 +19,7 @@ import { siteUrls } from "./contoler/siteUrls";
 import fastifyJwt from "@fastify/jwt";
 import { store } from "./contoler/store";
 import { notifications } from "./contoler/notifications";
+import { webhooks } from "./contoler/webhooks";
 
 const protectedRoutes = ["/api/v1", "/api/notifications", "/api/store"];
 dotEnv.config()
@@ -109,6 +110,7 @@ server.get('/api/token', async (req, res) => {
   const token = tokenGenerator(generator);
   res.send(JSON.stringify({token}));
 })
+server.get('/api/webhooks', webhooks)
 server.post('/api/store', store)
 server.post("/api/notifications", notifications)
 
