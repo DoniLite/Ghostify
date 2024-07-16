@@ -83,9 +83,11 @@ export class ApifyCustomClient implements CrawlerClient {
     return version;
   }
 
-  async getDataset<T extends DatasetRecord>(id: string): Promise<Dataset<T>> {
+  async getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>> {
     const run = await this.#client.actor("kRn80VXoQpNq9gVod");
-    const dataset = await this.#client.dataset(id);
+    const dataset = id
+      ? await this.#client.dataset(id)
+      : await this.#client.dataset('default dataset id');
     const datasets = (await dataset.listItems()).items as T[];
     const data = {
       data: datasets,
