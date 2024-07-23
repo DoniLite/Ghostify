@@ -107,7 +107,7 @@ export interface CrawlerClient {
 
   getVersionClient(actorId: string, versionNumber: string): Promise<ActorVersionClient>;
 
-  getDataset<T extends DatasetRecord>(id: string): Promise<Dataset<T>>;
+  getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>>;
 
   getKeyList(id: string, options?: KeyValueClientListKeysOptions): Promise<KeyValueListItem[]>;
 

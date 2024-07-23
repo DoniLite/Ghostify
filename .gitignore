@@ -6,3 +6,4 @@
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/src/public/output.css
