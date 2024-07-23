@@ -16,7 +16,7 @@
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "deploy": "gh-pages -d build",
-    "migrate": "pnpx prisma migrate dev --dev",
+    "migrate": "pnpx prisma migrate dev",
     "push": "pnpx prisma db push",
     "test": "pnpm exec playwright test",
     "dbTest": "nodemon ./temp/test.spec.js",
