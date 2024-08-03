@@ -7,12 +7,13 @@ import {
 } from "fastify";
 
 export interface EssentialWeatherData {
-  datetime: string;
-  tempmax: number;
-  tempmin: number;
-  conditions: string;
-  description: string;
-  icon: string;
+  datetime?: string;
+  tempmax?: number;
+  tempmin?: number;
+  conditions?: string;
+  description?: string;
+  icon?: string;
+  flag?: string;
 }
 
 export interface WeatherData {
@@ -70,6 +71,12 @@ export interface Quote {
   url: string;
   tags: string[];
   length: number;
+}
+
+export interface SessionQuote {
+  id?: string;
+  content?: string;
+  author?: string;
 }
 
 export interface IQuerystring {
@@ -147,6 +154,7 @@ export type CrawlerOutPuts<T extends keyof unknown> = Record<string | number, T>
 export interface CrawlerInput {
   startUrls: {
     url: string;
+    name: string;
   }[];
   maxRequestsPerCrawl: number;
 }
