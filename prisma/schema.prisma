@@ -47,7 +47,13 @@ model Project {
 }
 
 model GeneratorData {
-  name  String @id
+  name  String  @id
   email String?
   url   String?
+}
+
+model Url {
+  id   Int    @id @default(autoincrement())
+  url  String
+  name String
 }

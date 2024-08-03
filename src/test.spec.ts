@@ -1,6 +1,6 @@
 import { prismaClient } from "./config/db";
 
-const test = async () => {
+export const deploymentTester = async () => {
   const data = await prismaClient.post.create({
     data:{
         title: 'Test post',
@@ -16,4 +16,4 @@ const test = async () => {
 };
 
 
-test().then().catch(err => console.error(err));
+deploymentTester().then().catch(err => console.error(err));

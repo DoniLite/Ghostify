@@ -2,6 +2,7 @@ import { ActorBuildOptions, ActorLastRunOptions, ApifyClient, Build, BuildCollec
 import { Builder, CrawlerClient, CrawlerInput, CrawlerOutPuts, Dataset, DatasetRecord, RunOptions, RuntimeOptions, StoreValue } from "./types/index";
 import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
 
+export const ACTOR_ID = process.env.ACTOR_ID;
 export class ApifyCustomClient implements CrawlerClient {
   #client: ApifyClient;
   constructor(token: string) {
@@ -12,7 +13,7 @@ export class ApifyCustomClient implements CrawlerClient {
     input: CrawlerInput,
     runtimeOptions?: RuntimeOptions
   ): Promise<CrawlerOutPuts[]> {
-    const run = await this.#client.actor("kRn80VXoQpNq9gVod").call(input);
+    const run = await this.#client.actor(ACTOR_ID).call(input);
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
     if (runtimeOptions.iterateToConsole) {
@@ -27,7 +28,7 @@ export class ApifyCustomClient implements CrawlerClient {
     input: CrawlerInput,
     runOptions?: RunOptions
   ): Promise<CrawlerOutPuts[]> {
-    const run = await this.#client.actor("kRn80VXoQpNq9gVod").start(input);
+    const run = await this.#client.actor(ACTOR_ID).start(input);
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
     return items as CrawlerOutPuts[];

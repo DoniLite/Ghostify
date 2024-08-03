@@ -6,10 +6,9 @@ import fromBody from "@fastify/formbody";
 import session from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import path from "node:path";
-import { client, prismaClient } from "./config/db";
-import { Quote, ReqParams } from "./types";
+import { prismaClient } from "./config/db";
+import { ReqParams } from "./types";
 import { index } from "./routes";
-import { WeatherData, EssentialWeatherData } from "./types";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./contoler/home";
@@ -20,40 +19,36 @@ import fastifyJwt from "@fastify/jwt";
 import { store } from "./contoler/store";
 import { notifications } from "./contoler/notifications";
 import { webhooks } from "./contoler/webhooks";
+import { sessionStorageHook } from "./hooks/sessionStorage";
 
-const protectedRoutes = ["/api/v1", "/api/notifications", "/api/store"];
+const protectedRoutes = [
+  "/api/v1",
+  "/api/notifications",
+  "/api/store",
+  "/api/webhooks",
+];
 dotEnv.config()
 const server : FastifyInstance = fastify();
-
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          pong: {
-            type: "string",
-          },
-        },
-      },
-    },
-  },
-};
 
 server.register(fastifyJwt, {
   secret: process.env.JWT_SECRET,
 })
 
+// Hooks...
 server.addHook("onRequest", async (req, res) => {
   const url = req.raw.url;
   if (protectedRoutes.includes(url)) {
     try {
       await req.jwtVerify();
     } catch (err) {
+      if (process.env.NODE_ENV == 'production') {
+        res.send({err: "Une erreur s'est produite i se peut que vous ne soyez pas disposé à accéder à ceci"})
+      }
       res.send(err);
     }
   }
 });
+// server.addHook("preHandler", sessionStorageHook)
 
 const tokenGenerator = (payload: string) =>  {
   const token = server.jwt.sign({ payload });
@@ -79,9 +74,23 @@ server.register(staticPlugin, {
 server.register(fromBody);
 server.register(fastifyCookie);
 server.register(session, {
-  secret: "This is the Server of @DoniLiteGhost",
+  secret: process.env.SESSION_SECRET,
+  cookie: {
+    secure: false, // true in production for HTTPS
+  },
+  // saveUninitialized: false,
+  // cookieName: "sessionId",
 });
 
+
+// routes...
+server.setErrorHandler((err, req, res) => {
+  server.log.error(err);
+  res.view("/src/views/error.ejs");
+});
+server.setNotFoundHandler((req, res) => {
+  res.view("/src/views/404.ejs");
+})
 server.get("/", index);
 server.post("/home", homeControler);
 server.get("/home", home);

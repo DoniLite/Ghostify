@@ -9,17 +9,18 @@ L'essentie du code est constitué de typeScript considérez tous les fichiers po
 
 ## langages
 
--> **TypeScript**
--> **EJS** (pour le templatage)
--> **CSS** l'essentiel du style a été écrit en [tailwind](https://tailwind.com/) via les fichiers **views** comme [blog](/src/views/blog.ejs) par exemple.
--> **JavaScript**
+- **TypeScript**
+- **EJS** (pour le templatage)
+- **CSS** l'essentiel du style a été écrit en [tailwind](https://tailwind.com/) via les fichiers **views** comme [blog](/src/views/blog.ejs) par exemple.
+- **JavaScript**
 
 ## structure
 
 Le dossier **src/** est le dossier principal du projet. Cependant tous le code qui y est contenu est sensé etre ***compiler***, ***builder***, ***servi*** par le serveur à travers les fichiers publics cependant garder à l'esprit que certaines fonctionnalités du *front* sont contenus dans les fichiers js comme:  
--> [1](/src/public/script/1.js)
--> [loader](/src/public/script/loader.js)
--> [uploaoder](/src/public/script/uploader.js)
+
+- [1](/src/public/script/1.js)
+- [loader](/src/public/script/loader.js)
+- [uploaoder](/src/public/script/uploader.js)
 
 ## les tests
 

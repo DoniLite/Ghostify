@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { createClient } from "redis";
 
 export const client = createClient({
-  password: "vQjlP3BWaQGwgrHzqZ3lBHnK67Ys4Uct",
+  password: process.env.REDIS_PASSWORD,
   socket: {
-    host: "redis-16063.c299.asia-northeast1-1.gce.redns.redis-cloud.com",
+    host: process.env.REDIS_HOST,
     port: 16063,
   },
 });
