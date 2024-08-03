@@ -3,11 +3,12 @@ import {CrawlerInput} from '../types/index'
 
 const token = process.env.APIFY_API_TOKEN;
 
-const sendUrlToCrawler = async (url: string) => {
+const sendUrlToCrawler = async (url: string, name: string) => {
     const input : CrawlerInput = {
         startUrls: [
             {
-                url
+                url,
+                name
             }
         ],
         maxRequestsPerCrawl: 100,
