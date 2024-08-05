@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
+import MarkdownIt from "markdown-it";
 
 export const terms = (req: FastifyRequest, res: FastifyReply) => {
 

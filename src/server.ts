@@ -23,7 +23,6 @@ import { sessionStorageHook } from "./hooks/sessionStorage";
 import { article } from "./routes/article";
 import { about, license, policy, terms } from "./routes/assets";
 import { stats } from "./hooks/statCounter";
-// import LRU from "lru-cache";
 
 const protectedRoutes = [
   "/api/v1",
@@ -33,7 +32,6 @@ const protectedRoutes = [
 ];
 dotEnv.config()
 const server : FastifyInstance = fastify();
-// ejs.cache = LRU(100);
 
 server.register(fastifyJwt, {
   secret: process.env.JWT_SECRET,
@@ -91,7 +89,7 @@ server.register(session, {
 
 // routes...
 server.setErrorHandler((err, req, res) => {
-  server.log.error(err);
+  console.log(err);
   res.view("/src/views/error.ejs");
 });
 server.setNotFoundHandler((req, res) => {
