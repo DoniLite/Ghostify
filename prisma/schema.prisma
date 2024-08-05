@@ -26,7 +26,7 @@ model Category {
 model Post {
   id         Int       @id @default(autoincrement())
   title      String
-  date       String
+  date       DateTime
   content    String?
   published  Boolean   @default(false)
   slug       String
@@ -37,13 +37,16 @@ model Post {
 }
 
 model Project {
-  id          Int    @id @default(autoincrement())
-  title       String
-  description String
-  github      String
-  gitLab      String
-  bitbucket   String
-  license     String
+  id                Int    @id @default(autoincrement())
+  title             String
+  description       String
+  github            String
+  gitLab            String
+  bitbucket         String
+  license           String
+  link              String
+  participation     String
+  participationType String
 }
 
 model GeneratorData {
@@ -56,4 +59,20 @@ model Url {
   id   Int    @id @default(autoincrement())
   url  String
   name String
+}
+
+model Actu {
+  id             Int       @id @default(autoincrement())
+  file           String?
+  content        String
+  rawLink        String
+  promoted       Boolean
+  expirationDate DateTime?
+}
+
+model Assets {
+  id      Int    @id @default(autoincrement())
+  type    String
+  content String
+  title   String
 }

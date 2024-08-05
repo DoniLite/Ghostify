@@ -17,6 +17,6 @@ declare module "fastify" {
   }
 
   interface FastifyRequest {
-    setSession(payload: any, dest: "Weather" | "Quote"): Promise<void>;
+    // setSession(payload: any, dest: "Weather" | "Quote"): Promise<void>;
   }
 }

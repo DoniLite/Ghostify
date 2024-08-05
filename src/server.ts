@@ -11,15 +11,18 @@ import { ReqParams } from "./types";
 import { index } from "./routes";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
-import { homeControler } from "./contoler/home";
+import { homeControler } from "./controller/home";
 import { blog } from "./routes/blog";
 import dotEnv from "dotenv"
-import { siteUrls } from "./contoler/siteUrls";
+import { siteUrls } from "./controller/siteUrls";
 import fastifyJwt from "@fastify/jwt";
-import { store } from "./contoler/store";
-import { notifications } from "./contoler/notifications";
-import { webhooks } from "./contoler/webhooks";
+import { store } from "./controller/store";
+import { notifications } from "./controller/notifications";
+import { webhooks } from "./controller/webhooks";
 import { sessionStorageHook } from "./hooks/sessionStorage";
+import { article } from "./routes/article";
+import { about, license, policy, terms } from "./routes/assets";
+import { stats } from "./hooks/statCounter";
 
 const protectedRoutes = [
   "/api/v1",
@@ -48,6 +51,7 @@ server.addHook("onRequest", async (req, res) => {
     }
   }
 });
+server.addHook('onRequest', stats)
 // server.addHook("preHandler", sessionStorageHook)
 
 const tokenGenerator = (payload: string) =>  {
@@ -85,7 +89,7 @@ server.register(session, {
 
 // routes...
 server.setErrorHandler((err, req, res) => {
-  server.log.error(err);
+  console.log(err);
   res.view("/src/views/error.ejs");
 });
 server.setNotFoundHandler((req, res) => {
@@ -124,6 +128,12 @@ server.post('/api/store', store)
 server.post("/api/notifications", notifications)
 
 server.get('/blog', blog)
+server.get('/articles', article)
+
+server.get('/terms', terms)
+server.get('/privacy', policy)
+server.get('/license', license)
+server.get('/about', about)
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, (err, address) => {

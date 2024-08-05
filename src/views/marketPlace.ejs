@@ -52,7 +52,7 @@
       frameborder="1.5"
     ></iframe>
   </div>
-  <section class="bg-gray-900 text-white">
+  <section class="bg-transparent text-white">
     <div
       class="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center"
     >
@@ -88,6 +88,6 @@
       </div>
     </div>
   </section>
-  <%- include('footer') %>
+  <%- include('footer'), {linear: 'bg-gradient-to-tr', from: 'from-gray-900', to: 'to-blue-500', text: 'text-white', title: 'text-gray-400'} %>
 </div>
 <script type="module" src="/static/script/uploader.js"></script>
