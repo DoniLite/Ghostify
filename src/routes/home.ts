@@ -6,6 +6,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
   // const quote = await client.hGetAll("Quote");
   // console.log(value);
   const projects = await prismaClient.project.findMany()
+  const posts = await prismaClient.post.findMany()
   const weather = req.session.Weather;
   const quote = req.session.Quote;
   console.log(quote, weather);
@@ -14,5 +15,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
     activeIndex: 0,
     weatherData: weather,
     quote: quote,
+    projects,
+    posts,
   });
 };

@@ -3,7 +3,7 @@ import {CrawlerInput} from '../types/index'
 
 const token = process.env.APIFY_API_TOKEN;
 
-const sendUrlToCrawler = async (url: string, name: string) => {
+export const sendUrlToCrawler = async (url: string, name: string) => {
     const input : CrawlerInput = {
         startUrls: [
             {
@@ -19,7 +19,7 @@ const sendUrlToCrawler = async (url: string, name: string) => {
     console.log(result);
 }
 
-const getDataFromCrawler = async() => {
+export const getDataFromCrawler = async() => {
     const Crawler = new ApifyCustomClient(token);
     
 }

@@ -171,3 +171,22 @@ export interface ReqParams {
   email?: string;
   url?: string;
 }
+
+export type StatsData = {
+  total_visitor: number;
+  urls: string[];
+  [key: number]: {
+    visitor: number;
+    url: string;
+  };
+  weekly: {
+    index: number;
+    visitor: number;
+  };
+  monthly: {
+    month: month;
+    visitor: number;
+  };
+}
+
+type month = "Janvier" | "Février" | "Mars" | "Avril" | "Mai" | "Juin" | "Juillet" | "Aout" | "Septembre" | "Octobre" | "Novembre" | "Décembre";
