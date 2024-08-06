@@ -19,65 +19,61 @@
      </a>
     </div>
   </div>
-  <div
-    class="grid w-3/4 mx-auto mt-20 gap-3 mb-10"
-    style="grid-template-columns: 75% 20%"
-  >
-    <% projects.forEach(project => { %>
-        <div class="card">
-            <div class="flex flex-col">
-                <div class="flex font-bold p-3 justify-between text-green-300">
-                    <div>
-                        <i class="fa-solid fa-diagram-project mr-3"></i>
-                        <a href="#"><%= project.title %></a>
-                        <div>
-                        <i class="fa-solid fa-scale-balanced"></i>
-                        <small><%= project.license></small>
-                        </div>
-                    </div>
-                    <div class="w-1/4 flex justify-between text-green-300">
-                        <a href="<%= project.github %>">
-                            <i class="fa-brands fa-github"></i>
-                        </a>
-                        <a href="<%= prject.gitLab %>">
-                            <i class="fa-brands fa-gitlab"></i>
-                        </a>
-                        <a href="<%= project.bitbucket %>">
-                            <i class="fa-brands fa-bitbucket"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="text-white font-bold text-sm">
-                    <p>
-                        <%= project.description %>
-                    </p>
-                </div>
+  <div class="grid w-3/4 mx-auto mt-20 gap-3 mb-10" style="grid-template-columns: 75% 20%">
+  <% projects.forEach(project => { %>
+    <div class="card">
+      <div class="flex flex-col">
+        <div class="flex font-bold p-3 justify-between text-green-300">
+          <div>
+            <i class="fa-solid fa-diagram-project mr-3"></i>
+            <a href="#"><%= project.title %></a>
+            <div>
+              <i class="fa-solid fa-scale-balanced"></i>
+              <small><%= project.license %></small>
             </div>
+          </div>
+          <div class="w-1/4 flex justify-between text-green-300">
+            <a href="<%= project.github %>">
+              <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="<%= project.gitLab %>">
+              <i class="fa-brands fa-gitlab"></i>
+            </a>
+            <a href="<%= project.bitbucket %>">
+              <i class="fa-brands fa-bitbucket"></i>
+            </a>
+          </div>
         </div>
-        <div class="">
-        <%# Personnaliser cette partie de l'interface en fonction des nouvelles données. %>
-            <b class="text-white">Check it Now</b>
-            <div class="w-full flex items-center mt-4 text-white">
-                <div class="flex">
-                    <% if (project.participationType == 'colaboration') { %>
-                    <i class="fa-solid fa-folder-tree"></i>
-                    <% } %>
-                    <% else if (project.participationType == 'free'){ %>
-                    <i class="fa-regular fa-heart"></i>
-                    <% } %>
-                    <% else if (project.participationType == 'subscription'){ %>
-                    <i class="fa-solid fa-tag"></i>
-                    <% } %>
-                    <p class="ml-3">
-                        <a href="<%= project.link %>">
-                            <%= project.participation %>
-                        </a>
-                    </p>
-                </div>
-            </div>
+        <div class="text-white font-bold text-sm">
+          <p>
+            <%= project.description %>
+          </p>
         </div>
-    <% }) %>
-    
-  </div>
-  <%- include('footer'), {bg: 'bg-emerald-900', text: 'text-white', title: 'text-green-300'} %>
+      </div>
+    </div>
+    <div>
+      <%# Personnaliser cette partie de l'interface en fonction des nouvelles données. %>
+      <b class="text-white">Check it Now</b>
+      <div class="w-full flex items-center mt-4 text-white">
+        <div class="flex">
+          <% if (project.participationType === 'colaboration') { %>
+            <i class="fa-solid fa-folder-tree"></i>
+          <% } else if (project.participationType === 'free') { %>
+            <i class="fa-regular fa-heart"></i>
+          <% } else if (project.participationType === 'subscription') { %>
+            <i class="fa-solid fa-tag"></i>
+          <% } else { %>
+            <i class="fa-solid fa-question"></i>
+          <% } %>
+          <p class="ml-3">
+            <a href="<%= project.link %>">
+              <%= project.participation %>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+  <%- include('footer', { bg: 'bg-emerald-900', text: 'text-white', title: 'text-green-300',}) %>
 </div>

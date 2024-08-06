@@ -1,4 +1,4 @@
-import { client, prismaClient } from "../config/db";
+import {  prismaClient } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
 
 export const home: RouteHandlerMethod = async (req, res) => {
@@ -6,7 +6,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
   // const quote = await client.hGetAll("Quote");
   // console.log(value);
   const projects = await prismaClient.project.findMany()
-  const posts = await prismaClient.post.findMany()
+  // const posts = await prismaClient.post.findMany()
   const weather = req.session.Weather;
   const quote = req.session.Quote;
   console.log(quote, weather);
@@ -16,6 +16,6 @@ export const home: RouteHandlerMethod = async (req, res) => {
     weatherData: weather,
     quote: quote,
     projects,
-    posts,
+    // posts,
   });
 };

@@ -36,6 +36,7 @@
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
+    "ejs-lint": "^2.0.0",
     "fastify": "^4.26.2",
     "gh-pages": "^6.1.1",
     "markdown-it": "^14.1.0",
