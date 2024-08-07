@@ -1,18 +1,17 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import MarkdownIt from "markdown-it";
+import { prismaClient } from "../config/db";
 
-export const terms = (req: FastifyRequest, res: FastifyReply) => {
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+});
 
-}
+export const terms = async (req: FastifyRequest, res: FastifyReply) => {};
 
-export const license = (req: FastifyRequest, res: FastifyReply) => {
+export const license = async (req: FastifyRequest, res: FastifyReply) => {};
 
-}
+export const about = async (req: FastifyRequest, res: FastifyReply) => {};
 
-export const about = (req: FastifyRequest, res: FastifyReply) => {
-
-}
-
-export const policy = (req: FastifyRequest, res: FastifyReply) => {
-    
-}
+export const policy = async (req: FastifyRequest, res: FastifyReply) => {};

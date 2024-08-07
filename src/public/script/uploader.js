@@ -18,13 +18,13 @@ formElement.addEventListener('submit', async (e) => {
     if (!result.ok) {
         errorMessage.innerHTML = "Oups 🥲 There was an error.. <br>" + result.statusText;
         setTimeout(() => {
-          errorMessage.innerHTML = ""; // clear the message after a few seconds  // 1000 = 1 second  // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once  // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be
+          errorMessage.innerHTML = ""; 
         }, 2000);
     }
     const res = await result.json();
-    console.log("Data sent successfully:", res);
+    // console.log("Data sent successfully:", res);
     errorMessage.innerHTML = "Thanks for uploading! ❤️";
     setTimeout(()=>{
-        errorMessage.innerHTML = "";  // clear the message after a few seconds  // 1000 = 1 second  // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be called only once  // setTimeout(function, delay)  // delay in milliseconds  // this will wait for 1 second before executing the function  // after the delay, the function will be called // the function will be
+        errorMessage.innerHTML = ""; 
     }, 2000)
 })

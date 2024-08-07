@@ -159,6 +159,10 @@ export interface CrawlerInput {
   maxRequestsPerCrawl: number;
 }
 
+export type BodyXData<T = any> = {
+  [key: string]: T;
+}
+
 export interface BodyData  {
   data?: {
     country_capital: string;

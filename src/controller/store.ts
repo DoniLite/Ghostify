@@ -1,9 +1,9 @@
 import { RouteHandlerMethod } from "fastify";
-import { BodyData } from "../types/index";
+import { BodyData, BodyXData } from "../types/index";
 
 
 export const store: RouteHandlerMethod = (req, res) => {
-    const body: BodyData = req.body;
+    const body = req.body as BodyXData;
     console.log(body);
     return res.send(JSON.stringify({ message: "Data stored successfully" }));
 }

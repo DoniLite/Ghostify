@@ -72,7 +72,7 @@ model Actu {
 
 model Assets {
   id      Int    @id @default(autoincrement())
-  type    String
+  type    String @unique
   content String
   title   String
 }

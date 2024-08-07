@@ -8,3 +8,4 @@
 /playwright/.cache/
 /src/public/output.css
 /.vscode
+/articles

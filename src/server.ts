@@ -12,7 +12,6 @@ import { index } from "./routes";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./controller/home";
-import { blog } from "./routes/blog";
 import dotEnv from "dotenv"
 import { siteUrls } from "./controller/siteUrls";
 import fastifyJwt from "@fastify/jwt";
@@ -20,9 +19,11 @@ import { store } from "./controller/store";
 import { notifications } from "./controller/notifications";
 import { webhooks } from "./controller/webhooks";
 import { sessionStorageHook } from "./hooks/sessionStorage";
-import { article } from "./routes/article";
 import { about, license, policy, terms } from "./routes/assets";
 import { stats } from "./hooks/statCounter";
+import { articlePost } from "./controller/articlePost";
+import { projectPost } from "./controller/projectPost";
+import { article } from "./routes/blog";
 
 const protectedRoutes = [
   "/api/v1",
@@ -127,8 +128,9 @@ server.get('/api/webhooks', webhooks)
 server.post('/api/store', store)
 server.post("/api/notifications", notifications)
 
-server.get('/blog', blog)
-server.get('/articles', article)
+server.get('/article', article)
+server.post("/articlePost", articlePost);
+server.post("/projectPost", projectPost);
 
 server.get('/terms', terms)
 server.get('/privacy', policy)
