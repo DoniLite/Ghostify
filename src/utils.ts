@@ -74,7 +74,7 @@ export const months = [
   "Décembre",
 ] as const;
 
-const getMonthWithDate = (monthIndex: number) => {
+export const getMonthWithDate = (monthIndex: number) => {
   return months[monthIndex];
 };
 
@@ -107,7 +107,10 @@ export function loadStatistics(): StatsData {
   return stats;
 }
 
-export function saveStatistic(stat: StatsData) {
+export async function saveStatistic(stat: StatsData) {
   const json = JSON.stringify(stat, null, 4);
-  fs.writeFileSync(DATA_FILE, json, 'utf8')
+  fs.writeFile(DATA_FILE, json, 'utf8', (err) => {
+    if (err) throw err;
+    console.log("The file has been saved!");
+  })
 }

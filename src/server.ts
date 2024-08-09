@@ -52,7 +52,8 @@ server.addHook("onRequest", async (req, res) => {
     }
   }
 });
-server.addHook('onRequest', stats)
+
+// server.addHook('onRequest', stats)
 // server.addHook("preHandler", sessionStorageHook)
 
 const tokenGenerator = (payload: string) =>  {

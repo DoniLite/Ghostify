@@ -1,6 +1,6 @@
 import { RouteHandlerMethod } from "fastify";
 import { prismaClient } from "../config/db";
-import { sendUrlToCrawler } from "../scraping/jobClawler";
+// import { sendUrlToCrawler } from "../scraping/jobClawler";
 import { URL } from "url";
 
 interface BodyData {
@@ -17,7 +17,7 @@ export const siteUrls: RouteHandlerMethod = async (req, res) => {
             url: url,
         }
     })
-    await sendUrlToCrawler(url, urlName);
+    // await sendUrlToCrawler(url, urlName);
     if (site) {
         return res.send(JSON.stringify({ urI: url }));
     }

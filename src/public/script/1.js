@@ -5,42 +5,10 @@ window.onload = (e) => {
   swiper.slideTo(parseInt(activeIndex.className), 200);
 };
 
-/**
- * Fonction retournant le mois correspondant à l'index
- * @param {number} monthIndex
- */
-const getMonthWithDate = (monthIndex) => {
-const months = [
-  "Janvier",
-  "Février",
-  "Mars",
-  "Avril",
-  "Mai",
-  "Juin",
-  "Juillet",
-  "Aout",
-  "Septembre",
-  "Octobre",
-  "Novembre",
-  "Décembre",
-];
-return months[monthIndex]
-}
-
-window.setInterval(()=>{
-    const handler = document.querySelector(".time-check");
-    const handlerText = handler.textContent
-    const date = new Date();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const secondes = date.getSeconds();
-    const time = `${hours}H : ${minutes}m ${secondes}s`
-    handler.innerHTML = `${time} <br> ${date.getDate()} ${getMonthWithDate(
-      date.getMonth()
-    )} ${date.getFullYear()}`;
-    console.log(time);
-}, 1000);
-
+localStorage.setItem('activeIndex', activeIndex);
+sessionStorage.setItem('activeIndex', activeIndex);
+const Aindex = localStorage.getItem("activeIndex");
+console.log(localStorage.getItem('activeIndex'), sessionStorage.getItem('activeIndex'));
 // window.onscroll = (e) => {
 
 // }
@@ -66,6 +34,10 @@ scrollParent.forEach((el) => {
 const slideNavigation = (el, index, list) => {
   el.addEventListener("click", (e) => {
     e.preventDefault();
+
+    /**
+     * @type {EventTarget}
+     */
     let element = e.currentTarget;
     swiper.slideTo(parseInt(element.dataset.index), 200);
     navLinks.forEach((el) => {
@@ -75,7 +47,6 @@ const slideNavigation = (el, index, list) => {
     console.log(element.dataset.index);
   });
   el.setAttribute("data-index", index);
-  const i = document.createElement("button");
 };
 
 navLinks.forEach(slideNavigation);
