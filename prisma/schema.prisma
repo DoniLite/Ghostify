@@ -119,12 +119,13 @@ model Actu {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   name         String
-  email        String   @unique
+  email        String    @unique
   password     String
   token        String
-  registrtoken DateTime
+  service      String
+  registration DateTime?
   credits      BigInt?
 }
 

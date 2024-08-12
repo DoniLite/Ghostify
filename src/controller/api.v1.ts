@@ -1,7 +1,13 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { QueryXData } from "index";
-import { Service } from "../utils";
+import { BodyXData, QueryXData } from "index";
+import {
+  decrypt,
+  encrypt,
+  Service,
+  tokenTimeExpirationChecker,
+} from "../utils";
 import { tokenGenerator } from "../server";
+import { prismaClient } from "../config/db";
 
 type PosterQuery = {
   token: string | undefined;
@@ -41,32 +47,140 @@ export const tempLinkGenerator = async (
   res: FastifyReply
 ) => {
   const { service, forTemp } = req.query as QueryXData<TempLinkQuery>;
-  const date = new Date()
-  date.setHours(date.getHours() + forTemp)
-  const expiration = date.getTime()
-  const token = tokenGenerator(expiration.toString())
-  const linkPayload = `https//gostify.site/register?service=${service}&expiration=${expiration}&token=${token}`
+  const date = new Date();
+  date.setHours(date.getHours() + Number(forTemp));
+  const expiration = date.getTime();
+  const token = encrypt(expiration.toString());
+  const linkPayload = `https//gostify.site/register?service=${service}&token=${token}`;
   res.send(JSON.stringify(linkPayload));
 };
 
 type Register = {
-  service: Service,
-  registration: string | undefined,
-  token: string,
-}
+  service: Service;
+  token: string | undefined | null;
+};
 
-export const registration = async (
+export const registrationView = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-    const {service, registration, token} = req.query as QueryXData<Register>;
+  const { service, token } = req.query as QueryXData<Register>;
 
-    if(!service || !token ) {
-      throw new Error("Invalid service  or registration");
+  if (!service || !token) {
+    throw new Error("Invalid service  or registration");
+  }
+
+  let d;
+  try {
+    d = decrypt(token);
+  } catch (e) {
+    console.error(e);
+  }
+
+  const verifier = tokenTimeExpirationChecker(Number(d));
+  if (verifier) {
+    throw new Error("The validation time expired");
+  }
+  res.view("/src/views/signup.ejs", { service: service });
+};
+
+type RegisterPost = {
+  service: Service;
+  name: string | undefined | null;
+  email: string | undefined | null;
+  password: string | undefined | null;
+};
+
+export const registrationController = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
+  const { service, name, email, password } =
+    req.body as BodyXData<RegisterPost>;
+
+  if (service === "blog") {
+    try {
+      const cryptedPassword = encrypt(password);
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 1);
+      const registrationTime = date.getTime();
+      const token = tokenGenerator(String(registrationTime));
+      const user = await prismaClient.user.create({
+        data: {
+          name: name,
+          email: email,
+          service: service,
+          token: token,
+          password: cryptedPassword,
+          registration: date,
+        },
+      });
+      if (user) {
+        return res.redirect(200, '/poster');
+      }
+    } catch (err) {
+      console.log(err);
     }
+  }
 
+  if (service === 'api') {
+    try {
+      const cryptedPassword = encrypt(password);
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 1);
+      const credits = 100;
+      const token = tokenGenerator(date.toDateString());
+      const user = await prismaClient.user.create({
+        data: {
+          name: name,
+          email: email,
+          service: service,
+          token: token,
+          password: cryptedPassword,
+          credits: credits
+        },
+      });
+      if (user) {
+        return res.redirect(200, "/poster");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (service === 'superUser') {
+    try {
+      const cryptedPassword = encrypt(password);
+      const date = new Date();
+      date.setMonth(date.getMonth() + 6);
+      const registrationTime = date.getTime();
+      const token = tokenGenerator(String(registrationTime));
+      const user = await prismaClient.user.create({
+        data: {
+          name: name,
+          email: email,
+          service: service,
+          token: token,
+          password: cryptedPassword,
+          registration: date,
+        },
+      });
+      if (user) {
+        return res.redirect(200, "/poster");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  throw new Error('Something went wrong')
 };
 
 export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
-  const { service } = req.query as QueryXData;
+  const { service } = req.query as QueryXData<{service: Service}>;
+  console.log(service)
+  if (!service) {
+    throw new Error('Service not found');
+  }
+  return res.view("/src/views/signup.ejs", { service: service });
 };

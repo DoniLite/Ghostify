@@ -14,6 +14,7 @@ declare module "fastify" {
   interface Session {
     Weather?: EssentialWeatherData; 
     Quote?: SessionQuote
+    Token?: string;
   }
 
   interface FastifyRequest {

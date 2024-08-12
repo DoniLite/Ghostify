@@ -28,7 +28,8 @@ import { on, EventEmitter } from "node:events";
 import { listeners } from "node:process";
 import { PosterTask } from "./hooks/callTasks";
 import { customCreateHash } from "./utils";
-import { connexion, registration } from "./controller/api.v1";
+import { connexion, registrationController, registrationView } from "./controller/api.v1";
+import { urlVisitor } from "./controller/pushVisitor";
 
 
 export const ee = new EventEmitter();
@@ -145,18 +146,20 @@ server.get('/privacy', policy)
 server.get('/license', license)
 server.get('/about', about)
 server.get('/signin', connexion)
-server.get('/register', registration)
+server.get('/register', registrationView)
+server.post("/register", registrationController);
+
+server.get('/update/visitor', urlVisitor)
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
   // trying to make requests to the server
   const rep = await server.inject("/");
-  const r = customCreateHash('Just a string')
-  console.log(r);
 
   // log the result of the request
   // console.log(rep)
   process.nextTick(async() => {
+    const urls = await prismaClient.url.findMany()
     ee.emit("evrymorningAndNyTask", "begenning the task...");
     const respFTask = await PosterTask();
     console.log(respFTask)

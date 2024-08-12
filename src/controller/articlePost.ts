@@ -5,7 +5,7 @@ import { create } from "domain";
 
 
 export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
-    const {title, slug, date, content, category}  = req.body as BodyXData
+    const {title, slug, date, content, category, description}  = req.body as BodyXData
 
     console.log(title, slug, date, content, category)
 
@@ -19,12 +19,15 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
         const post = await prismaClient.post.create({
           data: {
             title: title,
+            description: description,
             slug: slug,
             date: new Date(date),
             content: content,
             category: {
                 connect: postCategory
             },
+            safe: true,
+            visites: 0,
           },
         });
         if (post) {
@@ -34,18 +37,21 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
     }
     
     const post = await prismaClient.post.create({
-        data: {
-            title: title,
-            slug: slug,
-            date: new Date(date),
-            content: content,
-            category: {
-                create: {
-                    title: category,
-                }
-            },
-        }
-    })
+      data: {
+        title: title,
+        slug: slug,
+        safe: true,
+        visites: 0,
+        description: description,
+        date: new Date(date),
+        content: content,
+        category: {
+          create: {
+            title: category,
+          },
+        },
+      },
+    });
 
     if (post) {
       console.log(post);

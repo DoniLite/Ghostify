@@ -1,17 +1,14 @@
- <body
-    x-data="{ page: 'signin', 'loaded': true, 'darkMode': true, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
-    x-init="
-          darkMode = JSON.parse(localStorage.getItem('darkMode'));
-          $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
-    :class="{'dark text-bodydark bg-boxdark-2': darkMode === true}"
-  >
+<%- include('rawHeader') %>
+  <% if (typeof service !== 'undefined') { %>
+   <input type="hidden" name="serice" id="service" value="<%= service %>">
+  <% } %>
 
     <!-- ===== Page Wrapper Start ===== -->
     <div class="flex h-screen overflow-hidden">
 
       <!-- ===== Content Area Start ===== -->
       <div
-        class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden"
+        class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-900 dark:text-gray-100 dark:bg-gray-800"
       >
 
         <!-- ===== Main Content Start ===== -->
@@ -22,31 +19,29 @@
               class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <h2 class="text-title-md2 font-bold text-black dark:text-white">
-                Sign In
+                Connection
               </h2>
             </div>
             <!-- Breadcrumb End -->
 
             <!-- ====== Forms Section Start -->
             <div
-              class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+              class="rounded-xl text-gray-900 dark:text-gray-100 dark:bg-gray-950 shadow-default"
             >
               <div class="flex flex-wrap items-center">
-                <div class="hidden w-full xl:block xl:w-1/2">
+                <div class="hidden w-full xl:block xl:w-1/2 p-4">
                   <div class="px-26 py-17.5 text-center">
                     <h1 class=" text-white font-bold text-3xl text-center">
-                      Ghostify Admin
+                      Ghostify <%= service %>
                     </h1>
+                    <img src="/static/SVG/gostify.svg" alt="Site logo" class=" w-16 h-16 mx-auto">
 
                     <p class="font-medium mt-4 2xl:px-20">
-                      Cette page est réservée aux personnel qualifié et permet d'interagir avec les données de la plateforme. 
+                      Deviens membre du service: <%= service %> de la plateforme pour profiter de nombreux avantages et promotions,
                     </p>
 
-                    <span class="mt-15 inline-block">
-                      <img
-                        src="./images/illustration/illustration-03.svg"
-                        alt="illustration"
-                      />
+                    <span class="mt-15 inline-block mt-3">
+                      <a href="/assets/billing/" class=" font-bold text-orange-600">Achete un pass</a> ou tente d'en décrocher un sur la plateforme 🤑
                     </span>
                   </div>
                 </div>
@@ -58,7 +53,7 @@
                     <h2
                       class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2"
                     >
-                      Sign In to Ghostify Admin
+                      Sign In
                     </h2>
 
                     <form>
@@ -134,7 +129,7 @@
                         <input
                           type="submit"
                           value="Sign In"
-                          class="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
+                          class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
                         />
                       </div>
 
@@ -143,7 +138,7 @@
                       <div class="mt-6 text-center">
                         <p class="font-medium">
                           Any problem to login?
-                          <a href="signup.html" class="text-primary">Check up here</a>
+                          <a href="signup.html" class=" font-bold text-orange-600">Check up here</a>
                         </p>
                       </div>
                     </form>
@@ -159,4 +154,4 @@
       <!-- ===== Content Area End ===== -->
     </div>
     <!-- ===== Page Wrapper End ===== -->
-  </body>
+<%- include('rawFooter') %>

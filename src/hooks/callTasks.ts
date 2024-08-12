@@ -1,10 +1,12 @@
 import v8 from "node:v8";
 import { ee } from "../server";
 import { prismaClient } from "../config/db";
+import { Post } from "@prisma/client";
 
 export const PosterTask = async () => {
   let resFunc;
   let utilsDate;
+  const traductorApi = `https//api.com/v1/`
   // let dom: HTMLAllCollection;
   // dom.length
 
@@ -14,7 +16,7 @@ export const PosterTask = async () => {
     ee.emit("evrymorningAndNyTask", "It's time to do the task");
     ee.emit("evrymorningAndNyTask", `Task begening... Collecting posts `);
     // const regex = new RegExp('\\');
-    const taskRunner = await makeSomeThing();
+    const taskRunner = await makeSomeThingWithPosts(postFilter);
     if (!taskRunner) {
       utilsDate = 60 * 60 * 6 * 1000;
       console.log(utilsDate);
@@ -31,7 +33,7 @@ export const PosterTask = async () => {
     date.setHours(date.getHours() + 6);
     ee.emit(
       "evrymorningAndNyTask",
-      `last execution time: ${date.getHours()}`
+      `next execution time: ${date.getHours()}`
     );
     return (resFunc = setTimeout(async () => {
       await PosterTask();
@@ -56,9 +58,29 @@ export const ActuTask = async() => {
   
 }
 
-async function makeSomeThing() {
-  const posts = await prismaClient.post.findMany();
-  if (!posts) return false;
-  console.log(posts);
-  return true;
+type MakeSomeThingCb<D, T = void> = (payload: D) => T | ((payload: D) => Promise<T>)
+
+async function makeSomeThingWithPosts<T>(fn?: MakeSomeThingCb<Post[], T>) {
+  try {
+    const posts = await prismaClient.post.findMany({
+      where: {
+        safe: false,
+        fromApi: true,
+      },
+    });
+    await fn(posts);
+    console.log(posts);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+type FilteredPosts = {
+  safe: Post[] | undefined,
+  unsafe: Post[] | undefined,
+}
+async function postFilter(posts: Post[]): Promise<FilteredPosts> {
+  const filtered = {} as FilteredPosts
+  return filtered
 }

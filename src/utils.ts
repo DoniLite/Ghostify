@@ -178,10 +178,13 @@ export function decrypt(encryptedText: string) {
     return decrypted;
 }
 
-// Exemple d'utilisation
-const textToEncrypt = "Salut Doni, c'est ton texte chiffré !";
-const encryptedText = encrypt(textToEncrypt);
-console.log("Texte chiffré:", encryptedText);
 
-const decryptedText = decrypt(encryptedText);
-console.log("Texte déchiffré:", decryptedText);
+export function subscriptionChecker(t: number) {
+  const now = new Date();
+  return now.getTime() <= t - (60 * 60 * 24 * 60 * 1000);
+}
+
+export function tokenTimeExpirationChecker(t: number) {
+  const now = new Date();
+  return now.getTime() <= t
+}
