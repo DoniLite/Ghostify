@@ -6,6 +6,7 @@ import {
   getWeekIndex,
   loadStatistics,
   saveStatistic,
+  streamTest,
 } from "../utils";
 
 export const stats = (
@@ -39,11 +40,13 @@ export const stats = (
       console.log(i);
       stats[`${i + 1}`].visitor += 1;
     }
-    saveStatistic(stats)
-      .then(() => {
-        done();
-      })
-      .catch((err) => console.log(err));
+    streamTest();
+    done();
+    // saveStatistic(stats)
+    //   .then(() => {
+    //     done();
+    //   })
+    //   .catch((err) => console.log(err));
     return;
   }
   if (weekIndex !== thisWeekIndex) {
@@ -62,11 +65,13 @@ export const stats = (
       console.log(i);
       stats[`${i + 1}`].visitor += 1;
     }
-    saveStatistic(stats)
-      .then(() => {
-        done();
-      })
-      .catch((err) => console.log(err));
+    streamTest();
+    done();
+    // saveStatistic(stats)
+    //   .then(() => {
+    //     done();
+    //   })
+    //   .catch((err) => console.log(err));
     return;
   }
   stats.monthly.visitor += 1;
@@ -85,9 +90,11 @@ export const stats = (
     console.log(stats);
     stats[`${i + 1}`].visitor += 1;
   }
-  saveStatistic(stats)
-    .then(() => {
-      done();
-    })
-    .catch((err) => console.log(err));
+  streamTest();
+  done();
+  // saveStatistic(stats)
+  //   .then(() => {
+  //     done();
+  //   })
+  //   .catch((err) => console.log(err));
 };

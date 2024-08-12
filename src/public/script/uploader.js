@@ -20,6 +20,9 @@ formElement.addEventListener('submit', async (e) => {
         setTimeout(() => {
           errorMessage.innerHTML = ""; 
         }, 2000);
+        setTimeout(() => {
+            errorMessage.innerHTML = `If you haeve already append this link try to search it on the site please <br> Si vous avez déjà ajouter ce lien au préalable recherchez le directement surle site car il y est toujours enregistré.`;
+        },2500);
     }
     const res = await result.json();
     // console.log("Data sent successfully:", res);

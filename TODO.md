@@ -6,3 +6,6 @@
 - **Mrettre à jour le codr de db.ts**
 
 Je précise que l'outil 'markdown-it' sera utilisé pour cette tache.
+
+- **Trouver une biblio pour manipuler le html**
+- **Suprimer la base de données pour la mettre à jour**

@@ -1,6 +1,0 @@
--- CreateTable
-CREATE TABLE "Url" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "url" TEXT NOT NULL,
-    "name" TEXT NOT NULL
-);

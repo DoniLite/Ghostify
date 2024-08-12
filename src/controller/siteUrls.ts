@@ -15,6 +15,7 @@ export const siteUrls: RouteHandlerMethod = async (req, res) => {
         data: {
             name: urlName,
             url: url,
+            visit: 0
         }
     })
     // await sendUrlToCrawler(url, urlName);

@@ -35,3 +35,5 @@ jobs:
         run: npm install -g pnpm && pnpm install
       - name: run build
         run: pnpm build
+      - name: launcher 
+        run: pnpm start

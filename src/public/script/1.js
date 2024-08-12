@@ -1,5 +1,12 @@
 import Swiper from "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs";
 
+// const swiper = new Swiper(...)
+const activeIndex = document.querySelector("#activeInputNav");
+const navLinks = document.querySelectorAll(".default-nav ul li");
+const mobileNavLinks = document.querySelectorAll(".mobile-nav ul li");
+const linkGroup = document.querySelector("nav ul");
+const scrollParent = document.querySelectorAll(".swiper-slide");
+
 window.onload = (e) => {
   console.log(activeIndex.className);
   swiper.slideTo(parseInt(activeIndex.className), 200);
@@ -12,12 +19,7 @@ console.log(localStorage.getItem('activeIndex'), sessionStorage.getItem('activeI
 // window.onscroll = (e) => {
 
 // }
-// const swiper = new Swiper(...)
-const activeIndex = document.querySelector("#activeInputNav");
-const navLinks = document.querySelectorAll(".default-nav ul li");
-const mobileNavLinks = document.querySelectorAll(".mobile-nav ul li");
-const linkGroup = document.querySelector("nav ul");
-const scrollParent = document.querySelectorAll(".swiper-slide");
+
 scrollParent.forEach((el) => {
   el.addEventListener("scroll", (e) => {
     linkGroup.style.display = "none";
