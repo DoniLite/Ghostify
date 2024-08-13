@@ -30,6 +30,7 @@ import { PosterTask } from "./hooks/callTasks";
 import { customCreateHash } from "./utils";
 import { connexion, registrationController, registrationView } from "./controller/api.v1";
 import { urlVisitor } from "./controller/pushVisitor";
+import { poster } from "./routes/poster";
 
 
 export const ee = new EventEmitter();
@@ -148,6 +149,7 @@ server.get('/about', about)
 server.get('/signin', connexion)
 server.get('/register', registrationView)
 server.post("/register", registrationController);
+server.get('/poster', poster)
 
 server.get('/update/visitor', urlVisitor)
 

@@ -14,7 +14,7 @@ type PosterQuery = {
   permission: Service;
 };
 
-export const poster = async (req: FastifyRequest, res: FastifyReply) => {
+export const posterController = async (req: FastifyRequest, res: FastifyReply) => {
   const { token, permission } = req.query as QueryXData<PosterQuery>;
   let dateStemp;
 

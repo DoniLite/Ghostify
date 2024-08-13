@@ -1,8 +1,8 @@
 import { EssentialWeatherData, month, StatsData, WeatherData } from "index";
-import fs, {promises as fsP} from "node:fs";
+import fs, { promises as fsP } from "node:fs";
 import path from "node:path";
 import crypto, { createHash, createVerify, sign } from "node:crypto";
-
+import { prismaClient } from "./config/db";
 
 export function verifyHash(hash: string) {
   const verify = createVerify("sha256");
@@ -10,10 +10,10 @@ export function verifyHash(hash: string) {
   console.log(verification);
 }
 
-export function customCreateHash(data: string): string{
+export function customCreateHash(data: string): string {
   const hash = createHash("sha256");
   hash.update(data);
-  return hash.digest('hex')
+  return hash.digest("hex");
 }
 
 export function extractEssentialWeatherData(
@@ -155,36 +155,74 @@ export enum Service {
   api = "api",
   blog = "blog",
   superUser = "superUser",
-}; 
+}
 
+// Définir une interface pour les clés
+interface Keys {
+  secretKey: string;
+  iv: string;
+}
 
-// Clé secrète (il est important de garder cette clé secrète)
-const secretKey = crypto.randomBytes(32);
-const iv = crypto.randomBytes(16); // Initialisation vector (IV)
+// Chemin vers le fichier où les clés seront stockées
+const keysFilePath: string = path.resolve(__dirname, "keys.json");
+
+// Fonction pour générer et sauvegarder les clés
+async function generateAndSaveKeys(): Promise<void> {
+  const secretKey: Buffer = crypto.randomBytes(32);
+  const iv: Buffer = crypto.randomBytes(16);
+
+  const keys: Keys = {
+    secretKey: secretKey.toString("hex"),
+    iv: iv.toString("hex"),
+  };
+
+  await fsP.writeFile(keysFilePath, JSON.stringify(keys), "utf8");
+  console.log("Clés générées et sauvegardées avec succès !");
+}
+
+// Fonction pour charger les clés depuis le fichier
+async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
+  const data: string = await fsP.readFile(keysFilePath, "utf8");
+  const keys: Keys = JSON.parse(data);
+
+  return {
+    secretKey: Buffer.from(keys.secretKey, "hex"),
+    iv: Buffer.from(keys.iv, "hex"),
+  };
+}
 
 // Fonction pour chiffrer les données
-export function encrypt(text: string) {
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
+function encrypt(text: string, secretKey: Buffer, iv: Buffer): string {
+  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
+  let encrypted: string = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
 }
 
 // Fonction pour déchiffrer les données
-export function decrypt(encryptedText: string) {
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
-    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+function decrypt(encryptedText: string, secretKey: Buffer, iv: Buffer): string {
+  const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
+  let decrypted: string = decipher.update(encryptedText, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
 }
-
 
 export function subscriptionChecker(t: number) {
   const now = new Date();
-  return now.getTime() <= t - (60 * 60 * 24 * 60 * 1000);
+  return now.getTime() <= t - 60 * 60 * 24 * 60 * 1000;
 }
 
 export function tokenTimeExpirationChecker(t: number) {
   const now = new Date();
-  return now.getTime() <= t
+  return now.getTime() <= t;
 }
+
+const colors = {
+  sun_1: " #FFD700",
+  sun_2: " #FFA500",
+  sun_3: " #FF8C00",
+  sun_4: " #FF6347",
+  sun_5: "#FFA500",
+  moon_1: "#8B4513",
+  moon_2: "#7B68EE",
+};

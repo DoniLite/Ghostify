@@ -32,13 +32,16 @@ model PostSection {
 }
 
 model Comment {
-  id      Int      @id @default(autoincrement())
-  post    Post?    @relation(fields: [postId], references: [id])
-  actu    Actu?    @relation(fields: [actuId], references: [id])
-  actuId  Int
-  postId  Int
-  content String
-  date    DateTime
+  id        Int       @id @default(autoincrement())
+  post      Post?     @relation(fields: [postId], references: [id])
+  actu      Actu?     @relation(fields: [actuId], references: [id])
+  actuId    Int
+  postId    Int
+  content   String
+  comments  Comment[] @relation(name: "CommentToComment" )
+  date      DateTime
+  comment   Comment?  @relation(name: "CommentToComment",fields: [commentId], references: [id])
+  commentId Int?
 }
 
 model Post {
