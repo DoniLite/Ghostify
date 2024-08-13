@@ -1,12 +1,7 @@
-<% if (linear) { %>
-  <div
-    class="w-full overflow-y-scroll h-full <%= linear %> <%= from %> <%= to %> <%= text %> lg:grid lg:grid-cols-5 mt-4"
-  >
-<% } %>
-<%  else { %>
-  <div
-    class="w-full overflow-y-scroll h-full <%= bg %> <%= text %> lg:grid lg:grid-cols-5 mt-4"
-  >
+<% if (typeof linear !== 'undefined') { %>
+  <div class="w-full overflow-y-scroll h-full <%= linear %> <%= from %> <%= to %> <%= text %> lg:grid lg:grid-cols-5 mt-4">
+<% } else { %>
+  <div class="w-full overflow-y-scroll h-full <%= bg %> <%= text %> lg:grid lg:grid-cols-5 mt-4">
 <% } %>
     <div class="relative block h-32 lg:col-span-2 lg:h-full">
     <img
@@ -20,10 +15,10 @@
     <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
       <div>
         <p>
-          <span class="text-xs uppercase tracking-wide text-gray-500"> Call us </span>
+          <span class="text-xs uppercase tracking-wide text-gray-500">  Ghostify.  </span>
 
           <a href="#" class="block text-2xl font-medium text-gray-900 hover:opacity-75 sm:text-3xl">
-            0123456789
+            Doni Lite Developer 
           </a>
         </p>
 

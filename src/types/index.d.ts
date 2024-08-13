@@ -159,6 +159,10 @@ export interface CrawlerInput {
   maxRequestsPerCrawl: number;
 }
 
+export type BodyXData<T = undefined> =  T extends undefined ? Record<string, T> : T;
+
+export type QueryXData<T = undefined> = T extends undefined ? Record<string, T> : T;
+
 export interface BodyData  {
   data?: {
     country_capital: string;
@@ -190,3 +194,4 @@ export type StatsData = {
 }
 
 type month = "Janvier" | "Février" | "Mars" | "Avril" | "Mai" | "Juin" | "Juillet" | "Aout" | "Septembre" | "Octobre" | "Novembre" | "Décembre";
+

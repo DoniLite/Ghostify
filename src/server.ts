@@ -12,7 +12,6 @@ import { index } from "./routes";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
 import { homeControler } from "./controller/home";
-import { blog } from "./routes/blog";
 import dotEnv from "dotenv"
 import { siteUrls } from "./controller/siteUrls";
 import fastifyJwt from "@fastify/jwt";
@@ -20,10 +19,21 @@ import { store } from "./controller/store";
 import { notifications } from "./controller/notifications";
 import { webhooks } from "./controller/webhooks";
 import { sessionStorageHook } from "./hooks/sessionStorage";
-import { article } from "./routes/article";
 import { about, license, policy, terms } from "./routes/assets";
 import { stats } from "./hooks/statCounter";
+import { articlePost } from "./controller/articlePost";
+import { projectPost } from "./controller/projectPost";
+import { article } from "./routes/blog";
+import { on, EventEmitter } from "node:events";
+import { listeners } from "node:process";
+import { PosterTask } from "./hooks/callTasks";
+import { customCreateHash } from "./utils";
+import { connexion, registrationController, registrationView } from "./controller/api.v1";
+import { urlVisitor } from "./controller/pushVisitor";
+import { poster } from "./routes/poster";
 
+
+export const ee = new EventEmitter();
 const protectedRoutes = [
   "/api/v1",
   "/api/notifications",
@@ -51,10 +61,11 @@ server.addHook("onRequest", async (req, res) => {
     }
   }
 });
-server.addHook('onRequest', stats)
+
+// server.addHook('onRequest', stats)
 // server.addHook("preHandler", sessionStorageHook)
 
-const tokenGenerator = (payload: string) =>  {
+export const tokenGenerator = (payload: string) =>  {
   const token = server.jwt.sign({ payload });
   return token
 };
@@ -127,19 +138,46 @@ server.get('/api/webhooks', webhooks)
 server.post('/api/store', store)
 server.post("/api/notifications", notifications)
 
-server.get('/blog', blog)
-server.get('/articles', article)
+server.get('/article', article)
+server.post("/articlePost", articlePost);
+server.post("/projectPost", projectPost);
 
 server.get('/terms', terms)
 server.get('/privacy', policy)
 server.get('/license', license)
 server.get('/about', about)
+server.get('/signin', connexion)
+server.get('/register', registrationView)
+server.post("/register", registrationController);
+server.get('/poster', poster)
+
+server.get('/update/visitor', urlVisitor)
 
 const port = parseInt(process.env.PORT) || 3081;
-server.listen({ port: port, host: '0.0.0.0' }, (err, address) => {
+server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
+  // trying to make requests to the server
+  const rep = await server.inject("/");
+
+  // log the result of the request
+  // console.log(rep)
+  process.nextTick(async() => {
+    const urls = await prismaClient.url.findMany()
+    ee.emit("evrymorningAndNyTask", "begenning the task...");
+    const respFTask = await PosterTask();
+    console.log(respFTask)
+  });
+  for await (const event of on(ee, "evrymorningAndNyTask")) {
+    // The execution of this inner block is synchronous and it
+    // processes one event at a time (even with await). Do not use
+    // if concurrent execution is required.
+    console.log(event); // prints ['bar'] [42]
+  }
   if (err) {
     console.error(err);
     process.exit(1);
   }
   console.log(`Server listening at ${address}`);
+  setInterval(() => {
+    console.log('tic')
+  }, 2000)
 });

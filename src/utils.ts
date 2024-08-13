@@ -1,6 +1,20 @@
 import { EssentialWeatherData, month, StatsData, WeatherData } from "index";
-import fs from "node:fs";
+import fs, { promises as fsP } from "node:fs";
 import path from "node:path";
+import crypto, { createHash, createVerify, sign } from "node:crypto";
+import { prismaClient } from "./config/db";
+
+export function verifyHash(hash: string) {
+  const verify = createVerify("sha256");
+  const verification = verify.update(hash);
+  console.log(verification);
+}
+
+export function customCreateHash(data: string): string {
+  const hash = createHash("sha256");
+  hash.update(data);
+  return hash.digest("hex");
+}
 
 export function extractEssentialWeatherData(
   data: WeatherData
@@ -14,7 +28,7 @@ const debordedLength = debordedText.length;
 
 export function reduceQuote(text: string): string {
   if (text.length > debordedLength) {
-    return text.slice(0,debordedLength).concat("...");
+    return text.slice(0, debordedLength).concat("...");
   }
   return text;
 }
@@ -32,11 +46,11 @@ export function createDirIfNotExists(path: string) {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
   }
-  return
+  return;
 }
 
 export function convertStatsInput(statsInput: string): StatsData {
-  return JSON.parse(statsInput)
+  return JSON.parse(statsInput);
 }
 
 export function stringifyStats(stats: StatsData): string {
@@ -44,21 +58,43 @@ export function stringifyStats(stats: StatsData): string {
 }
 
 /**
-* This function returns a boolean value indicating whether the month is over if `true` the month is not over
-* If `false` the month is over
-*/
+ * This function returns a boolean value indicating whether the month is over if `true` the month is not over
+ * If `false` the month is over
+ */
 export function checkIfMonthIsNotOver(monthParam: month): boolean {
-  const date = new Date()
+  const date = new Date();
   const thisMonth = getMonthWithDate(date.getMonth());
-  return thisMonth === monthParam
+  return thisMonth === monthParam;
 }
 
 export function getWeekIndex(): number {
-  const date = new Date()
-  const weekIndex = Math.round(date.getDate() / 7)
-  return weekIndex
+  const date = new Date();
+  const weekIndex = Math.round(date.getDate() / 7);
+  return weekIndex;
 }
+export function streamTest() {
+  fs.realpath("./data/statistics.json", (err, data) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    const streamReader = fs.createReadStream(data);
+    streamReader.on("data", (data) => {});
+    const chunks = [] as unknown[];
 
+    streamReader.on("readable", () => {
+      let chunk;
+      while (null !== (chunk = streamReader.read())) {
+        chunks.push(chunk);
+      }
+    });
+
+    streamReader.on("end", () => {
+      const content = chunks.join("");
+    });
+  });
+}
+fs.opendir("", () => {});
 export const months = [
   "Janvier",
   "Février",
@@ -74,12 +110,12 @@ export const months = [
   "Décembre",
 ] as const;
 
-const getMonthWithDate = (monthIndex: number) => {
+export const getMonthWithDate = (monthIndex: number) => {
   return months[monthIndex];
 };
 
 function createFirstStatistic(): StatsData {
-  const date = new Date()
+  const date = new Date();
   const month = getMonthWithDate(date.getMonth());
   const week = getWeekIndex();
   const stats: StatsData = {
@@ -98,16 +134,95 @@ function createFirstStatistic(): StatsData {
 }
 
 export function loadStatistics(): StatsData {
-  createDirIfNotExists(DATA_PATH)
+  createDirIfNotExists(DATA_PATH);
   if (!fs.existsSync(DATA_FILE)) {
-    return createFirstStatistic()
+    return createFirstStatistic();
   }
-  const jsonStrng = fs.readFileSync(DATA_FILE, 'utf8')
-  const stats = JSON.parse(jsonStrng) as StatsData
+  const jsonStrng = fs.readFileSync(DATA_FILE, "utf8");
+  const stats = JSON.parse(jsonStrng) as StatsData;
   return stats;
 }
 
-export function saveStatistic(stat: StatsData) {
+export async function saveStatistic(stat: StatsData) {
   const json = JSON.stringify(stat, null, 4);
-  fs.writeFileSync(DATA_FILE, json, 'utf8')
+  fs.writeFile(DATA_FILE, json, "utf8", (err) => {
+    if (err) throw err;
+    console.log("The file has been saved!");
+  });
 }
+
+export enum Service {
+  api = "api",
+  blog = "blog",
+  superUser = "superUser",
+}
+
+// Définir une interface pour les clés
+interface Keys {
+  secretKey: string;
+  iv: string;
+}
+
+// Chemin vers le fichier où les clés seront stockées
+const keysFilePath: string = path.resolve(__dirname, "keys.json");
+
+// Fonction pour générer et sauvegarder les clés
+async function generateAndSaveKeys(): Promise<void> {
+  const secretKey: Buffer = crypto.randomBytes(32);
+  const iv: Buffer = crypto.randomBytes(16);
+
+  const keys: Keys = {
+    secretKey: secretKey.toString("hex"),
+    iv: iv.toString("hex"),
+  };
+
+  await fsP.writeFile(keysFilePath, JSON.stringify(keys), "utf8");
+  console.log("Clés générées et sauvegardées avec succès !");
+}
+
+// Fonction pour charger les clés depuis le fichier
+async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
+  const data: string = await fsP.readFile(keysFilePath, "utf8");
+  const keys: Keys = JSON.parse(data);
+
+  return {
+    secretKey: Buffer.from(keys.secretKey, "hex"),
+    iv: Buffer.from(keys.iv, "hex"),
+  };
+}
+
+// Fonction pour chiffrer les données
+function encrypt(text: string, secretKey: Buffer, iv: Buffer): string {
+  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
+  let encrypted: string = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+}
+
+// Fonction pour déchiffrer les données
+function decrypt(encryptedText: string, secretKey: Buffer, iv: Buffer): string {
+  const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
+  let decrypted: string = decipher.update(encryptedText, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+}
+
+export function subscriptionChecker(t: number) {
+  const now = new Date();
+  return now.getTime() <= t - 60 * 60 * 24 * 60 * 1000;
+}
+
+export function tokenTimeExpirationChecker(t: number) {
+  const now = new Date();
+  return now.getTime() <= t;
+}
+
+const colors = {
+  sun_1: " #FFD700",
+  sun_2: " #FFA500",
+  sun_3: " #FF8C00",
+  sun_4: " #FF6347",
+  sun_5: "#FFA500",
+  moon_1: "#8B4513",
+  moon_2: "#7B68EE",
+};

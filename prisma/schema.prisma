@@ -23,17 +23,66 @@ model Category {
   post  Post[]
 }
 
+model PostSection {
+  id      Int    @id @default(autoincrement())
+  parent  Post   @relation(fields: [postId], references: [id])
+  postId  Int
+  title   String
+  content String
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  post      Post?     @relation(fields: [postId], references: [id])
+  actu      Actu?     @relation(fields: [actuId], references: [id])
+  actuId    Int
+  postId    Int
+  content   String
+  comments  Comment[] @relation(name: "CommentToComment" )
+  date      DateTime
+  comment   Comment?  @relation(name: "CommentToComment",fields: [commentId], references: [id])
+  commentId Int?
+}
+
 model Post {
-  id         Int       @id @default(autoincrement())
-  title      String
-  date       DateTime
-  content    String?
-  published  Boolean   @default(false)
-  slug       String
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String
+  safe        Boolean
+  date        DateTime
+  toUpdate    Boolean       @default(false)
+  content     String?
+  published   Boolean       @default(false)
+  section     PostSection[]
+  slug        String
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  visites     BigInt
+  user        String? // If the post is from `Api` then require the user. the user is a sjon string data
+  fromApi     Boolean       @default(false)
+  Comment     Comment[]
 
   @@map("posts")
+}
+
+model GamerStat {
+  id         Int       @id @default(autoincrement())
+  ip         String
+  url        String?   @unique
+  gamingDay  DateTime
+  game       GameData? @relation(fields: [gameId], references: [id])
+  gameId     Int?
+  gamerStats String
+}
+
+model GameData {
+  id          Int         @id @default(autoincrement())
+  gamers      GamerStat[]
+  gameUrl     String
+  title       String
+  description String
+  logo        String
+  data        String? //json
 }
 
 model Project {
@@ -56,9 +105,10 @@ model GeneratorData {
 }
 
 model Url {
-  id   Int    @id @default(autoincrement())
-  url  String
-  name String
+  id    Int    @id @default(autoincrement())
+  url   String @unique
+  visit BigInt
+  name  String
 }
 
 model Actu {
@@ -68,11 +118,23 @@ model Actu {
   rawLink        String
   promoted       Boolean
   expirationDate DateTime?
+  Comment        Comment[]
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  password     String
+  token        String
+  service      String
+  registration DateTime?
+  credits      BigInt?
 }
 
 model Assets {
   id      Int    @id @default(autoincrement())
-  type    String
+  type    String @unique
   content String
   title   String
 }
