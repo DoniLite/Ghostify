@@ -1,5 +1,53 @@
-<div class=" w-full">
-    <%- include('components/posterHeader.ejs') %>
-    <%- include('components/section.ejs') %>
+<%- include('components/rawHeader.ejs') %>
+<input type="hidden" name="index" value="<%= id %>" id="sessionIndex">
+<div
+  class="w-full h-16 flex items-center justify-between bg-gray-950 text-white p-4"
+>
+  <h1 class="text-white font-bold text-3xl">Poster</h1>
+  <i
+    class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+  ></i>
+</div>
+<div class="w-full mt-4" id="posterComponent">
+ <form action="" id="posterForm">
+     <div
+    class="poster-hidden transition-transform fixed top-8 right-0 h-1/2 w-40"
+    id="actionComponent"
+  >
+    <ul
+      class="h-full flex flex-col gap-5 justify-center items-center rounded-md bg-gradient-to-tr from-transparent via-gray-700 to-gray-950 text-white"
+    >
+      <li
+        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+      >
+        <i class="fa-solid fa-file-image fa-lg"></i> image
+      </li>
+      <li
+        id="requestSetionBtn"
+        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+      >
+        <i class="fa-solid fa-feather-pointed fa-lg"></i> Section
+      </li>
+      <li
+        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+      >
+        <i class="fa-regular fa-folder-open fa-lg"></i> Save
+      </li>
+      <li
+        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400 items-center"
+      >
+        <i class="fa-solid fa-circle-xmark"></i> Abort
+      </li>
+    </ul>
+  </div>
+  <div id="action">
+    <i
+      class="fa-solid fa-link fa-2xl text-white font-bold rounded-full shadow-xl bg-orange-400 p-2 cursor-pointer fixed top-1/2 right-7"
+    ></i>
+  </div>
+  <%- include('components/posterHeader.ejs') %> 
+  <%- include('components/section.ejs') %>
+ </form>
 </div>
 <script type="module" src="/static/script/poster.js"></script>
+<%- include('components/rawFooter.ejs') %>

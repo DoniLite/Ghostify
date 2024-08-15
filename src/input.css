@@ -32,6 +32,10 @@
   @apply absolute top-0 left-0 w-3/4 p-3 bg-white z-50;
 }
 
+.poster-hidden {
+  @apply translate-x-full
+}
+
 @keyframes showing-nav {
   0% {
     transform: translateX(-80%);

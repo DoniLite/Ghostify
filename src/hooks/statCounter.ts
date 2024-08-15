@@ -9,15 +9,14 @@ import {
   streamTest,
 } from "../utils";
 
-export const stats = (
+export const stats = async (
   req: FastifyRequest,
   res: FastifyReply,
-  done: HookHandlerDoneFunction
 ) => {
   const url = req.raw.url;
   const headers = req.raw.headers;
   console.log(headers);
-  const stats = loadStatistics();
+  const stats = await loadStatistics();
   const month = stats.monthly.month;
   const weekIndex = stats.weekly.index;
   const date = new Date();
@@ -40,13 +39,7 @@ export const stats = (
       console.log(i);
       stats[`${i + 1}`].visitor += 1;
     }
-    streamTest();
-    done();
-    // saveStatistic(stats)
-    //   .then(() => {
-    //     done();
-    //   })
-    //   .catch((err) => console.log(err));
+    await saveStatistic(stats);
     return;
   }
   if (weekIndex !== thisWeekIndex) {
@@ -66,12 +59,7 @@ export const stats = (
       stats[`${i + 1}`].visitor += 1;
     }
     streamTest();
-    done();
-    // saveStatistic(stats)
-    //   .then(() => {
-    //     done();
-    //   })
-    //   .catch((err) => console.log(err));
+    await saveStatistic(stats);
     return;
   }
   stats.monthly.visitor += 1;
@@ -90,11 +78,5 @@ export const stats = (
     console.log(stats);
     stats[`${i + 1}`].visitor += 1;
   }
-  streamTest();
-  done();
-  // saveStatistic(stats)
-  //   .then(() => {
-  //     done();
-  //   })
-  //   .catch((err) => console.log(err));
+  await saveStatistic(stats);
 };

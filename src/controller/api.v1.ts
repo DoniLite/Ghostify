@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { BodyXData, QueryXData } from "index";
+import { BodyXData, QueryXData } from "../@types";
 import {
   decrypt,
   encrypt,
@@ -50,7 +50,11 @@ export const tempLinkGenerator = async (
   const date = new Date();
   date.setHours(date.getHours() + Number(forTemp));
   const expiration = date.getTime();
-  const token = encrypt(expiration.toString());
+  const token = encrypt(
+    expiration.toString(),
+    req.session.ServerKeys.secretKey,
+    req.session.ServerKeys.iv
+  );
   const linkPayload = `https//gostify.site/register?service=${service}&token=${token}`;
   res.send(JSON.stringify(linkPayload));
 };
@@ -72,7 +76,11 @@ export const registrationView = async (
 
   let d;
   try {
-    d = decrypt(token);
+    d = decrypt(
+      token,
+      req.session.ServerKeys.secretKey,
+      req.session.ServerKeys.iv
+    );
   } catch (e) {
     console.error(e);
   }
@@ -100,7 +108,11 @@ export const registrationController = async (
 
   if (service === "blog") {
     try {
-      const cryptedPassword = encrypt(password);
+      const cryptedPassword = encrypt(
+        password,
+        req.session.ServerKeys.secretKey,
+        req.session.ServerKeys.iv
+      );
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
       const registrationTime = date.getTime();
@@ -125,7 +137,11 @@ export const registrationController = async (
 
   if (service === 'api') {
     try {
-      const cryptedPassword = encrypt(password);
+      const cryptedPassword = encrypt(
+        password,
+        req.session.ServerKeys.secretKey,
+        req.session.ServerKeys.iv
+      );
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
       const credits = 100;
@@ -150,7 +166,11 @@ export const registrationController = async (
 
   if (service === 'superUser') {
     try {
-      const cryptedPassword = encrypt(password);
+      const cryptedPassword = encrypt(
+        password,
+        req.session.ServerKeys.secretKey,
+        req.session.ServerKeys.iv
+      );
       const date = new Date();
       date.setMonth(date.getMonth() + 6);
       const registrationTime = date.getTime();

@@ -24,11 +24,12 @@ model Category {
 }
 
 model PostSection {
-  id      Int    @id @default(autoincrement())
-  parent  Post   @relation(fields: [postId], references: [id])
+  id      Int     @id @default(autoincrement())
+  parent  Post    @relation(fields: [postId], references: [id])
   postId  Int
   title   String
   content String
+  meta    String?
 }
 
 model Comment {
@@ -36,12 +37,22 @@ model Comment {
   post      Post?     @relation(fields: [postId], references: [id])
   actu      Actu?     @relation(fields: [actuId], references: [id])
   actuId    Int
+  file      String
+  reactions String
   postId    Int
   content   String
-  comments  Comment[] @relation(name: "CommentToComment" )
+  comments  Comment[] @relation(name: "CommentToComment")
   date      DateTime
-  comment   Comment?  @relation(name: "CommentToComment",fields: [commentId], references: [id])
+  comment   Comment?  @relation(name: "CommentToComment", fields: [commentId], references: [id])
   commentId Int?
+  signaled  BigInt    @default(0)
+}
+
+model postFile {
+  id       Int    @id @default(autoincrement())
+  filePath String
+  filePost Post   @relation(fields: [postId], references: [id])
+  postId   Int
 }
 
 model Post {
@@ -50,6 +61,7 @@ model Post {
   description String
   safe        Boolean
   date        DateTime
+  inMemory    Boolean       @default(true)
   toUpdate    Boolean       @default(false)
   content     String?
   published   Boolean       @default(false)
@@ -61,6 +73,7 @@ model Post {
   user        String? // If the post is from `Api` then require the user. the user is a sjon string data
   fromApi     Boolean       @default(false)
   Comment     Comment[]
+  files       postFile[]
 
   @@map("posts")
 }
@@ -107,7 +120,7 @@ model GeneratorData {
 model Url {
   id    Int    @id @default(autoincrement())
   url   String @unique
-  visit BigInt
+  visit BigInt @default(0)
   name  String
 }
 
@@ -118,7 +131,12 @@ model Actu {
   rawLink        String
   promoted       Boolean
   expirationDate DateTime?
-  Comment        Comment[]
+  comment        Comment[]
+  safe           Boolean   @default(false)
+  updated        Boolean   @default(false)
+  signaled       Int       @default(0)
+  visitors       BigInt    @default(0)
+  url            String
 }
 
 model User {

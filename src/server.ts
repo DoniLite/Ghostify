@@ -7,7 +7,7 @@ import session from "@fastify/session";
 import fastifyCookie from "@fastify/cookie";
 import path from "node:path";
 import { prismaClient } from "./config/db";
-import { ReqParams } from "./types";
+import { ReqParams } from "./@types";
 import { index } from "./routes";
 import cors from "@fastify/cors";
 import { home } from "./routes/home";
@@ -27,10 +27,10 @@ import { article } from "./routes/blog";
 import { on, EventEmitter } from "node:events";
 import { listeners } from "node:process";
 import { PosterTask } from "./hooks/callTasks";
-import { customCreateHash } from "./utils";
+import { customCreateHash, encrypt, graphicsUploader } from "./utils";
 import { connexion, registrationController, registrationView } from "./controller/api.v1";
 import { urlVisitor } from "./controller/pushVisitor";
-import { poster } from "./routes/poster";
+import { poster, requestComponent } from "./routes/poster";
 
 
 export const ee = new EventEmitter();
@@ -62,8 +62,21 @@ server.addHook("onRequest", async (req, res) => {
   }
 });
 
+server.addHook('onResponse', async (req, res) => {
+  const cookieExpriration = new Date();
+  cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+  req.session.Token = encrypt(
+    Date.now().toString(),
+    req.session.ServerKeys.secretKey,
+    req.session.ServerKeys.iv
+  );
+  res.setCookie("connection_time", req.session.Token, {
+    expires: cookieExpriration,
+  });
+})
+
 // server.addHook('onRequest', stats)
-// server.addHook("preHandler", sessionStorageHook)
+server.addHook("preHandler", sessionStorageHook)
 
 export const tokenGenerator = (payload: string) =>  {
   const token = server.jwt.sign({ payload });
@@ -150,6 +163,7 @@ server.get('/signin', connexion)
 server.get('/register', registrationView)
 server.post("/register", registrationController);
 server.get('/poster', poster)
+server.get("/components/poster", requestComponent);
 
 server.get('/update/visitor', urlVisitor)
 
