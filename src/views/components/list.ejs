@@ -1,0 +1,30 @@
+<div
+  id="list"
+  class="lg:w-5/6 w-11/12 mx-auto p-3 text-white justify-center items-center bg-gray-950 rounded-lg py-6 my-5"
+>
+  <div class="flex justify-between items-center w-full p-2">
+    <h1 class="text-white font-bold text-2xl">List</h1>
+    <div id="listAdd">
+      <i
+        class="fa-regular fa-square-plus fa-xl text-white hover:cursor-pointer"
+      ></i>
+    </div>
+  </div>
+  <div id="<%= id %>" class="lst-component w-full flex flex-col gap-y-3">
+    <div id="1" class="vl-parent flex gap-x-4 w-11/12 items-center mt-4">
+      <div class="w-4 h-4 rounded-full bg-white"></div>
+      <input
+        type="text"
+        id="listElement"
+        placeholder="Element"
+        class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+      />
+      <div id="listRemoveBtn">
+        <i
+          class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+        ></i>
+      </div>
+    </div>
+  </div>
+</div>
+

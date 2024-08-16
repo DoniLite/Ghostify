@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import {Assets} from '@prisma/client'
-import { BodyXData } from "index";
+import { BodyXData } from "../@types";
 
 
 export const assetPoster = async (req: FastifyRequest, res: FastifyReply) => {

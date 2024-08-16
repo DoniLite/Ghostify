@@ -1,12 +1,12 @@
-import v8 from "node:v8";
 import { ee } from "../server";
 import { prismaClient } from "../config/db";
-import { Post } from "@prisma/client";
+import { Post } from "index";
+import { schedule, validate, getTasks } from "node-cron";
+
 
 export const PosterTask = async () => {
   let resFunc;
   let utilsDate;
-  const traductorApi = `https//api.com/v1/`
   // let dom: HTMLAllCollection;
   // dom.length
 
@@ -53,7 +53,7 @@ export const PosterTask = async () => {
 export const ActuTask = async() => {
   let resFunc;
   let utilsDate;
-
+  const actu = await prismaClient.actu.findMany()
   const date = new Date();
   
 }

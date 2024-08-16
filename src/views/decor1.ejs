@@ -1,5 +1,15 @@
-<div class=" w-full absolute top-0 bg-blue-300 bg-gradient-to-b from-blue-300 via-lime-100 to-lime-500 -z-20" style="height: 100vh;">
-    <img src="/static/SVG/soleil.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-9" style="left: 30%;">
+<div class=" w-full absolute top-0 bg-gradient-to-b from-blue-300 via-lime-100 to-lime-500 -z-20" style="height: 100vh;">
+    <% if (theme.time==="Morning") { %>
+        <img src="/static/SVG/sun/morning.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-1/4" style="left: 20%;">
+    <% } else if (theme.time==="Midday") { %>
+        <img src="/static/SVG/sun/morning.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-9" style="left: 50%;">
+    <% } else if (theme.time==="Evening")  { %>
+        <img src="/static/SVG/evening.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-9" style="left: 75%;">
+    <% } else if (theme.time==="Night")  { %>
+        <img src="/static/SVG/moon/moon.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-9" style="left: 90%;">
+    <% } else { %>
+        <img src="/static/SVG/soleil.svg" alt="sun's icon" class="sun max-w-60 max-h-60 absolute top-9" style="left: 30%;">
+    <% } %>
     <!-- <img src="/static/SVG/decor1-montagne2.svg" class=" w-96 absolute right-0 bottom-0" alt=""> -->
     <img src="/static/SVG/decor1-nuage3.svg" class="sm:w-3/4 sm:h-auto h-36 w-full absolute top-40 left-0" alt="">
     <img src="/static/SVG/decor1-nuage3.svg" class="w-3/4 hidden sm:block absolute top-40 right-0 -z-10" alt="">

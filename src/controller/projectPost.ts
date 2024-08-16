@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { BodyXData } from "index";
+import { BodyXData } from "../@types";
 import { prismaClient } from "../config/db";
 
 

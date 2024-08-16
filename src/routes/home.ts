@@ -1,3 +1,4 @@
+import { decrypt } from "../utils";
 import { prismaClient } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
 
@@ -5,6 +6,11 @@ export const home: RouteHandlerMethod = async (req, res) => {
   // const value = await client.hGetAll("Weather");
   // const quote = await client.hGetAll("Quote");
   // console.log(value);
+  const connection_time = req.cookies["connection_time"]
+  if (!connection_time || Number(decrypt(connection_time, req.session.ServerKeys.secretKey, req.session.ServerKeys.iv)) < Date.now()) {
+    return res.redirect('/');
+  }
+  const Theme = req.session.Theme;
   const urls = await prismaClient.url.findMany({
     orderBy: {
       visit: "desc",
@@ -32,5 +38,6 @@ export const home: RouteHandlerMethod = async (req, res) => {
     projects,
     posts,
     urls,
+    theme: Theme,
   });
 };

@@ -1,5 +1,5 @@
 import { ActorBuildOptions, ActorLastRunOptions, ApifyClient, Build, BuildCollectionClient, KeyValueClientListKeysOptions, KeyValueListItem, PaginatedList, RequestQueueClient, RequestQueueCollectionClient, RequestQueueUserOptions, RunClient, RunCollectionClient } from "apify-client";
-import { Builder, CrawlerClient, CrawlerInput, CrawlerOutPuts, Dataset, DatasetRecord, RunOptions, RuntimeOptions, StoreValue } from "./types/index";
+import { Builder, CrawlerClient, CrawlerInput, CrawlerOutPuts, Dataset, DatasetRecord, RunOptions, RuntimeOptions, StoreValue } from "./@types/index";
 import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
 
 export const ACTOR_ID = process.env.ACTOR_ID;

@@ -5,7 +5,7 @@
 
 Ce projet est le code source de mon site professionel c'est en quelque sorte un personnal hub com pour moi. Il contient l'essentiel de l'architecture backend et frontend que j'ai utilisé pour la crétion du site.  
 L'architecture est basé sur server Backend fournissant les assets(documents ou données publiques) et les pages de toute la partie frontend. L'essentiel du front est logé dans les **/views** du projet. Les scripts sont disponibles via le dossier **/public** des assets.  
-L'essentie du code est constitué de typeScript considérez tous les fichiers portant une extension en rapport avec ce langage comme étant une implémentation du serveur ou d'une fonctionnalité attaché ausite.
+L'essentie du code est constitué de typeScript considérez tous les fichiers portant une extension en rapport avec ce langage comme étant une implémentation du serveur ou d'une fonctionnalité attaché au site.
 
 ## langages
 
