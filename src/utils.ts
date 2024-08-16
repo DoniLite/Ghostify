@@ -7,14 +7,27 @@ import {
 } from "./@types";
 import fs, { promises as fsP } from "node:fs";
 import path from "node:path";
-import crypto, { createHash, createVerify, sign } from "node:crypto";
-import { prismaClient } from "./config/db";
+import crypto, { createHash, createVerify } from "node:crypto";
 import sharp from "sharp";
 import Vibrant from "node-vibrant";
 import imageHash from "image-hash";
 import Tesseract from "tesseract.js";
+import MarkdownIt from "markdown-it";
 
-export async function analyzeImage(imagePath: string): Promise<ImageAnalysisResult> {
+
+const md = MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+});
+
+export const unify = (str: string) => {
+  return md.render(str);
+};
+
+export async function analyzeImage(
+  imagePath: string
+): Promise<ImageAnalysisResult> {
   // Analyse des métadonnées
   const metadata = await sharp(imagePath).metadata();
 
@@ -162,7 +175,7 @@ export function streamTest() {
       const content = chunks.join("");
     });
   });
-};
+}
 
 export const months = [
   "Janvier",
@@ -254,7 +267,7 @@ export async function generateAndSaveKeys(): Promise<void> {
 
 // Fonction pour charger les clés depuis le fichier
 export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
-  if(!fs.existsSync(keysFilePath)) {
+  if (!fs.existsSync(keysFilePath)) {
     await generateAndSaveKeys();
   }
   const data: string = await fsP.readFile(keysFilePath, "utf8");
@@ -423,9 +436,8 @@ export function checkTextContent(text: string): DetectionResult[] {
   return results;
 }
 
-const time = new Date();
-
 export const graphicsUploader = () => {
+  const time = new Date();
   if (time.getHours() > 5 && time.getHours() <= 10) {
     return "Morning" as const;
   }

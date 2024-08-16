@@ -28,7 +28,8 @@ model PostSection {
   parent  Post    @relation(fields: [postId], references: [id])
   postId  Int
   title   String
-  content String
+  content String?
+  header  Boolean @default(false)
   meta    String?
 }
 
@@ -36,10 +37,10 @@ model Comment {
   id        Int       @id @default(autoincrement())
   post      Post?     @relation(fields: [postId], references: [id])
   actu      Actu?     @relation(fields: [actuId], references: [id])
-  actuId    Int
+  actuId    Int?
   file      String
   reactions String
-  postId    Int
+  postId    Int?
   content   String
   comments  Comment[] @relation(name: "CommentToComment")
   date      DateTime
@@ -49,10 +50,11 @@ model Comment {
 }
 
 model postFile {
-  id       Int    @id @default(autoincrement())
-  filePath String
-  filePost Post   @relation(fields: [postId], references: [id])
-  postId   Int
+  id        Int    @id @default(autoincrement())
+  filePath  String
+  sectionId Int
+  filePost  Post   @relation(fields: [postId], references: [id])
+  postId    Int
 }
 
 model Post {
@@ -74,8 +76,22 @@ model Post {
   fromApi     Boolean       @default(false)
   Comment     Comment[]
   files       postFile[]
+  index       Indexer?      @relation(fields: [indexerId], references: [id])
+  indexerId   Int?
+  indexed     Boolean       @default(false)
 
   @@map("posts")
+}
+
+model Indexer {
+  id   Int        @id @default(autoincrement())
+  keys String
+  postId Int?
+  type String     @unique
+  post Post[]
+  actu Actu[]
+  url  Url[]
+  game GameData[]
 }
 
 model GamerStat {
@@ -94,17 +110,21 @@ model GameData {
   gameUrl     String
   title       String
   description String
+  indexed     Boolean     @default(true)
   logo        String
   data        String? //json
+  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
+  indexerId   Int?
 }
 
 model Project {
-  id                Int    @id @default(autoincrement())
+  id                Int     @id @default(autoincrement())
   title             String
   description       String
   github            String
   gitLab            String
   bitbucket         String
+  indexed           Boolean @default(true)
   license           String
   link              String
   participation     String
@@ -118,10 +138,13 @@ model GeneratorData {
 }
 
 model Url {
-  id    Int    @id @default(autoincrement())
-  url   String @unique
-  visit BigInt @default(0)
-  name  String
+  id        Int      @id @default(autoincrement())
+  url       String   @unique
+  visit     BigInt   @default(0)
+  name      String
+  indexed   Boolean  @default(false)
+  Indexer   Indexer? @relation(fields: [indexerId], references: [id])
+  indexerId Int?
 }
 
 model Actu {
@@ -134,9 +157,12 @@ model Actu {
   comment        Comment[]
   safe           Boolean   @default(false)
   updated        Boolean   @default(false)
+  indexed        Boolean   @default(false)
   signaled       Int       @default(0)
   visitors       BigInt    @default(0)
   url            String
+  Indexer        Indexer?  @relation(fields: [indexerId], references: [id])
+  indexerId      Int?
 }
 
 model User {
@@ -151,8 +177,9 @@ model User {
 }
 
 model Assets {
-  id      Int    @id @default(autoincrement())
-  type    String @unique
+  id      Int     @id @default(autoincrement())
+  type    String  @unique
   content String
   title   String
+  indexed Boolean @default(false)
 }

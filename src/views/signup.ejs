@@ -190,26 +190,19 @@
                   </div>
 
                   <div class=" my-4">
-                    <label
-                      for="checkboxLabelOne"
-                      class="flex cursor-pointer select-none items-center text-sm font-medium"
-                    >
-                      <div class="relative">
-                        <input
-                          type="checkbox"
-                          class="sr-only"
-                        />
-                        <div
-                          class="mr-4 flex h-5 w-5 items-center justify-center rounded border"
-                        >
-                          <span
-                            class="h-2.5 w-2.5 rounded-sm"
-                          ></span>
+                    
+                    <div>
+                      <label
+                        for="checkboxLabelOne"
+                        class="flex cursor-pointer select-none items-center text-sm font-medium"
+                      >
+                        <div class="relative">
+                          <input type="checkbox" name="userAgry" class="border-primary bg-gray bg-transparent mr-4 flex h-5 w-5 items-center justify-center rounded border">
                         </div>
-                      </div>
-                      <p>En cliquant sur ce bouton vous acceptez toutes les politiques de confidentialités qui définissent l'usage qui est fait de vos informations comme mentionné dans : <span><a href="/assets/policy" class=" font-bold text-orange-600">ce document</a></span>
-                    </p>
+                        <p>En cliquant sur ce bouton vous acceptez toutes les politiques de confidentialités qui définissent l'usage qui est fait de vos informations comme mentionné dans : <span><a href="/assets/policy" class=" font-bold text-orange-600">ce document</a></span>
+                        </p>
                       </label>
+                    </div>
                   </div>
 
                   <div class="mb-5">
@@ -231,5 +224,14 @@
   </div>
   <!-- ===== Content Area End ===== -->
 </div>
+<script>
+  const checkbox = document.querySelector('#checkboxLabelOne');
+  checkbox.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('checked')
+    const el = document.querySelector('#ipt');
+    el.setAttribute('value', 'true');
+  })
+</script>
 <!-- ===== Page Wrapper End ===== -->
 <%- include('components/rawFooter') %>

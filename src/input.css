@@ -5,6 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari et Edge */
+}
+
 .cookie-regular {
   font-family: "Cookie", cursive;
   font-weight: 400;

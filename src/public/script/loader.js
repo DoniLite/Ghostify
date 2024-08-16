@@ -1,8 +1,5 @@
 
 const getLoaderInfo = async () => {
-  const htmlFetch = await fetch('/');
-  const testData = await htmlFetch.text();
-  console.log(testData);
   const response = await fetch(
     `https://api.ipgeolocation.io/ipgeo?apiKey=f9f42822b0aa4b5daed3fd944a0ed341`
   );

@@ -200,7 +200,12 @@ export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
   const { service } = req.query as QueryXData<{service: Service}>;
   console.log(service)
   if (!service) {
-    throw new Error('Service not found');
+    return res.send(JSON.stringify({error: 'Service not found'}));
   }
-  return res.view("/src/views/signup.ejs", { service: service });
+  return res.view("/src/views/signin.ejs", { service: service });
 };
+
+export const connexionController = (req: FastifyRequest, res: FastifyReply) => {
+  const {} = req.body as BodyXData;
+  
+}

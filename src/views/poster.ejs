@@ -1,6 +1,7 @@
 <%- include('components/rawHeader.ejs') %>
-<input type="hidden" name="index" value="<%= id %>" id="sessionIndex">
+<input type="hidden" name="index" value="<%= id %>" id="sessionIndex" />
 <div
+  id="navHead"
   class="w-full h-16 flex items-center justify-between bg-gray-950 text-white p-4"
 >
   <h1 class="text-white font-bold text-3xl">Poster</h1>
@@ -9,45 +10,60 @@
   ></i>
 </div>
 <div class="w-full mt-4" id="posterComponent">
- <form action="" id="posterForm">
-     <div
-    class="poster-hidden transition-transform fixed top-8 right-0 h-1/2 w-40"
-    id="actionComponent"
-  >
-    <ul
-      class="h-full flex flex-col gap-5 justify-center items-center rounded-md bg-gradient-to-tr from-transparent via-gray-700 to-gray-950 text-white"
+  <form action="" id="posterForm">
+    <input type="file" name="file" class=" hidden" id="file_<%= id %>" />
+    <div
+      class="poster-hidden transition-transform fixed top-2 right-0 h-1/2 w-40"
+      id="actionComponent"
     >
-      <li
-        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+      <ul
+        class="h-full flex flex-col gap-5 justify-center items-center rounded-md bg-gradient-to-tr from-transparent via-gray-700 to-gray-950 text-white"
       >
-        <i class="fa-solid fa-file-image fa-lg"></i> image
-      </li>
-      <li
-        id="requestSetionBtn"
-        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
-      >
-        <i class="fa-solid fa-feather-pointed fa-lg"></i> Section
-      </li>
-      <li
-        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
-      >
-        <i class="fa-regular fa-folder-open fa-lg"></i> Save
-      </li>
-      <li
-        class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400 items-center"
-      >
-        <i class="fa-solid fa-circle-xmark"></i> Abort
-      </li>
-    </ul>
-  </div>
-  <div id="action">
-    <i
-      class="fa-solid fa-link fa-2xl text-white font-bold rounded-full shadow-xl bg-orange-400 p-2 cursor-pointer fixed top-1/2 right-7"
-    ></i>
-  </div>
-  <%- include('components/posterHeader.ejs') %> 
-  <%- include('components/section.ejs') %>
- </form>
+        <li
+          id="requestFile"
+          class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+        >
+          <i class="fa-solid fa-file-image fa-lg"></i> image
+        </li>
+        <li
+          id="requestList"
+          class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+        >
+          <i class="fa-solid fa-list fa-lg"></i> list
+        </li>
+        <li
+          id="requestSetionBtn"
+          class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+        >
+          <i class="fa-solid fa-feather-pointed fa-lg"></i> Section
+        </li>
+        <li
+          class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
+        >
+          <button type="submit">
+            <i class="fa-regular fa-folder-open fa-lg"></i> Save
+          </button>
+        </li>
+        <li
+          class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400 items-center"
+        >
+          <i class="fa-solid fa-circle-xmark"></i> Abort
+        </li>
+      </ul>
+    </div>
+    <div id="action">
+      <i
+        class="fa-solid fa-link fa-2xl text-white font-bold rounded-full shadow-xl bg-orange-400 p-2 cursor-pointer fixed top-1/2 right-7"
+      ></i>
+    </div>
+    <a href="#navHead" id="up" class="transition-all delay-500">
+      <i
+        class="fa-solid fa-angles-up fa-lg p-4 bg-orange-400 rounded-full text-white cursor-pointer fixed lg:left-7 lg:bottom-7 left-1 bottom-1"
+      ></i>
+    </a>
+    <%- include('components/posterHeader.ejs') %> <%-
+    include('components/section.ejs') %>
+  </form>
 </div>
-<script type="module" src="/static/script/poster.js"></script>
+<script type="module" src="/static/script/poster.js" defer></script>
 <%- include('components/rawFooter.ejs') %>
