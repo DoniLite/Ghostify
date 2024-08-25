@@ -124,9 +124,7 @@ export const DATA_PATH = path.join(__dirname, 'data');
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export function createDirIfNotExists(path: string) {
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync(path);
-  }
+  if (!fs.existsSync(path)) fsP.mkdir(path);
   return;
 }
 
@@ -152,28 +150,6 @@ export function getWeekIndex(): number {
   const date = new Date();
   const weekIndex = Math.round(date.getDate() / 7);
   return weekIndex;
-}
-export function streamTest() {
-  fs.realpath('./data/statistics.json', (err, data) => {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    const streamReader = fs.createReadStream(data);
-    streamReader.on('data', (data) => {});
-    const chunks = [] as unknown[];
-
-    streamReader.on('readable', () => {
-      let chunk;
-      while (null !== (chunk = streamReader.read())) {
-        chunks.push(chunk);
-      }
-    });
-
-    streamReader.on('end', () => {
-      const content = chunks.join('');
-    });
-  });
 }
 
 export const months = [
@@ -226,7 +202,7 @@ export async function loadStatistics(): Promise<StatsData> {
 
 export async function saveStatistic(stat: StatsData) {
   try {
-    const json = JSON.stringify(stat, null, 4);
+    const json = JSON.stringify(stat);
     await fsP.writeFile(DATA_FILE, json, 'utf8');
     return true;
   } catch (err) {
@@ -267,7 +243,8 @@ export async function generateAndSaveKeys(): Promise<void> {
 // Fonction pour charger les clés depuis le fichier
 export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
   if (!fs.existsSync(keysFilePath)) {
-    await createDirIfNotExists(keysFilePath);
+    await fsP.mkdir(DATA_PATH);
+    await generateAndSaveKeys();
   }
   const data: string = await fsP.readFile(keysFilePath, 'utf8');
   const keys: Keys = JSON.parse(data);
