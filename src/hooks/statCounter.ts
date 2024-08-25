@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import fs from "node:fs";
 import {
   checkIfMonthIsNotOver,
@@ -6,7 +6,6 @@ import {
   getWeekIndex,
   loadStatistics,
   saveStatistic,
-  streamTest,
 } from "../utils";
 
 export const stats = async (
@@ -58,7 +57,7 @@ export const stats = async (
       console.log(i);
       stats[`${i + 1}`].visitor += 1;
     }
-    streamTest();
+    
     await saveStatistic(stats);
     return;
   }
