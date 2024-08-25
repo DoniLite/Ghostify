@@ -267,7 +267,7 @@ export async function generateAndSaveKeys(): Promise<void> {
 // Fonction pour charger les clés depuis le fichier
 export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
   if (!fs.existsSync(keysFilePath)) {
-    await generateAndSaveKeys();
+    await createDirIfNotExists(keysFilePath);
   }
   const data: string = await fsP.readFile(keysFilePath, 'utf8');
   const keys: Keys = JSON.parse(data);

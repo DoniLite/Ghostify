@@ -200,7 +200,6 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
 
   // log the result of the request
   // console.log(rep)
-  await generateAndSaveKeys();
   process.nextTick(async () => {
     ee.emit('evrymorningAndNyTask', 'begenning the task...');
     const urls = await prismaClient.url.findMany();
