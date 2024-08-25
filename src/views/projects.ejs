@@ -1,10 +1,10 @@
-<div class="w-full overflow-y-scroll h-full bg-emerald-900">
+<div id="container" class="w-full overflow-y-scroll h-full bg-emerald-900">
   <div class="flex mx-auto lg:w-3/4 w-full justify-center">
-    <div class="card mt-20 border border-white">
-      <div class="w-3/4">
+    <div class="card mt-36 border border-white">
+      <div class="lg:w-3/4 w-full">
         <p class="text-white font-bold p-2">
-          Check my github projects portolio for more ressources and informations
-          about theses projects.
+          My projects portfolio for more ressources and informations
+          about theses projects go to the appropriate linked platform.
         </p>
         <div class="flex p-2 border border-red-600 text-white bg-red-400">
           <i class="fa-solid fa-triangle-exclamation mr-4"></i>
@@ -14,16 +14,16 @@
           </p>
         </div>
       </div>
-     <a href="https://github.com/DoniLite/">
+     <a href="https://github.com/DoniLite/" class=" text-center">
        <i class="fa-brands fa-github fa-2xl text-white mr-8"></i>
      </a>
     </div>
   </div>
-  <div class="lg:grid lg:w-3/4 w-full mx-auto mt-20 gap-3 mb-10" style="grid-template-columns: 75% 20%">
+  <div class="lg:grid lg:w-3/4 w-full mx-auto mt-12 gap-3 mb-10" style="grid-template-columns: 75% 20%">
   <% projects.forEach(project => { %>
     <div class="card">
-      <div class="flex flex-col">
-        <div class="flex font-bold p-3 justify-between text-green-300">
+      <div class="w-full flex flex-col">
+        <div class="flex font-bold w-full p-3 justify-between text-green-300">
           <div>
             <i class="fa-solid fa-diagram-project mr-3"></i>
             <a href="#"><%= project.title %></a>
@@ -32,7 +32,7 @@
               <small><%= project.license %></small>
             </div>
           </div>
-          <div class="w-1/4 flex justify-between text-green-300">
+          <div class=" flex gap-x-4 text-green-300">
             <a href="<%= project.github %>">
               <i class="fa-brands fa-github"></i>
             </a>
@@ -51,7 +51,8 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class=" flex justify-center items-center w-full mt-6">
+      <div>
       <%# Personnaliser cette partie de l'interface en fonction des nouvelles données. %>
       <b class="text-white">Check it Now</b>
       <div class="w-full flex items-center mt-4 text-white">
@@ -71,6 +72,7 @@
             </a>
           </p>
         </div>
+      </div>
       </div>
     </div>
   <% }) %>

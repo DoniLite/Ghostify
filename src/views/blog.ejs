@@ -1,15 +1,23 @@
 <div
-  class="w-full overflow-y-scroll h-full bg-gradient-to-br from-green-400 via-blue-400 to-purple-500 text-white"
+  id="container"
+  class="w-full overflow-y-scroll h-full bg-gradient-to-br from-slate-950 to-emerald-900 text-white"
 >
   <div class="bg-transparent py-24 sm:py-32">
     <div class="mx-auto max-w-full px-6 lg:px-8">
       <div class="mx-auto max-w-full lg:mx-0">
         <div class="lg:flex lg:justify-between block">
-          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h2
+            class="text-3xl font-bold tracking-tight lg:mb-0 mb-4 text-white sm:text-4xl"
+          >
             Poster Blog
           </h2>
 
-          <div class="relative lg:w-1/3 w-full">
+          <a
+            href="/signin?service=blog"
+            class="bg-gray-900 rounded-md lg:border-none border border-white lg:border-transparent font-bold text-white text-center p-2"
+            >Se connecter</a
+          >
+          <!-- <div class="relative lg:w-1/3 w-full">
             <label for="Search" class="sr-only"> Search for... </label>
 
             <input
@@ -44,7 +52,7 @@
                 </svg>
               </button>
             </span>
-          </div>
+          </div> -->
         </div>
         <p class="mt-2 text-lg leading-8 max-w-2xl text-white w-full">
           Bienvenue dans le monde fascinant de la programmation et des
@@ -54,9 +62,7 @@
           Ou votre savoir tout simplement
         </p>
       </div>
-      <h1 class="text-center text-2xl mt-6 font-bold">
-       Les plus consultés...
-      </h1>
+      <h1 class="text-center text-2xl mt-6 font-bold">Les plus consultés...</h1>
       <div
         class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-4 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3"
       >
@@ -175,272 +181,291 @@
       </div>
 
       <div
-        class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t pt-10 border-gray-200 sm:mt-8 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+        class="lg:grid flex flex-col-reverse gap-y-3 lg:gap-y-0 lg:grid-cols-[80%,20%]"
       >
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
+        <div
+          class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t pt-10 border-gray-200 sm:mt-8 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3"
         >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article
-          class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
-        >
-          <div
-            class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
+          <article
+            class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
           >
-            <time
-              datetime="2022-10-10"
-              class="block text-xs text-gray-500 dark:text-gray-400"
+            <div
+              class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900"
             >
-              10th Oct 2022
-            </time>
-
-            <a href="#">
-              <h3
-                class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+              <time
+                datetime="2022-10-10"
+                class="block text-xs text-gray-500 dark:text-gray-400"
               >
-                How to center an element using JavaScript and jQuery
-              </h3>
-            </a>
+                10th Oct 2022
+              </time>
 
-            <div class="mt-4 flex flex-wrap gap-1">
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                Snippet
-              </span>
+              <a href="#">
+                <h3
+                  class="mt-0.5 text-lg font-medium text-gray-900 dark:text-white"
+                >
+                  How to center an element using JavaScript and jQuery
+                </h3>
+              </a>
 
-              <span
-                class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
-              >
-                JavaScript
-              </span>
+              <div class="mt-4 flex flex-wrap gap-1">
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  Snippet
+                </span>
+
+                <span
+                  class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+                >
+                  JavaScript
+                </span>
+              </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- More posts... -->
+          <!-- More posts... -->
+        </div>
+        <div class="mt-4 flex flex-col gap-y-3">
+          <h1 class="text-white text-center font-bold text-2xl">Categories</h1>
+          <ul
+            class="flex lg:flex-col flex-row overflow-x-scroll font-bold lg:gap-y-3 gap-x-3 justify-center items-center text-white"
+          >
+            <li>
+              <span
+                class="whitespace-nowrap cursor-pointer rounded-md bg-purple-100 px-2.5 py-2 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
+              >
+                Category 1
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
   <p class="mt-2 text-lg leading-8 text-gray-600"></p>
 
-  <%- include('footer', {linear: 'bg-gradient-to-br', from: 'from-slate-950', to: 'to-emerald-900', text: 'text-white'}) %>
+  <%- include('footer', {linear: 'bg-gradient-to-br', from: 'from-slate-950',
+  to: 'to-emerald-900', text: 'text-white', title: 'text-gray-400'}) %>
 </div>

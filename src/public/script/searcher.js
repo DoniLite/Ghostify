@@ -13,9 +13,14 @@ console.log(searchInput);
  */
 const sendKeysToServer = async (e) => {
     e.preventDefault();
+    containerParser.classList.remove('hidden');
+    containerParser.classList.add('flex');
     console.log('click on search')
     loader.classList.remove('hidden');
     loader.classList.add('flex');
+    if(searchInput.value.trim().length <= 0) {
+        containerParser.classList.add('hidden');
+    }
     /**
      * @type {HTMLInputElement}
      */
