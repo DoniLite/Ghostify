@@ -27,7 +27,7 @@ import { article } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
 import { listeners } from 'node:process';
 import { PosterTask } from './hooks/callTasks';
-import { customCreateHash, encrypt, graphicsUploader } from './utils';
+import { customCreateHash, encrypt, generateAndSaveKeys, graphicsUploader } from './utils';
 import {
   connexion,
   registrationController,
@@ -200,6 +200,7 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
 
   // log the result of the request
   // console.log(rep)
+  await generateAndSaveKeys();
   process.nextTick(async () => {
     ee.emit('evrymorningAndNyTask', 'begenning the task...');
     const urls = await prismaClient.url.findMany();
