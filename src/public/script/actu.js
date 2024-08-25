@@ -7,6 +7,7 @@ const fileInput = document.querySelector('#fileInput');
 const addFileBtn = document.querySelector('#addFile');
 const fileNameLabel = document.querySelector('#fileName');
 
+
 parent.onscroll = (e) => {
   e.preventDefault();
   console.log('scroll');
