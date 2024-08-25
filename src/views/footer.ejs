@@ -5,7 +5,7 @@
 <% } %>
     <div class="relative block h-32 lg:col-span-2 lg:h-full">
     <img
-      src="https://images.unsplash.com/photo-1642370324100-324b21fab3a9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80"
+      src="<%= theme.footer %>"
       alt=""
       class="absolute inset-0 h-full w-full object-cover"
     />
@@ -17,23 +17,34 @@
         <p>
           <span class="text-xs uppercase tracking-wide text-gray-500">  Ghostify.  </span>
 
-          <a href="#" class="block text-2xl font-medium text-gray-900 hover:opacity-75 sm:text-3xl">
+          <a href="#" class="block text-2xl font-medium <%= title %> hover:opacity-75 sm:text-3xl">
             Doni Lite Developer 
           </a>
         </p>
 
-        <ul class="mt-8 space-y-1 text-sm text-gray-700">
-          <li>Monday to Friday: 10am - 5pm</li>
-          <li>Weekend: 10am - 3pm</li>
-        </ul>
+        <div class="mt-8 space-y-1 text-sm <%= text %>">
+          <h1>La news lettter est ouf!</h1>
+          <form id="newsLetter" class="flex lg:gap-x-4 lg:flex-row flex-col gap-y-3">
+            <input type="text" name="newsletter" id="newsletter" class="outline-none p-1 bg-transparent border-b-2 border-white <%= title %>" placeholder=" Passez nous votre mail et on s'occupe du reste">
+            <button
+              type="submit"
+              title="Send it!"
+              class="p-2 <%= title %> transition-all hover:<%= typeof bg !== 'undefined' ? bg : linear %> border font-bold flex justify-center items-center rounded-full"
+            >
+              <i
+                class="fa-solid fa-rocket hover:text-red-900 transition-all text-white self-end"
+              ></i>
+            </button>
+          </form>
+        </div>
 
-        <ul class="mt-8 flex gap-6">
+        <ul class="mt-8 flex gap-6 <%= text %>">
           <li>
             <a
               href="#"
               rel="noreferrer"
               target="_blank"
-              class="text-gray-700 transition hover:opacity-75"
+              class="<%= text %> transition hover:opacity-75"
             >
               <span class="sr-only">Facebook</span>
 
@@ -52,7 +63,7 @@
               href="#"
               rel="noreferrer"
               target="_blank"
-              class="text-gray-700 transition hover:opacity-75"
+              class="<%= text %> transition hover:opacity-75"
             >
               <span class="sr-only">Instagram</span>
 
@@ -71,7 +82,7 @@
               href="#"
               rel="noreferrer"
               target="_blank"
-              class="text-gray-700 transition hover:opacity-75"
+              class="<%= text %> transition hover:opacity-75"
             >
               <span class="sr-only">Twitter</span>
 
@@ -88,7 +99,7 @@
               href="#"
               rel="noreferrer"
               target="_blank"
-              class="text-gray-700 transition hover:opacity-75"
+              class="<%= text %> transition hover:opacity-75"
             >
               <span class="sr-only">GitHub</span>
 
@@ -107,7 +118,7 @@
               href="#"
               rel="noreferrer"
               target="_blank"
-              class="text-gray-700 transition hover:opacity-75"
+              class="<%= text %> transition hover:opacity-75"
             >
               <span class="sr-only">Dribbble</span>
 
@@ -125,45 +136,45 @@
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <p class="font-medium text-gray-900">Services</p>
+          <p class="font-medium <%= title %>">Services</p>
 
-          <ul class="mt-6 space-y-4 text-sm">
+          <ul class="mt-6 space-y-4 text-sm <%= text %>">
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Poster for blog and articles </a>
+              <a href="#" class=" transition hover:opacity-75"> Poster for blog and articles </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Try the basic web <i class="fa-solid fa-glob fa-lg"></i> search </a>
+              <a href="#" class=" transition hover:opacity-75"> Try the basic web <i class="fa-solid fa-globe fa-lg"></i> search </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Gamming  & Testing </a>
+              <a href="#" class=" transition hover:opacity-75"> Gamming  & Testing </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Marketing & Data-anlyzes support </a>
+              <a href="#" class=" transition hover:opacity-75"> Marketing & Data-anlyzes support </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Web Dev > backend & front & security & smart net </a>
+              <a href="#" class=" transition hover:opacity-75"> Web Dev > backend & front & security & smart net </a>
             </li>
           </ul>
         </div>
 
         <div>
-          <p class="font-medium text-gray-900">Sofware as Service</p>
+          <p class="font-medium <%= title %>">Help & Support Contact</p>
 
-          <ul class="mt-6 space-y-4 text-sm">
+          <ul class="mt-6 space-y-4 text-sm <%= text %>">
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> About </a>
+              <a href="#" class=" transition hover:opacity-75"> About </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Meet the Team </a>
+              <a href="#" class=" transition hover:opacity-75"> FAQ </a>
             </li>
 
             <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Accounts Review </a>
+              <a href="#" class=" transition hover:opacity-75"> Contact </a>
             </li>
           </ul>
         </div>
@@ -174,20 +185,20 @@
       <div class="sm:flex sm:items-center sm:justify-between">
         <ul class="flex flex-wrap gap-4 text-xs">
           <li>
-            <a href="#" class="text-gray-500 transition hover:opacity-75"> Terms & Conditions </a>
+            <a href="#" class=" <%= text %> transition hover:opacity-75"> Terms & Conditions </a>
           </li>
 
           <li>
-            <a href="#" class="text-gray-500 transition hover:opacity-75"> Privacy Policy </a>
+            <a href="#" class=" <%= text %> transition hover:opacity-75"> Privacy Policy </a>
           </li>
 
           <li>
-            <a href="#" class="text-gray-500 transition hover:opacity-75"> Cookies </a>
+            <a href="#" class=" <%= text %> transition hover:opacity-75"> Cookies </a>
           </li>
         </ul>
 
-        <p class="mt-8 text-xs text-gray-500 sm:mt-0">
-          &copy; 2022. Company Name. All rights reserved.
+        <p class="mt-8 text-xs  <%= text %> sm:mt-0">
+          &copy; 2024. Ghostify. All rights reserved.
         </p>
       </div>
     </div>

@@ -4,16 +4,15 @@ import {
   month,
   StatsData,
   WeatherData,
-} from "./@types";
-import fs, { promises as fsP } from "node:fs";
-import path from "node:path";
-import crypto, { createHash, createVerify } from "node:crypto";
-import sharp from "sharp";
-import Vibrant from "node-vibrant";
-import imageHash from "image-hash";
-import Tesseract from "tesseract.js";
-import MarkdownIt from "markdown-it";
-
+} from './@types';
+import fs, { promises as fsP } from 'node:fs';
+import path from 'node:path';
+import crypto, { createHash, createVerify } from 'node:crypto';
+import sharp from 'sharp';
+import Vibrant from 'node-vibrant';
+import imageHash from 'image-hash';
+import Tesseract from 'tesseract.js';
+import MarkdownIt from 'markdown-it';
 
 const md = MarkdownIt({
   html: true,
@@ -34,19 +33,19 @@ export async function analyzeImage(
   // Analyse des couleurs dominantes
   const palette = await Vibrant.from(imagePath).getPalette();
   const dominantColors = Object.values(palette).map(
-    (color) => color?.getHex() || ""
+    (color) => color?.getHex() || ''
   );
 
   // Création de l'empreinte de l'image (hash)
   const imageHashResult = await new Promise<string>((resolve, reject) => {
-    imageHash.hash(imagePath, 16, "hex", (error, hash) => {
+    imageHash.hash(imagePath, 16, 'hex', (error, hash) => {
       if (error) reject(error);
       resolve(hash);
     });
   });
 
   // Extraction du texte via OCR
-  const ocrResult = await Tesseract.recognize(imagePath, "eng", {
+  const ocrResult = await Tesseract.recognize(imagePath, 'eng', {
     logger: (m) => console.log(m), // Optionnel: pour suivre la progression
   });
   const ocrText = ocrResult.data.text;
@@ -70,8 +69,8 @@ export function shouldFlagImage(
   ocrText: string
 ): boolean {
   // Exemple de règles simples pour flagger une image
-  const prohibitedColors = ["#000000", "#ff0000"]; // Couleurs interdites (ex: noir, rouge vif)
-  const prohibitedKeywords = ["violence", "explicit", "forbidden"]; // Mots interdits dans le texte OCR
+  const prohibitedColors = ['#000000', '#ff0000']; // Couleurs interdites (ex: noir, rouge vif)
+  const prohibitedKeywords = ['violence', 'explicit', 'forbidden']; // Mots interdits dans le texte OCR
 
   // Vérification des couleurs dominantes
   const containsProhibitedColors = dominantColors.some((color) =>
@@ -87,15 +86,15 @@ export function shouldFlagImage(
 }
 
 export function verifyHash(hash: string) {
-  const verify = createVerify("sha256");
+  const verify = createVerify('sha256');
   const verification = verify.update(hash);
   console.log(verification);
 }
 
 export function customCreateHash(data: string): string {
-  const hash = createHash("sha256");
+  const hash = createHash('sha256');
   hash.update(data);
-  return hash.digest("hex");
+  return hash.digest('hex');
 }
 
 export function extractEssentialWeatherData(
@@ -110,19 +109,19 @@ const debordedLength = debordedText.length;
 
 export function reduceQuote(text: string): string {
   if (text.length > debordedLength) {
-    return text.slice(0, debordedLength).concat("...");
+    return text.slice(0, debordedLength).concat('...');
   }
   return text;
 }
 
 export enum ProjectParticipationType {
-  free = "free",
-  colaboration = "colaboration",
-  subscription = "subscription",
+  free = 'free',
+  colaboration = 'colaboration',
+  subscription = 'subscription',
 }
 
-export const DATA_PATH = path.join(__dirname, "data");
-export const DATA_FILE = path.join(DATA_PATH, "statistics.json");
+export const DATA_PATH = path.join(__dirname, 'data');
+export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export function createDirIfNotExists(path: string) {
   if (!fs.existsSync(path)) {
@@ -155,41 +154,41 @@ export function getWeekIndex(): number {
   return weekIndex;
 }
 export function streamTest() {
-  fs.realpath("./data/statistics.json", (err, data) => {
+  fs.realpath('./data/statistics.json', (err, data) => {
     if (err) {
       console.log(err);
       return;
     }
     const streamReader = fs.createReadStream(data);
-    streamReader.on("data", (data) => {});
+    streamReader.on('data', (data) => {});
     const chunks = [] as unknown[];
 
-    streamReader.on("readable", () => {
+    streamReader.on('readable', () => {
       let chunk;
       while (null !== (chunk = streamReader.read())) {
         chunks.push(chunk);
       }
     });
 
-    streamReader.on("end", () => {
-      const content = chunks.join("");
+    streamReader.on('end', () => {
+      const content = chunks.join('');
     });
   });
 }
 
 export const months = [
-  "Janvier",
-  "Février",
-  "Mars",
-  "Avril",
-  "Mai",
-  "Juin",
-  "Juillet",
-  "Aout",
-  "Septembre",
-  "Octobre",
-  "Novembre",
-  "Décembre",
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Aout',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ] as const;
 
 export const getMonthWithDate = (monthIndex: number) => {
@@ -220,7 +219,7 @@ export async function loadStatistics(): Promise<StatsData> {
   if (!fs.existsSync(DATA_FILE)) {
     return createFirstStatistic();
   }
-  const jsonStrng = await fsP.readFile(DATA_FILE, "utf8");
+  const jsonStrng = await fsP.readFile(DATA_FILE, 'utf8');
   const stats = JSON.parse(jsonStrng) as StatsData;
   return stats;
 }
@@ -228,7 +227,7 @@ export async function loadStatistics(): Promise<StatsData> {
 export async function saveStatistic(stat: StatsData) {
   try {
     const json = JSON.stringify(stat, null, 4);
-    await fsP.writeFile(DATA_FILE, json, "utf8");
+    await fsP.writeFile(DATA_FILE, json, 'utf8');
     return true;
   } catch (err) {
     console.log(err);
@@ -237,9 +236,9 @@ export async function saveStatistic(stat: StatsData) {
 }
 
 export enum Service {
-  api = "api",
-  blog = "blog",
-  superUser = "superUser",
+  api = 'api',
+  blog = 'blog',
+  superUser = 'superUser',
 }
 
 // Définir une interface pour les clés
@@ -249,7 +248,7 @@ interface Keys {
 }
 
 // Chemin vers le fichier où les clés seront stockées
-const keysFilePath: string = path.resolve(__dirname, "data/keys.json");
+const keysFilePath: string = path.resolve(__dirname, 'data/keys.json');
 
 // Fonction pour générer et sauvegarder les clés
 export async function generateAndSaveKeys(): Promise<void> {
@@ -257,12 +256,12 @@ export async function generateAndSaveKeys(): Promise<void> {
   const iv: Buffer = crypto.randomBytes(16);
 
   const keys: Keys = {
-    secretKey: secretKey.toString("hex"),
-    iv: iv.toString("hex"),
+    secretKey: secretKey.toString('hex'),
+    iv: iv.toString('hex'),
   };
 
-  await fsP.writeFile(keysFilePath, JSON.stringify(keys), "utf8");
-  console.log("Clés générées et sauvegardées avec succès !");
+  await fsP.writeFile(keysFilePath, JSON.stringify(keys), 'utf8');
+  console.log('Clés générées et sauvegardées avec succès !');
 }
 
 // Fonction pour charger les clés depuis le fichier
@@ -270,20 +269,20 @@ export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
   if (!fs.existsSync(keysFilePath)) {
     await generateAndSaveKeys();
   }
-  const data: string = await fsP.readFile(keysFilePath, "utf8");
+  const data: string = await fsP.readFile(keysFilePath, 'utf8');
   const keys: Keys = JSON.parse(data);
 
   return {
-    secretKey: Buffer.from(keys.secretKey, "hex"),
-    iv: Buffer.from(keys.iv, "hex"),
+    secretKey: Buffer.from(keys.secretKey, 'hex'),
+    iv: Buffer.from(keys.iv, 'hex'),
   };
 }
 
 // Fonction pour chiffrer les données
 export function encrypt(text: string, secretKey: Buffer, iv: Buffer): string {
-  const cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
-  let encrypted: string = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
+  const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);
+  let encrypted: string = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
   return encrypted;
 }
 
@@ -293,9 +292,9 @@ export function decrypt(
   secretKey: Buffer,
   iv: Buffer
 ): string {
-  const decipher = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
-  let decrypted: string = decipher.update(encryptedText, "hex", "utf8");
-  decrypted += decipher.final("utf8");
+  const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, iv);
+  let decrypted: string = decipher.update(encryptedText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
   return decrypted;
 }
 
@@ -310,19 +309,19 @@ export function tokenTimeExpirationChecker(t: number) {
 }
 
 export const colors = {
-  sun_1: " #FFD700",
-  sun_2: " #FFA500",
-  sun_3: " #FF8C00",
-  sun_4: " #FF6347",
-  sun_5: "#FFA500",
-  moon_1: "#8B4513",
-  moon_2: "#7B68EE",
-  morning_bg_from: "from-blue-300",
-  morning_bg_to: "to-lime-500",
-  evening_bg_from: "from-blue-300",
-  evening_bg_to: "to-lime-500",
-  night_bg_from: "from-blue-300",
-  nigh_bg_from: "to-lime-500",
+  sun_1: ' #FFD700',
+  sun_2: ' #FFA500',
+  sun_3: ' #FF8C00',
+  sun_4: ' #FF6347',
+  sun_5: '#FFA500',
+  moon_1: '#8B4513',
+  moon_2: '#7B68EE',
+  morning_bg_from: 'from-blue-300',
+  morning_bg_to: 'to-lime-500',
+  evening_bg_from: 'from-blue-300',
+  evening_bg_to: 'to-lime-500',
+  night_bg_from: 'from-blue-300',
+  nigh_bg_from: 'to-lime-500',
 } as const;
 
 interface DetectionResult {
@@ -367,41 +366,41 @@ function detectInappropriateContent(sequence: string): DetectionResult {
   const vulgarityRegex = /(fuck|shit|bitch|asshole|bastard|dickhead|cunt)/i;
 
   const regexArray = [
-    { regex: profanityRegex, issue: "Langage inapproprié détecté" },
-    { regex: spamRegex, issue: "Spam détecté" },
-    { regex: urlRegex, issue: "URL non autorisée détectée" },
-    { regex: threatRegex, issue: "Menace ou violence détectée" },
-    { regex: harassmentRegex, issue: "Harcèlement détecté" },
+    { regex: profanityRegex, issue: 'Langage inapproprié détecté' },
+    { regex: spamRegex, issue: 'Spam détecté' },
+    { regex: urlRegex, issue: 'URL non autorisée détectée' },
+    { regex: threatRegex, issue: 'Menace ou violence détectée' },
+    { regex: harassmentRegex, issue: 'Harcèlement détecté' },
     {
       regex: sexualContentRegex,
-      issue: "Contenu sexuellement explicite détecté",
+      issue: 'Contenu sexuellement explicite détecté',
     },
-    { regex: hateSpeechRegex, issue: "Discours haineux détecté" },
-    { regex: fakeNewsRegex, issue: "Fake news détectée" },
+    { regex: hateSpeechRegex, issue: 'Discours haineux détecté' },
+    { regex: fakeNewsRegex, issue: 'Fake news détectée' },
     {
       regex: promotionRegex,
-      issue: "Contenu promotionnel non autorisé détecté",
+      issue: 'Contenu promotionnel non autorisé détecté',
     },
     {
       regex: incitementRegex,
-      issue: "Incitation à la violence ou à la haine détectée",
+      issue: 'Incitation à la violence ou à la haine détectée',
     },
     {
       regex: sensitivePoliticalContentRegex,
-      issue: "Contenu politique sensible détecté",
+      issue: 'Contenu politique sensible détecté',
     },
-    { regex: defamationRegex, issue: "Propos diffamatoires détectés" },
+    { regex: defamationRegex, issue: 'Propos diffamatoires détectés' },
     {
       regex: phishingRegex,
-      issue: "Tentative de phishing ou escroquerie détectée",
+      issue: 'Tentative de phishing ou escroquerie détectée',
     },
     {
       regex: copyrightViolationRegex,
       issue: "Violation des droits d'auteur détectée",
     },
-    { regex: discriminationRegex, issue: "Discrimination détectée" },
-    { regex: illegalActivityRegex, issue: "Activité illégale détectée" },
-    { regex: vulgarityRegex, issue: "Langage grossier détecté" },
+    { regex: discriminationRegex, issue: 'Discrimination détectée' },
+    { regex: illegalActivityRegex, issue: 'Activité illégale détectée' },
+    { regex: vulgarityRegex, issue: 'Langage grossier détecté' },
   ];
 
   regexArray.forEach((item) => {
@@ -439,15 +438,15 @@ export function checkTextContent(text: string): DetectionResult[] {
 export const graphicsUploader = () => {
   const time = new Date();
   if (time.getHours() > 5 && time.getHours() <= 10) {
-    return "Morning" as const;
+    return 'Morning' as const;
   }
   if (time.getHours() >= 11 && time.getHours() < 13) {
-    return "Midday" as const;
+    return 'Midday' as const;
   }
 
-  if (time.getHours() >= 13 && time.getHours() < 6 && time.getHours() < 20) {
-    return "Evening" as const;
+  if (time.getHours() >= 13 && time.getHours() < 20) {
+    return 'Evening' as const;
   }
 
-  return "Night" as const;
+  return 'Night' as const;
 };

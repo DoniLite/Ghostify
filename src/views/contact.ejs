@@ -1,0 +1,25 @@
+<div
+  id="container"
+  class="overflow-y-scroll w-full h-full text-white bg-gray-950"
+>
+  <div class="flex lg:flex-row flex-col w-full h-full mt-24 lg:gap-x-4 gap-y-3">
+    <form
+      class="lg:w-[40%] w-full p-3 lg:border-r-2 lg:border-white flex flex-col gap-y-3"
+    >
+      <input
+        type="text"
+        placeholder="Email address"
+        class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+      />
+      <textarea
+        name="content"
+        class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+        id="actuContent"
+        placeholder="Quel est votre message?"
+      ></textarea>
+      <button type="submit" class=" w-full p-2 rounded-md font-bold hover:border hover:border-white hover:text-white transition-all hover:bg-gray-950 text-gray-950 bg-white">Envoyer</button>
+  </form>
+  </div>
+  <%- include('footer', {bg: 'bg-gray-950', text: 'text-white', title:
+  'text-gray-400'}) %>
+</div>

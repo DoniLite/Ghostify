@@ -1,60 +1,69 @@
-import fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-import view from "@fastify/view";
-import ejs from "ejs";
-import staticPlugin from "@fastify/static";
-import fromBody from "@fastify/formbody";
-import session from "@fastify/session";
-import fastifyCookie from "@fastify/cookie";
-import path from "node:path";
-import { prismaClient } from "./config/db";
-import { ReqParams } from "./@types";
-import { index } from "./routes";
-import cors from "@fastify/cors";
-import { home } from "./routes/home";
-import { homeControler } from "./controller/home";
-import dotEnv from "dotenv"
-import { siteUrls } from "./controller/siteUrls";
-import fastifyJwt from "@fastify/jwt";
-import { store } from "./controller/store";
-import { notifications } from "./controller/notifications";
-import { webhooks } from "./controller/webhooks";
-import { sessionStorageHook } from "./hooks/sessionStorage";
-import { about, license, policy, terms } from "./routes/assets";
-import { stats } from "./hooks/statCounter";
-import { articlePost } from "./controller/articlePost";
-import { projectPost } from "./controller/projectPost";
-import { article } from "./routes/blog";
-import { on, EventEmitter } from "node:events";
-import { listeners } from "node:process";
-import { PosterTask } from "./hooks/callTasks";
-import { customCreateHash, encrypt, graphicsUploader } from "./utils";
-import { connexion, registrationController, registrationView } from "./controller/api.v1";
-import { urlVisitor } from "./controller/pushVisitor";
-import { poster, requestComponent, requestListComponent } from "./routes/poster";
+import fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import view from '@fastify/view';
+import ejs from 'ejs';
+import staticPlugin from '@fastify/static';
+import fromBody from '@fastify/formbody';
+import session from '@fastify/session';
+import fastifyCookie from '@fastify/cookie';
+import path from 'node:path';
+import { prismaClient } from './config/db';
+import { ReqParams } from './@types';
+import { index } from './routes';
+import cors from '@fastify/cors';
+import { home } from './routes/home';
+import { homeControler } from './controller/home';
+import dotEnv from 'dotenv';
+import { siteUrls } from './controller/siteUrls';
+import fastifyJwt from '@fastify/jwt';
+import { store } from './controller/store';
+import { notifications } from './controller/notifications';
+import { webhooks } from './controller/webhooks';
+import { sessionStorageHook } from './hooks/sessionStorage';
+import { about, license, policy, terms } from './routes/assets';
+import { stats } from './hooks/statCounter';
+import { articlePost } from './controller/articlePost';
+import { projectPost } from './controller/projectPost';
+import { article } from './routes/blog';
+import { on, EventEmitter } from 'node:events';
+import { listeners } from 'node:process';
+import { PosterTask } from './hooks/callTasks';
+import { customCreateHash, encrypt, graphicsUploader } from './utils';
+import {
+  connexion,
+  registrationController,
+  registrationView,
+} from './controller/api.v1';
+import { urlVisitor } from './controller/pushVisitor';
+import {
+  poster,
+  posterHome,
+  requestComponent,
+  requestListComponent,
+} from './routes/poster';
+import { find } from './controller/finder';
+import fastifyWebsocket from '@fastify/websocket';
 
 export const ee = new EventEmitter();
 const protectedRoutes = [
-  "/api/v1",
-  "/api/notifications",
-  "/api/store",
-  "/api/webhooks",
+  '/api/v1',
+  '/api/notifications',
+  '/api/store',
+  '/api/webhooks',
 ];
-dotEnv.config()
-const server : FastifyInstance = fastify();
-
-server.register(fastifyJwt, {
-  secret: process.env.JWT_SECRET,
-})
+dotEnv.config();
+const server: FastifyInstance = fastify();
 
 // Hooks...
-server.addHook("onRequest", async (req, res) => {
+server.addHook('onRequest', async (req, res) => {
   const url = req.raw.url;
   if (protectedRoutes.includes(url)) {
     try {
       await req.jwtVerify();
     } catch (err) {
       if (process.env.NODE_ENV == 'production') {
-        res.send({err: "Une erreur s'est produite i se peut que vous ne soyez pas disposé à accéder à ceci"})
+        res.send({
+          err: "Une erreur s'est produite i se peut que vous ne soyez pas disposé à accéder à ceci",
+        });
       }
       res.send(err);
     }
@@ -69,25 +78,41 @@ server.addHook('onResponse', async (req, res) => {
     req.session.ServerKeys.secretKey,
     req.session.ServerKeys.iv
   );
-  res.setCookie("connection_time", req.session.Token, {
+  res.setCookie('connection_time', req.session.Token, {
     expires: cookieExpriration,
   });
-})
+});
 
 // server.addHook('onRequest', stats)
-server.addHook("preHandler", sessionStorageHook)
+server.addHook('preHandler', sessionStorageHook);
 
-export const tokenGenerator = (payload: string) =>  {
+export const tokenGenerator = (payload: string) => {
   const token = server.jwt.sign({ payload });
-  return token
+  return token;
 };
 
+server.register(fastifyJwt, {
+  secret: process.env.JWT_SECRET,
+});
+
+server.register(fastifyWebsocket);
+server.register(async (fastify) => {
+  fastify.get(
+    '/notifications',
+    { websocket: true },
+    (socket, req) => {
+      socket.on('message', async (mes) => {
+        console.log(JSON.parse(mes.toString()));
+      })
+    }
+  );
+})
 server.register(cors, {
   // put your options here
-  origin: "*",
-  methods:['GET', 'PUT', 'POST'],
+  origin: '*',
+  methods: ['GET', 'PUT', 'POST'],
   credentials: true,
-  cacheControl: "Cache-Control: ${fully}",
+  cacheControl: 'Cache-Control: ${fully}',
 });
 server.register(view, {
   engine: {
@@ -95,8 +120,8 @@ server.register(view, {
   },
 });
 server.register(staticPlugin, {
-  root: path.join(path.resolve(__dirname, ".."), "src/public"),
-  prefix: "/static/",
+  root: path.join(path.resolve(__dirname, '..'), 'src/public'),
+  prefix: '/static/',
 });
 server.register(fromBody);
 server.register(fastifyCookie);
@@ -109,22 +134,21 @@ server.register(session, {
   // cookieName: "sessionId",
 });
 
-
 // routes...
 server.setErrorHandler((err, req, res) => {
   console.log(err);
-  res.view("/src/views/error.ejs");
+  res.view('/src/views/error.ejs');
 });
 server.setNotFoundHandler((req, res) => {
-  res.view("/src/views/404.ejs");
-})
-server.get("/", index);
-server.post("/home", homeControler);
-server.get("/home", home);
-server.post("/sitesUpload", siteUrls);
+  res.view('/src/views/404.ejs');
+});
+server.get('/', index);
+server.post('/home', homeControler);
+server.get('/home', home);
+server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
-  const {generator, email, url}: ReqParams = req.query;
-  if(!generator) {
+  const { generator, email, url }: ReqParams = req.query;
+  if (!generator) {
     throw new Error('generator is missing in the query string');
   }
   const tokenChecked = await prismaClient.generatorData.findUnique({
@@ -132,40 +156,42 @@ server.get('/api/token', async (req, res) => {
       name: generator.toLowerCase(),
     },
   });
-  if(tokenChecked) {
-    return res.send(JSON.stringify({tokenError: 'Invalid token Attribute'}));
+  if (tokenChecked) {
+    return res.send(JSON.stringify({ tokenError: 'Invalid token Attribute' }));
   }
   const newTokenHandler = await prismaClient.generatorData.create({
     data: {
       name: generator.toLowerCase(),
       email: email,
       url: url,
-    }
-  })
-  console.log(newTokenHandler)
+    },
+  });
+  console.log(newTokenHandler);
   const token = tokenGenerator(generator);
-  res.send(JSON.stringify({token}));
-})
+  res.send(JSON.stringify({ token }));
+});
 server.get('/api/webhooks', webhooks);
 server.post('/api/store', store);
-server.post("/api/notifications", notifications);
+server.post('/api/notifications', notifications);
 
 server.get('/article', article);
-server.post("/articlePost", articlePost);
-server.post("/projectPost", projectPost);
+server.post('/articlePost', articlePost);
+server.post('/projectPost', projectPost);
 
 server.get('/terms', terms);
 server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
 server.get('/signin', connexion);
-server.get('/register', registrationView)
-server.post("/register", registrationController);
-server.get('/poster', poster);
-server.get("/components/poster", requestComponent);
-server.get("/components/list", requestListComponent);
+server.get('/register', registrationView);
+server.post('/register', registrationController);
+server.get('/poster', posterHome);
+server.get('/poster/new', poster);
+server.get('/components/poster', requestComponent);
+server.get('/components/list', requestListComponent);
 
 server.get('/update/visitor', urlVisitor);
+server.get('/find', find);
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
@@ -174,14 +200,14 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
 
   // log the result of the request
   // console.log(rep)
-  process.nextTick(async() => {
-    ee.emit("evrymorningAndNyTask", "begenning the task...");
+  process.nextTick(async () => {
+    ee.emit('evrymorningAndNyTask', 'begenning the task...');
     const urls = await prismaClient.url.findMany();
     // const respFTask = await PosterTask();
     // console.log(respFTask);
   });
-  for await (const event of on(ee, "evrymorningAndNyTask")) {
-    console.log(event); 
+  for await (const event of on(ee, 'evrymorningAndNyTask')) {
+    console.log(event);
   }
   if (err) {
     console.error(err);

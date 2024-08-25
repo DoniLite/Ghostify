@@ -1,37 +1,40 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { BodyXData, QueryXData } from "../@types";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { BodyXData, QueryXData } from '../@types';
 import {
   decrypt,
   encrypt,
   Service,
   tokenTimeExpirationChecker,
-} from "../utils";
-import { tokenGenerator } from "../server";
-import { prismaClient } from "../config/db";
+} from '../utils';
+import { tokenGenerator } from '../server';
+import { prismaClient } from '../config/db';
 
 type PosterQuery = {
   token: string | undefined;
   permission: Service;
 };
 
-export const posterController = async (req: FastifyRequest, res: FastifyReply) => {
+export const posterController = async (
+  req: FastifyRequest,
+  res: FastifyReply
+) => {
   const { token, permission } = req.query as QueryXData<PosterQuery>;
   let dateStemp;
 
   req.jwtDecode();
   if (!token) {
-    return res.view("/src/views/article.ejs", {
+    return res.view('/src/views/article.ejs', {
       pagination: 1,
       activeIndex: 3,
     });
   }
 
-  if (token !== "SPECIAL") {
+  if (token !== 'SPECIAL') {
     res.status(403);
-    return res.send(JSON.stringify({ error: "Access denied" }));
+    return res.send(JSON.stringify({ error: 'Access denied' }));
   }
 
-  if (permission === "blog") {
+  if (permission === 'blog') {
     dateStemp = token;
     const date = new Date();
   }
@@ -71,7 +74,7 @@ export const registrationView = async (
   const { service, token } = req.query as QueryXData<Register>;
 
   if (!service || !token) {
-    throw new Error("Invalid service  or registration");
+    throw new Error('Invalid service  or registration');
   }
 
   let d;
@@ -87,9 +90,9 @@ export const registrationView = async (
 
   const verifier = tokenTimeExpirationChecker(Number(d));
   if (verifier) {
-    throw new Error("The validation time expired");
+    throw new Error('The validation time expired');
   }
-  res.view("/src/views/signup.ejs", { service: service });
+  res.view('/src/views/signup.ejs', { service: service });
 };
 
 type RegisterPost = {
@@ -106,7 +109,7 @@ export const registrationController = async (
   const { service, name, email, password } =
     req.body as BodyXData<RegisterPost>;
 
-  if (service === "blog") {
+  if (service === 'blog') {
     try {
       const cryptedPassword = encrypt(
         password,
@@ -153,11 +156,11 @@ export const registrationController = async (
           service: service,
           token: token,
           password: cryptedPassword,
-          credits: credits
+          credits: credits,
         },
       });
       if (user) {
-        return res.redirect(200, "/poster");
+        return res.redirect(200, '/poster');
       }
     } catch (err) {
       console.log(err);
@@ -186,26 +189,25 @@ export const registrationController = async (
         },
       });
       if (user) {
-        return res.redirect(200, "/poster");
+        return res.redirect(200, '/poster');
       }
     } catch (err) {
       console.log(err);
     }
   }
 
-  throw new Error('Something went wrong')
+  throw new Error('Something went wrong');
 };
 
 export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
-  const { service } = req.query as QueryXData<{service: Service}>;
-  console.log(service)
+  const { service } = req.query as QueryXData<{ service: Service }>;
+  console.log(service);
   if (!service) {
-    return res.send(JSON.stringify({error: 'Service not found'}));
+    return res.send(JSON.stringify({ error: 'Service not found' }));
   }
-  return res.view("/src/views/signin.ejs", { service: service });
+  return res.view('/src/views/signin.ejs', { service: service });
 };
 
 export const connexionController = (req: FastifyRequest, res: FastifyReply) => {
   const {} = req.body as BodyXData;
-  
-}
+};

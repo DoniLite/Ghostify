@@ -1,11 +1,26 @@
-import { ActorBuildOptions, ActorCallOptions, ActorLastRunOptions, ActorStartOptions, Build, BuildClient, BuildCollectionClient, DatasetClient, KeyValueClientListKeysOptions, KeyValueListItem, KeyValueStoreClient, PaginatedList, RequestQueueClient, RequestQueueCollectionClient, RequestQueueUserOptions, RunClient, RunCollectionClient, StoreCollectionClient } from "apify-client";
-import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
 import {
-  FastifyReply,
-  FastifyRequest,
-  FastifyTypeProvider,
-} from "fastify";
-import sharp from "sharp";
+  ActorBuildOptions,
+  ActorCallOptions,
+  ActorLastRunOptions,
+  ActorStartOptions,
+  Build,
+  BuildClient,
+  BuildCollectionClient,
+  DatasetClient,
+  KeyValueClientListKeysOptions,
+  KeyValueListItem,
+  KeyValueStoreClient,
+  PaginatedList,
+  RequestQueueClient,
+  RequestQueueCollectionClient,
+  RequestQueueUserOptions,
+  RunClient,
+  RunCollectionClient,
+  StoreCollectionClient,
+} from 'apify-client';
+import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
+import { FastifyReply, FastifyRequest, FastifyTypeProvider } from 'fastify';
+import sharp from 'sharp';
 
 export interface EssentialWeatherData {
   datetime?: string;
@@ -86,43 +101,58 @@ export interface IQuerystring {
 }
 
 export interface IHeaders {
-  "h-Custom": string;
+  'h-Custom': string;
 }
 
 export interface IReply {
   200: FastifyReply;
   302: { url: string };
-  "4xx": { error: string };
+  '4xx': { error: string };
 }
 
 export interface CrawlerClient {
-
-  runActorsAndGetOutputs<T>(input: CrawlerInput, runtimeOptions?: RuntimeOptions): Promise<T[]>;
+  runActorsAndGetOutputs<T>(
+    input: CrawlerInput,
+    runtimeOptions?: RuntimeOptions
+  ): Promise<T[]>;
 
   run<T>(input: CrawlerInput, runOptions?: RunOptions): Promise<T[]>;
 
-  crawlerBuilder(versionNumber: string, options?: ActorBuildOptions): Promise<Builder>
+  crawlerBuilder(
+    versionNumber: string,
+    options?: ActorBuildOptions
+  ): Promise<Builder>;
 
   getLastRunClient(options?: ActorLastRunOptions): Promise<RunClient>;
 
   getRequestQueueCollection(): Promise<RequestQueueCollectionClient>;
 
-  getRequestQueue(id: string, options?: RequestQueueUserOptions): Promise<RequestQueueClient>;
+  getRequestQueue(
+    id: string,
+    options?: RequestQueueUserOptions
+  ): Promise<RequestQueueClient>;
 
   getBuildsCollection(): Promise<BuildCollectionClient>;
 
   getRunsCollection(): Promise<RunCollectionClient>;
 
-  getVersionClient(actorId: string, versionNumber: string): Promise<ActorVersionClient>;
+  getVersionClient(
+    actorId: string,
+    versionNumber: string
+  ): Promise<ActorVersionClient>;
 
   getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>>;
 
-  getKeyList(id: string, options?: KeyValueClientListKeysOptions): Promise<KeyValueListItem[]>;
+  getKeyList(
+    id: string,
+    options?: KeyValueClientListKeysOptions
+  ): Promise<KeyValueListItem[]>;
 
-  getStoreValue<T extends keyof unknown>(id: string, key: string): Promise<StoreValue<T> | undefined>;
-
+  getStoreValue<T extends keyof unknown>(
+    id: string,
+    key: string
+  ): Promise<StoreValue<T> | undefined>;
 }
-
 
 export type Builder = {
   build: Build;
@@ -141,16 +171,17 @@ export type DatasetRecord = {
 export type StoreValue<T extends keyof unknown> = {
   data: T;
   storeClient: KeyValueStoreClient;
-}
-export interface RunOptions extends ActorStartOptions {
-
-}
+};
+export interface RunOptions extends ActorStartOptions {}
 
 export interface RuntimeOptions extends ActorCallOptions {
   iterateToConsole?: boolean;
 }
 
-export type CrawlerOutPuts<T extends keyof unknown> = Record<string | number, T>
+export type CrawlerOutPuts<T extends keyof unknown> = Record<
+  string | number,
+  T
+>;
 
 export interface CrawlerInput {
   startUrls: {
@@ -160,11 +191,15 @@ export interface CrawlerInput {
   maxRequestsPerCrawl: number;
 }
 
-export type BodyXData<T = undefined> =  T extends undefined ? Record<string, T> : T;
+export type BodyXData<T = undefined> = T extends undefined
+  ? Record<string, T>
+  : T;
 
-export type QueryXData<T = undefined> = T extends undefined ? Record<string, T> : T;
+export type QueryXData<T = undefined> = T extends undefined
+  ? Record<string, T>
+  : T;
 
-export interface BodyData  {
+export interface BodyData {
   data?: {
     country_capital: string;
     country_flag: string;
@@ -192,9 +227,21 @@ export type StatsData = {
     month: month;
     visitor: number;
   };
-}
+};
 
-type month = "Janvier" | "Février" | "Mars" | "Avril" | "Mai" | "Juin" | "Juillet" | "Aout" | "Septembre" | "Octobre" | "Novembre" | "Décembre";
+type month =
+  | 'Janvier'
+  | 'Février'
+  | 'Mars'
+  | 'Avril'
+  | 'Mai'
+  | 'Juin'
+  | 'Juillet'
+  | 'Aout'
+  | 'Septembre'
+  | 'Octobre'
+  | 'Novembre'
+  | 'Décembre';
 
 export interface ImageAnalysisResult {
   metadata: sharp.Metadata;
@@ -204,7 +251,7 @@ export interface ImageAnalysisResult {
   flagged: boolean;
 }
 
-export type timeOfJourney = "Morning" | "Midday" | "Evening" | "Night";
+export type timeOfJourney = 'Morning' | 'Midday' | 'Evening' | 'Night';
 
 export type Post = {
   id: number;
@@ -221,3 +268,17 @@ export type Post = {
   user: string | null;
   fromApi: boolean;
 };
+
+export type PosterUserMeta = {
+  [key: string]:
+    | never
+    | {
+        id: number;
+        title: string;
+      }[];
+};
+
+export type Meta<T = unknown> = {
+  userId: number;
+  service: string;
+} & T;

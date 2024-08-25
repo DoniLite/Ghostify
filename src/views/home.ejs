@@ -1,24 +1,30 @@
-<div class="w-full overflow-y-scroll" style="height: 100vh">
+<div id="container" class="w-full overflow-y-scroll" style="height: 100vh">
   <%- include('decor1') %>
-  <div class="lg:absolute lg:mt-0 mt-24 bottom-36 w-full">
-    <div class="gap-6 flex lg:flex-row flex-col items-center w-4/5 mx-auto">
-      <h1
+  <div class="lg:absolute lg:mt-0 mt-96 bottom-36 w-full">
+   
+     <div class="gap-6 flex lg:flex-row flex-col items-center w-4/5 mx-auto">
+      <!-- <h1
         class="time-check text-red-950 font-bold lg:text-5xl text-3xl flex-none lg:relative lg:top-6 pacifico-regular"
-      ></h1>
-      <div class="p-3">
-        <p class="text-red-950 font-bold text-2xl cookie-regular">
-          <span class="text-red-950 font-bold text-9xl relative top-12 right-4 italic"
-            >"</span
-          >
-          <%= quote.content %>
-        </p>
-        <p class="text-red-950 font-bold text-2xl font-mono italic mt-2">
-          <%= quote.author %>
-        </p>
-      </div>
+      ></h1> -->
+      <% if (typeof quote !== 'undefined') { %>
+        <div class="p-3">
+          <p class="text-red-950 font-bold text-2xl cookie-regular">
+            <span class="text-red-950 font-bold text-9xl relative top-12 right-4 italic"
+              >"</span
+            >
+            <%= quote.content %>
+          </p>
+          <p class="text-red-950 font-bold text-2xl font-mono italic mt-2">
+            <%= quote.author %>
+          </p>
+        </div>
+      <% } else { %>
+        <!-- <p class=" font-bold text-center text-xl text-red-950 pb-4">Bienvenue à vous visiteur... Je me nomme Yao Messan #DoniLite et j'ai programmé ce site web afin qu'il me serve de portfolio et de vitrine professionel à travers lequel je partages mon savoir faire</p> -->
+      <% } %>
     </div>
   </div>
-  <div class="text-red-950 pacifico-regular font-bold lg:absolute lg:right-20 lg:top-36 lg:w-1/5 -z-20">
+  <% if (typeof weatherData !== 'undefined') { %>
+   <div class="text-red-950 pacifico-regular font-bold lg:absolute lg:right-20 lg:top-36 lg:w-1/5 -z-20">
     <div class="flex w-full p-3 justify-between items-center">
       <img
         src="<%= weatherData.flag %>"
@@ -46,7 +52,8 @@
       </div>
     </div> 
   </div>
-  <div class="lg:absolute lg:bottom-3 flex gap-6 mt-20 lg:mt-0 pl-4 lg:pl-0 lg:right-12">
+  <% } %>
+  <div class="lg:absolute lg:bottom-3 lg:flex hidden gap-6 mt-20 lg:mt-0 pl-4 lg:pl-0 lg:right-12">
     <p class="font-bold text-white">By :</p>
     <img src="/static/img/ts.jpg" class="w-10 h-10" alt="type script image" />
     <img
@@ -61,4 +68,3 @@
     />
   </div>
 </div>
-<script type="module" src="/static/script/home.js"></script>

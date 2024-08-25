@@ -32,6 +32,7 @@ declare module "fastify" {
       evening_bg_to: "to-lime-500";
       night_bg_from: "from-blue-300";
       nigh_bg_from: "to-lime-500";
+      footer: string;
     };
     Poster?: {
       title: string;

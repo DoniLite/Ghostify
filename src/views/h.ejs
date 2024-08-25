@@ -1,0 +1,46 @@
+<% if (typeof title === 'undefined'){ %>
+<title>Ghostify - The big data hub</title>
+<meta name="twitter:title" content="Ghostify" />
+<meta property="og:title" content="Ghostify" />
+<% } else { %>
+<title><%= title %></title>
+<meta name="twitter:title" content="<%= title %>" />
+<meta property="og:title" content="<%= title %>" />
+<% } %> <% if (typeof desc === 'undefined') { %>
+<meta
+  name="description"
+  content="Ghostify est une plateforme cherchant à connecter chaque personne que je peux toucher à un réseau établies dans le virtuel,,,🤖 Nombreux ne nous connaissent pas... Mais nous vous voyons passer souvent par là👀"
+/>
+<meta
+  property="og:description"
+  content="Ghostify est une plateforme cherchant à connecter chaque personne que je peux toucher à un réseau établies dans le virtuel,,,🤖 Nombreux ne nous connaissent pas... Mais nous vous voyons passer souvent par là👀"
+/>
+<meta
+  name="twitter:description"
+  content="Ghostify est une plateforme cherchant à connecter chaque personne que je peux toucher à un réseau établies dans le virtuel,,,🤖 Nombreux ne nous connaissent pas... Mais nous vous voyons passer souvent par là👀"
+/>
+<% } else { %>
+<meta name="description" content="<%= desc %>" />
+<meta property="og:description" content="<%= desc %>" />
+<meta name="twitter:description" content="<%= desc %>" />
+<% } %>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:image" content="/static/screen/screen1.png" />
+<meta property="og:url" content="https://www.ghostiy-app.com" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="/static/screen/screen1.png" />
+<meta name="twitter:image" content="/static/screen/screen1.png" />
+<% if (typeof icon === 'undefined'){ %>
+<link rel="icon" type="image/x-icon" href="/static/SVG/gostify.svg" />
+<% } else { %>
+<link rel="icon" type="image/x-icon" href="<%= icon %>" />
+<% } %>
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.ghostify-app.com/page-url" />
+<!-- <meta name="theme-color" content="#000000"> -->
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; img-src 'self' https://example.com; script-src 'self'"
+/>
+<link rel="alternate" href="https://www.ghostify-app.com/fr" hreflang="fr" />
