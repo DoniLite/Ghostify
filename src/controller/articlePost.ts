@@ -4,7 +4,7 @@ import { prismaClient } from '../config/db';
 import { create } from 'domain';
 
 export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
-  const { title, slug, date, content, category, description } =
+  const { title, slug, date, content, category, description, keys } =
     req.body as BodyXData;
 
   console.log(title, slug, date, content, category);
@@ -48,6 +48,7 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
       category: {
         create: {
           title: category,
+          keys: keys,
         },
       },
     },
