@@ -195,3 +195,13 @@ model Assets {
   Indexer   Indexer? @relation(fields: [indexerId], references: [id])
   indexerId Int?
 }
+
+model Admin {
+  id         BigInt   @id @default(autoincrement())
+  role       String
+  login      String   @unique
+  password   String
+  token      String
+  activities String?
+  connection DateTime?
+}

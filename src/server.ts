@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import view from '@fastify/view';
 import ejs from 'ejs';
 import staticPlugin from '@fastify/static';
@@ -27,7 +27,7 @@ import { article } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
 import { listeners } from 'node:process';
 import { PosterTask } from './hooks/callTasks';
-import { customCreateHash, encrypt, generateAndSaveKeys, graphicsUploader } from './utils';
+import { encrypt, saveStatistic } from './utils';
 import {
   connexion,
   registrationController,
@@ -42,6 +42,8 @@ import {
 } from './routes/poster';
 import { find } from './controller/finder';
 import fastifyWebsocket from '@fastify/websocket';
+import { setUp } from './hooks/setup';
+import { cv } from './hooks/cv';
 
 export const ee = new EventEmitter();
 const protectedRoutes = [
@@ -54,6 +56,7 @@ dotEnv.config();
 const server: FastifyInstance = fastify();
 
 // Hooks...
+server.addHook('onListen', async () => {});
 server.addHook('onRequest', async (req, res) => {
   const url = req.raw.url;
   if (protectedRoutes.includes(url)) {
@@ -83,7 +86,10 @@ server.addHook('onResponse', async (req, res) => {
   });
 });
 
-// server.addHook('onRequest', stats)
+server.addHook('preHandler', stats);
+server.addHook('preSerialization', async (req, res) => {
+  await saveStatistic(req.session.Stats);
+});
 server.addHook('preHandler', sessionStorageHook);
 
 export const tokenGenerator = (payload: string) => {
@@ -97,16 +103,12 @@ server.register(fastifyJwt, {
 
 server.register(fastifyWebsocket);
 server.register(async (fastify) => {
-  fastify.get(
-    '/notifications',
-    { websocket: true },
-    (socket, req) => {
-      socket.on('message', async (mes) => {
-        console.log(JSON.parse(mes.toString()));
-      })
-    }
-  );
-})
+  fastify.get('/notifications', { websocket: true }, (socket, req) => {
+    socket.on('message', async (mes) => {
+      console.log(JSON.parse(mes.toString()));
+    });
+  });
+});
 server.register(cors, {
   // put your options here
   origin: '*',
@@ -177,6 +179,7 @@ server.post('/api/notifications', notifications);
 server.get('/article', article);
 server.post('/articlePost', articlePost);
 server.post('/projectPost', projectPost);
+server.get('/cvMaker', cv);
 
 server.get('/terms', terms);
 server.get('/privacy', policy);
@@ -200,6 +203,10 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
 
   // log the result of the request
   // console.log(rep)
+  ee.on('stats', async (e) => {
+    console.log(JSON.parse(e));
+    // await saveStatistic(JSON.parse(e));
+  });
   process.nextTick(async () => {
     ee.emit('evrymorningAndNyTask', 'begenning the task...');
     const urls = await prismaClient.url.findMany();

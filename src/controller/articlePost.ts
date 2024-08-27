@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { BodyData, BodyXData } from '../@types';
+import { BodyXData } from '../@types';
 import { prismaClient } from '../config/db';
-import { create } from 'domain';
 
 export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
   const { title, slug, date, content, category, description, keys } =
