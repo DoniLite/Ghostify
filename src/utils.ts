@@ -123,8 +123,8 @@ export enum ProjectParticipationType {
 export const DATA_PATH = path.join(__dirname, 'data');
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
-export function createDirIfNotExists(path: string) {
-  if (!fs.existsSync(path)) fsP.mkdir(path);
+export async function createDirIfNotExists(path: string) {
+  if (!fs.existsSync(path)) await fsP.mkdir(path);
   return;
 }
 
@@ -196,13 +196,13 @@ export async function loadStatistics(): Promise<StatsData> {
     return createFirstStatistic();
   }
   const jsonStrng = await fsP.readFile(DATA_FILE, 'utf8');
-  const stats = JSON.parse(jsonStrng) as StatsData;
+  const stats = convertStatsInput(jsonStrng);
   return stats;
 }
 
 export async function saveStatistic(stat: StatsData) {
   try {
-    const json = JSON.stringify(stat);
+    const json = stringifyStats(stat);
     await fsP.writeFile(DATA_FILE, json, 'utf8');
     return true;
   } catch (err) {

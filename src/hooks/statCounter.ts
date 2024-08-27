@@ -1,20 +1,14 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import fs from "node:fs";
+import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   checkIfMonthIsNotOver,
   getMonthWithDate,
   getWeekIndex,
   loadStatistics,
-  saveStatistic,
-} from "../utils";
+} from '../utils';
 
-export const stats = async (
-  req: FastifyRequest,
-  res: FastifyReply,
-) => {
+export const stats = async (req: FastifyRequest, res: FastifyReply) => {
   const url = req.raw.url;
   const headers = req.raw.headers;
-  console.log(headers);
   const stats = await loadStatistics();
   const month = stats.monthly.month;
   const weekIndex = stats.weekly.index;
@@ -27,18 +21,22 @@ export const stats = async (
     stats.total_visitor += 1;
     stats.weekly.visitor = 1;
     stats.weekly.index = thisWeekIndex;
-    if (!stats.urls.includes(url)) {
-      const i = stats.urls.push(url);
-      stats[`${i}`] = {
-        visitor: 1,
+    let aborter;
+    stats.urls.forEach((oneUrl) => {
+      if (oneUrl.url === url) {
+        oneUrl.visitor++;
+        aborter = true;
+      } else {
+        aborter = false;
+      }
+    });
+    if (aborter === false) {
+      stats.urls.push({
         url: url,
-      };
-    } else {
-      const i = stats.urls.findIndex((v) => v === url);
-      console.log(i);
-      stats[`${i + 1}`].visitor += 1;
+        visitor: 1,
+      });
     }
-    await saveStatistic(stats);
+    req.session.Stats = stats;
     return;
   }
   if (weekIndex !== thisWeekIndex) {
@@ -46,36 +44,41 @@ export const stats = async (
     stats.weekly.visitor = 1;
     stats.monthly.visitor += 1;
     stats.total_visitor += 1;
-    if (!stats.urls.includes(url)) {
-      const i = stats.urls.push(url);
-      stats[`${i}`] = {
-        visitor: 1,
-        url: url,
-      };
-    } else {
-      const i = stats.urls.findIndex((v) => v === url);
-      console.log(i);
-      stats[`${i + 1}`].visitor += 1;
-    }
-    
-    await saveStatistic(stats);
+    let aborter;
+    stats.urls.forEach((oneUrl) => {
+      if (oneUrl.url === url) {
+        oneUrl.visitor++;
+        aborter = true;
+      } else {
+        aborter = false;
+      }
+    });
+   if (aborter === false) {
+     stats.urls.push({
+       url: url,
+       visitor: 1,
+     });
+   }
+    req.session.Stats = stats;
     return;
   }
   stats.monthly.visitor += 1;
   stats.total_visitor += 1;
   stats.weekly.visitor += 1;
-  if (!stats.urls.includes(url)) {
-    const i = stats.urls.push(url);
-    stats[`${i}`] = {
-      visitor: 1,
+  let aborter;
+  stats.urls.forEach((oneUrl) => {
+    if (oneUrl.url === url) {
+      oneUrl.visitor++;
+      aborter = true;
+    } else {
+      aborter = false;
+    }
+  });
+  if (aborter === false) {
+    stats.urls.push({
       url: url,
-    };
-  } else {
-    const i = stats.urls.findIndex((v) => v === url);
-    console.log(i);
-    console.log(stats.urls);
-    console.log(stats);
-    stats[`${i + 1}`].visitor += 1;
+      visitor: 1,
+    });
   }
-  await saveStatistic(stats);
+  req.session.Stats = stats;
 };

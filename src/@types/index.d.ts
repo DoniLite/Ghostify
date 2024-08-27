@@ -214,11 +214,10 @@ export interface ReqParams {
 
 export type StatsData = {
   total_visitor: number;
-  urls: string[];
-  [key: number]: {
+  urls: {
     visitor: number;
     url: string;
-  };
+  }[];
   weekly: {
     index: number;
     visitor: number;
