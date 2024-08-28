@@ -44,6 +44,15 @@ import { find } from './controller/finder';
 import fastifyWebsocket from '@fastify/websocket';
 import { setUp } from './hooks/setup';
 import { cv } from './hooks/cv';
+import multipart, { MultipartFile } from '@fastify/multipart'
+import { uploadActu } from './controller/actu';
+import util from 'util';
+import fs, { promises as fsP } from 'fs';
+import { pipeline } from 'stream';
+import { randomInt } from 'node:crypto';
+import { error } from 'node:console';
+
+const pump = util.promisify(pipeline);
 
 export const ee = new EventEmitter();
 const protectedRoutes = [
@@ -53,7 +62,9 @@ const protectedRoutes = [
   '/api/webhooks',
 ];
 dotEnv.config();
-const server: FastifyInstance = fastify();
+  const server: FastifyInstance = fastify(
+    // {logger: true}
+  );
 
 // Hooks...
 server.addHook('onListen', async () => {});
@@ -100,7 +111,20 @@ export const tokenGenerator = (payload: string) => {
 server.register(fastifyJwt, {
   secret: process.env.JWT_SECRET,
 });
-
+// async function onFile(part: MultipartFile) {
+  // const ext = path.extname(part.filename);
+  // const date = new Date();
+  // const r = randomInt(date.getTime()).toString();
+  // const name = `${date.getTime().toString() + r}${ext}`
+  // ee.emit('upload', name);
+  // console.log(name)
+  // const dPath = path.resolve(__dirname, '../src/public/uploads');
+  // const uploadPath = path.join(dPath, name);
+//   await pump(part.file, fs.createWriteStream(uploadPath));
+// }
+server.register(multipart, 
+  // { attachFieldsToBody: true, onFile }
+);
 server.register(fastifyWebsocket);
 server.register(async (fastify) => {
   fastify.get('/notifications', { websocket: true }, (socket, req) => {
@@ -139,7 +163,12 @@ server.register(session, {
 // routes...
 server.setErrorHandler((err, req, res) => {
   console.log(err);
-  res.view('/src/views/error.ejs');
+  const errorCode = Number(err.code);
+  if(errorCode >= 400 && errorCode < 600) {
+    res.view('/src/views/error.ejs');
+  }
+  res.send(JSON.stringify({error: 'some error'}));
+  
 });
 server.setNotFoundHandler((req, res) => {
   res.view('/src/views/404.ejs');
@@ -195,6 +224,8 @@ server.get('/components/list', requestListComponent);
 
 server.get('/update/visitor', urlVisitor);
 server.get('/find', find);
+
+server.post('/actu/post', uploadActu);
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {

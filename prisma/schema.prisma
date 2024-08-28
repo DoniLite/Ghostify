@@ -159,7 +159,8 @@ model Actu {
   id             Int       @id @default(autoincrement())
   file           String?
   content        String
-  rawLink        String
+  meta           String
+  rawLink        String?
   promoted       Boolean
   ip             String?
   expirationDate DateTime?
@@ -169,7 +170,7 @@ model Actu {
   indexed        Boolean   @default(false)
   signaled       Int       @default(0)
   visitors       BigInt    @default(0)
-  url            String
+  url            String?
   Indexer        Indexer?  @relation(fields: [indexerId], references: [id])
   indexerId      Int?
 }
@@ -197,9 +198,9 @@ model Assets {
 }
 
 model Admin {
-  id         BigInt   @id @default(autoincrement())
+  id         BigInt    @id @default(autoincrement())
   role       String
-  login      String   @unique
+  login      String    @unique
   password   String
   token      String
   activities String?
