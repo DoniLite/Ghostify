@@ -7,6 +7,32 @@ const fileInput = document.querySelector('#fileInput');
 const addFileBtn = document.querySelector('#addFile');
 const fileNameLabel = document.querySelector('#fileName');
 
+actuForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  const title = form.get('title');
+  const content = form.get('content');
+  const file = form.get('img');
+  const data = {
+    title,
+    content,
+    file
+  };
+  console.log(data);
+  const fetcher = await fetch('/actu/post', {
+    method: 'POST',
+    headers: {
+      contentType: 'multipart/form-data'
+    },
+    body: form,
+  });
+  if(!fetcher.ok) {
+    console.error(fetcher.statusText);
+    return;
+  }
+  const result = await fetcher.text();
+  console.log(result);
+});
 
 parent.onscroll = (e) => {
   e.preventDefault();
