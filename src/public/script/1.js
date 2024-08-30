@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Swiper from "../swiper/package/swiper.mjs";
 // const swiper = new Swiper(...)
 const activeIndex = document.querySelector("#activeInputNav");
@@ -31,20 +32,17 @@ allParentsContainer.forEach(parent => {
 })
 
 window.onload = (e) => {
-  console.log(activeIndex.className);
+  e.preventDefault();
   swiper.slideTo(parseInt(activeIndex.className), 200);
 };
 
-localStorage.setItem('activeIndex', activeIndex);
-sessionStorage.setItem('activeIndex', activeIndex);
-const Aindex = localStorage.getItem("activeIndex");
-console.log(localStorage.getItem('activeIndex'), sessionStorage.getItem('activeIndex'));
 // window.onscroll = (e) => { 
 
 // }
 
 scrollParent.forEach((el) => {
   el.addEventListener("scroll", (e) => {
+    e.preventDefault();
     linkGroup.style.display = "none";
     console.log("scroll");
   });
@@ -56,7 +54,7 @@ scrollParent.forEach((el) => {
  * @param {number} index 
  * @param {NodeListOf<Element>} list 
  */
-const slideNavigation = (el, index, list) => {
+const slideNavigation = (el, index) => {
   el.addEventListener("click", (e) => {
     e.preventDefault();
 

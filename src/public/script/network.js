@@ -1,10 +1,14 @@
+/* eslint-disable no-undef */
 const socket = new WebSocket('http://0.0.0.0:3081/notifications');
 socket.onopen = (ev) => {
-  console.log('open connection');
+  const dataset = localStorage.getItem('dataset');
+  console.log(ev);
   const s = {
-    message: 'hey everyone',
+    eventType: 'data sending',
+    data: dataset,
   };
-  socket.send(JSON.stringify(s));
+  if (dataset !== null) socket.send(JSON.stringify(s));
+  socket.dispatchEvent('clientConnection');
 };
 socket.onerror = () => {
   console.error('connection error');

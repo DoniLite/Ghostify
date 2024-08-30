@@ -1,17 +1,14 @@
 import 'fastify';
 import '@fastify/jwt';
-import { EssentialWeatherData, SessionQuote, StatsData } from '.';
+import { Auth, Service, StatsData } from '.';
 
 declare module 'fastify' {
-  export interface payload {}
   interface jwt {
-    sign: (payload: payload) => string; // Remplace `any` par le type approprié
+    sign: (payload: unknown) => string; // Remplace `any` par le type approprié
     // Ajoute d'autres propriétés de session ici si nécessaire
   }
 
   interface Session {
-    Weather?: EssentialWeatherData;
-    Quote?: SessionQuote;
     Token?: string;
     ServerKeys?: {
       secretKey: Buffer;
@@ -41,13 +38,14 @@ declare module 'fastify' {
         index: number;
         title: string;
         content: string;
-        file?: { url: string; description: string };
+        file?: { url: string; description: string }[];
       }[];
     };
     Stats?: StatsData;
+    UserId?: string;
+    PersistedData?: string;
+    Services?: Service;
+    Auth?: Auth
   }
 
-  interface FastifyRequest {
-    // setSession(payload: any, dest: "Weather" | "Quote"): Promise<void>;
-  }
 }

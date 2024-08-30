@@ -1,25 +1,20 @@
 // import { StatsData } from "index";
 // import { prismaClient } from "./config/db";
 // import { createDirIfNotExists, DATA_PATH } from "./utils";
-// import fs from 'node:fs'
-// import path from "node:path";
-// import MarkdownIt from 'markdown-it';
-// import path from 'path';
-// import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { reduceStringSuite, unify } from './utils';
 
-// export const deploymentTester = async () => {
-//   const md = MarkdownIt({
-//     html: true,
-//     linkify: true,
-//   });
-//   const articlesPath = path.resolve(__dirname, '../src/articles');
-//   const filePath = path.join(articlesPath, 'Bibliothéques.md');
-//   let content = fs.readFileSync(filePath, 'utf8');
-//   const files = fs.readdirSync(articlesPath);
-//   const v = fs.existsSync(articlesPath);
-//   console.log(articlesPath, v, files);
-//   const result = md.render(content);
-//   console.log(result);
+export const deploymentTester = async () => {
+  const articlesPath = path.resolve(__dirname, '../src/articles');
+  const filePath = path.join(articlesPath, 'Bibliothéques.md');
+  const content = fs.readFileSync(filePath, 'utf8');
+  const result = await unify(content);
+  console.log(result);
+
+  const testStr = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, debitis magnam voluptates, aperiam esse dolores sit totam enim odio ducimus consequuntur molestias. Ab exercitationem quidem repudiandae ullam amet numquam corporis veniam dignissimos saepe reiciendis qui recusandae cum quaerat rem beatae deserunt, dolorum sequi asperiores, harum labore eaque. Reprehenderit, nam sed.`;
+  const r2 = reduceStringSuite(testStr);
+  console.log(r2);
   // const data = await prismaClient.post.create({
   //   data:{
   //       title: 'Test post',
@@ -61,8 +56,8 @@
   // );
   // const json = JSON.parse(jsString)
   // console.log(json)
-// };
+};
 
-// deploymentTester()
-//   .then()
-//   .catch((err) => console.error(err));
+deploymentTester()
+  .then()
+  .catch((err) => console.error(err));

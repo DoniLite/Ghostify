@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import { FastifyRequest } from 'fastify';
 import {
   colors,
   generateAndSaveKeys,
@@ -10,7 +10,6 @@ import { prismaClient } from '../config/db';
 
 export const sessionStorageHook = async (
   req: FastifyRequest,
-  res: FastifyReply
 ) => {
   const randomNumber = randomInt(1, 9);
   const des = Math.random();

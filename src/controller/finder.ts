@@ -1,11 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { QueryXData } from 'index';
+import { Indexer, QueryXData } from 'index';
 import { prismaClient } from '../config/db';
-import { error } from 'console';
 
 export const find = async (req: FastifyRequest, res: FastifyReply) => {
   const { q } = req.query as QueryXData;
-  const allIndexer = await prismaClient.indexer.findMany();
+  const allIndexer = await prismaClient.indexer.findMany() as Indexer[];
   let allResources;
   const result = allIndexer.filter((index) => {
     const keys = index.keys.split(',');
@@ -55,7 +54,7 @@ export const find = async (req: FastifyRequest, res: FastifyReply) => {
   return res.send(JSON.stringify({ data: allResources }));
 };
 
-type KeyQuery = {
+interface KeyQuery  {
   keyType: string;
   k: string;
 };

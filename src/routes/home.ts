@@ -1,7 +1,7 @@
-import { decrypt, encrypt } from "../utils";
+import { encrypt } from "../utils";
 import { prismaClient } from "../config/db";
 import { RouteHandlerMethod } from "fastify";
-import { EssentialWeatherData, QueryXData, SessionQuote } from "index";
+import { QueryXData } from "index";
 
 export const home: RouteHandlerMethod = async (req, res) => {
   // const value = await client.hGetAll("Weather");
@@ -15,10 +15,17 @@ export const home: RouteHandlerMethod = async (req, res) => {
   const loaderCookie = req.cookies['ghostify_home_session'];
   const Theme = req.session.Theme;
   if (persisted){
-    const cookieObj = JSON.parse(loaderCookie) as {
-      weather: EssentialWeatherData;
-      quote: SessionQuote;
+    let cookieObj;
+    try {
+      cookieObj = JSON.parse(loaderCookie) as {
+      pagination: number,
     };
+    }catch (e) {
+      console.log(e);
+      cookieObj = JSON.parse(req.session.PersistedData) as {
+        pagination: number,
+      };
+    }
     const urls = await prismaClient.url.findMany({
       orderBy: {
         visit: 'desc',
@@ -38,10 +45,8 @@ export const home: RouteHandlerMethod = async (req, res) => {
       expires: cookieExpriration,
     });
     return res.view('/src/views/index.ejs', {
-      pagination: 1,
+      pagination: Number(cookieObj.pagination),
       activeIndex: 0,
-      weatherData: cookieObj.weather,
-      quote: cookieObj.quote,
       projects,
       posts,
       urls,
@@ -56,17 +61,13 @@ export const home: RouteHandlerMethod = async (req, res) => {
   });
   const projects = await prismaClient.project.findMany();
   const posts = await prismaClient.post.findMany();
-  const weather = req.session.Weather;
-  const quote = req.session.Quote;
   const cookieObj = {
-    weather: weather,
-    quote: quote,
+    pagination: 1,
   };
   const cookieExpiration = new Date();
   cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
   const cookie = JSON.stringify(cookieObj);
   res.setCookie("ghostify_home_session", cookie, { expires: cookieExpiration });
-  console.log(quote, weather);
   if(noApiData) {
     return res.view('/src/views/index.ejs', {
       pagination: 1,
@@ -80,8 +81,6 @@ export const home: RouteHandlerMethod = async (req, res) => {
   return res.view("/src/views/index.ejs", {
     pagination: 1,
     activeIndex: 0,
-    weatherData: weather,
-    quote: quote,
     projects,
     posts,
     urls,
