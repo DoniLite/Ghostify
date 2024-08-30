@@ -1,10 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { BodyXData, QueryXData } from 'index';
+import { QueryXData } from 'index';
 import util from 'util';
-import fs, { promises as fsP, link } from 'fs';
+import fs, { promises as fsP } from 'fs';
 import path from 'path';
 import { pipeline } from 'stream';
-import { ee } from '../server';
 import { randomInt } from 'crypto';
 import { prismaClient } from '../config/db';
 
@@ -14,7 +13,6 @@ export const uploadActu = async (req: FastifyRequest, res: FastifyReply) => {
   let title;
   let content;
   let fName;
-  console.log(req.body);
   const part = await req.file();
   const fields = part.fields as Record<string, { value?: unknown }>;
   console.log(fields);
@@ -76,7 +74,7 @@ export const uploadActu = async (req: FastifyRequest, res: FastifyReply) => {
 export const actu = async (req: FastifyRequest, res: FastifyReply) => {
   const {ref, root} = req.query as QueryXData<{ref: unknown; root: unknown}>;
 
-  if ((root && typeof root !== 'undefined') || 'null') {
+  if (root && typeof root === 'string') {
     const actu = await prismaClient.actu.findUnique({
       where: {
         id: Number(ref),
@@ -98,7 +96,7 @@ export const actu = async (req: FastifyRequest, res: FastifyReply) => {
     return res.code(404);
   }
 
-  if(ref && typeof ref !== 'undefined' || 'null') {
+  if(ref && typeof ref === 'string') {
     const actu = await prismaClient.actu.findUnique({
       where: {
         id: Number(ref)

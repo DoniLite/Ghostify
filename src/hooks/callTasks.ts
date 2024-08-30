@@ -1,7 +1,7 @@
 import { ee } from "../server";
 import { prismaClient } from "../config/db";
 import { Post } from "index";
-import { schedule, validate, getTasks } from "node-cron";
+// import { schedule, validate, getTasks } from "node-cron";
 
 
 export const PosterTask = async () => {

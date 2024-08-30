@@ -11,6 +11,28 @@
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
     <link rel="stylesheet" href="/static/output.css" />
+    <%- include('h') %>
   </head>
 
   <body>
+    <% if (service === 'blog') { %>
+      <div
+        id="navHead"
+        class="w-full h-16 flex items-center justify-between bg-gray-950 text-white p-4"
+      >
+        <h1 class="text-white font-bold text-3xl">Poster</h1>
+        <i
+          class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+        ></i>
+      </div>
+    <% }  else if (service === 'api') {%>
+      <div
+        id="navHead"
+        class="w-full h-16 flex items-center justify-between bg-orange-500 text-white p-4"
+      >
+        <h1 class="text-white font-bold text-3xl">Ghostify APIs</h1>
+        <i
+          class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+        ></i>
+      </div>
+    <% } %>

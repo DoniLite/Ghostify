@@ -1,6 +1,26 @@
-import { ActorBuildOptions, ActorLastRunOptions, ApifyClient, Build, BuildCollectionClient, KeyValueClientListKeysOptions, KeyValueListItem, PaginatedList, RequestQueueClient, RequestQueueCollectionClient, RequestQueueUserOptions, RunClient, RunCollectionClient } from "apify-client";
-import { Builder, CrawlerClient, CrawlerInput, CrawlerOutPuts, Dataset, DatasetRecord, RunOptions, RuntimeOptions, StoreValue } from "./@types/index";
-import { ActorVersionClient } from "apify-client/dist/resource_clients/actor_version";
+import {
+  ActorBuildOptions,
+  ActorLastRunOptions,
+  ApifyClient,
+  BuildCollectionClient,
+  KeyValueListItem,
+  RequestQueueClient,
+  RequestQueueCollectionClient,
+  RequestQueueUserOptions,
+  RunClient,
+  RunCollectionClient,
+} from 'apify-client';
+import {
+  Builder,
+  CrawlerClient,
+  CrawlerInput,
+  CrawlerOutPuts,
+  Dataset,
+  DatasetRecord,
+  RuntimeOptions,
+  StoreValue,
+} from './@types/index';
+import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
 
 export const ACTOR_ID = process.env.ACTOR_ID;
 export class ApifyCustomClient implements CrawlerClient {
@@ -17,21 +37,23 @@ export class ApifyCustomClient implements CrawlerClient {
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
     if (runtimeOptions.iterateToConsole) {
-      console.log("The request have been completed");
-      console.log("...printing results");
+      console.log('The request have been completed');
+      console.log('...printing results');
       items.forEach((item) => console.dir(item));
     }
     return items as CrawlerOutPuts[];
   }
 
-  async run<CrawlerOutPuts>(
+  async run<T extends CrawlerOutPuts<never>>(
     input: CrawlerInput,
-    runOptions?: RunOptions
-  ): Promise<CrawlerOutPuts[]> {
+  ): Promise<T> {
     const run = await this.#client.actor(ACTOR_ID).start(input);
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
-    return items as CrawlerOutPuts[];
+    return {
+      data: items,
+      ...run
+    } as T;
   }
 
   async crawlerBuilder(
@@ -47,7 +69,7 @@ export class ApifyCustomClient implements CrawlerClient {
   }
 
   async getLastRunClient(options?: ActorLastRunOptions): Promise<RunClient> {
-    const run = await this.#client.actor("kRn80VXoQpNq9gVod");
+    const run = await this.#client.actor('kRn80VXoQpNq9gVod');
     const lastRun = run.lastRun(options);
     return lastRun;
   }
@@ -85,10 +107,9 @@ export class ApifyCustomClient implements CrawlerClient {
   }
 
   async getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>> {
-    const run = await this.#client.actor("kRn80VXoQpNq9gVod");
     const dataset = id
       ? await this.#client.dataset(id)
-      : await this.#client.dataset('default dataset id');
+      : await this.#client.dataset('kRn80VXoQpNq9gVod');
     const datasets = (await dataset.listItems()).items as T[];
     const data = {
       data: datasets,
@@ -99,7 +120,6 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getKeyList(
     id: string,
-    options?: KeyValueClientListKeysOptions
   ): Promise<KeyValueListItem[]> {
     const store = await this.#client.keyValueStore(id);
     const keys = (await store.listKeys()).items;
@@ -113,47 +133,42 @@ export class ApifyCustomClient implements CrawlerClient {
     const store = await this.#client.keyValueStore(id);
     const verify = await store.recordExists(key);
     if (!verify) {
-        return undefined
+      return undefined;
     }
-    const value = await store.getRecord(key) as T
-    return{
-        data: value,
-        storeClient: store,
-    }
-  };
+    const value = (await store.getRecord(key)) as T;
+    return {
+      data: value,
+      storeClient: store,
+    };
+  }
 }
-
 
 // Prepare Actor input
 const input = {
   startUrls: [
     {
-      url: "https://crawlee.dev",
+      url: 'https://crawlee.dev',
     },
   ],
   maxRequestsPerCrawl: 100,
 };
 
-type Data = {
-    url: string;
-    title: string;
-}
-
-const aCC = new ApifyCustomClient('djhccwbc');
+// interface Data {
+//   url: string;
+//   title: string;
+// }
 
 // Initialize the ApifyClient with API token
 const client = new ApifyClient({
-  token: "<YOUR_API_TOKEN>",
+  token: '<YOUR_API_TOKEN>',
 });
-
-
 
 (async () => {
   // Run the Actor and wait for it to finish
-  const run = await client.actor("kRn80VXoQpNq9gVod").call(input);
+  const run = await client.actor('kRn80VXoQpNq9gVod').call(input);
 
   // Fetch and print Actor results from the run's dataset (if any)
-  console.log("Results from dataset");
+  console.log('Results from dataset');
   const { items } = await client.dataset(run.defaultDatasetId).listItems();
   items.forEach((item) => {
     console.dir(item);

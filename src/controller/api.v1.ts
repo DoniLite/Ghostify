@@ -9,41 +9,79 @@ import {
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 
-type PosterQuery = {
-  token: string | undefined;
+interface PosterQuery {
+  email: string;
+  password: string;
   permission: Service;
-};
+}
 
-export const posterController = async (
+export const authController = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { token, permission } = req.query as QueryXData<PosterQuery>;
-  let dateStemp;
+  const { email, password, permission } = req.body as BodyXData<PosterQuery>;
 
-  req.jwtDecode();
-  if (!token) {
-    return res.view('/src/views/article.ejs', {
-      pagination: 1,
-      activeIndex: 3,
-    });
-  }
+  if (!email || !password || !permission)
+    return res.code(400).send(JSON.stringify({ error: 'Invalid credentials' }));
 
-  if (token !== 'SPECIAL') {
-    res.status(403);
-    return res.send(JSON.stringify({ error: 'Access denied' }));
-  }
+  const user = await prismaClient.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
 
-  if (permission === 'blog') {
-    dateStemp = token;
-    const date = new Date();
-  }
+  if (!user) return res.code(404);
+
+  const truePassword = decrypt(
+    user.password,
+    req.session.ServerKeys.secretKey,
+    req.session.ServerKeys.iv
+  );
+
+  if (truePassword !== password) return res.code(403).send('invalid password');
+
+  if (permission === Service.blog || permission === Service.api)
+    return res.view('/src/views/serviceHome.ejs', { service: permission });
+
+  return res.code(403).send('Not Matching Issue');
 };
 
-type TempLinkQuery = {
+export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
+  const { userId, service } = req.query as QueryXData<{
+    userId: string;
+    service: Service;
+  }>;
+
+  if (!userId || !service) return res.code(404);
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      id: Number(userId),
+    },
+    select: {
+      name: true,
+      email: true,
+      service: true,
+      registration: true,
+      credits: true,
+    },
+  });
+  
+  if (!user) return res.redirect('/signin?service=blog');
+
+  if (service !== Service.api && service !== Service.blog)
+    return res.redirect('/signin?service=blog');
+
+  return res.view('/src/views/serviceHome.ejs', {
+    service: service,
+    data: { ...user },
+  });
+};
+
+interface TempLinkQuery {
   service: Service;
   forTemp: number;
-};
+}
 
 export const tempLinkGenerator = async (
   req: FastifyRequest,
@@ -62,10 +100,10 @@ export const tempLinkGenerator = async (
   res.send(JSON.stringify(linkPayload));
 };
 
-type Register = {
+interface Register {
   service: Service;
   token: string | undefined | null;
-};
+}
 
 export const registrationView = async (
   req: FastifyRequest,
@@ -95,12 +133,12 @@ export const registrationView = async (
   res.view('/src/views/signup.ejs', { service: service });
 };
 
-type RegisterPost = {
+interface RegisterPost {
   service: Service;
   name: string | undefined | null;
   email: string | undefined | null;
   password: string | undefined | null;
-};
+}
 
 export const registrationController = async (
   req: FastifyRequest,
@@ -206,8 +244,4 @@ export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
     return res.send(JSON.stringify({ error: 'Service not found' }));
   }
   return res.view('/src/views/signin.ejs', { service: service });
-};
-
-export const connexionController = (req: FastifyRequest, res: FastifyReply) => {
-  const {} = req.body as BodyXData;
 };

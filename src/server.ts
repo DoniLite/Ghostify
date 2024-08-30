@@ -25,49 +25,46 @@ import { articlePost } from './controller/articlePost';
 import { projectPost } from './controller/projectPost';
 import { article } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
-import { listeners } from 'node:process';
-import { PosterTask } from './hooks/callTasks';
 import { encrypt, saveStatistic } from './utils';
 import {
+  authController,
   connexion,
   registrationController,
   registrationView,
+  serviceHome,
 } from './controller/api.v1';
 import { urlVisitor } from './controller/pushVisitor';
 import {
   poster,
-  posterHome,
   requestComponent,
   requestListComponent,
 } from './routes/poster';
 import { find } from './controller/finder';
 import fastifyWebsocket from '@fastify/websocket';
-import { setUp } from './hooks/setup';
-import { cv } from './hooks/cv';
-import multipart, { MultipartFile } from '@fastify/multipart'
+import { cv } from './controller/cv';
+import multipart from '@fastify/multipart';
 import { uploadActu } from './controller/actu';
-import util from 'util';
-import fs, { promises as fsP } from 'fs';
-import { pipeline } from 'stream';
-import { randomInt } from 'node:crypto';
-import { error } from 'node:console';
-
-const pump = util.promisify(pipeline);
+import { assetPoster } from './controller/assetsPost';
 
 export const ee = new EventEmitter();
 const protectedRoutes = [
   '/api/v1',
+  '/api/v1/auth',
+  '/api/v1/playground',
+  '/api/v1/poster/save',
   '/api/notifications',
   '/api/store',
   '/api/webhooks',
+  '/articlePost',
+  '/projectPost',
+  '/assetsPost',
 ];
 dotEnv.config();
-  const server: FastifyInstance = fastify(
-    // {logger: true}
-  );
+const server: FastifyInstance =
+  fastify();
+  // {logger: true}
 
 // Hooks...
-server.addHook('onListen', async () => {});
 server.addHook('onRequest', async (req, res) => {
   const url = req.raw.url;
   if (protectedRoutes.includes(url)) {
@@ -98,7 +95,7 @@ server.addHook('onResponse', async (req, res) => {
 });
 
 server.addHook('preHandler', stats);
-server.addHook('preSerialization', async (req, res) => {
+server.addHook('preSerialization', async (req) => {
   await saveStatistic(req.session.Stats);
 });
 server.addHook('preHandler', sessionStorageHook);
@@ -112,22 +109,27 @@ server.register(fastifyJwt, {
   secret: process.env.JWT_SECRET,
 });
 // async function onFile(part: MultipartFile) {
-  // const ext = path.extname(part.filename);
-  // const date = new Date();
-  // const r = randomInt(date.getTime()).toString();
-  // const name = `${date.getTime().toString() + r}${ext}`
-  // ee.emit('upload', name);
-  // console.log(name)
-  // const dPath = path.resolve(__dirname, '../src/public/uploads');
-  // const uploadPath = path.join(dPath, name);
+// const ext = path.extname(part.filename);
+// const date = new Date();
+// const r = randomInt(date.getTime()).toString();
+// const name = `${date.getTime().toString() + r}${ext}`
+// ee.emit('upload', name);
+// console.log(name)
+// const dPath = path.resolve(__dirname, '../src/public/uploads');
+// const uploadPath = path.join(dPath, name);
 //   await pump(part.file, fs.createWriteStream(uploadPath));
 // }
-server.register(multipart, 
+server.register(
+  multipart
   // { attachFieldsToBody: true, onFile }
 );
 server.register(fastifyWebsocket);
 server.register(async (fastify) => {
   fastify.get('/notifications', { websocket: true }, (socket, req) => {
+    socket.on('clientConnection', () => {
+      req.session.Services.Platform.Sockets = true;
+      req.session.Services.Platform.internals = true;
+    });
     socket.on('message', async (mes) => {
       console.log(JSON.parse(mes.toString()));
     });
@@ -164,14 +166,25 @@ server.register(session, {
 server.setErrorHandler((err, req, res) => {
   console.log(err);
   const errorCode = Number(err.code);
-  if(errorCode >= 400 && errorCode < 600) {
+  if (errorCode >= 400 && errorCode < 600) {
     res.view('/src/views/error.ejs');
   }
-  res.send(JSON.stringify({error: 'some error'}));
-  
+  res.send(JSON.stringify({ error: 'some error' }));
 });
 server.setNotFoundHandler((req, res) => {
   res.view('/src/views/404.ejs');
+});
+server.get('/auth/token', async (req, res) => {
+  const userId = req.session.UserId;
+  const user = await prismaClient.user.findUnique({
+    where: {
+      email: userId,
+    },
+  });
+  if (user) {
+    return res.send(JSON.stringify({ token: user.token }));
+  }
+  return res.code(404);
 });
 server.get('/', index);
 server.post('/home', homeControler);
@@ -201,31 +214,40 @@ server.get('/api/token', async (req, res) => {
   const token = tokenGenerator(generator);
   res.send(JSON.stringify({ token }));
 });
-server.get('/api/webhooks', webhooks);
-server.post('/api/store', store);
-server.post('/api/notifications', notifications);
 
+// Pages...
 server.get('/article', article);
-server.post('/articlePost', articlePost);
-server.post('/projectPost', projectPost);
-server.get('/cvMaker', cv);
-
 server.get('/terms', terms);
 server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
+
+// Admin conn
+server.post('/articlePost', articlePost);
+server.post('/projectPost', projectPost);
+server.post('/assetsPost', assetPoster);
+
+// API
 server.get('/signin', connexion);
 server.get('/register', registrationView);
-server.post('/register', registrationController);
-server.get('/poster', posterHome);
+server.post('/api/v1/register', registrationController);
+server.post('/api/v1/auth', authController);
+server.get('/service', serviceHome);
 server.get('/poster/new', poster);
+server.post('/actu/post', uploadActu);
+server.get('/cvMaker', cv);
+// Plateform bin
+server.get('/api/webhooks', webhooks);
+server.post('/api/store', store);
+server.post('/api/notifications', notifications);
+
+// Components...
 server.get('/components/poster', requestComponent);
 server.get('/components/list', requestListComponent);
 
+// features and other thread specific
 server.get('/update/visitor', urlVisitor);
 server.get('/find', find);
-
-server.post('/actu/post', uploadActu);
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
@@ -240,7 +262,7 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
   });
   process.nextTick(async () => {
     ee.emit('evrymorningAndNyTask', 'begenning the task...');
-    const urls = await prismaClient.url.findMany();
+    // const urls = await prismaClient.url.findMany();
     // const respFTask = await PosterTask();
     // console.log(respFTask);
   });

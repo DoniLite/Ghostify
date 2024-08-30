@@ -1,4 +1,5 @@
-const { title } = require('process');
+/* eslint-disable no-undef */
+
 
 const posterComponent = document.querySelector('#posterComponent');
 let storage = localStorage.getItem('poster_storage');
@@ -10,6 +11,12 @@ if (storage !== undefined || storage !== null) {
 //   ...posterComponent.querySelectorAll(),
 //   ...posterComponent.querySelectorAll(),
 // ];
+
+/**
+ *
+ * @param {Element[]} els
+ */
+const getList = (els) => {};
 
 const loadList = () => {
   const list = document.querySelectorAll('.lst-component');
@@ -50,11 +57,11 @@ const actionComponent = document.querySelector('#actionComponent');
 const posterForm = document.querySelector('#posterForm');
 const requestSetionBtn = document.querySelector('#requestSetionBtn');
 const requestListBtn = document.querySelector('#requestList');
-const sectionRemoveBtn = document.querySelector('#sectionRemoveBtn');
-const listRemoveBtn = document.querySelector('#listRemoveBtn');
+// const sectionRemoveBtn = document.querySelector('#sectionRemoveBtn');
+// const listRemoveBtn = document.querySelector('#listRemoveBtn');
 const requestFileBtn = document.querySelector('#requestFile');
-const listAddBtn = document.querySelectorAll('#listAdd');
-const form = new FormData(posterForm);
+// const listAddBtn = document.querySelectorAll('#listAdd');
+// const form = new FormData(posterForm);
 const data = {
   title: '',
   desc_or_meta: '',
@@ -120,11 +127,6 @@ const requestNewSection = async (e) => {
   sessionIndex.setAttribute('value', String(parseInt(sessionIndex.value) + 1));
 };
 
-/**
- *
- * @param {Element[]} els
- */
-const getList = (els) => {};
 
 /**
  *
@@ -183,6 +185,7 @@ const requestFile = async (e) => {
  * @param {Event} e
  */
 const requestNewList = async (e) => {
+  e.preventDefault();
   const index = Number(sessionIndex.value);
   const lastChild = posterForm.lastElementChild;
   if (lastChild.getAttribute('id') !== 'list') {

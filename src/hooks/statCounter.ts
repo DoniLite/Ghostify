@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyRequest } from 'fastify';
 import {
   checkIfMonthIsNotOver,
   getMonthWithDate,
@@ -6,9 +6,9 @@ import {
   loadStatistics,
 } from '../utils';
 
-export const stats = async (req: FastifyRequest, res: FastifyReply) => {
+export const stats = async (req: FastifyRequest) => {
   const url = req.raw.url;
-  const headers = req.raw.headers;
+  // const headers = req.raw.headers;
   const stats = await loadStatistics();
   const month = stats.monthly.month;
   const weekIndex = stats.weekly.index;

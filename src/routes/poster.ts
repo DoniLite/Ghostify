@@ -1,10 +1,16 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { BodyXData, QueryXData } from '../@types';
-import { decrypt, encrypt, Service } from '../utils';
+import { QueryXData, Section } from '../@types';
+import { decrypt, encrypt } from '../utils';
 import { prismaClient } from '../config/db';
+import util from 'util';
+import fs from 'fs';
+import path from 'path';
+import { pipeline } from 'stream';
+import { randomInt } from 'crypto';
+
+const pump = util.promisify(pipeline);
 
 export const poster = async (req: FastifyRequest, res: FastifyReply) => {
-  const {} = req.query as QueryXData;
   const cookie = req.cookies;
   const lastTime = cookie['connection_time'];
   try {
@@ -37,6 +43,7 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
 
     return res.view('/src/views/poster.ejs', { id: 1 });
   } catch (e) {
+    console.log(e);
     return res.redirect('/signin?service=blog');
   }
 };
@@ -77,6 +84,7 @@ export const requestComponent = (req: FastifyRequest, res: FastifyReply) => {
       id: Number(section),
     });
   } catch (e) {
+    console.log(e);
     return res.redirect('/signin?service=blog');
   }
 };
@@ -117,40 +125,76 @@ export const requestListComponent = async (
     );
     return res.view('/src/views/components/list.ejs', { id: Number(section) });
   } catch (e) {
+    console.error(e);
     return res.redirect('/signin?service=blog');
   }
 };
+
+interface Requester<T = unknown> {
+  sections: {
+    title: string;
+    content: string;
+    index: number;
+  }[];
+  files: { position: number; sectionId: number }[] & Record<string, undefined>;
+  list: {
+    position: number;
+    sectionId: number;
+    els: T[];
+  }[];
+}
 
 export const requestView = async (req: FastifyRequest, res: FastifyReply) => {
-  const {} = req.body as BodyXData;
-};
+  const parts = req.parts();
+  let data: Requester<{ el: string; position: number }>;
+  let fName;
 
-export const posterHome = async (req: FastifyRequest, res: FastifyReply) => {
-  const { userId, service } = req.query as QueryXData<{ userId: string; service: Service }>;
+  for await (const part of parts) {
+    const dangerousExtension = [
+      '.js',
+      '.jsx',
+      '.cmd',
+      'py',
+      '',
+      '.bash',
+      '.sh',
+      '.shx',
+    ];
+    if (dangerousExtension.includes(path.extname(part.filename))) return res.code(403);
+    const fields = part.fields as Record<string, { value?: string }>;
+    console.log(fields);
+    for (const field in fields) {
+      if (field === 'sections') {
+        data.sections = JSON.parse(fields[field].value);
+      } else if (field === 'files') {
+        data.files = JSON.parse(fields[field].value);
+      } else if (field === 'list') {
+        data.list = JSON.parse(fields[field].value);
+      } else {
+        continue;
+      }
+    }
 
-  const user = await prismaClient.user.findUnique({
-    where: {
-      id: Number(userId),
-    },
-    select: {
-      name: true,
-      email: true,
-      service: true,
-      registration: true,
-      credits: true,
-    },
-  });
-  if (!user) {
-    return res.redirect('/signin?service=blog');
-  };
-  if (service !== Service.api && service !== Service.blog) {
-    return res.redirect('/signin?service=blog');
+    if (part.file) {
+      const ext = path.extname(part.filename);
+      const date = new Date();
+      const r = randomInt(date.getTime()).toString();
+      fName = `${date.getTime().toString() + r}${ext}`;
+      console.log(fName);
+      const xPath = path.resolve(__dirname, '../../src/public/uploads/actues');
+      const uploadPath = path.join(xPath, fName);
+      await pump(part.file, fs.createWriteStream(uploadPath));
+    }
+
+    
+    data.files.sort((a, b) => a.position - b.position);
+
+    return res.send(JSON.stringify({ response: true }));
   }
-   return res.view('/src/views/serviceHome.ejs', {service: service, data: {...user}});
 };
 
 export const loadPost = async (req: FastifyRequest, res: FastifyReply) => {
-  const {postId} = req.query as QueryXData<{postId: string}>;
+  const { postId } = req.query as QueryXData<{ postId: string }>;
   if (!postId) {
     res.status(404).send('this is not a post');
   }
@@ -163,19 +207,22 @@ export const loadPost = async (req: FastifyRequest, res: FastifyReply) => {
     where: {
       parent: post,
       postId: post.id,
-    }
-  });
+    },
+  }) as Section[]
   const allFile = await prismaClient.postFile.findMany({
     where: {
       postId: post.id,
-    }
+    },
   });
   const data = {
     sections: allSections,
     files: allFile,
-    lists: [] as never[],
-  }
-  allSections.forEach(section => {
-    data.lists = section.meta ?? JSON.parse(section.meta);
-  })
-}
+    lists: [] as unknown[],
+  };
+  allSections.forEach((section) => {
+    const d = JSON.parse(section.meta);
+    if (d) {
+      data.lists.push(d);
+    }
+  });
+};

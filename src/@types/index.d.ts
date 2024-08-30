@@ -2,7 +2,7 @@ import {
   ActorBuildOptions,
   ActorCallOptions,
   ActorLastRunOptions,
-  ActorStartOptions,
+  ActorRun,
   Build,
   BuildClient,
   BuildCollectionClient,
@@ -10,104 +10,53 @@ import {
   KeyValueClientListKeysOptions,
   KeyValueListItem,
   KeyValueStoreClient,
-  PaginatedList,
   RequestQueueClient,
   RequestQueueCollectionClient,
   RequestQueueUserOptions,
   RunClient,
   RunCollectionClient,
-  StoreCollectionClient,
 } from 'apify-client';
 import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
-import { FastifyReply, FastifyRequest, FastifyTypeProvider } from 'fastify';
 import sharp from 'sharp';
 
-export interface EssentialWeatherData {
-  datetime?: string;
-  tempmax?: number;
-  tempmin?: number;
-  conditions?: string;
-  description?: string;
-  icon?: string;
-  flag?: string;
-}
-
-export interface WeatherData {
-  datetime: string;
-  datetimeEpoch: number;
-  tempmax: number;
-  tempmin: number;
-  temp: number;
-  feelslikemax: number;
-  feelslikemin: number;
-  feelslike: number;
-  dew: number;
-  humidity: number;
-  precip: number;
-  precipprob: number;
-  precipcover: number;
-  preciptype: any[];
-  snow: number;
-  snowdepth: number;
-  windgust: number;
-  windspeed: number;
-  winddir: number;
-  pressure: number;
-  cloudcover: number;
-  visibility: number;
-  solarradiation: number;
-  solarenergy: number;
-  uvindex: number;
-  severerisk: number;
-  sunrise: string;
-  sunriseEpoch: number;
-  sunset: string;
-  sunsetEpoch: number;
-  moonphase: number;
-  conditions: string;
-  description: string;
-  icon: string;
-  stations: any;
-  source: string;
-  hours: any[];
-}
-
-export interface Quote {
-  id: string;
-  content: string;
-  originator: {
-    id: number;
-    language_code: string;
-    description?: string;
-    master_id: number;
+export interface Service {
+  APIs?: {
     name: string;
-    url: string;
+    endpoint: string;
+    docs?: string;
+    isSecure?: boolean;
+  }[];
+  chekHealth?: (service: string, endpoint: string) => boolean;
+  Platform?: {
+    internals: boolean;
+    externals: boolean;
+    API: boolean;
+    Sockets: boolean;
   };
-  language_code: string;
-  url: string;
-  tags: string[];
-  length: number;
 }
 
-export interface SessionQuote {
-  id?: string;
-  content?: string;
-  author?: string;
+
+export interface Auth {
+  id?: number;
+  login?: string;
+  authenticated: boolean;
 }
 
-export interface IQuerystring {
-  username?: string;
-  password?: string;
+export interface Indexer {
+  id: number;
+  keys: string;
+  postId: number | null;
+  type: string;
 }
 
-export interface IHeaders {
-  'h-Custom': string;
-}
-
-export interface IReply {
-  200: FastifyReply;
-  302: { url: string };
-  '4xx': { error: string };
+export interface Section {
+  id: number;
+  postId: number;
+  title: string;
+  content: string | null;
+  indedx: number;
+  header: boolean;
+  meta: string | null;
 }
 
 export interface CrawlerClient {
@@ -116,7 +65,10 @@ export interface CrawlerClient {
     runtimeOptions?: RuntimeOptions
   ): Promise<T[]>;
 
-  run<T>(input: CrawlerInput, runOptions?: RunOptions): Promise<T[]>;
+  run<T extends CrawlerOutPuts<never>>(
+    input: CrawlerInput,
+    runOptions?: RunOptions
+  ): Promise<T>;
 
   crawlerBuilder(
     versionNumber: string,
@@ -154,34 +106,36 @@ export interface CrawlerClient {
   ): Promise<StoreValue<T> | undefined>;
 }
 
-export type Builder = {
+type FetchFn = typeof fetch;
+
+export type RunOptions = Record<string, string>;
+
+export interface Builder {
   build: Build;
   buildInstance: BuildClient;
-};
+}
 
-export type Dataset<T extends DatasetRecord> = {
+export interface Dataset<T extends DatasetRecord> {
   data: T[];
   dataSetClient?: DatasetClient<T>;
-};
+}
 
-export type DatasetRecord = {
-  [key: string]: string | number | symbol;
-};
+export type DatasetRecord = Record<string, string | number | symbol>;
 
-export type StoreValue<T extends keyof unknown> = {
+export interface StoreValue<T extends keyof unknown> {
   data: T;
   storeClient: KeyValueStoreClient;
-};
-export interface RunOptions extends ActorStartOptions {}
+}
 
 export interface RuntimeOptions extends ActorCallOptions {
   iterateToConsole?: boolean;
 }
 
-export type CrawlerOutPuts<T extends keyof unknown> = Record<
-  string | number,
-  T
->;
+type Run = ActorRun;
+
+export type CrawlerOutPuts<T extends keyof unknown> = {
+  data: Record<string | number, T>[];
+} & Run;
 
 export interface CrawlerInput {
   startUrls: {
@@ -212,7 +166,7 @@ export interface ReqParams {
   url?: string;
 }
 
-export type StatsData = {
+export interface StatsData {
   total_visitor: number;
   urls: {
     visitor: number;
@@ -226,7 +180,7 @@ export type StatsData = {
     month: month;
     visitor: number;
   };
-};
+}
 
 type month =
   | 'Janvier'
@@ -252,7 +206,7 @@ export interface ImageAnalysisResult {
 
 export type timeOfJourney = 'Morning' | 'Midday' | 'Evening' | 'Night';
 
-export type Post = {
+export interface Post {
   id: number;
   title: string;
   description: string;
@@ -266,16 +220,16 @@ export type Post = {
   visites: bigint;
   user: string | null;
   fromApi: boolean;
-};
+}
 
-export type PosterUserMeta = {
-  [key: string]:
-    | never
-    | {
-        id: number;
-        title: string;
-      }[];
-};
+export type PosterUserMeta = Record<
+  string,
+  | never
+  | {
+      id: number;
+      title: string;
+    }[]
+>;
 
 export type Meta<T = unknown> = {
   userId: number;

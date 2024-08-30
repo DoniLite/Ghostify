@@ -1,14 +1,6 @@
 <%- include('components/rawHeader.ejs') %>
 <input type="hidden" name="index" value="<%= id %>" id="sessionIndex" />
-<div
-  id="navHead"
-  class="w-full h-16 flex items-center justify-between bg-gray-950 text-white p-4"
->
-  <h1 class="text-white font-bold text-3xl">Poster</h1>
-  <i
-    class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
-  ></i>
-</div>
+
 <div class="w-full mt-4" id="posterComponent">
   <form action="" id="posterForm">
     <input type="file" name="file" class=" hidden" id="file_<%= id %>" />

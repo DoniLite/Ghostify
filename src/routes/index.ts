@@ -1,7 +1,5 @@
 import { RouteHandlerMethod } from "fastify";
 import { encrypt } from "../utils";
-import { prismaClient } from "../config/db";
-import { EssentialWeatherData, SessionQuote } from "../@types";
 export const index: RouteHandlerMethod = async (req, res) => {
   const loaderCookie = req.cookies["ghostify_home_session"];
   if (!loaderCookie || Object.keys(JSON.parse(loaderCookie)).length <= 0) {
