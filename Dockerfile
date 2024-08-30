@@ -72,7 +72,6 @@ ENV NODE_ENV=production
 # Give ownership of the /usr/src/app/build directory to the 'node' user
 RUN mkdir -p /usr/src/app/build/data && chown -R node:node /usr/src/app/build && chmod -R 755 /usr/src/app/build
 
-RUN mkdir -p /usr/src/app/prisma && chown -R node:node /usr/src/app/prisma && chmod -R 755 /usr/src/app/prisma
 
 # Run the application as a non-root user.
 USER node
