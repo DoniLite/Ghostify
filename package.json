@@ -15,7 +15,7 @@
   "scripts": {
     "build": "npm run tailwind && pnpm exec tsc --outDir build",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
-    "start": "nodemon build/server.js",
+    "start": "nodemon ./build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "deploy": "gh-pages -d build",
