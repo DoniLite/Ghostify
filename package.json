@@ -15,7 +15,7 @@
   "scripts": {
     "build": "npm run tailwind && pnpm exec tsc --outDir build",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
-    "start": "node build/server.js",
+    "start": "nodemon build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "deploy": "gh-pages -d build",
@@ -24,7 +24,9 @@
     "test": "pnpm exec playwright test",
     "dbTest": "nodemon ./temp/test.spec.js",
     "show-reporter": "pnpm exec playwright show-report",
-    "lint": "pnpm eslint"
+    "lint": "pnpm eslint",
+    "dockerBuild": "docker build -t test:latest .",
+    "dockerStart": "docker run -p 3081:3081 test:latest"
   },
   "dependencies": {
     "prisma": "^5.15.0",
