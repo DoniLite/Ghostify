@@ -12,7 +12,7 @@
     "typescript-eslint": "^8.4.0"
   },
   "scripts": {
-    "build": "npm run tailwind && pnpm exec tsc --outDir build",
+    "build": "npm run tailwind && pnpm prisma && pnpm generate && pnpm deployDB && pnpm exec tsc --outDir build",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
     "start": "node ./build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
