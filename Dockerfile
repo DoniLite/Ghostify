@@ -11,6 +11,17 @@ WORKDIR /usr/src/app
 RUN --mount=type=cache,target=/root/.npm \
     npm install -g pnpm@${PNPM_VERSION}
 
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    cairo-dev \
+    pango-dev \
+    jpeg-dev \
+    giflib-dev \
+    librsvg-dev
+
+
 ################################################################################
 FROM base AS deps
 
@@ -27,7 +38,7 @@ RUN pnpm dlx prisma
 
 RUN pnpx prisma generate
 
-ENV DATABASE_URL=postgresql://doni:DoniLite13@localhost:5432/ghostifyDB?schema=public&connection_limit=5
+ENV DATABASE_URL=postgres://koyeb-adm:l1sU9yCamFhV@ep-wispy-math-a25dvdme.eu-central-1.pg.koyeb.app/koyebdb
 
 RUN  pnpx prisma migrate deploy
 
