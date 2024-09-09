@@ -20,13 +20,13 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
         title: title,
         description: description,
         slug: slug,
-        date: new Date(date),
         content: content,
         category: {
           connect: postCategory,
         },
         safe: true,
         visites: 0,
+        visibility: 'Public'
       },
     });
     if (post) {
@@ -41,8 +41,8 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
       slug: slug,
       safe: true,
       visites: 0,
+      visibility: 'Public',
       description: description,
-      date: new Date(date),
       content: content,
       category: {
         create: {

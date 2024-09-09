@@ -1,6 +1,9 @@
 /* eslint-disable no-undef */
 
 
+const rawHeaderNav = document.querySelector('#rawHeaderNav');
+const NavCloserBtn = document.querySelector('#NavCloserBtn');
+const rawHeadIcon = document.querySelector('#rawHeadIcon');
 const posterComponent = document.querySelector('#posterComponent');
 let storage = localStorage.getItem('poster_storage');
 if (storage !== undefined || storage !== null) {
@@ -11,6 +14,16 @@ if (storage !== undefined || storage !== null) {
 //   ...posterComponent.querySelectorAll(),
 //   ...posterComponent.querySelectorAll(),
 // ];
+
+NavCloserBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  rawHeaderNav.classList.add('translate-x-[200%]');
+});
+
+rawHeadIcon.addEventListener('click', (e) => {
+  e.preventDefault();
+  rawHeaderNav.classList.remove('translate-x-[200%]');
+});
 
 /**
  *

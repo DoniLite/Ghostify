@@ -1,13 +1,26 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// schema.prisma
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Permission {
+  User
+  Admin
+  Root
+}
+
+enum Visibility {
+  Public
+  Private
 }
 
 model Contact {
@@ -25,30 +38,46 @@ model Category {
 }
 
 model PostSection {
-  id      Int     @id @default(autoincrement())
-  parent  Post    @relation(fields: [postId], references: [id])
-  postId  Int
-  title   String
-  content String?
-  indedx  Int
-  header  Boolean @default(false)
-  meta    String?
+  id        Int      @id @default(autoincrement())
+  parent    Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  title     String
+  updatedAt DateTime @updatedAt
+  content   String?
+  indedx    Int
+  header    Boolean  @default(false)
+  meta      String? //like list or injeted metadata
+}
+
+enum Reactions {
+  Love
+  Laugh
+  Hurted
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  post      Post?     @relation(fields: [postId], references: [id])
-  actu      Actu?     @relation(fields: [actuId], references: [id])
-  actuId    Int?
-  file      String
-  reactions String
+  id        Int         @id @default(autoincrement())
+  post      Post?       @relation(fields: [postId], references: [id])
+  file      String?
+  reactions Reactions[]
   postId    Int?
-  content   String
-  comments  Comment[] @relation(name: "CommentToComment")
-  date      DateTime
-  comment   Comment?  @relation(name: "CommentToComment", fields: [commentId], references: [id])
+  content   String?
+  comments  Comment[]   @relation(name: "CommentToComment")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  comment   Comment?    @relation(name: "CommentToComment", fields: [commentId], references: [id])
   commentId Int?
-  signaled  BigInt    @default(0)
+  signaled  BigInt      @default(0)
+  meta      String?
+  isAnActu  Boolean
+  promoted  Boolean     @default(false)
+  ip        String?
+  safe      Boolean     @default(false)
+  indexed   Boolean     @default(false)
+  visitors  BigInt      @default(0)
+  url       String?
+  Indexer   Indexer?    @relation(fields: [indexerId], references: [id])
+  indexerId Int?
 }
 
 model postFile {
@@ -61,43 +90,47 @@ model postFile {
 }
 
 model Post {
-  id          Int           @id @default(autoincrement())
-  title       String
-  description String
-  safe        Boolean
-  date        DateTime
-  inMemory    Boolean       @default(true)
-  toUpdate    Boolean       @default(false)
-  content     String?
-  published   Boolean       @default(false)
-  section     PostSection[]
-  slug        String?
-  category    Category?     @relation(fields: [categoryId], references: [id])
-  categoryId  Int?
-  visites     BigInt        @default(0)
-  user        String? // If the post is from `Api` then require the user. the user is a sjon string data
-  fromApi     Boolean       @default(false)
-  parser      String?
-  Comment     Comment[]
-  files       postFile[]
-  index       Indexer?      @relation(fields: [indexerId], references: [id])
-  indexerId   Int?
-  indexed     Boolean       @default(false)
+  id            Int           @id @default(autoincrement())
+  title         String
+  description   String
+  safe          Boolean
+  url           String?
+  createdAt     DateTime      @default(now())
+  inMemory      Boolean       @default(true)
+  toUpdate      Boolean       @default(false)
+  updatedAt     DateTime      @updatedAt
+  content       String?
+  published     Boolean       @default(false)
+  section       PostSection[]
+  slug          String?
+  category      Category?     @relation(fields: [categoryId], references: [id])
+  categoryId    Int?
+  visibility    Visibility
+  visites       BigInt        @default(0)
+  user          User?         @relation(fields: [userId], references: [id]) // If the post is from `Api` then require the user. the user is a sjon string data
+  fromApi       Boolean       @default(false)
+  parsedContent String?
+  Comment       Comment[]
+  files         postFile[]
+  indexer       Indexer?      @relation(fields: [indexerId], references: [id])
+  indexerId     Int?
+  indexed       Boolean       @default(false)
+  userId        Int?
 
+  @@index([published, createdAt])
   @@map("posts")
 }
 
 model Indexer {
   id      Int        @id @default(autoincrement())
   keys    String
-  postId  Int?
   type    String     @unique
   post    Post[]
-  actu    Actu[]
   url     Url[]
   game    GameData[]
   Project Project[]
   Assets  Assets[]
+  Comment Comment[]
 }
 
 model GamerStat {
@@ -107,7 +140,9 @@ model GamerStat {
   gamingDay  DateTime
   game       GameData? @relation(fields: [gameId], references: [id])
   gameId     Int?
+  user       User?     @relation(fields: [userId], references: [id])
   gamerStats String
+  userId     Int?
 }
 
 model GameData {
@@ -115,12 +150,13 @@ model GameData {
   gamers      GamerStat[]
   gameUrl     String
   title       String
+  icon        String
   description String
   indexed     Boolean     @default(true)
   logo        String
   data        String? //json
-  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
-  indexerId   Int?
+  Indexer     Indexer     @relation(fields: [indexerId], references: [id])
+  indexerId   Int
 }
 
 model Project {
@@ -130,7 +166,7 @@ model Project {
   github            String
   gitLab            String
   bitbucket         String
-  indexed           Boolean  @default(true)
+  indexed           Boolean  @default(false)
   license           String
   link              String
   participation     String
@@ -150,50 +186,43 @@ model Url {
   url       String   @unique
   visit     BigInt   @default(0)
   name      String
+  updatedAt DateTime @updatedAt
   indexed   Boolean  @default(false)
+  health    Boolean  @default(false)
   Indexer   Indexer? @relation(fields: [indexerId], references: [id])
   indexerId Int?
 }
 
-model Actu {
-  id             Int       @id @default(autoincrement())
-  file           String?
-  content        String
-  meta           String
-  rawLink        String?
-  promoted       Boolean
-  ip             String?
-  expirationDate DateTime?
-  comment        Comment[]
-  safe           Boolean   @default(false)
-  updated        Boolean   @default(false)
-  indexed        Boolean   @default(false)
-  signaled       Int       @default(0)
-  visitors       BigInt    @default(0)
-  url            String?
-  Indexer        Indexer?  @relation(fields: [indexerId], references: [id])
-  indexerId      Int?
-}
-
 model User {
-  id           Int       @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   name         String
-  email        String    @unique
+  email        String      @unique
   password     String
   token        String
   service      String
   registration DateTime?
-  credits      BigInt?
+  permission   Permission
+  credits      BigInt      @default(300)
   meta         String?
+  GamerStat    GamerStat[]
+  Post         Post[]
+}
+
+enum AssetType {
+  Component
+  Script
+  Page
+  Snippet
 }
 
 model Assets {
-  id        Int      @id @default(autoincrement())
-  type      String   @unique
+  id        Int       @id @default(autoincrement())
+  type      AssetType
+  uid       String    @unique
   content   String
   title     String
-  indexed   Boolean  @default(false)
-  Indexer   Indexer? @relation(fields: [indexerId], references: [id])
+  indexed   Boolean   @default(false)
+  Indexer   Indexer?  @relation(fields: [indexerId], references: [id])
   indexerId Int?
 }
 

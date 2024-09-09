@@ -4,12 +4,14 @@ import {
   getMonthWithDate,
   getWeekIndex,
   loadStatistics,
+  saveStatistic,
 } from '../utils';
 
 export const stats = async (req: FastifyRequest) => {
   const url = req.raw.url;
   // const headers = req.raw.headers;
   const stats = await loadStatistics();
+  const Uris = [...stats.urls.map(url => url.url)];
   const month = stats.monthly.month;
   const weekIndex = stats.weekly.index;
   const date = new Date();
@@ -21,22 +23,15 @@ export const stats = async (req: FastifyRequest) => {
     stats.total_visitor += 1;
     stats.weekly.visitor = 1;
     stats.weekly.index = thisWeekIndex;
-    let aborter;
-    stats.urls.forEach((oneUrl) => {
-      if (oneUrl.url === url) {
-        oneUrl.visitor++;
-        aborter = true;
-      } else {
-        aborter = false;
-      }
-    });
-    if (aborter === false) {
+    if(!Uris.includes(url)) {
       stats.urls.push({
         url: url,
         visitor: 1,
       });
     }
-    req.session.Stats = stats;
+    const index = stats.urls.findIndex(thisUrl => thisUrl.url === url)
+    stats.urls[index].visitor ++;
+    await saveStatistic(stats);
     return;
   }
   if (weekIndex !== thisWeekIndex) {
@@ -44,41 +39,29 @@ export const stats = async (req: FastifyRequest) => {
     stats.weekly.visitor = 1;
     stats.monthly.visitor += 1;
     stats.total_visitor += 1;
-    let aborter;
-    stats.urls.forEach((oneUrl) => {
-      if (oneUrl.url === url) {
-        oneUrl.visitor++;
-        aborter = true;
-      } else {
-        aborter = false;
-      }
-    });
-   if (aborter === false) {
-     stats.urls.push({
-       url: url,
-       visitor: 1,
-     });
-   }
-    req.session.Stats = stats;
-    return;
+     if (!Uris.includes(url)) {
+       stats.urls.push({
+         url: url,
+         visitor: 1,
+       });
+       req.session.Stats = stats;
+     }
+     const index = stats.urls.findIndex((thisUrl) => thisUrl.url === url);
+     stats.urls[index].visitor++;
+     await saveStatistic(stats);
+     return;
   }
   stats.monthly.visitor += 1;
   stats.total_visitor += 1;
   stats.weekly.visitor += 1;
-  let aborter;
-  stats.urls.forEach((oneUrl) => {
-    if (oneUrl.url === url) {
-      oneUrl.visitor++;
-      aborter = true;
-    } else {
-      aborter = false;
-    }
-  });
-  if (aborter === false) {
-    stats.urls.push({
-      url: url,
-      visitor: 1,
-    });
-  }
-  req.session.Stats = stats;
+   if (!Uris.includes(url)) {
+     stats.urls.push({
+       url: url,
+       visitor: 1,
+     });
+     req.session.Stats = stats;
+   }
+   const index = stats.urls.findIndex((thisUrl) => thisUrl.url === url);
+   stats.urls[index].visitor++;
+   await saveStatistic(stats);
 };
