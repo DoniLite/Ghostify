@@ -48,44 +48,52 @@ export const uploadActu = async (req: FastifyRequest, res: FastifyReply) => {
     await pump(part.file, fs.createWriteStream(uploadPath));
   }
 
-  const newActu = await prismaClient.actu.create({
+  const newComment = await prismaClient.comment.create({
     data: {
       promoted: false,
       meta: title,
       content: content,
       ip: req.ip,
       file: `/static/uploads/actues/${fName}`,
+      isAnActu: false,
     },
   });
-  const resData = await prismaClient.actu.update({
+  const resData = await prismaClient.comment.update({
     where: {
-      id: newActu.id,
+      id: newComment.id,
     },
     data: {
-      rawLink: `/actu?ref=${newActu.id}`,
-      url: `/actu?root=${newActu.ip}`,
+      url: `/actu?ref=${newComment.ip}`,
     },
   });
 
-  return res.send(JSON.stringify({link: resData.rawLink}));
+  return res.send(JSON.stringify({ link: resData.url }));
 };
 
+export const comment = async (req: FastifyRequest, res: FastifyReply) => {
+  const { ref, root } = req.query as QueryXData<{
+    ref: unknown;
+    root: unknown;
+  }>;
 
-export const actu = async (req: FastifyRequest, res: FastifyReply) => {
-  const {ref, root} = req.query as QueryXData<{ref: unknown; root: unknown}>;
-
-  if (root && typeof root === 'string') {
-    const actu = await prismaClient.actu.findUnique({
+  if (root) {
+    const actu = await prismaClient.comment.findUnique({
       where: {
         id: Number(ref),
       },
     });
+    const connectedComments = await prismaClient.comment.findMany({
+      where: {
+        commentId: actu.id,
+      }
+    })
     if (actu) {
       const clientActu = {
-        link: actu.rawLink,
+        link: actu.url,
         file: actu.file ?? actu.file,
         meta: actu.meta,
         content: actu.content,
+        replies: connectedComments,
         root: true,
       };
       if (actu.ip === req.ip) {
@@ -96,24 +104,34 @@ export const actu = async (req: FastifyRequest, res: FastifyReply) => {
     return res.code(404);
   }
 
-  if(ref && typeof ref === 'string') {
-    const actu = await prismaClient.actu.findUnique({
+  if (ref && typeof ref === 'string') {
+    const actu = await prismaClient.comment.findUnique({
       where: {
-        id: Number(ref)
-      }
+        id: Number(ref),
+      },
     });
-    if(actu) {
+    const connectedComments = await prismaClient.comment.findMany({
+      where: {
+        commentId: actu.id,
+      },
+    });
+    if (actu) {
       const clientActu = {
-        link: actu.rawLink,
+        link: actu.url,
         file: actu.file ?? actu.file,
         meta: actu.meta,
         content: actu.content,
+        replies: connectedComments,
+      };
+      if (
+        actu.ip === req.ip ||
+        (typeof req.session.Auth.authenticated === 'boolean' &&
+          req.session.Auth.authenticated)
+      ) {
+        return res.redirect(`/actu?root=${true}&ref=${actu.id}`);
       }
-      if(actu.ip === req.ip) {
-        return res.redirect(`/actu?root=${actu.ip}&ref=${actu.id}`);
-      }
-      return res.view('/src/views/components/actu.ejs', {data: clientActu});
+      return res.view('/src/views/components/actu.ejs', { data: clientActu });
     }
     return res.code(404);
   }
-}
+};

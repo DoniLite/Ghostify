@@ -1,12 +1,10 @@
 import { ee } from "../server";
 import { prismaClient } from "../config/db";
 import { Post } from "index";
-// import { schedule, validate, getTasks } from "node-cron";
+import cron from "node-cron";
 
 
 export const PosterTask = async () => {
-  let resFunc;
-  let utilsDate;
   // let dom: HTMLAllCollection;
   // dom.length
 
@@ -18,45 +16,35 @@ export const PosterTask = async () => {
     // const regex = new RegExp('\\');
     const taskRunner = await makeSomeThingWithPosts(postFilter);
     if (!taskRunner) {
-      utilsDate = 60 * 60 * 6 * 1000;
-      console.log(utilsDate);
       ee.emit(
         "evrymorningAndNyTask",
         "Error during running the task it will be schedule for later execution"
       );
-      return resFunc = setTimeout(async () => {
-        await PosterTask();
-      }, utilsDate);
+      return cron.schedule('', PosterTask);
     }
-    utilsDate = 60 * 60 * 6 * 1000;
     ee.emit("evrymorningAndNyTask", `last execution time: ${date.getHours()}`);
     date.setHours(date.getHours() + 6);
     ee.emit(
       "evrymorningAndNyTask",
       `next execution time: ${date.getHours()}`
     );
-    return (resFunc = setTimeout(async () => {
-      await PosterTask();
-    }, utilsDate));
+    return cron.schedule('', PosterTask);
   }
   ee.emit("evrymorningAndNyTask", "It's look like time it not properly scheduling for later execution");
   ee.emit("evrymorningAndNyTask", `last verification time: ${date.getHours()}`);
   date.setHours(date.getHours() + 6);
   ee.emit("evrymorningAndNyTask", `next verification time: ${date.getHours()}`);
-  utilsDate = 60 * 60 * 6 * 1000;
-  return resFunc = setTimeout(async () => {
-    await PosterTask();
-  }, utilsDate);
+  return cron.schedule('', PosterTask);
 };
 
 
-export const ActuTask = async() => {
-  let resFunc;
-  let utilsDate;
-  const actu = await prismaClient.actu.findMany()
-  const date = new Date();
+// export const ActuTask = async() => {
+//   let resFunc;
+//   let utilsDate;
+//   const actu = await prismaClient.comment.findMany()
+//   const date = new Date();
   
-}
+// }
 
 type MakeSomeThingCb<D, T = void> = (payload: D) => T | ((payload: D) => Promise<T>)
 
@@ -72,11 +60,12 @@ async function makeSomeThingWithPosts<T>(fn?: MakeSomeThingCb<Post[], T>) {
     console.log(posts);
     return true;
   } catch (e) {
+    console.error(e);
     return false;
   }
 }
 
-type FilteredPosts = {
+interface FilteredPosts {
   safe: Post[] | undefined,
   unsafe: Post[] | undefined,
 }

@@ -6,33 +6,136 @@
     <title>Ghostify</title>
     <link rel="stylesheet" href="/static/all.min.css" />
     <link rel="icon" type="image/svg+xml" href="/static/SVG/gostify.svg" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    />
     <link rel="stylesheet" href="/static/output.css" />
-    <%- include('h') %>
+    <%- include('../h.ejs') %>
   </head>
 
   <body>
-    <% if (service === 'blog') { %>
-      <div
-        id="navHead"
-        class="w-full h-16 flex items-center justify-between bg-gray-950 text-white p-4"
-      >
-        <h1 class="text-white font-bold text-3xl">Poster</h1>
+    <nav
+      id="rawHeaderNav"
+      class="fixed right-0 top-0 transition-all z-50 translate-x-[200%] lg:w-[40%] w-[80%] bg-gray-950 p-4 text-gray-400"
+    >
+      <ul class="flex flex-col gap-4 w-full">
+        <div id="NavCloserBtn" class="absolute right-3">
+          <i class="fa-solid fa-xmark fa-lg"></i>
+        </div>
+        <% if (typeof auth !== 'undefined' && auth === true) { %>
+        <div class="flex gap-x-4">
+          <a
+            href="/user"
+            class="p-1 rounded-full border-2 w-8 h-8 flex justify-center items-center border-white"
+          >
+            <img
+              class="object-cover"
+              src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
+              alt="icon"
+            />
+          </a>
+          user
+        </div>
+        <% } %>
+        <a
+          class="flex items-center font-bold text-red-950 cursor-pointer hover:text-red-950 transition-all"
+          href="/home"
+        >
+          <i class="fa-solid fa-ghost mr-3"></i>
+          <% if (service === 'blog') { %> Poster->Ghost <% } else if (service
+          ==='api') { %> APIs->Ghost <% } else { %> Ghost <% } %>
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/home?pagination=1"
+        >
+          <i class="fa-solid fa-diagram-project mr-3"></i>
+          Projects
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/home?pagination=2"
+        >
+          <i class="fa-solid fa-at mr-3"></i>
+          Meta-Hub
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/home?pagination=3"
+        >
+          <i class="fa-solid fa-blog mr-3"></i>
+          Blog
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/home?pagination=4"
+        >
+          <i class="fa-solid fa-flask-vial mr-3"></i>
+          Tester & GAMES
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/home?pagination=5"
+        >
+          <i class="fa-solid fa-mug-saucer mr-3"></i>
+          Contact
+        </a>
+      </ul>
+    </nav>
+    <% if (typeof auth !== 'undefined') { %> <% if (service === 'blog') { %>
+    <div
+      id="navHead"
+      class="w-full h-16 fixed top-0 flex items-center justify-between bg-gray-950 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl">Poster</h1>
+      <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
+        <% if (typeof writterMode !== 'undefined' && writterMode === true) { %>
         <i
           class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
         ></i>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
       </div>
-    <% }  else if (service === 'api') {%>
-      <div
-        id="navHead"
-        class="w-full h-16 flex items-center justify-between bg-orange-500 text-white p-4"
-      >
-        <h1 class="text-white font-bold text-3xl">Ghostify APIs</h1>
+    </div>
+    <% } else if (service === 'api') {%>
+    <div
+      id="navHead"
+      class="w-full h-16 fixed top-0 flex items-center justify-between bg-orange-500 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl">Ghostify APIs</h1>
+      <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
+        <% if (typeof testerMode !== 'undefined' && testerMode === true) { %>
         <i
-          class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+          class="fa-solid fa-terminal fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
         ></i>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
       </div>
-    <% } %>
+    </div>
+    <% } else { %>
+    <div
+      id="navHead"
+      class="w-full fixed top-0 h-16 flex items-center justify-between bg-blue-800 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl"><%= title %></h1>
+      <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
+        <% if (typeof testerMode !== 'undefined' && testerMode === true) { %>
+        <i
+          class="fa-solid fa-terminal fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+        ></i>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
+      </div>
+    </div>
+    <% } %> <% } %>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+<div class="w-full p-3">
+  <div
+    class="w-[80%] lg:w-[20%] p-3 rounded-lg shadow-lg flex justify-center flex-col gap-y-6 fixed left-4 translate-x-[-200%] top-[20%] bg-gray-950 transition-all text-white font-bold"
+    id="newDocumentRequester"
+  >
+    <div class="flex justify-between w-full">
+      <a class="flex items-center cursor-pointer gap-x-3" href="/poster/new?service=<%= service %>">
+        <img src="/static/SVG/file.svg" alt="doc-icon" class="w-8 h-8" />
+        Nouveau document / article
+      </a>
+      <div id="actionCloser" class=" p-2 cursor-pointer">
+        <i class="fa-solid fa-xmark fa-lg text-white"></i>
+      </div>
+    </div>
+    <a class="flex items-center cursor-pointer gap-x-3" href="/poster/convert">
+      <img src="/static/SVG/convert.svg" alt="doc-icon" class="w-8 h-8" />
+      Convertisseur
+    </a>
+  </div>
+  <h1 class="font-bold mb-4 text-2xl">Documents récents</h1>
+  <div class="flex sm:gap-x-8 gap-y-4 gap-x-2 mx-auto w-[90%] lg:w-full flex-wrap">
+    <div
+      id="posterNewAction"
+      class="p-3 rounded-md w-16 flex h-16 justify-center cursor-pointer items-center bg-gray-950"
+    >
+      <i class="fa-solid fa-plus fa-2xl text-white text-center"></i>
+    </div>
+
+    <div class="flex flex-col gap-y-1">
+      <div
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img src="/static/SVG/word.svg" alt="doc-icon" class="object-cover" />
+      </div>
+      <small class="font-bold text-gray-950 text-center w-full"
+        >document#1</small
+      >
+    </div>
+
+    <div class="flex flex-col gap-y-1">
+      <div
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img src="/static/SVG/pdf.svg" alt="doc-icon" class="object-cover" />
+      </div>
+      <small class="font-bold text-gray-950 text-center w-full"
+        >Le document</small
+      >
+    </div>
+
+    <div class="flex flex-col gap-y-1">
+      <div
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img src="/static/SVG/csv.svg" alt="doc-icon" class="object-cover" />
+      </div>
+      <small class="font-bold text-gray-950 text-center w-full"
+        >Le document</small
+      >
+    </div>
+
+    <div class="flex flex-col gap-y-1">
+      <div
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img
+          src="/static/SVG/powerPoint.svg"
+          alt="doc-icon"
+          class="object-cover"
+        />
+      </div>
+      <small class="font-bold text-gray-950 text-center w-full"
+        >Le document</small
+      >
+    </div>
+
+    <div class="flex flex-col gap-y-1">
+      <div
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img src="/static/SVG/excel.svg" alt="doc-icon" class="object-cover" />
+      </div>
+      <small class="font-bold text-gray-950 text-center w-full"
+        >Le document</small
+      >
+    </div>
+  </div>
+</div>
+<script type="module" src="/static/script/posterHome.js"></script>

@@ -6,7 +6,7 @@ import fromBody from '@fastify/formbody';
 import session from '@fastify/session';
 import fastifyCookie from '@fastify/cookie';
 import path from 'node:path';
-import { prismaClient } from './config/db';
+import { prismaClient, redisStoreClient } from './config/db';
 import { ReqParams } from './@types';
 import { index } from './routes';
 import cors from '@fastify/cors';
@@ -19,16 +19,17 @@ import { store } from './controller/store';
 import { notifications } from './controller/notifications';
 import { webhooks } from './controller/webhooks';
 import { sessionStorageHook } from './hooks/sessionStorage';
-import { about, license, policy, terms } from './routes/assets';
-import { stats } from './hooks/statCounter';
+import { about, conditions, FAQ, license, policy, terms } from './routes/assets';
+// import { stats } from './hooks/statCounter';
 import { articlePost } from './controller/articlePost';
 import { projectPost } from './controller/projectPost';
 import { article } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
-import { encrypt, saveStatistic } from './utils';
+import { loadKeys } from './utils';
 import {
   authController,
   connexion,
+  disconnection,
   registrationController,
   registrationView,
   serviceHome,
@@ -45,11 +46,19 @@ import { cv } from './controller/cv';
 import multipart from '@fastify/multipart';
 import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
+import fastifyRedis from '@fastify/redis';
+import RedisStore from 'connect-redis';
+import { setUp } from './hooks/setup';
+
+
+const Store = new RedisStore({
+  client: redisStoreClient
+});
 
 export const ee = new EventEmitter();
 const protectedRoutes = [
   '/api/v1',
-  '/api/v1/auth',
+  '/api/v1/register',
   '/api/v1/playground',
   '/api/v1/poster/save',
   '/api/notifications',
@@ -73,7 +82,7 @@ server.addHook('onRequest', async (req, res) => {
     } catch (err) {
       if (process.env.NODE_ENV == 'production') {
         res.send({
-          err: "Une erreur s'est produite i se peut que vous ne soyez pas disposé à accéder à ceci",
+          err: "Une erreur s'est produite il se peut que vous ne soyez pas disposé à accéder à ceci",
         });
       }
       res.send(err);
@@ -81,28 +90,12 @@ server.addHook('onRequest', async (req, res) => {
   }
 });
 
-server.addHook('onResponse', async (req, res) => {
-  const cookieExpriration = new Date();
-  cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
-  req.session.Token = encrypt(
-    Date.now().toString(),
-    req.session.ServerKeys.secretKey,
-    req.session.ServerKeys.iv
-  );
-  res.setCookie('connection_time', req.session.Token, {
-    expires: cookieExpriration,
-  });
-});
-
-server.addHook('preHandler', stats);
-server.addHook('preSerialization', async (req) => {
-  await saveStatistic(req.session.Stats);
-});
 server.addHook('preHandler', sessionStorageHook);
 
+// server.addHook('onResponse', stats);
+
 export const tokenGenerator = (payload: string) => {
-  const token = server.jwt.sign({ payload });
-  return token;
+  return server.jwt.sign({ payload });
 };
 
 server.register(fastifyJwt, {
@@ -119,6 +112,7 @@ server.register(fastifyJwt, {
 // const uploadPath = path.join(dPath, name);
 //   await pump(part.file, fs.createWriteStream(uploadPath));
 // }
+server.register(fastifyRedis, { host: '127.0.0.1' });
 server.register(
   multipart
   // { attachFieldsToBody: true, onFile }
@@ -132,6 +126,9 @@ server.register(async (fastify) => {
     });
     socket.on('message', async (mes) => {
       console.log(JSON.parse(mes.toString()));
+    });
+    socket.on('data', async (data) => {
+      console.log(data);
     });
   });
 });
@@ -156,10 +153,10 @@ server.register(fastifyCookie);
 server.register(session, {
   secret: process.env.SESSION_SECRET,
   cookie: {
-    secure: false, // true in production for HTTPS
+    secure: 'auto', // true in production for HTTPS
   },
-  // saveUninitialized: false,
-  // cookieName: "sessionId",
+  cookieName: "sessionId",
+  store: Store,
 });
 
 // routes...
@@ -175,7 +172,9 @@ server.setNotFoundHandler((req, res) => {
   res.view('/src/views/404.ejs');
 });
 server.get('/auth/token', async (req, res) => {
-  const userId = req.session.UserId;
+  if(req.session.Auth.isSuperUser && req.session.SuperUser) 
+    return res.send(JSON.stringify({ token: req.session.SuperUser.token }));
+  const userId = req.session.Auth.login;
   const user = await prismaClient.user.findUnique({
     where: {
       email: userId,
@@ -218,6 +217,8 @@ server.get('/api/token', async (req, res) => {
 // Pages...
 server.get('/article', article);
 server.get('/terms', terms);
+server.get('/conditions', conditions);
+server.get('/FAQ', FAQ);
 server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
@@ -240,6 +241,7 @@ server.get('/cvMaker', cv);
 server.get('/api/webhooks', webhooks);
 server.post('/api/store', store);
 server.post('/api/notifications', notifications);
+server.get('/disconnection', disconnection);
 
 // Components...
 server.get('/components/poster', requestComponent);
@@ -256,15 +258,14 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
 
   // log the result of the request
   // console.log(rep)
-  ee.on('stats', async (e) => {
-    console.log(JSON.parse(e));
-    // await saveStatistic(JSON.parse(e));
-  });
+  // 
   process.nextTick(async () => {
     ee.emit('evrymorningAndNyTask', 'begenning the task...');
     // const urls = await prismaClient.url.findMany();
     // const respFTask = await PosterTask();
     // console.log(respFTask);
+    const keys = await loadKeys();
+    await setUp(keys.secretKey, keys.iv, tokenGenerator);
   });
   for await (const event of on(ee, 'evrymorningAndNyTask')) {
     console.log(event);

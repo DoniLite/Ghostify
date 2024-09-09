@@ -1,16 +1,24 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import {} from '@prisma/client'
 import { BodyXData } from "../@types";
+import { prismaClient } from "../config/db";
+import crypto from 'node:crypto'
 
-type Assets = {
-  type: string;
+interface Assets {
+  type: 'Component' | 'Script' | 'Page' | 'Snippet';
   content: string;
   title: string;
-  indexed: boolean;
-  indexerId: number | null;
-};
+  uid: string | undefined;
+}
 
 export const assetPoster = async (req: FastifyRequest, res: FastifyReply) => {
-    const {title, type, content} = req.body as BodyXData<Assets>;
-    
+    const {title, type, content, uid} = req.body as BodyXData<Assets>;
+    const newAsset = await prismaClient.assets.create({
+      data: {
+        title: title,
+        type: type,
+        content: content,
+        uid: typeof uid === 'undefined' ? crypto.randomBytes(80).toString('hex') : uid,
+      }
+    });
+    return res.send(JSON.stringify({assetLink: `/asset?ref=${newAsset.uid}`}))
 }

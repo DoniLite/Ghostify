@@ -1,8 +1,4 @@
-import {
-  ImageAnalysisResult,
-  month,
-  StatsData,
-} from './@types';
+import { ImageAnalysisResult, month, StatsData } from './@types';
 import fs, { promises as fsP } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -13,6 +9,31 @@ import Tesseract from 'tesseract.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import ejs from 'ejs';
+// import html2pdf from 'html2pdf.js';
+
+export enum DocInputFormat {
+  MicrosoftWord = '.docx',
+  OpenDocumentText = '.odt',
+  RichtTextFormat = '.rtf',
+  PlainText = '.txt',
+  MicrosoftExcel = '.xlsx',
+  OpenDocumentSpreadsheet = '.ods',
+  CommaSeparatedValues = '.csv',
+  MicrosoftPowerPoint = '.pptx',
+  OpenDocumentPresentation = '.odp',
+  PortableDocumentFormat = '.pdf',
+  HypertextMarkupLanguage = '.html',
+}
+
+
+export enum DocOutputFormat {
+  PNG = '.png',
+  JPEG = '.jpeg',
+  PlainText = '.txt',
+  PortableDocumentFormat = '.pdf',
+  HypertextMarkupLanguage = '.html',
+}
 
 export const unify = async (str: string) => {
   const window = new JSDOM('').window;
@@ -20,6 +41,32 @@ export const unify = async (str: string) => {
   const result = await marked(str);
   const clean = purify.sanitize(result);
   return clean;
+};
+
+export enum Can {
+  CreateUser = 'createUser',
+  MakeComment = 'makeComment',
+  CRUD = 'crud',
+  UpdateCirtificate = 'updateCirtificate',
+  MakeSecureAction = 'makeSecureAction',
+  NotDefined = 'notDef',
+}
+
+export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
+  const keys = [] as string[];
+  if (typeof obj['title'] === 'string') {
+    obj['title'].split(' ').forEach((key) => keys.push(key));
+  }
+  if (typeof obj['description'] === 'string') {
+    obj['description'].split(' ').forEach((key) => keys.push(key));
+  }
+  if (typeof obj['desc'] === 'string') {
+    obj['desc'].split(' ').forEach((key) => keys.push(key));
+  }
+  if (typeof obj['content'] === 'string') {
+    obj['content'].split(' ').forEach((key) => keys.push(key));
+  }
+  return keys.includes(k);
 };
 
 export async function analyzeImage(
@@ -401,3 +448,159 @@ export const graphicsUploader = () => {
 
   return 'Night' as const;
 };
+
+
+export const termsMD = `
+# 📝 **Terms of Service**
+
+Welcome to our platform! We’re thrilled to have you here. Please take a moment to read through our terms before using our services.
+
+---
+
+## 1. **🎯 Acceptance of Terms**
+
+By accessing or using our services, you agree to these terms. If you don’t agree, feel free to close this page or contact us for more information.
+
+---
+
+## 2. **🔐 User Responsibilities**
+
+You are responsible for keeping your account information safe. Ensure your password is strong, and if you detect any suspicious activity, notify us immediately.
+
+---
+
+## 3. **🔄 Changes to Services**
+
+We may update or modify the services as needed. We’ll try to notify you beforehand, but some changes may occur without prior notice.
+
+---
+
+## 4. **⚖️ Limitation of Liability**
+
+We are not liable for any damages resulting from the use or inability to use the service. This includes, but is not limited to, loss of data, indirect damages, or technical issues.
+
+---
+
+## 5. **💬 Contact Us**
+
+If you have any questions, suggestions, or feedback, don’t hesitate to contact us via **<support@ghostify.site>** or **[contact](/home?pagination=5)**.
+`;
+
+export const conditionsMD = `
+# 📑 **Conditions d'Utilisation**
+
+Bienvenue ! En utilisant nos services, vous acceptez de respecter les conditions ci-dessous. Prenez le temps de bien les lire !
+
+---
+
+## 1. **👤 Accès au Service**
+
+Nos services sont réservés aux utilisateurs majeurs. Si vous avez moins de 18 ans, l'accord parental est nécessaire.
+
+---
+
+## 2. **🔑 Compte et Sécurité**
+
+Vous devez garder vos informations de connexion confidentielles. Si vous remarquez une utilisation non autorisée de votre compte, contactez-nous immédiatement.
+
+---
+
+## 3. **📜 Contenu Utilisateur**
+
+Tout contenu que vous publiez sur notre plateforme vous appartient, mais vous nous accordez le droit de l'utiliser pour améliorer notre service. Nous nous réservons également le droit de supprimer tout contenu inapproprié.
+
+---
+
+## 4. **🔄 Modifications des Conditions**
+
+Nous pouvons mettre à jour ces conditions à tout moment. Vous serez averti par e-mail ou via une notification sur notre site.
+
+---
+
+## 5. **📧 Nous Contacter**
+
+Pour toute question, vous pouvez nous joindre à **<contact@votre-site.com>**.
+`;
+
+export const privacyMD = `
+# 🔐 **Privacy Policy**
+
+Your privacy is our priority. Here’s how we handle your data and ensure its protection.
+
+---
+
+## 1. **📊 Data Collection**
+
+We collect information to make your experience better. This may include your name, email, and how you interact with our services.
+
+---
+
+## 2. **🔍 How We Use Your Data**
+
+Your data is used to personalize your experience, such as recommending content and sending notifications about updates.
+
+---
+
+## 3. **🤝 Third-Party Sharing**
+
+We don’t sell your data to third parties. However, we may share information with partners who assist in improving our services, under strict confidentiality agreements.
+
+---
+
+## 4. **🔒 Your Rights**
+
+You have full control over your data! You can request access, correction, or deletion of your personal information at any time.
+
+---
+
+## 5. **📬 Questions or Concerns?**
+
+Feel free to contact our privacy team at **<privacy@yourwebsite.com>** for any questions.
+
+`;
+
+export const FAQMD = `
+# ❓ **Frequently Asked Questions (FAQ)**
+
+We’ve compiled answers to some of the most common questions from our users. If you can’t find the answer here, feel free to reach out!
+
+---
+
+## 1. **📥 How do I create an account?**
+
+Creating an account is easy! Simply click the **Sign Up** button on the top right, fill in the required details, and you’re good to go.
+
+---
+
+## 2. **🔐 Is my personal information secure?**
+
+Absolutely! We follow industry-leading practices to keep your data safe. Check out our [Privacy Policy](#) for more information.
+
+---
+
+## 3. **💳 Can I change my subscription plan?**
+
+Yes! You can upgrade, downgrade, or cancel your subscription anytime via the **Account Settings** page.
+
+---
+
+## 4. **💬 Who can I contact for support?**
+
+Our support team is available 24/7. You can reach them via **<support@yourwebsite.com>** or the chat feature in the bottom-right corner of our site.
+
+---
+
+## 5. **🚀 How can I improve my experience on the platform?**
+
+Make sure to check out our latest updates and follow us on social media for tips and tricks to enhance your experience!
+
+`;
+
+export const cvDownloader = async (options: Record<string, unknown>) => {
+  const compiledCv = await ejs.renderFile('./views/components/cv.ejs', {...options});
+  const dom = new JSDOM(compiledCv , {
+    resources: 'usable',
+    runScripts: 'dangerously'
+  });
+  dom.window.eval(``);
+}

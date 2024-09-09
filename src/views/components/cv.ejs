@@ -1,191 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CV - NOGBEDZI Yao Messan Mawuena</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        color: #333;
-      }
-
-      .container {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      header {
-        @apply flex w-full justify-between;
-      }
-      .header-meta {
-        text-align: center;
-        border-bottom: 2px solid #333;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-      }
-      .header-meta h1 {
-        margin: 0;
-      }
-
-      .header-meta p {
-        margin: 5px 0;
-      }
-
-      section {
-        margin-bottom: 20px;
-      }
-
-      section h2 {
-        background-color: #333;
-        color: #fff;
-        padding: 10px;
-        margin: 0 -20px;
-        text-transform: uppercase;
-      }
-
-      section ul {
-        list-style-type: none;
-        padding: 0;
-      }
-
-      section ul li {
-        padding: 5px 0;
-      }
-
-      h3 {
-        color: #333;
-        margin-bottom: 10px;
-      }
-
-      a {
-        color: #333;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <header>
-        <div id="profilPhoto" class=" w-24 h-24">
-            <img src="/static/img/random1.png" alt="" class="w-full h-full object-cover">
+<%- include('rawHeader.ejs') %>
+<div class="w-[90%] p-3 bg-white shadow-lg mx-auto mt-4">
+  <!-- Group 1 -->
+  <div class="grid grid-cols-[40%,60%] gap-0">
+    <!-- Section Présentation -->
+    <div
+      class="bg-gray-500 text-black p-4 flex flex-col gap-y-3 justify-center"
+    >
+      <h1 class="text-4xl font-bold text-neutral-900">Doni Lite</h1>
+      <div class="w-16 h-[2px] bg-black"></div>
+      <div class="mt-4 flex flex-col gap-y-4 p-4">
+        <div class="flex gap-x-6 items-center font-bold">
+          <img
+            src="/static/SVG/envelopeN.svg"
+            class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
+            alt=""
+          />
+          donilite@gmail.com
         </div>
-        <div class="header-meta">
-          <div class="flex w-full">
-            <h1 class="w-[90%]">NOGBEDZI Yao Messan Mawuena</h1>
-            <div id="editHeader">
-            <i class="fa-regular fa-pen-to-square fa-xl text-gray-950"></i>
-          </div>
-          </div>
-          <p>Residence: Burkina Faso,Bobo-Dioulasso</p>
-          <p>
-            Email:
-            <a href="mailto:nogbedziyaomessan13@gmail.com"
-              >nogbedziyaomessan13@gmail.com</a
-            >
-          </p>
-          <p>Projects: https://github.com/DoniLite</p>
-          <p>Phone: +226 07224034</p>
+
+        <div class="flex gap-x-6 items-center font-bold">
+          <img
+            src="/static/SVG/phone.svg"
+            class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
+            alt=""
+          />
+          +226 07 22 40 34
         </div>
-      </header>
-      <section>
-        <h2>Web Developer</h2>
-        <p>
-          Passionate about web development with proficiency in JavaScript and
-          Python, I am eager to bring my expertise and enthusiasm for innovation
-          to a dynamic team. Skilled in both front-end and back-end projects, I
-          am driven by technical challenges and continuous learning.
-        </p>
-      </section>
-      <section>
-        <h2>Technical Skills</h2>
-        <ul>
-          <li>
-            <strong>Programming Languages:</strong> JavaScript, TypeScript,
-            Python
-          </li>
-          <li>
-            <strong>Frameworks and Libraries:</strong> React, Node.js, Express,
-            React Native, Flask
-          </li>
-          <li><strong>Web Technologies:</strong> HTML5, CSS3, RESTful APIs</li>
-          <li><strong>Databases:</strong> MongoDB</li>
-          <li><strong>Version Control Tools:</strong> Git, GitHub</li>
-          <li>
-            <strong>Development Tools:</strong>TailwindCSS, Prisma, Babel,
-            ESLint
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h2>Professional Experience</h2>
-        <h3>Freelance Web Developer (3 years)</h3>
-        <ul>
-          <li>
-            Developed interactive web applications using React and Node.js.
-          </li>
-          <li>Created content management websites with Express and MongoDB.</li>
-          <li>Integrated APIs and managed databases.</li>
-          <li>Optimized performance and resolved bugs.</li>
-        </ul>
-      </section>
-      <section>
-        <h2>Personal Projects</h2>
-        <ul>
-          <li>
-            <strong>Content Management Application:</strong> Developed a content
-            management platform using Node.js, Express, and MongoDB.
-          </li>
-          <li>
-            <strong>Interactive Web Application:</strong> Created an interactive
-            web application with React to enhance user experience.
-          </li>
-          <li>
-            <strong>Personal Portfolio:</strong> Designed and developed an
-            online portfolio to showcase my projects and skills.
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h2>Education</h2>
-        <ul>
-          <li><strong>Web Development Certifications</strong> (Mimo dev)</li>
-          <li><strong>Advanced JavaScript Certification</strong></li>
-          <li><strong>Python for Web Development Certification</strong></li>
-        </ul>
-      </section>
-      <section>
-        <h2>Continuous Learning</h2>
-        <p>
-          Online courses on Udemy for React, Node.js, and Django technologies
-        </p>
-      </section>
-      <section>
-        <h2>Languages</h2>
-        <ul>
-          <li><strong>French:</strong> Fluent</li>
-          <li><strong>English:</strong> Intermediate (improving)</li>
-        </ul>
-      </section>
-      <section>
-        <h2>Interests</h2>
-        <ul>
-          <li>Programming and new technologies</li>
-          <li>Music and manga</li>
-          <li>Learning languages</li>
-        </ul>
-      </section>
+
+        <div class="flex gap-x-6 items-center font-bold">
+          <img
+            src="/static/SVG/location-dot.svg"
+            class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
+            alt=""
+          />
+          Bobo-Dioulasso
+        </div>
+
+        <div class="flex gap-x-6 items-center font-bold">
+          <img
+            src="/static/SVG/calendar.svg"
+            class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
+            alt=""
+          />
+          12 juin 1999
+        </div>
+      </div>
     </div>
+    <!-- Profile container -->
+    <div class=" p-8 bg-gray-300">
+      <!-- Section profile -->
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4">Profile</h1>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quos
+        voluptatibus quis dolores ipsum tempore illum aut incidunt similique
+        aliquid, laborum exercitationem consequatur recusandae explicabo
+        ducimus? Nulla non itaque totam iure, deleniti explicabo, animi autem,
+        tempora temporibus culpa a quia ipsum adipisci id nisi nam. Sapiente,
+        accusantium. Alias rerum quis reprehenderit illum eum cum laborum
+        quibusdam ipsam aliquid. Totam tenetur necessitatibus molestiae autem
+        quidem in assumenda pariatur, adipisci esse perspiciatis, dignissimos
+        magni aspernatur rerum magnam odio voluptatibus blanditiis nisi? Natus
+        dolore ipsa veniam iusto nesciunt illo, obcaecati possimus, eos magni
+        officia ea ut error eum molestias, exercitationem enim numquam nihil
+        iure!
+      </p>
+    </div>
+  </div>
+  <!-- Group 2 -->
+  <div class="grid grid-cols-[40%,60%] gap-0">
+    <div class="bg-gray-300 text-black p-4 flex flex-col gap-y-3">
+      <!-- Section compétences -->
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Compétences</h1>
+      <ul class=" list-disc flex flex-col ml-8 gap-y-4 mb-4">
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+      </ul>
+      <!-- Section formations -->
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Formations</h1>
+      <div class="flex flex-col gap-y-1 mb-2">
+        <h3 class=" font-bold">Bac série D</h3>
+        <p>Lorem ipsum dolor sit amet. : 2022</p>
+      </div>
 
+       <div class="flex flex-col gap-y-1 mb-2">
+        <h3 class=" font-bold">Bac série D</h3>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore, fugit. : 2022</p>
+      </div>
+
+       <div class="flex flex-col gap-y-1 mb-2">
+        <h3 class=" font-bold">Bac série D</h3>
+        <p>Lorem ipsum dolor sit amet. : 2022</p>
+      </div>
+
+       <div class="flex flex-col gap-y-1 mb-2">
+        <h3 class=" font-bold">Bac série D</h3>
+        <p>Lorem ipsum dolor sit amet. : 2022</p>
+      </div>
+    </div>
+    <div class="bg-white text-black p-4 flex flex-col gap-y-3 ">
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Expérience</h1>
+      <div class="flex flex-col gap-y-4 mb-2">
+        <h3 class=" text-center text-lg font-bold">Developpeur</h3>
+        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-y-4 mb-2">
+        <h3 class=" text-center text-lg font-bold">Security</h3>
+        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="flex flex-col gap-y-4 mb-2">
+        <h3 class=" text-center text-lg font-bold">Security</h3>
+        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+
+          <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
+            <span>3 ans</span>
+          </li>
+        </ul>
+      </div>
+
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Centres d'intéret</h1>
+      <ul class=" list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
+        <li>Musique</li>
+        <li>Sport</li>
+        <li>Basket-ball</li>
+        <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, eaque?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<%- include('rawFooter.ejs') %>

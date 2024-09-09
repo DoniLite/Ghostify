@@ -5,31 +5,18 @@ declare module "node-cron" {
     stop(): void;
   }
 
-  class BackgroundScheduledTask {}
-
   function validation(pattern: string): void;
 
-  function storage(): {
-    save: (task: any) => void;
-    getTasks: () => any;
-  };
-
-  export type CronScheduleOptions = {
+  export interface CronScheduleOptions {
     scheduled?: boolean | undefined;
     timezone?: string | undefined;
-  };
+  }
 
   function schedule(
     expression: string,
-    func: Function,
+    func: Promise<unknown> | ((...args: [])=> unknown),
     options?: CronScheduleOptions | undefined
   ): ScheduledTask;
-
-  function createTask(
-    expression: any,
-    func: any,
-    options: any
-  ): BackgroundScheduledTask | ScheduledTask;
 
   function validate(expression: string): boolean;
 

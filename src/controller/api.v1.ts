@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { BodyXData, QueryXData } from '../@types';
+import { BodyXData, QueryXData } from 'index';
 import {
   decrypt,
   encrypt,
@@ -8,9 +8,13 @@ import {
 } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
+import { SuperUser } from '../class/SuperUser';
+import { Can } from '../utils';
+
+const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
 interface PosterQuery {
-  email: string;
+  login: string;
   password: string;
   permission: Service;
 }
@@ -19,18 +23,56 @@ export const authController = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { email, password, permission } = req.body as BodyXData<PosterQuery>;
+  const { login, password, permission } = req.body as BodyXData<PosterQuery>;
 
-  if (!email || !password || !permission)
+  console.log(req.body);
+  req.session.Auth = {
+    authenticated: false,
+  };
+
+  if (!login || !password || !permission)
     return res.code(400).send(JSON.stringify({ error: 'Invalid credentials' }));
 
   const user = await prismaClient.user.findUnique({
     where: {
-      email: email,
+      email: login,
     },
   });
 
-  if (!user) return res.code(404);
+  if (!user) {
+    const spltPass = password.split(';');
+    if (
+      (spltPass[1] === SUPER_USER_PASS_CODE && permission === Service.api) ||
+      permission === Service.blog
+    ) {
+      try {
+        const Su = new SuperUser(login, spltPass[0]);
+        Su.checkPermissions();
+        req.session.SuperUser = Su;
+        req.session.Auth = {
+          authenticated: true,
+          isSuperUser: true,
+        };
+        const cookieExpriration = new Date();
+        cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+        req.session.Token = encrypt(
+          cookieExpriration.getTime().toString(),
+          req.session.ServerKeys.secretKey,
+          req.session.ServerKeys.iv
+        );
+        res.setCookie('connection_time', req.session.Token, {
+          expires: cookieExpriration,
+        });
+        return res.redirect(
+          `/service?userId=${Su.userString}&service=${permission}`
+        );
+      } catch (e) {
+        console.error(e);
+        return res.code(404).send('error during service connection');
+      }
+    }
+    return res.code(404).send('error during service connection');
+  }
 
   const truePassword = decrypt(
     user.password,
@@ -40,8 +82,25 @@ export const authController = async (
 
   if (truePassword !== password) return res.code(403).send('invalid password');
 
-  if (permission === Service.blog || permission === Service.api)
-    return res.view('/src/views/serviceHome.ejs', { service: permission });
+  if (permission === Service.blog || permission === Service.api) {
+    req.session.Auth = {
+      authenticated: true,
+      isSuperUser: false,
+      login: login,
+      id: user.id,
+    };
+    const cookieExpriration = new Date();
+    cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+    req.session.Token = encrypt(
+      cookieExpriration.getTime().toString(),
+      req.session.ServerKeys.secretKey,
+      req.session.ServerKeys.iv
+    );
+    res.setCookie('connection_time', req.session.Token, {
+      expires: cookieExpriration,
+    });
+    return res.redirect(`/service?userId=${user.id}&service=${permission}`);
+  }
 
   return res.code(403).send('Not Matching Issue');
 };
@@ -52,7 +111,38 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
     service: Service;
   }>;
 
-  if (!userId || !service) return res.code(404);
+  const cookieExpriration = new Date();
+  cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+  req.session.Token = encrypt(
+    cookieExpriration.getTime().toString(),
+    req.session.ServerKeys.secretKey,
+    req.session.ServerKeys.iv
+  );
+  res.setCookie('connection_time', req.session.Token, {
+    expires: cookieExpriration,
+  });
+
+  if (!req.session.Auth.authenticated)
+    return res.code(403).send('you cannot access to this service');
+
+  if (!userId || !service) return res.code(404).send('invalid credentials');
+
+  if (!userId && !service) return res.code(404).send('invalid credentials');
+
+  if (
+    isNaN(Number(userId)) &&
+    req.session.Auth.isSuperUser &&
+    req.session.SuperUser
+  ) {
+    return res.view('/src/views/serviceHome.ejs', {
+      service: service,
+      auth: true,
+      data: { ...req.session.SuperUser },
+    });
+  }
+
+  if (isNaN(Number(userId)))
+    return res.code(404).send('invalide user information');
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -66,14 +156,15 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
       credits: true,
     },
   });
-  
-  if (!user) return res.redirect('/signin?service=blog');
 
   if (service !== Service.api && service !== Service.blog)
-    return res.redirect('/signin?service=blog');
+    return res.redirect(`/signin?service=${service}`);
+
+  if (!user) return res.code(404).send('failed to login');
 
   return res.view('/src/views/serviceHome.ejs', {
     service: service,
+    auth: true,
     data: { ...user },
   });
 };
@@ -147,6 +238,38 @@ export const registrationController = async (
   const { service, name, email, password } =
     req.body as BodyXData<RegisterPost>;
 
+  const spltPass = password.split(';');
+  if (spltPass.length > 1 && spltPass[1] === SUPER_USER_PASS_CODE) {
+    try {
+      const Su = new SuperUser(name, spltPass[0], false, [Can.CreateUser]);
+      Su.checkPermissions();
+      req.session.Auth = {
+        authenticated: true,
+        id: Number(Su.health),
+        login: Su.userString,
+        isSuperUser: true,
+      };
+      const cookieExpriration = new Date();
+      cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+      req.session.Token = encrypt(
+        cookieExpriration.getTime().toString(),
+        req.session.ServerKeys.secretKey,
+        req.session.ServerKeys.iv
+      );
+      res.setCookie('connection_time', req.session.Token, {
+        expires: cookieExpriration,
+      });
+      return res
+        .code(200)
+        .redirect(
+          `/service?userId=${req.session.Auth.login}&service=${service}`
+        );
+    } catch (e) {
+      console.error(e);
+      return res.code(403);
+    }
+  }
+
   if (service === 'blog') {
     try {
       const cryptedPassword = encrypt(
@@ -166,10 +289,31 @@ export const registrationController = async (
           token: token,
           password: cryptedPassword,
           registration: date,
+          permission: 'User',
         },
       });
       if (user) {
-        return res.redirect(200, '/poster');
+        req.session.Auth = {
+          authenticated: true,
+          id: user.id,
+          login: user.email,
+          isSuperUser: false,
+        };
+        const cookieExpriration = new Date();
+        cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+        req.session.Token = encrypt(
+          cookieExpriration.getTime().toString(),
+          req.session.ServerKeys.secretKey,
+          req.session.ServerKeys.iv
+        );
+        res.setCookie('connection_time', req.session.Token, {
+          expires: cookieExpriration,
+        });
+        return res
+          .code(200)
+          .redirect(
+            `/service?userId=${req.session.Auth.login}&service=${service}`
+          );
       }
     } catch (err) {
       console.log(err);
@@ -195,10 +339,31 @@ export const registrationController = async (
           token: token,
           password: cryptedPassword,
           credits: credits,
+          permission: 'User',
         },
       });
       if (user) {
-        return res.redirect(200, '/poster');
+        req.session.Auth = {
+          authenticated: true,
+          id: user.id,
+          login: user.email,
+          isSuperUser: false,
+        };
+        const cookieExpriration = new Date();
+        cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+        req.session.Token = encrypt(
+          cookieExpriration.getTime().toString(),
+          req.session.ServerKeys.secretKey,
+          req.session.ServerKeys.iv
+        );
+        res.setCookie('connection_time', req.session.Token, {
+          expires: cookieExpriration,
+        });
+        return res
+          .code(200)
+          .redirect(
+            `/service?userId=${req.session.Auth.login}&service=${service}`
+          );
       }
     } catch (err) {
       console.log(err);
@@ -224,10 +389,31 @@ export const registrationController = async (
           token: token,
           password: cryptedPassword,
           registration: date,
+          permission: 'User',
         },
       });
       if (user) {
-        return res.redirect(200, '/poster');
+        req.session.Auth = {
+          authenticated: true,
+          id: user.id,
+          login: user.email,
+          isSuperUser: false,
+        };
+        const cookieExpriration = new Date();
+        cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+        req.session.Token = encrypt(
+          cookieExpriration.getTime().toString(),
+          req.session.ServerKeys.secretKey,
+          req.session.ServerKeys.iv
+        );
+        res.setCookie('connection_time', req.session.Token, {
+          expires: cookieExpriration,
+        });
+        return res
+          .code(200)
+          .redirect(
+            `/service?userId=${req.session.Auth.login}&service=${service}`
+          );
       }
     } catch (err) {
       console.log(err);
@@ -244,4 +430,11 @@ export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
     return res.send(JSON.stringify({ error: 'Service not found' }));
   }
   return res.view('/src/views/signin.ejs', { service: service });
+};
+
+export const disconnection = async (req: FastifyRequest, res: FastifyReply) => {
+  req.session.Auth = {
+    authenticated: false,
+  };
+  return res.code(200).send(JSON.stringify({ success: true }));
 };

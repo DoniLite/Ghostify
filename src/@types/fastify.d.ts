@@ -1,6 +1,7 @@
 import 'fastify';
 import '@fastify/jwt';
 import { Auth, Service, StatsData } from '.';
+import { SuperUser } from '../class/SuperUser';
 
 declare module 'fastify' {
   interface jwt {
@@ -42,10 +43,10 @@ declare module 'fastify' {
       }[];
     };
     Stats?: StatsData;
-    UserId?: string;
     PersistedData?: string;
     Services?: Service;
-    Auth?: Auth
+    Auth?: Auth;
+    SuperUser?: SuperUser;
   }
 
 }

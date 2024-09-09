@@ -1,3 +1,21 @@
-<div>
-    <%= content %>
-</div>
+<%- include('components/rawHeader.ejs') %>
+<link rel="stylesheet" href="/static/md.css" />
+<div class="markdown-content"><%- content %></div>
+<script type="module" src="/static/script/md.js"></script>
+<script type="module" src="/static/all.min.js"></script>
+<script>
+  const rawHeaderNav = document.querySelector('#rawHeaderNav');
+  const NavCloserBtn = document.querySelector('#NavCloserBtn');
+  const rawHeadIcon = document.querySelector('#rawHeadIcon');
+
+  NavCloserBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    rawHeaderNav.classList.add('translate-x-[200%]');
+  });
+
+  rawHeadIcon.addEventListener('click', (e) => {
+    e.preventDefault();
+    rawHeaderNav.classList.remove('translate-x-[200%]');
+  });
+</script>
+<%- include('footer', { bg: 'bg-blue-800', text: 'text-white', title:'text-gray-300',}) %>

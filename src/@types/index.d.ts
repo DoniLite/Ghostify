@@ -18,6 +18,9 @@ import {
 } from 'apify-client';
 import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
 import sharp from 'sharp';
+import { prismaClient } from '../config/db';
+import { Can } from '../utils';
+export {Post} from '@prisma/client';
 
 export interface Service {
   APIs?: {
@@ -35,10 +38,41 @@ export interface Service {
   };
 }
 
+export interface UserActor {
+  checkPermissions(permissions: Can[]): void;
+}
+
+export interface Secrets {
+  key: Buffer;
+  iv: Buffer;
+}
+
+export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
+
+export type Inf<T extends Can[]> = T extends (
+  | Can.CRUD
+  | Can.CreateUser
+  | Can.MakeComment
+)[]
+  ? T[number] extends Can.CRUD
+    ? { data: typeof prismaClient }
+    : T[number] extends Can.CreateUser
+    ? { data: typeof prismaClient.user }
+    : T[number] extends Can.MakeComment
+    ? { data: typeof prismaClient.comment }
+    : unknown
+  : unknown;
+
+export interface Certificates {
+  pass: string;
+  health: string;
+  permissions: Can[];
+}
 
 export interface Auth {
   id?: number;
   login?: string;
+  isSuperUser?: boolean;
   authenticated: boolean;
 }
 
@@ -106,7 +140,7 @@ export interface CrawlerClient {
   ): Promise<StoreValue<T> | undefined>;
 }
 
-type FetchFn = typeof fetch;
+export type FetchFn = typeof fetch;
 
 export type RunOptions = Record<string, string>;
 
@@ -182,7 +216,7 @@ export interface StatsData {
   };
 }
 
-type month =
+export type month =
   | 'Janvier'
   | 'Février'
   | 'Mars'
@@ -206,21 +240,6 @@ export interface ImageAnalysisResult {
 
 export type timeOfJourney = 'Morning' | 'Midday' | 'Evening' | 'Night';
 
-export interface Post {
-  id: number;
-  title: string;
-  description: string;
-  safe: boolean;
-  date: Date;
-  toUpdate: boolean;
-  content: string | null;
-  published: boolean;
-  slug: string;
-  categoryId: number | null;
-  visites: bigint;
-  user: string | null;
-  fromApi: boolean;
-}
 
 export type PosterUserMeta = Record<
   string,

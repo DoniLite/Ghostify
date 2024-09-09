@@ -1,5 +1,13 @@
 import { prismaClient } from '../config/db';
-import { encrypt } from '../utils';
+import { conditionsMD, encrypt, FAQMD, privacyMD, termsMD, unify } from '../utils';
+
+const SETUP_ASSETS = Boolean(process.env.SETUP_ASSETS);
+const uids = [
+  'terms',
+  'conditions',
+  'policy',
+  'FAQ',
+] as const 
 
 export const setUp = async (
   secret: Buffer,
@@ -8,6 +16,66 @@ export const setUp = async (
 ) => {
   const login = process.env.ADMIN_LOGIN;
   const password = encrypt(process.env.ADMIN_PASSWORD, secret, iv);
+
+  [
+    await prismaClient.assets.findUnique({
+      where: {
+        uid: 'terms',
+      },
+    }),
+
+    await prismaClient.assets.findUnique({
+      where: {
+        uid: 'conditions',
+      },
+    }),
+
+    await prismaClient.assets.findUnique({
+      where: {
+        uid: 'policy',
+      },
+    }),
+
+    await prismaClient.assets.findUnique({
+      where: {
+        uid: 'FAQ',
+      },
+    }),
+  ].forEach(async (el, i) => {
+    let htmlString
+    if(uids[i] === 'FAQ') {
+      htmlString = await unify(FAQMD);
+    }
+    if(uids[i] === 'conditions') {
+      htmlString = await unify(conditionsMD);
+    }
+    if(uids[i] === 'policy') {
+      htmlString = await unify(privacyMD);
+    }
+    if(uids[i] === 'terms') {
+      htmlString = await unify(termsMD);
+    }
+    if(!el) {
+      await prismaClient.assets.create({
+        data: {
+          type: 'Page',
+          uid: uids[i],
+          title: `Ghostify | ${uids[i]}`,
+          content: htmlString
+        },
+      });
+    }
+    if(SETUP_ASSETS) {
+      await prismaClient.assets.update({
+        where: {
+          uid: uids[i],
+        },
+        data: {
+          content: htmlString,
+        }
+      });
+    }
+  });
 
   const verifyIfadminPresent = await prismaClient.admin.findUnique({
     where: {
@@ -36,6 +104,7 @@ export const setUp = async (
         password: password,
       },
     });
+    console.log('All done');
     return;
   }
   console.log("it's looks like evrything is OK");

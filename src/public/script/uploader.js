@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 
 const formElement = document.querySelector("#urlForm");
 const errorMessage = document.querySelector("#submitMessage");
