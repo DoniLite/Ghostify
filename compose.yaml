@@ -7,25 +7,14 @@
 # You can add other services your application may depend on here, such as a
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
-version: '3.8'
-
 services:
-  app:
+  server:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: ghostify
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${db-password}@localhost:5432/${POSTGRES_DB}?schema=public&connection_limit=5
-      env_file: '.env'
+      NODE_ENV: production
     ports:
-      - "3081:3081"
-    volumes:
-      - .:/usr/src/app
-    command: ["pnpm", "start"]
-
-
-
+      - 3081:3081
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
