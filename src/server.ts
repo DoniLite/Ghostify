@@ -254,26 +254,27 @@ server.get('/find', find);
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
-  // trying to make requests to the server
-  // const rep = await server.inject("/");
-
-  // log the result of the request
-  // console.log(rep)
-  // 
-  process.nextTick(async () => {
-    ee.emit('evrymorningAndNyTask', 'begenning the task...');
-    // const urls = await prismaClient.url.findMany();
-    // const respFTask = await PosterTask();
-    // console.log(respFTask);
-    const keys = await loadKeys();
-    await setUp(keys.secretKey, keys.iv, tokenGenerator);
-  });
-  for await (const event of on(ee, 'evrymorningAndNyTask')) {
-    console.log(event);
-  }
   if (err) {
     console.error(err);
     process.exit(1);
   }
+
   console.log(`Server listening at ${address}`);
+
+  // Exécution des tâches une fois le serveur démarré
+  try {
+    ee.emit('evrymorningAndNyTask', 'beginning the task...');
+
+    // Charger les clés et configurer les tokens
+    const keys = await loadKeys();
+    await setUp(keys.secretKey, keys.iv, tokenGenerator);
+
+    // Attendre les événements émis et les loguer
+    for await (const event of on(ee, 'evrymorningAndNyTask')) {
+      console.log(event);
+    }
+  } catch (err) {
+    console.error('Error during setup:', err);
+  }
 });
+
