@@ -48,7 +48,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
-ENV DATABASE_URL=postgres://koyeb-adm:l1sU9yCamFhV@ep-wispy-math-a25dvdme.eu-central-1.pg.koyeb.app/koyebdb
+ENV DATABASE_URL=postgres://koyeb-adm:l1sU9yCamFhV@ep-wispy-math-a25dvdme.eu-central-1.pg.koyeb.app/koyebdb?sslmode=require
 
 RUN pnpm dlx prisma
 
