@@ -20,7 +20,7 @@ import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_ver
 import sharp from 'sharp';
 import { prismaClient } from '../config/db';
 import { Can } from '../utils';
-export {Post} from '@prisma/client';
+export { Post } from '@prisma/client';
 
 export interface Service {
   APIs?: {
@@ -240,7 +240,6 @@ export interface ImageAnalysisResult {
 
 export type timeOfJourney = 'Morning' | 'Midday' | 'Evening' | 'Night';
 
-
 export type PosterUserMeta = Record<
   string,
   | never
@@ -255,5 +254,25 @@ export type Meta<T = unknown> = {
   service: string;
 } & T;
 
-
-
+export interface DocumentStorage {
+  title: string;
+  desc_or_meta: string;
+  section: {
+    index: number;
+    title: string;
+    content: string;
+  }[];
+  image: {
+    img: never;
+    index: number;
+    section: number;
+  }[];
+  list: Record<string, [{
+      index: number;
+      items: {
+        item: string;
+        index: number;
+        section: number;
+      }[];
+    }]>;
+}

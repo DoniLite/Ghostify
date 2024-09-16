@@ -1,0 +1,80 @@
+<div class="bg-white shadow-md rounded-lg p-4 max-w-xl mx-auto my-6">
+  <!-- Header: User Info -->
+  <div class="flex items-center space-x-4 mb-4">
+    <img src="https://via.placeholder.com/40" alt="User profile" class="w-10 h-10 rounded-full">
+    <div>
+      <h2 class="font-semibold text-gray-900">John Doe</h2>
+      <span class="text-sm text-gray-600">2 hours ago</span>
+    </div>
+  </div>
+
+  <!-- Post Text -->
+  <p class="text-gray-800 mb-4">
+    This is an example of a post content. Here you can add your thoughts, share photos, and express yourself!
+  </p>
+
+  <!-- Post Image -->
+  <div class="mb-4">
+    <img src="https://via.placeholder.com/500x300" alt="Post image" class="rounded-lg w-full">
+  </div>
+
+  <!-- Reactions (Like, Comment, Share) -->
+  <div class="flex items-center justify-between text-gray-600 border-t border-b py-2">
+    <div class="flex space-x-4">
+      <button class="flex items-center space-x-1 hover:text-blue-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <span>Like</span>
+      </button>
+      <button class="flex items-center space-x-1 hover:text-blue-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h4m0 0h4m-4 0v4m0-4v-4m0 8v4m0 0v4m0 4H8v-4m0 0v-4m0-8V4m0 0V0" />
+        </svg>
+        <span>Comment</span>
+      </button>
+      <button class="flex items-center space-x-1 hover:text-blue-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h4m0 0h4m-4 0v4m0-4v-4m0 8v4m0 0v4m0 4H8v-4m0 0v-4m0-8V4m0 0V0" />
+        </svg>
+        <span>Share</span>
+      </button>
+    </div>
+    <span class="text-sm">120 Likes</span>
+  </div>
+
+  <!-- Comment Section -->
+  <div class="mt-4">
+    <h3 class="text-gray-900 font-semibold mb-2">Comments</h3>
+    <!-- Comment Input -->
+    <div class="flex space-x-3 mb-4">
+      <img src="https://via.placeholder.com/40" alt="Your profile" class="w-8 h-8 rounded-full">
+      <input type="text" placeholder="Write a comment..." class="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+      <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Post</button>
+    </div>
+
+    <!-- Existing Comment -->
+    <div class="flex items-start space-x-3 mb-4">
+      <img src="https://via.placeholder.com/40" alt="Comment user profile" class="w-8 h-8 rounded-full">
+      <div>
+        <div class="bg-gray-100 p-3 rounded-lg">
+          <h4 class="font-semibold">Jane Doe</h4>
+          <p class="text-gray-700">This is a comment. Great post!</p>
+        </div>
+        <div class="text-sm text-gray-500 mt-1">Like • Reply</div>
+      </div>
+    </div>
+
+    <!-- Second Comment -->
+    <div class="flex items-start space-x-3 mb-4">
+      <img src="https://via.placeholder.com/40" alt="Comment user profile" class="w-8 h-8 rounded-full">
+      <div>
+        <div class="bg-gray-100 p-3 rounded-lg">
+          <h4 class="font-semibold">Mark Smith</h4>
+          <p class="text-gray-700">Love the post, can't wait to see more content like this!</p>
+        </div>
+        <div class="text-sm text-gray-500 mt-1">Like • Reply</div>
+      </div>
+    </div>
+  </div>
+</div>

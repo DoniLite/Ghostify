@@ -1,6 +1,6 @@
 import 'fastify';
 import '@fastify/jwt';
-import { Auth, Service, StatsData } from '.';
+import { Auth, DocumentStorage, Service, StatsData } from '.';
 import { SuperUser } from '../class/SuperUser';
 
 declare module 'fastify' {
@@ -47,6 +47,7 @@ declare module 'fastify' {
     Services?: Service;
     Auth?: Auth;
     SuperUser?: SuperUser;
+    Storage?: DocumentStorage;
   }
 
 }

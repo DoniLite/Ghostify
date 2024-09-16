@@ -81,12 +81,13 @@ model Comment {
 }
 
 model postFile {
-  id        Int    @id @default(autoincrement())
-  filePath  String
-  sectionId Int
-  filePost  Post   @relation(fields: [postId], references: [id])
-  index     Int
-  postId    Int
+  id          Int    @id @default(autoincrement())
+  filePath    String
+  sectionId   Int
+  filePost    Post   @relation(fields: [postId], references: [id])
+  index       Int
+  description String
+  postId      Int
 }
 
 model Post {
@@ -117,7 +118,7 @@ model Post {
   indexed       Boolean       @default(false)
   userId        Int?
 
-  @@index([published, createdAt])
+  @@index([published, createdAt, id, userId])
   @@map("posts")
 }
 
