@@ -180,65 +180,65 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
   }
 };
 
-export const docView = async (req: FastifyRequest, res: FastifyReply) => {
-  const { post } = req.query as QueryXData;
-  if (!post) return res.code(404).send('no post specified');
+// export const docView = async (req: FastifyRequest, res: FastifyReply) => {
+//   const { post } = req.query as QueryXData;
+//   if (!post) return res.code(404).send('no post specified');
 
-  const article = await prismaClient.post.findUnique({
-    where: {
-      id: Number(post),
-    },
-  });
+//   const article = await prismaClient.post.findUnique({
+//     where: {
+//       id: Number(post),
+//     },
+//   });
 
-  if (article.inMemory) {
-    let docString = `
-    # ${article.title} \n\n\n
-    `;
-    const postFiles = await prismaClient.postFile.findMany({
-      where: {
-        postId: article.id,
-      },
-    });
-    const postSections = await prismaClient.postSection.findMany({
-      where: {
-        postId: article.id,
-      },
-    });
-    postFiles.sort((a, b) => a.index - b.index);
-    postSections.sort((a, b) => a.indedx - b.indedx);
-    postSections.forEach(async (section) => {
-      docString += `
-      ## ${section.title}
+//   if (article.inMemory) {
+//     let docString = `
+//     # ${article.title} \n\n\n
+//     `;
+//     const postFiles = await prismaClient.postFile.findMany({
+//       where: {
+//         postId: article.id,
+//       },
+//     });
+//     const postSections = await prismaClient.postSection.findMany({
+//       where: {
+//         postId: article.id,
+//       },
+//     });
+//     postFiles.sort((a, b) => a.index - b.index);
+//     postSections.sort((a, b) => a.indedx - b.indedx);
+//     postSections.forEach(async (section) => {
+//       docString += `
+//       ## ${section.title}
 
-      ${section.content} \n\n\n
-      `;
-      const list: [
-        {
-          index: number;
-          items: {
-            item: string;
-            index: number;
-            section: number;
-          }[];
-        }
-      ] = typeof section.meta === 'string' ? JSON.parse(section.meta) : [];
-      [...list, ...postFiles].sort((a, b) => a.index - b.index).forEach(el => {
-        if(el.items)
-      });
-    });
-  }
+//       ${section.content} \n\n\n
+//       `;
+//       const list: [
+//         {
+//           index: number;
+//           items: {
+//             item: string;
+//             index: number;
+//             section: number;
+//           }[];
+//         }
+//       ] = typeof section.meta === 'string' ? JSON.parse(section.meta) : [];
+//       [...list, ...postFiles].sort((a, b) => a.index - b.index).forEach(el => {
+//         if(el.items)
+//       });
+//     });
+//   }
 
-  return res.view('/src/views/page.ejs', {
-    content: article.parsedContent,
-    title: article.title,
-    service: Service.blog,
-    theme: req.session.Theme,
-    auth:
-      typeof req.session.Auth !== 'undefined' && req.session.Auth.authenticated
-        ? req.session.Auth.authenticated
-        : false,
-  });
-};
+//   return res.view('/src/views/page.ejs', {
+//     content: article.parsedContent,
+//     title: article.title,
+//     service: Service.blog,
+//     theme: req.session.Theme,
+//     auth:
+//       typeof req.session.Auth !== 'undefined' && req.session.Auth.authenticated
+//         ? req.session.Auth.authenticated
+//         : false,
+//   });
+// };
 
 export const storage = (req: FastifyRequest, res: FastifyReply) => {
   try {
