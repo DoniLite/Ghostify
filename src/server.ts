@@ -36,7 +36,6 @@ import {
 } from './controller/api.v1';
 import { urlVisitor } from './controller/pushVisitor';
 import {
-  docSaver,
   poster,
   requestComponent,
   requestListComponent,
@@ -236,7 +235,7 @@ server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
-server.get('/poster/save', docSaver);
+// server.get('/poster/save', docSaver);
 server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 // Plateform bin
