@@ -142,7 +142,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
             filePath: `/static/uploada/posts/${fName}`,
             index: req.session.Storage.image[i].index,
             sectionId: req.session.Storage.image[i].section,
-            postId: post.id,
+            postId: Number(post.id),
           },
         });
         console.log(file);
