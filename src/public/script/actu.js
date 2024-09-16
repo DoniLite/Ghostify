@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 
 const action = document.querySelector('#actuAction');
 const parent = document.querySelector('.dp');
@@ -5,7 +6,7 @@ const actuForm = document.querySelector('#actuForm');
 const closer = document.querySelector('#actuCloser');
 const fileInput = document.querySelector('#fileInput');
 const addFileBtn = document.querySelector('#addFile');
-const fileNameLabel = document.querySelector('#fileName');
+// const fileNameLabel = document.querySelector('#fileName');
 
 actuForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -61,4 +62,4 @@ addFileBtn.onclick = (e) => {
   fileInput.click();
 };
 
-fileInput.onchange = (e) => {};
+// fileInput.onchange = (e) => {};

@@ -10,7 +10,7 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import ejs from 'ejs';
-// import html2pdf from 'html2pdf.js';
+import puppeteer from 'puppeteer';
 
 export enum DocInputFormat {
   MicrosoftWord = '.docx',
@@ -264,7 +264,7 @@ export async function generateAndSaveKeys(): Promise<void> {
 // Fonction pour charger les clés depuis le fichier
 export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
   if (!fs.existsSync(keysFilePath)) {
-    await fsP.mkdir(DATA_PATH);
+    await createDirIfNotExists(DATA_PATH);
     await generateAndSaveKeys();
   }
   const data: string = await fsP.readFile(keysFilePath, 'utf8');
@@ -597,10 +597,20 @@ Make sure to check out our latest updates and follow us on social media for tips
 `;
 
 export const cvDownloader = async (options: Record<string, unknown>) => {
-  const compiledCv = await ejs.renderFile('./views/components/cv.ejs', {...options});
-  const dom = new JSDOM(compiledCv , {
-    resources: 'usable',
-    runScripts: 'dangerously'
+  const compiledCv = await ejs.renderFile('./views/components/cv.ejs', {
+    ...options,
   });
-  dom.window.eval(``);
+
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(compiledCv);
+
+  const pdf = await page.pdf({ path: 'cv.pdf', format: 'A4' });
+
+  // Prendre un screenshot de la page entière
+  await page.screenshot({ path: 'cv-screenshot.png', fullPage: true });
+
+  await browser.close();
+
+  return pdf;
 }

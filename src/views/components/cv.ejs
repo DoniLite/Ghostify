@@ -1,12 +1,17 @@
 <%- include('rawHeader.ejs') %>
-<div class="w-[90%] p-3 bg-white shadow-lg mx-auto mt-4">
+<div class=" max-w-4xl p-3 bg-white shadow-lg mx-auto mt-4">
   <!-- Group 1 -->
   <div class="grid grid-cols-[40%,60%] gap-0">
     <!-- Section Présentation -->
     <div
       class="bg-gray-500 text-black p-4 flex flex-col gap-y-3 justify-center"
     >
-      <h1 class="text-4xl font-bold text-neutral-900">Doni Lite</h1>
+      <div class="flex w-full justify-between items-center">
+        <% if (typeof img !== 'undefined') { %>
+         <img src="<%= img %>" alt="profile image" class=" w-28 h-28 rounded-full object-cover">
+        <% } %>
+        <h1 class="text-4xl font-bold text-neutral-900 relative"><%= fullName %></h1>
+      </div>
       <div class="w-16 h-[2px] bg-black"></div>
       <div class="mt-4 flex flex-col gap-y-4 p-4">
         <div class="flex gap-x-6 items-center font-bold">
@@ -15,7 +20,7 @@
             class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
             alt=""
           />
-          donilite@gmail.com
+          <%= email %>
         </div>
 
         <div class="flex gap-x-6 items-center font-bold">
@@ -24,7 +29,7 @@
             class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
             alt=""
           />
-          +226 07 22 40 34
+          <%= phoneNumber %>
         </div>
 
         <div class="flex gap-x-6 items-center font-bold">
@@ -33,7 +38,7 @@
             class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
             alt=""
           />
-          Bobo-Dioulasso
+          <%= location %>
         </div>
 
         <div class="flex gap-x-6 items-center font-bold">
@@ -42,27 +47,16 @@
             class="w-8 h-8 p-1 object-contain bg-white rounded-full flex"
             alt=""
           />
-          12 juin 1999
+          <%= birthday %>
         </div>
       </div>
     </div>
     <!-- Profile container -->
     <div class=" p-8 bg-gray-300">
       <!-- Section profile -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4">Profile</h1>
+      <h1 class="text-2xl font-bold text-neutral-900 mt-12">Profile</h1>
       <p>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quos
-        voluptatibus quis dolores ipsum tempore illum aut incidunt similique
-        aliquid, laborum exercitationem consequatur recusandae explicabo
-        ducimus? Nulla non itaque totam iure, deleniti explicabo, animi autem,
-        tempora temporibus culpa a quia ipsum adipisci id nisi nam. Sapiente,
-        accusantium. Alias rerum quis reprehenderit illum eum cum laborum
-        quibusdam ipsam aliquid. Totam tenetur necessitatibus molestiae autem
-        quidem in assumenda pariatur, adipisci esse perspiciatis, dignissimos
-        magni aspernatur rerum magnam odio voluptatibus blanditiis nisi? Natus
-        dolore ipsa veniam iusto nesciunt illo, obcaecati possimus, eos magni
-        officia ea ut error eum molestias, exercitationem enim numquam nihil
-        iure!
+        <%= profile %>
       </p>
     </div>
   </div>
@@ -72,119 +66,57 @@
       <!-- Section compétences -->
       <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Compétences</h1>
       <ul class=" list-disc flex flex-col ml-8 gap-y-4 mb-4">
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
-        <li>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Id, possimus.</li>
+        <% skills.forEach(skill => { %>
+         <li><%= skill %></li>
+        <% }) %>
       </ul>
       <!-- Section formations -->
       <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Formations</h1>
-      <div class="flex flex-col gap-y-1 mb-2">
-        <h3 class=" font-bold">Bac série D</h3>
-        <p>Lorem ipsum dolor sit amet. : 2022</p>
-      </div>
 
+      <% formations.forEach(formation => { %>
        <div class="flex flex-col gap-y-1 mb-2">
-        <h3 class=" font-bold">Bac série D</h3>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore, fugit. : 2022</p>
-      </div>
-
-       <div class="flex flex-col gap-y-1 mb-2">
-        <h3 class=" font-bold">Bac série D</h3>
-        <p>Lorem ipsum dolor sit amet. : 2022</p>
-      </div>
-
-       <div class="flex flex-col gap-y-1 mb-2">
-        <h3 class=" font-bold">Bac série D</h3>
-        <p>Lorem ipsum dolor sit amet. : 2022</p>
-      </div>
+         <h3 class=" font-bold"><%= formation.tite %></h3>
+         <p> <%= formation.description %> : <%= formation.date %></p>
+       </div>
+      <% }) %>
     </div>
     <div class="bg-white text-black p-4 flex flex-col gap-y-3 ">
       <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Expérience</h1>
-      <div class="flex flex-col gap-y-4 mb-2">
-        <h3 class=" text-center text-lg font-bold">Developpeur</h3>
-        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-        </ul>
+      <% experience.forEach(el => { %>
+       <div class="flex flex-col gap-y-4 mb-2">
+        <h3 class=" text-center text-lg font-bold"><%= el.title %></h3>
+        <% if (typeof el.contents !== 'undefined') { %>
+         <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
+          <% el.contents.forEach(content => { %>
+           <li class=" flex gap-x-4">
+            <span><span class=" font-bold">- </span><%= content.description %> :</span>
+            <span><%= content.duration %></span>
+           </li>
+          <% }) %>
+         </ul>
+        <% } %>
       </div>
-
-      <div class="flex flex-col gap-y-4 mb-2">
-        <h3 class=" text-center text-lg font-bold">Security</h3>
-        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-        </ul>
-      </div>
-
-      <div class="flex flex-col gap-y-4 mb-2">
-        <h3 class=" text-center text-lg font-bold">Security</h3>
-        <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-
-          <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span>Equipe de développement de l'entreprise NIBATIC :</span>
-            <span>3 ans</span>
-          </li>
-        </ul>
-      </div>
-
+      <% }) %>
+      <!-- Section centres d'intérets -->
       <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Centres d'intéret</h1>
       <ul class=" list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
-        <li>Musique</li>
-        <li>Sport</li>
-        <li>Basket-ball</li>
-        <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, eaque?</li>
+        <% interest.forEach(el => { %>
+         <li><%= el %></li>
+        <% }) %>
+      </ul>
+
+      <!-- Section langues -->
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Langues</h1>
+      <ul class=" list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
+        <% languages.forEach(language => { %>
+         <li class=" flex flex-col gap-2">
+          <h3 class=" font-bold"><%= language.title %></h3>
+          <div class=" w-full h-[6px] rounded-lg bg-gray-300">
+            <div class=" h-full bg-gray-500 rounded-lg <%= language.css %>"></div>
+          </div>
+          <span class=""><%= language.level %></span>
+         </li>
+        <% }) %>
       </ul>
     </div>
   </div>
