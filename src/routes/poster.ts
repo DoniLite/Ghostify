@@ -2,13 +2,13 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { DocumentStorage, QueryXData, Section } from '../@types';
 import { decrypt, encrypt, Service } from '../utils';
 import { prismaClient } from '../config/db';
-import util from 'util';
-import fs from 'fs';
-import path from 'path';
-import { pipeline } from 'stream';
-import { randomInt } from 'crypto';
+// import util from 'util';
+// import fs from 'fs';
+// import path from 'path';
+// import { pipeline } from 'stream';
+// import { randomInt } from 'crypto';
 
-const pump = util.promisify(pipeline);
+// const pump = util.promisify(pipeline);
 
 export const poster = async (req: FastifyRequest, res: FastifyReply) => {
   const { service } = req.query as QueryXData<{ service: Service }>;
@@ -89,96 +89,96 @@ export const requestListComponent = async (
   }
 };
 
-export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
-  const parts = req.parts();
-  let i = 0;
-  let fName;
-  let json: boolean | undefined;
-  try {
-    const post = await prismaClient.post.create({
-      data: {
-        title: '',
-        description: '',
-        visibility: 'Private',
-        safe: false,
-        userId:
-          typeof req.session.Auth.isSuperUser !== 'undefined' &&
-          req.session.Auth.isSuperUser
-            ? -1
-            : req.session.Auth.id,
-      },
-    });
+// export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
+//   const parts = req.parts();
+//   let i = 0;
+//   let fName;
+//   let json: boolean | undefined;
+//   try {
+//     const post = await prismaClient.post.create({
+//       data: {
+//         title: '',
+//         description: '',
+//         visibility: 'Private',
+//         safe: false,
+//         userId:
+//           typeof req.session.Auth.isSuperUser !== 'undefined' &&
+//           req.session.Auth.isSuperUser
+//             ? -1
+//             : req.session.Auth.id,
+//       },
+//     });
 
-    for await (const part of parts) {
-      const dangerousExtension = [
-        '.js',
-        '.jsx',
-        '.cmd',
-        '.py',
-        '.bash',
-        '.sh',
-        '.shx',
-      ];
-      if (dangerousExtension.includes(path.extname(part.filename)))
-        return res.code(403);
-      console.log(part.fields);
-      const fields = part.fields as unknown as {
-        data: DocumentStorage;
-        json: boolean;
-      };
-      req.session.Storage = fields.data;
-      json = fields.json;
-      if (part.file) {
-        const ext = path.extname(part.filename);
-        const date = new Date();
-        const r = randomInt(date.getTime()).toString();
-        fName = `${date.getTime().toString() + r}${ext}`;
-        console.log(fName);
-        const xPath = path.resolve(__dirname, '../../src/public/uploads/posts');
-        const uploadPath = path.join(xPath, fName);
-        await pump(part.file, fs.createWriteStream(uploadPath));
-        const file = await prismaClient.postFile.create({
-          data: {
-            filePath: `/static/uploada/posts/${fName}`,
-            index: req.session.Storage.image[i].index,
-            sectionId: req.session.Storage.image[i].section,
-            postId: Number(post.id),
-          },
-        });
-        console.log(file);
-        i++;
-      }
-    }
+//     for await (const part of parts) {
+//       const dangerousExtension = [
+//         '.js',
+//         '.jsx',
+//         '.cmd',
+//         '.py',
+//         '.bash',
+//         '.sh',
+//         '.shx',
+//       ];
+//       if (dangerousExtension.includes(path.extname(part.filename)))
+//         return res.code(403);
+//       console.log(part.fields);
+//       const fields = part.fields as unknown as {
+//         data: DocumentStorage;
+//         json: boolean;
+//       };
+//       req.session.Storage = fields.data;
+//       json = fields.json;
+//       if (part.file) {
+//         const ext = path.extname(part.filename);
+//         const date = new Date();
+//         const r = randomInt(date.getTime()).toString();
+//         fName = `${date.getTime().toString() + r}${ext}`;
+//         console.log(fName);
+//         const xPath = path.resolve(__dirname, '../../src/public/uploads/posts');
+//         const uploadPath = path.join(xPath, fName);
+//         await pump(part.file, fs.createWriteStream(uploadPath));
+//         const file = await prismaClient.postFile.create({
+//           data: {
+//             filePath: `/static/uploada/posts/${fName}`,
+//             index: req.session.Storage.image[i].index,
+//             sectionId: req.session.Storage.image[i].section,
+//             postId: post.id,
+//           },
+//         });
+//         console.log(file);
+//         i++;
+//       }
+//     }
 
-    req.session.Storage.section.forEach(async (sec, id) => {
-      const newSection = await prismaClient.postSection.create({
-        data: {
-          title: sec.title,
-          content: sec.content,
-          indedx: sec.index,
-          postId: post.id,
-          meta: JSON.stringify(req.session.Storage.list[`${id + 1}`]),
-        },
-      });
-      console.log(newSection);
-    });
-    await prismaClient.post.update({
-      where: {
-        id: post.id,
-      },
-      data: {
-        title: req.session.Storage.title,
-        description: req.session.Storage.desc_or_meta,
-      },
-    });
-    if (typeof json === 'boolean' && json === true)
-      return res.code(200).send(JSON.stringify({ success: true }));
-    return res.code(200).redirect('');
-  } catch (err) {
-    console.log(err);
-    return res.code(400).send('error');
-  }
-};
+//     req.session.Storage.section.forEach(async (sec, id) => {
+//       const newSection = await prismaClient.postSection.create({
+//         data: {
+//           title: sec.title,
+//           content: sec.content,
+//           indedx: sec.index,
+//           postId: post.id,
+//           meta: JSON.stringify(req.session.Storage.list[`${id + 1}`]),
+//         },
+//       });
+//       console.log(newSection);
+//     });
+//     await prismaClient.post.update({
+//       where: {
+//         id: post.id,
+//       },
+//       data: {
+//         title: req.session.Storage.title,
+//         description: req.session.Storage.desc_or_meta,
+//       },
+//     });
+//     if (typeof json === 'boolean' && json === true)
+//       return res.code(200).send(JSON.stringify({ success: true }));
+//     return res.code(200).redirect('');
+//   } catch (err) {
+//     console.log(err);
+//     return res.code(400).send('error');
+//   }
+// };
 
 // export const docView = async (req: FastifyRequest, res: FastifyReply) => {
 //   const { post } = req.query as QueryXData;
