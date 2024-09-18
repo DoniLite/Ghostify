@@ -48,6 +48,7 @@ export const authController = async (
       try {
         const Su = new SuperUser(login, spltPass[0]);
         Su.checkPermissions();
+        // const actons = Su.actions;
         req.session.SuperUser = Su;
         req.session.Auth = {
           authenticated: true,

@@ -40,20 +40,34 @@ if (storage !== undefined || storage !== null) {
  */
 const requesterFunc = async (e) => {
   e.preventDefault();
+
   data.title = getTitleAndMeta().title;
   data.desc_or_meta = getTitleAndMeta().meta;
   data.section = getSections();
   data.list = getList();
   data.image = getImg();
+
   const form = new FormData(posterForm);
+
   form.append('json', true);
-  form.append('data', data);
+  form.append('data', JSON.stringify(data));
+
+  // Log de chaque champ pour vérifier son contenu
+  for (let pair of form.entries()) {
+    console.log(pair[0] + ', ' + pair[1]);
+  }
+
   const res = await fetch('/poster/save', {
     method: 'POST',
     body: form,
   });
-  const data = await res.json();
+
+  const dataRes = await res.json();
+  if (dataRes.success) {
+    window.location.href = `/poster/view?post=${dataRes.article}`;
+  }
 };
+
 // const allSections = [
 //   ...posterComponent.querySelectorAll(),
 //   ...posterComponent.querySelectorAll(),
@@ -131,7 +145,7 @@ const getImg = () => {
     const sectionId = Number(img.querySelector('img').getAttribute('id'));
     imgList.push({
       img: imgFiles[id],
-      index: img.dataset.index,
+      index: parseInt(img.dataset.index),
       section: sectionId,
     });
   });

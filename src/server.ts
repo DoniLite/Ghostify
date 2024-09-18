@@ -19,7 +19,14 @@ import { store } from './controller/store';
 import { notifications } from './controller/notifications';
 import { webhooks } from './controller/webhooks';
 import { sessionStorageHook } from './hooks/sessionStorage';
-import { about, conditions, FAQ, license, policy, terms } from './routes/assets';
+import {
+  about,
+  conditions,
+  FAQ,
+  license,
+  policy,
+  terms,
+} from './routes/assets';
 // import { stats } from './hooks/statCounter';
 import { articlePost } from './controller/articlePost';
 import { projectPost } from './controller/projectPost';
@@ -36,6 +43,8 @@ import {
 } from './controller/api.v1';
 import { urlVisitor } from './controller/pushVisitor';
 import {
+  docSaver,
+  docView,
   poster,
   requestComponent,
   requestListComponent,
@@ -49,10 +58,10 @@ import { assetPoster } from './controller/assetsPost';
 import fastifyRedis from '@fastify/redis';
 import RedisStore from 'connect-redis';
 import { setUp } from './hooks/setup';
-
+// import multer from 'fastify-multer';
 
 const Store = new RedisStore({
-  client: redisStoreClient
+  client: redisStoreClient,
 });
 
 export const ee = new EventEmitter();
@@ -69,9 +78,8 @@ const protectedRoutes = [
   '/assetsPost',
 ];
 dotEnv.config();
-const server: FastifyInstance =
-  fastify();
-  // {logger: true}
+const server: FastifyInstance = fastify();
+// {logger: true}
 
 // Hooks...
 server.addHook('onRequest', async (req, res) => {
@@ -97,68 +105,72 @@ server.addHook('preHandler', sessionStorageHook);
 export const tokenGenerator = (payload: string) => {
   return server.jwt.sign({ payload });
 };
-
-server.register(fastifyJwt, {
-  secret: process.env.JWT_SECRET,
-});
-// async function onFile(part: MultipartFile) {
-// const ext = path.extname(part.filename);
-// const date = new Date();
-// const r = randomInt(date.getTime()).toString();
-// const name = `${date.getTime().toString() + r}${ext}`
-// ee.emit('upload', name);
-// console.log(name)
-// const dPath = path.resolve(__dirname, '../src/public/uploads');
-// const uploadPath = path.join(dPath, name);
-//   await pump(part.file, fs.createWriteStream(uploadPath));
-// }
-server.register(fastifyRedis, { host: '127.0.0.1' });
-server.register(
-  multipart
-  // { attachFieldsToBody: true, onFile }
-);
-server.register(fastifyWebsocket);
-server.register(async (fastify) => {
-  fastify.get('/notifications', { websocket: true }, (socket, req) => {
-    socket.on('clientConnection', () => {
-      req.session.Services.Platform.Sockets = true;
-      req.session.Services.Platform.internals = true;
-    });
-    socket.on('message', async (mes) => {
-      console.log(JSON.parse(mes.toString()));
-    });
-    socket.on('data', async (data) => {
-      console.log(data);
+const registration = async () => {
+  await server.register(fastifyJwt, {
+    secret: process.env.JWT_SECRET,
+  });
+  // async function onFile(part: MultipartFile) {
+  // const ext = path.extname(part.filename);
+  // const date = new Date();
+  // const r = randomInt(date.getTime()).toString();
+  // const name = `${date.getTime().toString() + r}${ext}`
+  // ee.emit('upload', name);
+  // console.log(name)
+  // const dPath = path.resolve(__dirname, '../src/public/uploads');
+  // const uploadPath = path.join(dPath, name);
+  //   await pump(part.file, fs.createWriteStream(uploadPath));
+  // }
+  await server.register(fastifyRedis, { host: '127.0.0.1' });
+  await server.register(
+    multipart
+    // { attachFieldsToBody: true, onFile }
+  );
+  await server.register(fastifyWebsocket);
+  await server.register(async (fastify) => {
+    fastify.get('/notifications', { websocket: true }, (socket, req) => {
+      socket.on('clientConnection', () => {
+        req.session.Services.Platform.Sockets = true;
+        req.session.Services.Platform.internals = true;
+      });
+      socket.on('message', async (mes) => {
+        console.log(JSON.parse(mes.toString()));
+      });
+      socket.on('data', async (data) => {
+        console.log(data);
+      });
     });
   });
-});
-server.register(cors, {
-  // put your options here
-  origin: '*',
-  methods: ['GET', 'PUT', 'POST'],
-  credentials: true,
-  cacheControl: 'Cache-Control: ${fully}',
-});
-server.register(view, {
-  engine: {
-    ejs: ejs,
-  },
-});
-server.register(staticPlugin, {
-  root: path.join(path.resolve(__dirname, '..'), 'src/public'),
-  prefix: '/static/',
-});
-server.register(fromBody);
-server.register(fastifyCookie);
-server.register(session, {
-  secret: process.env.SESSION_SECRET,
-  cookie: {
-    secure: 'auto', // true in production for HTTPS
-  },
-  cookieName: "sessionId",
-  store: Store,
-});
+  await server.register(cors, {
+    // put your options here
+    origin: '*',
+    methods: ['GET', 'PUT', 'POST'],
+    credentials: true,
+    cacheControl: 'Cache-Control: ${fully}',
+  });
+  await server.register(view, {
+    engine: {
+      ejs: ejs,
+    },
+  });
+  await server.register(staticPlugin, {
+    root: path.join(path.resolve(__dirname, '..'), 'src/public'),
+    prefix: '/static/',
+  });
+  await server.register(fromBody);
+  await server.register(fastifyCookie);
+  await server.register(session, {
+    secret: process.env.SESSION_SECRET,
+    cookie: {
+      secure: 'auto', // true in production for HTTPS
+    },
+    cookieName: 'sessionId',
+    store: Store,
+  });
+};
 
+registration().then(() => {
+  console.log('Registration done');
+}).catch(console.error);
 // routes...
 server.setErrorHandler((err, req, res) => {
   console.log(err);
@@ -172,7 +184,7 @@ server.setNotFoundHandler((req, res) => {
   res.view('/src/views/404.ejs');
 });
 server.get('/auth/token', async (req, res) => {
-  if(req.session.Auth.isSuperUser && req.session.SuperUser) 
+  if (req.session.Auth.isSuperUser && req.session.SuperUser)
     return res.send(JSON.stringify({ token: req.session.SuperUser.token }));
   const userId = req.session.Auth.login;
   const user = await prismaClient.user.findUnique({
@@ -235,7 +247,8 @@ server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
-// server.get('/poster/save', docSaver);
+server.post('/poster/save', docSaver);
+server.get('/poster/view', docView);
 server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 // Plateform bin
@@ -277,4 +290,3 @@ server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
     console.error('Error during setup:', err);
   }
 });
-
