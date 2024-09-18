@@ -13,7 +13,7 @@ export class SuperUser implements UserActor {
   userString;
   #passPhrase;
   #health: string;
-  #permissions: Can[];
+  permissions = [Can.CreateUser] ;
   #secretFilePath;
   #certificatePath;
   actions;
@@ -53,15 +53,14 @@ export class SuperUser implements UserActor {
       );
     if (setUp) {
       this.#setUp();
-      if(permissionSetup)
-        this.#updatePermission();
+      if (permissionSetup) this.#updatePermission();
     } else {
-      this.#permissions = permissionSetup;
+      this.permissions = permissionSetup;
       this.checkPermissions();
       this.#creator();
     }
     this.#checkHealth(this.userString, this.#health);
-    this.actions = this.#updateActorWithPermissions(this.#permissions);
+    this.actions = this.#updateActorWithPermissions(this.permissions);
   }
 
   public get health() {
@@ -89,7 +88,7 @@ export class SuperUser implements UserActor {
       Can.MakeSecureAction,
     ]
   ) {
-    this.#permissions.forEach((permission) => {
+    this.permissions.forEach((permission) => {
       if (!permissions.includes(permission))
         throw new Error('Permission ' + permission + 'is not allowed');
     });
@@ -151,19 +150,21 @@ export class SuperUser implements UserActor {
     };
   }
 
-  #updateActorWithPermissions<T extends Can[]>(permissions: T): Inf<T> {
+  #updateActorWithPermissions(permissions: Can[]): Inf<typeof permissions> {
     if (permissions.includes(Can.CRUD))
       return {
         data: prismaClient,
-      } as Inf<T>;
+      } as Inf<typeof permissions>;
     if (permissions.includes(Can.CreateUser))
       return {
         data: prismaClient.user,
-      } as Inf<T>;
+      } as Inf<typeof permissions>;
     if (permissions.includes(Can.MakeComment))
       return {
         data: prismaClient.comment,
-      } as Inf<T>;
+      } as Inf<typeof permissions>;
+    if (permissions.includes(Can.MakeSecureAction))
+      return { data: prismaClient } as Inf<typeof permissions>;
     return;
   }
 
@@ -191,7 +192,7 @@ export class SuperUser implements UserActor {
     this.setHealth(this.#certificate.health);
     this.#setUserHealth(this.userString, this.#health);
     this.#updateCertificate(this.userString, this.#health);
-    this.#permissions = this.#certificate.permissions;
+    this.permissions = this.#certificate.permissions;
   }
 
   #updateCertificate(cert: string, health: string) {
@@ -223,7 +224,7 @@ export class SuperUser implements UserActor {
     const newCert = {
       pass: tecPass[1],
       health: this.#health,
-      permissions: this.#permissions,
+      permissions: this.permissions,
     };
     this.#certificate = newCert;
     this.#setUserHealth(this.userString, this.#health);
@@ -248,8 +249,8 @@ export class SuperUser implements UserActor {
   }
 
   #updatePermission(...permissions: Can[]) {
-    this.#permissions = [...this.#permissions, ...permissions];
-    this.#certificate.permissions = [...this.#permissions];
+    this.permissions.push(...permissions);
+    this.#certificate.permissions = [...this.permissions];
     this.#updateCertificate(this.userString, this.#health);
   }
 }

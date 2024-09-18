@@ -53,6 +53,7 @@ export type Inf<T extends Can[]> = T extends (
   | Can.CRUD
   | Can.CreateUser
   | Can.MakeComment
+  | Can.MakeSecureAction
 )[]
   ? T[number] extends Can.CRUD
     ? { data: typeof prismaClient }
@@ -60,6 +61,8 @@ export type Inf<T extends Can[]> = T extends (
     ? { data: typeof prismaClient.user }
     : T[number] extends Can.MakeComment
     ? { data: typeof prismaClient.comment }
+    : T[number] extends Can.MakeSecureAction
+    ? { data: typeof prismaClient }
     : unknown
   : unknown;
 
@@ -276,3 +279,22 @@ export interface DocumentStorage {
       }[];
     }]>;
 }
+
+export interface PostFile {
+  id: number;
+  filePath: string;
+  sectionId: number;
+  index: number;
+  postId: number;
+}
+
+export interface List {
+  index: number;
+  items: {
+    item: string;
+    index: number;
+    section: number;
+  }[];
+}
+
+export type DocDataUnion = PostFile | List
