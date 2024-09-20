@@ -1,4 +1,5 @@
-<%- include('components/rawHeader') %> <% if (typeof service !== 'undefined') { %>
+<%- include('components/rawHeader') %> 
+<% if (typeof service !== 'undefined') { %>
 <input type="hidden" name="serice" id="service" value="<%= service %>" />
 <% } %>
 
@@ -53,7 +54,8 @@
                   Sign Up
                 </h2>
 
-                <form>
+                <form method="post" action="/api/v1/register">
+                  <input type="hidden" name="service" value="<%= service %>">
                   <div class="mb-4">
                     <label
                       class="mb-2.5 block font-medium text-black dark:text-white"
@@ -62,6 +64,7 @@
                     <div class="relative">
                       <input
                         type="text"
+                        name="name"
                         placeholder="Enter your full name"
                         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                       />
@@ -93,6 +96,7 @@
                     <div class="relative">
                       <input
                         type="email"
+                        name="email"
                         placeholder="Enter your email"
                         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                       />
@@ -125,6 +129,8 @@
                     <div class="relative">
                       <input
                         type="password"
+                        id="firstTryPassword"
+                        name="password"
                         placeholder="Type your Password"
                         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                       />
@@ -161,7 +167,8 @@
                     <div class="relative">
                       <input
                         type="password"
-                        placeholder="Type your Password"
+                        id="secondTryPassword"
+                        placeholder="Validate your password"
                         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                       />
 
@@ -189,6 +196,8 @@
                     </div>
                   </div>
 
+                  <span id="alertElement" class=" my-3 font-bold text-red-700"></span>
+
                   <div class=" my-4">
                     
                     <div>
@@ -208,6 +217,7 @@
                   <div class="mb-5">
                     <input
                       type="submit"
+                      id="submitBtn"
                       value="Sign Up"
                       class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
                     />
@@ -225,12 +235,23 @@
   <!-- ===== Content Area End ===== -->
 </div>
 <script>
-  const checkbox = document.querySelector('#checkboxLabelOne');
-  checkbox.addEventListener('click', function(e) {
-    e.preventDefault();
-    console.log('checked')
-    const el = document.querySelector('#ipt');
-    el.setAttribute('value', 'true');
+  
+  /**
+  * @type {HTMLInputElement}
+  */
+  const secondPasswordInput = document.querySelector('#secondTryPassword');
+  /**
+  * @type {HTMLButtonElement}
+  */
+  const submitBtn = document.querySelector('#submitBtn');
+  secondPasswordInput.addEventListener('keyup', (e) => {
+    if(document.querySelector('#firstTryPassword').value.trim() !== e.currentTarget.value.trim()) {
+      document.querySelector('#alertElement').innerHTML = 'Your password must match the first';
+      submitBtn.disabled = true;
+      return;
+    }
+    document.querySelector('#alertElement').innerHTML = '';
+    submitBtn.disabled = false;
   })
 </script>
 <!-- ===== Page Wrapper End ===== -->

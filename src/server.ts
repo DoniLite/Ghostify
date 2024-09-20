@@ -55,7 +55,7 @@ import { cv } from './controller/cv';
 import multipart from '@fastify/multipart';
 import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
-import fastifyRedis from '@fastify/redis';
+// import fastifyRedis from '@fastify/redis';
 import RedisStore from 'connect-redis';
 import { setUp } from './hooks/setup';
 // import multer from 'fastify-multer';
@@ -67,7 +67,6 @@ const Store = new RedisStore({
 export const ee = new EventEmitter();
 const protectedRoutes = [
   '/api/v1',
-  '/api/v1/register',
   '/api/v1/playground',
   '/api/v1/poster/save',
   '/api/notifications',
@@ -120,7 +119,7 @@ const registration = async () => {
   // const uploadPath = path.join(dPath, name);
   //   await pump(part.file, fs.createWriteStream(uploadPath));
   // }
-  await server.register(fastifyRedis, { host: '127.0.0.1' });
+  // await server.register(fastifyRedis, { host: '127.0.0.1' });
   await server.register(
     multipart
     // { attachFieldsToBody: true, onFile }
@@ -189,7 +188,7 @@ server.get('/auth/token', async (req, res) => {
   const userId = req.session.Auth.login;
   const user = await prismaClient.user.findUnique({
     where: {
-      email: userId,
+      id: Number(userId),
     },
   });
   if (user) {
@@ -264,6 +263,9 @@ server.get('/components/list', requestListComponent);
 // features and other thread specific
 server.get('/update/visitor', urlVisitor);
 server.get('/find', find);
+server.get('/feed', (req, res) =>{
+  return res.view('src/views/components/feed.ejs', { service: undefined });
+})
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {

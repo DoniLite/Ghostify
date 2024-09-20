@@ -5,7 +5,7 @@ CREATE TYPE "Permission" AS ENUM ('User', 'Admin', 'Root');
 CREATE TYPE "Visibility" AS ENUM ('Public', 'Private');
 
 -- CreateEnum
-CREATE TYPE "Reactions" AS ENUM ('Love', 'Laugh', 'Hurted');
+CREATE TYPE "Reactions" AS ENUM ('Love', 'Laugh', 'Hurted', 'Good');
 
 -- CreateEnum
 CREATE TYPE "AssetType" AS ENUM ('Component', 'Script', 'Page', 'Snippet');
@@ -50,19 +50,22 @@ CREATE TABLE "Comment" (
     "reactions" "Reactions"[],
     "postId" INTEGER,
     "content" TEXT,
+    "author" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "commentId" INTEGER,
-    "signaled" BIGINT NOT NULL DEFAULT 0,
+    "signaled" INTEGER NOT NULL DEFAULT 0,
+    "referred" TEXT,
     "meta" TEXT,
-    "isAnActu" BOOLEAN NOT NULL,
+    "isAnActu" BOOLEAN NOT NULL DEFAULT false,
+    "isForumPost" BOOLEAN NOT NULL DEFAULT false,
     "promoted" BOOLEAN NOT NULL DEFAULT false,
-    "ip" TEXT,
     "safe" BOOLEAN NOT NULL DEFAULT false,
     "indexed" BOOLEAN NOT NULL DEFAULT false,
-    "visitors" BIGINT NOT NULL DEFAULT 0,
+    "visitors" INTEGER NOT NULL DEFAULT 0,
     "url" TEXT,
     "indexerId" INTEGER,
+    "userId" INTEGER,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
@@ -73,6 +76,7 @@ CREATE TABLE "postFile" (
     "filePath" TEXT NOT NULL,
     "sectionId" INTEGER NOT NULL,
     "index" INTEGER NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
     "postId" INTEGER NOT NULL,
 
     CONSTRAINT "postFile_pkey" PRIMARY KEY ("id")
@@ -94,7 +98,7 @@ CREATE TABLE "posts" (
     "slug" TEXT,
     "categoryId" INTEGER,
     "visibility" "Visibility" NOT NULL,
-    "visites" BIGINT NOT NULL DEFAULT 0,
+    "visites" INTEGER NOT NULL DEFAULT 0,
     "fromApi" BOOLEAN NOT NULL DEFAULT false,
     "parsedContent" TEXT,
     "indexerId" INTEGER,
@@ -172,7 +176,7 @@ CREATE TABLE "GeneratorData" (
 CREATE TABLE "Url" (
     "id" SERIAL NOT NULL,
     "url" TEXT NOT NULL,
-    "visit" BIGINT NOT NULL DEFAULT 0,
+    "visit" INTEGER NOT NULL DEFAULT 0,
     "name" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "indexed" BOOLEAN NOT NULL DEFAULT false,
@@ -192,7 +196,7 @@ CREATE TABLE "User" (
     "service" TEXT NOT NULL,
     "registration" TIMESTAMP(3),
     "permission" "Permission" NOT NULL,
-    "credits" BIGINT NOT NULL DEFAULT 300,
+    "credits" INTEGER NOT NULL DEFAULT 300,
     "meta" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -213,7 +217,7 @@ CREATE TABLE "Assets" (
 
 -- CreateTable
 CREATE TABLE "Admin" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "role" TEXT NOT NULL,
     "login" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -231,19 +235,13 @@ CREATE UNIQUE INDEX "Contact_email_key" ON "Contact"("email");
 CREATE UNIQUE INDEX "Category_title_key" ON "Category"("title");
 
 -- CreateIndex
-CREATE INDEX "posts_published_createdAt_idx" ON "posts"("published", "createdAt");
+CREATE INDEX "posts_published_createdAt_id_userId_idx" ON "posts"("published", "createdAt", "id", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Indexer_type_key" ON "Indexer"("type");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "GamerStat_url_key" ON "GamerStat"("url");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Url_url_key" ON "Url"("url");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Assets_uid_key" ON "Assets"("uid");
@@ -259,6 +257,9 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId"
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_indexerId_fkey" FOREIGN KEY ("indexerId") REFERENCES "Indexer"("id") ON DELETE SET NULL ON UPDATE CASCADE;

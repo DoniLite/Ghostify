@@ -53,7 +53,6 @@ export const uploadActu = async (req: FastifyRequest, res: FastifyReply) => {
       promoted: false,
       meta: title,
       content: content,
-      ip: req.ip,
       file: `/static/uploads/actues/${fName}`,
       isAnActu: false,
     },
@@ -63,7 +62,7 @@ export const uploadActu = async (req: FastifyRequest, res: FastifyReply) => {
       id: newComment.id,
     },
     data: {
-      url: `/actu?ref=${newComment.ip}`,
+      url: `/actu?ref=${newComment.id}`,
     },
   });
 
@@ -96,12 +95,9 @@ export const comment = async (req: FastifyRequest, res: FastifyReply) => {
         replies: connectedComments,
         root: true,
       };
-      if (actu.ip === req.ip) {
-        return res.view('/src/views/components/actu.ejs', { data: clientActu });
-      }
-      return res.code(500);
+      return res.view('/src/views/components/actu.ejs', { data: clientActu });
     }
-    return res.code(404);
+    return res.code(404).send('access denied');
   }
 
   if (ref && typeof ref === 'string') {
@@ -123,13 +119,6 @@ export const comment = async (req: FastifyRequest, res: FastifyReply) => {
         content: actu.content,
         replies: connectedComments,
       };
-      if (
-        actu.ip === req.ip ||
-        (typeof req.session.Auth.authenticated === 'boolean' &&
-          req.session.Auth.authenticated)
-      ) {
-        return res.redirect(`/actu?root=${true}&ref=${actu.id}`);
-      }
       return res.view('/src/views/components/actu.ejs', { data: clientActu });
     }
     return res.code(404);

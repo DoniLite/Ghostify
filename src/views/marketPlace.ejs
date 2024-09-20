@@ -4,7 +4,7 @@
 >
   <form
     id="actuForm"
-    class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
+    class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] overflow-y-scroll p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
   >
     <div class="mb-4">
       <div class="flex justify-between mb-3 items-center">
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <div class="mb-6">
+    <div id="imgInput" class="mb-6">
       <input
         id="fileInput"
         name="img"
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <div class="mb-5">
+    <div id="actuBtnInput" class="mb-5">
       <input
         type="submit"
         value="Soumettre"
@@ -183,9 +183,9 @@
           <div class="flex gap-x-3 text-white">
             <div class="flex">
               <i class="fa-solid fa-heart fa-lg text-red-600"></i>
-              <i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>
+              <i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-gray-950"></i>
               <i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>
-              <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
+              <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-gray-950"></i>
             </div>
             #555
           </div>

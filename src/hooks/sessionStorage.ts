@@ -6,28 +6,10 @@ import {
   loadKeys,
 } from '../utils';
 import { randomInt } from 'node:crypto';
-import { prismaClient } from '../config/db';
 
 export const sessionStorageHook = async (req: FastifyRequest) => {
   const randomNumber = randomInt(1, 9);
-  const des = Math.random();
-  const actus = await prismaClient.comment.findMany({
-    where: {
-      isAnActu: true,
-    },
-    select: { file: true },
-  }) as { file: string }[];
-  const filesNumber = actus.length > 1 ? actus.length : 2;
-  const actuFile = randomInt(filesNumber - 1);
-  let footerImg;
-  if (des === 1) {
-    footerImg = `/static/img/random${randomNumber}.png`;
-  } else {
-    footerImg =
-      actus.length <= 0
-        ? `/static/img/random${randomNumber}.png`
-        : actus[actuFile].file;
-  }
+  const footerImg = `/static/img/random${randomNumber}.png`;
   req.session.Theme = {
     time: graphicsUploader(),
     footer: footerImg,

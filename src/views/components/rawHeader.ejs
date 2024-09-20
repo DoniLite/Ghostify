@@ -13,7 +13,7 @@
   <body>
     <nav
       id="rawHeaderNav"
-      class="fixed right-0 top-0 transition-all z-50 translate-x-[200%] lg:w-[40%] w-[80%] bg-gray-950 p-4 text-gray-400"
+      class="fixed right-0 top-0 transition-all z-[500] translate-x-[200%] lg:w-[40%] w-[80%] bg-gray-950 p-4 text-gray-400"
     >
       <ul class="flex flex-col gap-4 w-full">
         <div id="NavCloserBtn" class="absolute right-3">
@@ -36,11 +36,12 @@
         <% } %>
         <a
           class="flex items-center font-bold text-red-950 cursor-pointer hover:text-red-950 transition-all"
-          href="/home"
+          href="<% if (typeof auth === 'undefined') { %>/home<% } else { %>/service?userId=<%= typeof data.id === 'undefined' ? data.userString : data.id  %>&service=<%= service %><% } %>"
         >
           <i class="fa-solid fa-ghost mr-3"></i>
-          <% if (service === 'blog') { %> Poster->Ghost <% } else if (service
-          === 'api') { %> APIs->Ghost <% } else { %> Ghost <% } %>
+          <% if (service === 'blog') { %> <%= 'Poster->Ghost' %> <% } else if
+          (service=== 'api') { %> <%= 'APIs->Ghost' %> <% } else { %> <%=
+          'Ghost' %> <% } %>
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
@@ -126,7 +127,7 @@
       id="navHead"
       class="w-full fixed top-0 h-16 flex items-center justify-between bg-blue-800 text-white p-4"
     >
-      <h1 class="text-white font-bold text-3xl"><%= title %></h1>
+      <h1 class="text-white font-bold text-3xl"><%= title = 'Ghostify' %></h1>
       <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
         <% if (typeof testerMode !== 'undefined' && testerMode === true) { %>
         <i

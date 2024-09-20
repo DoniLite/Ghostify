@@ -91,6 +91,16 @@
   color: #3498db;
 }
 
+.markdown-content ul li {
+  font-weight: bold;
+}
+
+.markdown-content ul li::before {
+  content: "- ";
+  color: #2980b9;
+  font-weight: bold;
+}
+
 .markdown-content ol {
   counter-reset: item;
 }

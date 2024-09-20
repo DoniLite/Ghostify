@@ -63,6 +63,7 @@ const requesterFunc = async (e) => {
   });
 
   const dataRes = await res.json();
+  console.log(dataRes)
   if (dataRes.success) {
     window.location.href = `/poster/view?post=${dataRes.article}`;
   }
@@ -97,6 +98,7 @@ const getList = () => {
         el.querySelectorAll('.vl-parent').forEach((e) => {
           list.push({
             item: e.querySelector('input').value,
+            description: e.querySelector('textarea').value,
             index: Number(e.dataset.index),
             section: sectionIndex,
           });
@@ -303,20 +305,30 @@ const addListItem = (e) => {
       lastParent.querySelector('.lst-component').lastElementChild.dataset.index
     ) + 1;
   const listItemComponent = `
-  <div data-index="${icr}" class="vl-parent flex gap-x-4 w-11/12 items-center mt-4">
-    <div class="w-4 h-4 rounded-full bg-white"></div>
-      <input
-        type="text"
-        id="listElement"
-        placeholder="Element"
-        class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-      />
-    <div id="listRemoveBtn">
+  <div
+      data-index="${icr}"
+      class="vl-parent flex justify-between w-full items-center mt-4 lg:p-3 p-2"
+    >
+      <div class="w-4 h-4 rounded-full bg-white hidden lg:block"></div>
+      <div class="flex flex-col gap-y-3 lg:w-9/12 w-[90%]">
+        <input
+          type="text"
+          id="listElement"
+          placeholder="Element"
+          class=" bg-transparent p-2 text-white font-bold w-full"
+        />
+        <textarea
+          id="listElementContent"
+          placeholder="Description..."
+          class="text-gray-950 w-full max-sm:mx-auto p-2 lg:h-24 h-20 placeholder:text-gray-950 rounded-sm"
+        ></textarea>
+      </div>
+      <div id="listRemoveBtn">
         <i
           class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
         ></i>
+      </div>
     </div>
-  </div>
 `;
   lastParent
     .querySelector('.lst-component')

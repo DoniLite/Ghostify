@@ -62,4 +62,23 @@ addFileBtn.onclick = (e) => {
   fileInput.click();
 };
 
-// fileInput.onchange = (e) => {};
+/**
+ * 
+ * @param {InputEvent} e 
+ */
+fileInput.onchange = (e) => {
+  e.preventDefault();
+  const file = e.currentTarget.files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const img = document.createElement('img');
+      img.src = reader.result;
+      img.classList.add('w-full', 'rounded-lg', 'object-cover', 'mb-4')
+      img.style.height = '8rem';
+      document.querySelector('#imgInput').style.display = 'none';
+      document.querySelector('#actuBtnInput').insertAdjacentElement('beforebegin', img);
+    }
+  }
+};
