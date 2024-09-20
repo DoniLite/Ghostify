@@ -7,7 +7,7 @@ export const urlVisitor = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const urlUpdate = await prismaClient.url.update({
       where: {
-        url: url,
+        id: Number(url),
       },
       data: {
         visit: {
