@@ -4,7 +4,6 @@ import {
   decrypt,
   encrypt,
   Service,
-  tokenTimeExpirationChecker,
 } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
@@ -53,6 +52,7 @@ export const authController = async (
         req.session.Auth = {
           authenticated: true,
           isSuperUser: true,
+          login: Su.userString,
         };
         const cookieExpriration = new Date();
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -201,28 +201,29 @@ export const registrationView = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { service, token } = req.query as QueryXData<Register>;
+  const { service } = req.query as QueryXData<Register>;
 
-  if (!service || !token) {
-    throw new Error('Invalid service  or registration');
+  console.log(service);
+  if (!service) {
+    return res.send(JSON.stringify({ error: 'Service not found' }));
   }
 
-  let d;
-  try {
-    d = decrypt(
-      token,
-      req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv
-    );
-  } catch (e) {
-    console.error(e);
-  }
+  // let d;
+  // try {
+  //   d = decrypt(
+  //     token,
+  //     req.session.ServerKeys.secretKey,
+  //     req.session.ServerKeys.iv
+  //   );
+  // } catch (e) {
+  //   console.error(e);
+  // }
 
-  const verifier = tokenTimeExpirationChecker(Number(d));
-  if (verifier) {
-    throw new Error('The validation time expired');
-  }
-  res.view('/src/views/signup.ejs', { service: service });
+  // const verifier = tokenTimeExpirationChecker(Number(d));
+  // if (verifier) {
+  //   throw new Error('The validation time expired');
+  // }
+  return res.view('/src/views/signup.ejs', { service: service });
 };
 
 interface RegisterPost {
@@ -261,17 +262,16 @@ export const registrationController = async (
         expires: cookieExpriration,
       });
       return res
-        .code(200)
         .redirect(
           `/service?userId=${req.session.Auth.login}&service=${service}`
         );
     } catch (e) {
       console.error(e);
-      return res.code(403);
+      return res.send('something went wrong');
     }
   }
 
-  if (service === 'blog') {
+  if (service === Service.blog) {
     try {
       const cryptedPassword = encrypt(
         password,
@@ -311,7 +311,6 @@ export const registrationController = async (
           expires: cookieExpriration,
         });
         return res
-          .code(200)
           .redirect(
             `/service?userId=${req.session.Auth.login}&service=${service}`
           );
@@ -321,7 +320,7 @@ export const registrationController = async (
     }
   }
 
-  if (service === 'api') {
+  if (service === Service.api) {
     try {
       const cryptedPassword = encrypt(
         password,
@@ -361,7 +360,6 @@ export const registrationController = async (
           expires: cookieExpriration,
         });
         return res
-          .code(200)
           .redirect(
             `/service?userId=${req.session.Auth.login}&service=${service}`
           );
@@ -371,7 +369,7 @@ export const registrationController = async (
     }
   }
 
-  if (service === 'superUser') {
+  if (service === Service.superUser) {
     try {
       const cryptedPassword = encrypt(
         password,
@@ -411,7 +409,6 @@ export const registrationController = async (
           expires: cookieExpriration,
         });
         return res
-          .code(200)
           .redirect(
             `/service?userId=${req.session.Auth.login}&service=${service}`
           );

@@ -100,3 +100,65 @@
 .show {
     animation: showing-nav .2s ease-out forwards;
 }
+
+
+@keyframes showing-reactions {
+  0% {
+    transform: translateY(80%);
+    opacity: 0.2;
+  }
+
+  25% {
+    transform: translateY(60%);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(40%);
+    opacity: 0.6;
+  }
+
+  75% {
+    transform: translateY(20%);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes hiding-reactions {
+  0% {
+    transform: translateY(0%);
+    opacity: 0.8;
+  }
+
+  25% {
+    transform: translateY(20%);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(60%);
+    opacity: 0.4;
+  }
+
+  75% {
+    transform: translateY(80%);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.hide-reactions {
+    animation: hiding-reactions .1s ease-out forwards;
+}
+.show-reactions {
+    animation: showing-reactions .1s ease-out forwards;
+}

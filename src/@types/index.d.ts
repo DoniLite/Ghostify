@@ -274,6 +274,7 @@ export interface DocumentStorage {
       index: number;
       items: {
         item: string;
+        description: string;
         index: number;
         section: number;
       }[];
@@ -291,6 +292,7 @@ export interface PostFile {
 export interface List {
   index: number;
   items: {
+    description: string;
     item: string;
     index: number;
     section: number;

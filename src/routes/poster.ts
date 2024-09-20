@@ -10,11 +10,11 @@ import {
 import { decrypt, encrypt, Service, unify } from '../utils';
 import { prismaClient } from '../config/db';
 // import util from 'util';
-// import fs from 'fs';
-// import path from 'path';
+import fs from 'fs';
+import path from 'path';
 // import { pipeline } from 'stream';
-// import { randomInt } from 'crypto';
-// import { IncomingForm, File as FormidableFile } from 'formidable';
+import { randomInt } from 'crypto';
+import { IncomingForm, File as FormidableFile } from 'formidable';
 
 // const pump = util.promisify(pipeline);
 
@@ -40,7 +40,7 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
       };
       return res.redirect('/signin?service=blog');
     }
-    if (!req.session.Auth) return res.redirect('/signin?service=blog');
+    if (!req.session.Auth || req.session.Auth.authenticated === false) return res.redirect('/signin?service=blog');
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
@@ -58,6 +58,7 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
       service: service,
       auth: true,
       writterMode: true,
+      data: req.session.Auth.isSuperUser ? {...req.session.SuperUser} : {id: req.session.Auth.id}
     });
   } catch (e) {
     console.log(e);
@@ -99,143 +100,150 @@ export const requestListComponent = async (
 };
 
 export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
-  console.log(req, res);
-  // console.log('Starting docSaver');
-  // const form = new IncomingForm({
-  //   uploadDir: path.resolve(__dirname, '../../src/public/uploads/posts'),
-  //   keepExtensions: true,
-  //   multiples: true, // Permet de gérer plusieurs fichiers
-  // });
-  // let json: boolean | undefined;
-  // let i = 0;
+  console.log('Starting docSaver');
+  const form = new IncomingForm({
+    uploadDir: path.resolve(__dirname, '../../src/public/uploads/posts'),
+    keepExtensions: true,
+    multiples: true, // Permet de gérer plusieurs fichiers
+    allowEmptyFiles: true,
+    minFileSize: 0,
+    filter: function ({ mimetype }) {
+      // keep only images
+      return mimetype && mimetype.includes('image');
+    },
+  });
+  let json: boolean | undefined;
   // Crée un post vide au début
-  // const post = req.session.Auth.isSuperUser
-  //   ? await prismaClient.post.create({
-  //       data: {
-  //         title: '',
-  //         description: '',
-  //         visibility: 'Private',
-  //         safe: false,
-  //       },
-  //     })
-  //   : await prismaClient.post.create({
-  //       data: {
-  //         title: '',
-  //         description: '',
-  //         visibility: 'Private',
-  //         safe: false,
-  //         userId: req.session.Auth.id,
-  //       },
-  //     });
-  // form.parse(req.raw, async (err, fields, files) => {
-  //   if (err) {
-  //     console.error('Error parsing form:', err);
-  //     return res.code(400).send('Error parsing form');
-  //   }
-  //   console.log('Fields:', fields);
-  //   console.log('Files:', files);
-  //   try {
-  //     req.session.Storage = JSON.parse(
-  //       fields.data as string
-  //     ) as DocumentStorage;
-  //     json = Boolean(fields.json);
-  //   } catch (parseError) {
-  //     console.error('Error parsing fields data:', parseError);
-  //     return res.code(400).send('Invalid form data');
-  //   }
-  //   const dangerousExtension = [
-  //     '.js',
-  //     '.jsx',
-  //     '.cmd',
-  //     '.py',
-  //     '.bash',
-  //     '.sh',
-  //     '.shx',
-  //   ];
+  const post = req.session.Auth.isSuperUser
+    ? await prismaClient.post.create({
+        data: {
+          title: '',
+          description: '',
+          visibility: 'Private',
+          safe: false,
+        },
+      })
+    : await prismaClient.post.create({
+        data: {
+          title: '',
+          description: '',
+          visibility: 'Private',
+          safe: false,
+          userId: req.session.Auth.id,
+        },
+      });
+  const [fields, files] = await form.parse(req.raw);
+
+  console.log('Fields:', fields);
+  console.log('Files:', files);
+  try {
+    req.session.Storage = JSON.parse(fields.data.toString()) as DocumentStorage;
+    json = Boolean(fields.json[0]);
+    console.log(req.session.Storage, json);
+  } catch (parseError) {
+    console.error('Error parsing fields data:', parseError);
+    return res.code(400).send('Invalid form data');
+  }
+  const dangerousExtension = [
+    '.js',
+    '.jsx',
+    '.cmd',
+    '.py',
+    '.bash',
+    '.sh',
+    '.shx',
+  ];
   // Traiter les fichiers multiples
-  //   const fileArray: FormidableFile[] = Array.isArray(files.file)
-  //     ? files.file
-  //     : [files.file];
-  //   for (const file of fileArray) {
-  //     const ext = path.extname(file.originalFilename!);
-  // Vérifier les extensions dangereuses
-  //     if (dangerousExtension.includes(ext)) {
-  //       console.log('Inappropriate file detected');
-  //       return res.code(403).send('You want to send inappropriate content');
-  //     }
-  // Générer un nom de fichier unique
-  //     const date = new Date();
-  //     const r = randomInt(date.getTime()).toString();
-  //     const fName = `${date.getTime().toString() + r}${ext}`;
-  //     const uploadPath = path.join(form.uploadDir, fName);
-  // Déplacer le fichier téléchargé
-  //     fs.rename(file.filepath, uploadPath, async (renameErr) => {
-  //       if (renameErr) {
-  //         console.error('Error moving file:', renameErr);
-  //         return res.code(500).send('File upload error');
-  //       }
-  //       console.log('File uploaded:', fName);
-  // Sauvegarder le fichier dans la base de données
-  //       await prismaClient.postFile.create({
-  //         data: {
-  //           filePath: `/static/uploads/posts/${fName}`,
-  //           index: Number(req.session.Storage.image[i].index),
-  //           sectionId: Number(req.session.Storage.image[i].section),
-  //           postId: post.id,
-  //         },
-  //       });
-  //       i++;
-  //     });
-  //   }
+  const fileArray: FormidableFile[] = Array.isArray(files.file)
+    ? files.file
+    : [files.file];
+  console.log(fileArray);
+  if (fileArray.length > 0 && typeof fileArray[0] !== 'undefined') {
+    for (let i = 0; i < fileArray.length; i++) {
+      const ext = path.extname(fileArray[i].originalFilename);
+      // Vérifier les extensions dangereuses
+      if (dangerousExtension.includes(ext)) {
+        console.log('Inappropriate file detected');
+        return res.code(403).send('You want to send inappropriate content');
+      }
+      if (ext === '') continue;
+      // Générer un nom de fichier unique
+      const date = new Date();
+      const r = randomInt(date.getTime()).toString();
+      const fName = `${date.getTime().toString() + r}${ext}`;
+      const uploadPath = path.join(
+        path.resolve(__dirname, '../../src/public/uploads/posts'),
+        fName
+      );
+      // Déplacer le fichier téléchargé
+      fs.rename(fileArray[i].filepath, uploadPath, async (renameErr) => {
+        if (renameErr) {
+          console.error('Error moving file:', renameErr);
+          return res.code(500).send('File upload error');
+        }
+        console.log('File uploaded:', fName);
+        // Sauvegarder le fichier dans la base de données
+        const nFile = await prismaClient.postFile.create({
+          data: {
+            filePath: `/static/uploads/posts/${fName}`,
+            index: Number(req.session.Storage.image[i].index),
+            sectionId: Number(req.session.Storage.image[i].section),
+            postId: post.id,
+          },
+        });
+        console.log('file post created:', nFile);
+        console.log(i);
+      });
+    }
+  }
   // Traiter les sections après les fichiers
-  //   for (let id = 0; id < req.session.Storage.section.length; id++) {
-  //     const sec = req.session.Storage.section[id];
-  //     const newSection = await prismaClient.postSection.create({
-  //       data: {
-  //         title: sec.title,
-  //         content: sec.content,
-  //         indedx: sec.index,
-  //         postId: post.id,
-  //         meta: JSON.stringify(req.session.Storage.list[`${id + 1}`]),
-  //       },
-  //     });
-  //     console.log('Section created:', newSection);
-  //   }
+  for (let id = 0; id < req.session.Storage.section.length; id++) {
+    const sec = req.session.Storage.section[id];
+    const newSection = await prismaClient.postSection.create({
+      data: {
+        title: sec.title,
+        content: sec.content,
+        indedx: sec.index,
+        postId: post.id,
+        meta: JSON.stringify(req.session.Storage.list[`${id + 1}`]),
+      },
+    });
+    console.log('Section created:', newSection);
+  }
   // Mise à jour du post avec les données du formulaire
-  //   await prismaClient.post.update({
-  //     where: { id: post.id },
-  //     data: {
-  //       title: req.session.Storage.title,
-  //       description: req.session.Storage.desc_or_meta,
-  //     },
-  //   });
-  // Répondre avec JSON ou redirection en fonction de la demande
-  //   if (json === true) {
-  //     return res.send(JSON.stringify({ success: true, article: post.id }));
-  //   }
-  //   return res.redirect(`/poster/view?post=${post.id}`);
-  // });
+  const up = await prismaClient.post.update({
+    where: { id: post.id },
+    data: {
+      title: req.session.Storage.title,
+      description: req.session.Storage.desc_or_meta,
+    },
+  });
+  console.log('updated content final:', up);
+  console.log(json);
+  if (json === true) {
+    return res.send(JSON.stringify({ success: true, article: post.id }));
+  }
+  return res.redirect(`/poster/view?post=${post.id}`);
 };
 
 export const docView = async (req: FastifyRequest, res: FastifyReply) => {
-  const { post } = req.query as QueryXData;
+  const { post, api } = req.query as QueryXData<{ post: string; api: string }>;
   if (!post) return res.code(404).send('no post specified');
 
   const article = await prismaClient.post.findUnique({
     where: {
-      id: Number(post),
+      id: parseInt(post),
     },
   });
 
   if (article.inMemory) {
-    let docString = `
-    # ${article.title} \n\n\n
-    `;
+    let docString = `# ${article.title} \n`;
     const postFiles = await prismaClient.postFile.findMany({
       where: {
         postId: article.id,
       },
     });
+    console.log(postFiles);
     const postSections = await prismaClient.postSection.findMany({
       where: {
         postId: article.id,
@@ -244,16 +252,13 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
     postFiles.sort((a, b) => a.index - b.index);
     postSections.sort((a, b) => a.indedx - b.indedx);
     postSections.forEach(async (section) => {
-      docString += `
-      ## ${section.title}
-
-      ${section.content} \n\n\n
-      `;
+      docString += `## ${section.title} \n${section.content} \n`;
       const list: [
         {
           index: number;
           items: {
             item: string;
+            description: string;
             index: number;
             section: number;
           }[];
@@ -272,17 +277,19 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
             element.items
               .sort((a, b) => a.index - b.index)
               .forEach((el) => {
-                docString += `
-            - ${el.item} \n\n\n
-            `;
+                docString += `- ${el.item} \n${
+                  typeof el.description !== 'undefined'
+                    ? '\n' + el.description + '\n'
+                    : ''
+                }`;
               });
+          } else {
+            element = el as PostFile;
+            docString += `![image](${element.filePath}) \n`;
           }
-          element = el as PostFile;
-          docString += `
-          ![image](${element.filePath}) \n\n\n
-          `;
         });
     });
+    console.log(docString);
     const unifyingText = await unify(docString);
     const updatedContent = await prismaClient.post.update({
       where: {
@@ -290,9 +297,20 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
       },
       data: {
         parsedContent: unifyingText,
+        content: docString,
       },
     });
+    console.log(unifyingText);
+    if (Boolean(api) === true) {
+      return res.send(
+        JSON.stringify({
+          ...updatedContent,
+          visites: updatedContent.visites.toString(),
+        })
+      );
+    }
     return res.view('/src/views/page.ejs', {
+      id: updatedContent.id,
       content: updatedContent.parsedContent,
       title: updatedContent.title,
       service: Service.blog,
@@ -302,10 +320,14 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
         req.session.Auth.authenticated
           ? req.session.Auth.authenticated
           : false,
+      data: req.session.Auth.isSuperUser
+        ? { ...req.session.SuperUser }
+        : { id: req.session.Auth.id },
     });
   }
 
   return res.view('/src/views/page.ejs', {
+    id: article.id,
     content: article.parsedContent,
     title: article.title,
     service: Service.blog,
@@ -314,6 +336,9 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
       typeof req.session.Auth !== 'undefined' && req.session.Auth.authenticated
         ? req.session.Auth.authenticated
         : false,
+    data: req.session.Auth.isSuperUser
+      ? { ...req.session.SuperUser }
+      : { id: req.session.Auth.id },
   });
 };
 

@@ -53,31 +53,36 @@ enum Reactions {
   Love
   Laugh
   Hurted
+  Good
 }
 
 model Comment {
-  id        Int         @id @default(autoincrement())
-  post      Post?       @relation(fields: [postId], references: [id])
-  file      String?
-  reactions Reactions[]
-  postId    Int?
-  content   String?
-  comments  Comment[]   @relation(name: "CommentToComment")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  comment   Comment?    @relation(name: "CommentToComment", fields: [commentId], references: [id])
-  commentId Int?
-  signaled  BigInt      @default(0)
-  meta      String?
-  isAnActu  Boolean
-  promoted  Boolean     @default(false)
-  ip        String?
-  safe      Boolean     @default(false)
-  indexed   Boolean     @default(false)
-  visitors  BigInt      @default(0)
-  url       String?
-  Indexer   Indexer?    @relation(fields: [indexerId], references: [id])
-  indexerId Int?
+  id          Int         @id @default(autoincrement())
+  post        Post?       @relation(fields: [postId], references: [id])
+  file        String?
+  reactions   Reactions[]
+  postId      Int?
+  content     String?
+  author      String?
+  comments    Comment[]   @relation(name: "CommentToComment")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  comment     Comment?    @relation(name: "CommentToComment", fields: [commentId], references: [id])
+  commentId   Int?
+  signaled    Int         @default(0)
+  referred    String?
+  user        User?       @relation(fields: [userId], references: [id])
+  meta        String?
+  isAnActu    Boolean     @default(false)
+  isForumPost Boolean     @default(false)
+  promoted    Boolean     @default(false)
+  safe        Boolean     @default(false)
+  indexed     Boolean     @default(false)
+  visitors    Int         @default(0)
+  url         String?
+  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
+  indexerId   Int?
+  userId      Int?
 }
 
 model postFile {
@@ -86,7 +91,7 @@ model postFile {
   sectionId   Int
   filePost    Post   @relation(fields: [postId], references: [id])
   index       Int
-  description String
+  description String @default("")
   postId      Int
 }
 
@@ -107,7 +112,7 @@ model Post {
   category      Category?     @relation(fields: [categoryId], references: [id])
   categoryId    Int?
   visibility    Visibility
-  visites       BigInt        @default(0)
+  visites       Int           @default(0)
   user          User?         @relation(fields: [userId], references: [id]) // If the post is from `Api` then require the user. the user is a sjon string data
   fromApi       Boolean       @default(false)
   parsedContent String?
@@ -184,8 +189,8 @@ model GeneratorData {
 
 model Url {
   id        Int      @id @default(autoincrement())
-  url       String   @unique
-  visit     BigInt   @default(0)
+  url       String
+  visit     Int      @default(0)
   name      String
   updatedAt DateTime @updatedAt
   indexed   Boolean  @default(false)
@@ -197,16 +202,17 @@ model Url {
 model User {
   id           Int         @id @default(autoincrement())
   name         String
-  email        String      @unique
+  email        String
   password     String
   token        String
   service      String
   registration DateTime?
   permission   Permission
-  credits      BigInt      @default(300)
+  credits      Int         @default(300)
   meta         String?
   GamerStat    GamerStat[]
   Post         Post[]
+  Comment      Comment[]
 }
 
 enum AssetType {
@@ -228,7 +234,7 @@ model Assets {
 }
 
 model Admin {
-  id         BigInt    @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   role       String
   login      String    @unique
   password   String
