@@ -34,7 +34,7 @@ export const authController = async (
 
   const user = await prismaClient.user.findUnique({
     where: {
-      email: login,
+      id: Number(login),
     },
   });
 
