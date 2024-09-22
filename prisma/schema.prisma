@@ -12,6 +12,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Service {
+  Poster
+  CVMaker
+  APIs
+}
+
+model Services {
+  id     Int     @id @default(autoincrement())
+  type   Service @unique
+  active Boolean @default(false)
+}
+
+enum Class {
+  A
+  B
+  S
+  SS
+  D
+}
+
+model Vote {
+  id      Int    @id @default(autoincrement())
+  title   String
+  votes   Int    @default(0)
+  poll    String // json data for the poll
+  class   Class
+  Topic   Topic? @relation(fields: [topicId], references: [id])
+  topicId Int?
+}
+
+model Topic {
+  id      Int       @id @default(autoincrement())
+  title   String    @unique
+  keyword String
+  comment Comment[]
+  vote    Vote[]
+}
+
 enum Permission {
   User
   Admin
@@ -44,7 +82,7 @@ model PostSection {
   title     String
   updatedAt DateTime @updatedAt
   content   String?
-  indedx    Int
+  index     Int
   header    Boolean  @default(false)
   meta      String? //like list or injeted metadata
 }
@@ -83,6 +121,10 @@ model Comment {
   Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
   indexerId   Int?
   userId      Int?
+  Topic       Topic?      @relation(fields: [topicId], references: [id])
+  topicId     Int?
+
+  @@index([id, userId, topicId, postId, commentId, indexerId])
 }
 
 model postFile {
@@ -123,7 +165,7 @@ model Post {
   indexed       Boolean       @default(false)
   userId        Int?
 
-  @@index([published, createdAt, id, userId])
+  @@index([published, createdAt, id, userId, indexerId])
   @@map("posts")
 }
 
@@ -159,8 +201,7 @@ model GameData {
   icon        String
   description String
   indexed     Boolean     @default(true)
-  logo        String
-  data        String? //json
+  data        String? // json data
   Indexer     Indexer     @relation(fields: [indexerId], references: [id])
   indexerId   Int
 }
@@ -200,19 +241,49 @@ model Url {
 }
 
 model User {
-  id           Int         @id @default(autoincrement())
-  name         String
-  email        String
-  password     String
-  token        String
-  service      String
-  registration DateTime?
-  permission   Permission
-  credits      Int         @default(300)
-  meta         String?
-  GamerStat    GamerStat[]
-  Post         Post[]
-  Comment      Comment[]
+  id            Int         @id @default(autoincrement())
+  name          String
+  email         String      @unique
+  password      String
+  token         String
+  service       String
+  registration  DateTime?
+  permission    Permission
+  posterCredits Int         @default(300)
+  cvCredits     Int         @default(300)
+  apiCredits    Int         @default(300)
+  apiAccess     Boolean     @default(false)
+  meta          String?
+  GamerStat     GamerStat[]
+  Post          Post[]
+  Comment       Comment[]
+}
+
+enum KeyType {
+  Password
+  SecretKey
+  SessionKey
+  ApiKey
+  AccessToken
+  RefreshToken
+  TwoFactorCode
+  GoogleAuthCode
+  AppleAuthCode
+  GitHubAuthCode
+  DiscordAuthCode
+  TwitterAuthCode
+  InstagramAuthCode
+  LinkedInAuthCode
+  FacebookAuthCode
+  RedditAuthCode
+}
+
+model Key {
+  id   Int     @id @default(autoincrement())
+  key  String
+  iv   String
+  type KeyType
+  uid  String  @unique
 }
 
 enum AssetType {

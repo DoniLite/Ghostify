@@ -5,7 +5,11 @@
         
         <!-- Slides -->
         <div class="swiper-slide">
-            <%- include('home') %>
+            <% if (typeof auth !== 'undefined' && auth === true) { %>
+             <%- include('components/user.ejs') %>
+            <% } else { %>
+                <%- include('home') %>
+            <% } %>
         </div>
         <div class="swiper-slide">
             <%- include('projects') %>

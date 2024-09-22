@@ -77,6 +77,7 @@ export interface Auth {
   login?: string;
   isSuperUser?: boolean;
   authenticated: boolean;
+  name?: string;
 }
 
 export interface Indexer {
@@ -91,7 +92,7 @@ export interface Section {
   postId: number;
   title: string;
   content: string | null;
-  indedx: number;
+  index: number;
   header: boolean;
   meta: string | null;
 }

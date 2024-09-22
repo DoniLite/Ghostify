@@ -61,9 +61,14 @@ export const home: RouteHandlerMethod = async (req, res) => {
       defaultArticles: articlesResults.defaultArticles,
       topArticles: articlesResults.topArticles,
       urls,
-      auth: typeof req.session.Auth !== 'undefined' ? req.session.Auth.authenticated : undefined,
-      categories: [...categories.map(category => category.title)],
+      auth:
+        typeof req.session.Auth !== 'undefined'
+          ? req.session.Auth.authenticated
+          : undefined,
+      categories: [...categories.map((category) => category.title)],
       theme: Theme,
+      user: req.session.Auth.name || '@super user 🤖',
+      userId: req.session.Auth.id || req.session.Auth.login || '',
     });
   }
 
@@ -112,6 +117,8 @@ export const home: RouteHandlerMethod = async (req, res) => {
           : undefined,
       urls,
       theme: Theme,
+      user: req.session.Auth.name || '@super user 🤖',
+      userId: req.session.Auth.id || req.session.Auth.login || '',
     });
   }
   return res.view('/src/views/index.ejs', {
@@ -126,5 +133,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
         : undefined,
     urls,
     theme: Theme,
+    user: req.session.Auth.name || '@super user 🤖',
+    userId: req.session.Auth.id || req.session.Auth.login || '',
   });
 };

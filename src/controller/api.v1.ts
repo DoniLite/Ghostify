@@ -1,10 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { BodyXData, QueryXData } from 'index';
-import {
-  decrypt,
-  encrypt,
-  Service,
-} from '../utils';
+import { decrypt, encrypt, Service } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 import { SuperUser } from '../class/SuperUser';
@@ -34,7 +30,7 @@ export const authController = async (
 
   const user = await prismaClient.user.findUnique({
     where: {
-      id: Number(login),
+      email: login,
     },
   });
 
@@ -89,6 +85,7 @@ export const authController = async (
       isSuperUser: false,
       login: login,
       id: user.id,
+      name: user.name,
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -154,7 +151,6 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
       email: true,
       service: true,
       registration: true,
-      credits: true,
     },
   });
 
@@ -240,6 +236,19 @@ export const registrationController = async (
   const { service, name, email, password } =
     req.body as BodyXData<RegisterPost>;
 
+    console.log(name, email, password, service);
+
+  if (!service || !name || !email || !password) 
+    throw new Error('Invalid credentials');
+
+  const refifyIfUserExists = await prismaClient.user.findUnique({
+    where: {
+      email: email,
+    }
+  });
+  
+  if (refifyIfUserExists) throw new Error(`User ${email} already exists`);
+
   const spltPass = password.split(';');
   if (spltPass.length > 1 && spltPass[1] === SUPER_USER_PASS_CODE) {
     try {
@@ -261,10 +270,9 @@ export const registrationController = async (
       res.setCookie('connection_time', req.session.Token, {
         expires: cookieExpriration,
       });
-      return res
-        .redirect(
-          `/service?userId=${req.session.Auth.login}&service=${service}`
-        );
+      return res.redirect(
+        `/service?userId=${req.session.Auth.login}&service=${service}`
+      );
     } catch (e) {
       console.error(e);
       return res.send('something went wrong');
@@ -310,10 +318,9 @@ export const registrationController = async (
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
-        return res
-          .redirect(
-            `/service?userId=${req.session.Auth.login}&service=${service}`
-          );
+        return res.redirect(
+          `/service?userId=${req.session.Auth.id}&service=${service}`
+        );
       }
     } catch (err) {
       console.log(err);
@@ -329,7 +336,6 @@ export const registrationController = async (
       );
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
-      const credits = 100;
       const token = tokenGenerator(date.toDateString());
       const user = await prismaClient.user.create({
         data: {
@@ -338,7 +344,6 @@ export const registrationController = async (
           service: service,
           token: token,
           password: cryptedPassword,
-          credits: credits,
           permission: 'User',
         },
       });
@@ -359,10 +364,9 @@ export const registrationController = async (
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
-        return res
-          .redirect(
-            `/service?userId=${req.session.Auth.login}&service=${service}`
-          );
+        return res.redirect(
+          `/service?userId=${req.session.Auth.id}&service=${service}`
+        );
       }
     } catch (err) {
       console.log(err);
@@ -408,10 +412,9 @@ export const registrationController = async (
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
-        return res
-          .redirect(
-            `/service?userId=${req.session.Auth.login}&service=${service}`
-          );
+        return res.redirect(
+          `/service?userId=${req.session.Auth.id}&service=${service}`
+        );
       }
     } catch (err) {
       console.log(err);

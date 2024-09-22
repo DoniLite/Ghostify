@@ -6,16 +6,16 @@
 >
   <div class="flex w-full gap-x-4 items-center p-3">
     <img
-      src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
+      src="<% if (typeof comment.userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= comment.userIcon %> <% } %>"
       class="w-8 h-8 rounded-full"
       alt="user profil"
     />
-    <span class="text-white font-bold"> Doni Lite</span>
-    <span class="text-white"> 1 hour ago</span>
+    <span class="text-white font-bold"><%= comment.author %></span>
+    <span class="text-white"><%= comment.time %></span>
   </div>
-  <a href="/static/img/random2.png" class="w-full">
+  <a href="<%= comment.file %>" class="w-full">
     <img
-      src="/static/img/random2.png"
+      src="<%= coment.file %>"
       alt=""
       class="w-full object-cover h-auto mt-3 rounded-lg"
     />
@@ -40,18 +40,15 @@
         </div>
       </div>
       <div class="flex">
-        <i class="fa-solid fa-heart fa-lg text-red-600"></i>
-        <i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>
-        <i
-          class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"
-        ></i>
-        <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
+        <% comment.reactions.forEach(element => { %> <%- element %> <% }) %>
       </div>
-      <span class="text-white">1k reactions</span>
+      <span class="text-white"> <%= comment.reactionsNumber %> reactions</span>
     </div>
-    <span class="text-white font-bold">1.5k comments</span>
+    <span class="text-white font-bold">
+      <%= comment.commentsNumber %> comments</span
+    >
   </div>
-  <%- include('comment', {pointerType: 'actu'}) %>
+  <%- include('comment', {pointerType: 'actu', replies: comment.replies, pointer: comment.id }) %>
 </div>
 <%- include('rawFooter.ejs') %>
 <script>

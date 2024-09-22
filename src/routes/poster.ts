@@ -203,7 +203,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
       data: {
         title: sec.title,
         content: sec.content,
-        indedx: sec.index,
+        index: sec.index,
         postId: post.id,
         meta: JSON.stringify(req.session.Storage.list[`${id + 1}`]),
       },
@@ -250,7 +250,7 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
       },
     });
     postFiles.sort((a, b) => a.index - b.index);
-    postSections.sort((a, b) => a.indedx - b.indedx);
+    postSections.sort((a, b) => a.index - b.index);
     postSections.forEach(async (section) => {
       docString += `## ${section.title} \n${section.content} \n`;
       const list: [
@@ -266,7 +266,7 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
       ] = typeof section.meta === 'string' ? JSON.parse(section.meta) : [];
       const docAssetsData = [
         ...list,
-        ...postFiles.filter((file) => file.sectionId === section.indedx),
+        ...postFiles.filter((file) => file.sectionId === section.index),
       ] as DocDataUnion[];
       docAssetsData
         .sort((a, b) => a.index - b.index)

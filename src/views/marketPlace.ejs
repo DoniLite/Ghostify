@@ -2,6 +2,14 @@
   id="container"
   class="dp w-full overflow-y-scroll h-full bg-gradient-to-tr from-gray-900 to-blue-500"
 >
+
+        <% if (typeof auth === 'undefined' || auth === false) { %>
+          <a
+            href="/signin?service=blog"
+            class="bg-gray-900 absolute right-4 top-24 rounded-md lg:border-none border border-white lg:border-transparent font-bold text-white text-center p-2"
+            >Se connecter</a
+          >
+        <% } %>
   <form
     id="actuForm"
     class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] overflow-y-scroll p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
@@ -52,6 +60,8 @@
       </div>
     </div>
 
+    <div class="w-full overflow-y-scroll h-auto" id="imgPrintDiv"></div>
+
     <div id="actuBtnInput" class="mb-5">
       <input
         type="submit"
@@ -67,7 +77,7 @@
     <i class="fa-solid fa-circle-plus fa-xl text-white"></i>
   </div>
   <h1
-    class="anton-sc-regular mx-auto mt-20 text-center lg:mt-24 text-white"
+    class="anton-sc-regular mx-auto mt-20 text-center lg:mt-24 text-white p-2"
     style="font-size: 40px"
   >
     Put your web site in the time 🛸

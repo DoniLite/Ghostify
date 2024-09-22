@@ -11,7 +11,9 @@ import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import ejs from 'ejs';
 import puppeteer from 'puppeteer';
+import { prismaClient } from './config/db';
 
+const server_uid = process.env.SECRET_UID;
 export enum DocInputFormat {
   MicrosoftWord = '.docx',
   OpenDocumentText = '.odt',
@@ -25,7 +27,6 @@ export enum DocInputFormat {
   PortableDocumentFormat = '.pdf',
   HypertextMarkupLanguage = '.html',
 }
-
 
 export enum DocOutputFormat {
   PNG = '.png',
@@ -107,6 +108,7 @@ export async function analyzeImage(
     flagged,
   };
 }
+
 
 export function shouldFlagImage(
   metadata: sharp.Metadata,
@@ -244,11 +246,11 @@ interface Keys {
   iv: string;
 }
 
-// Chemin vers le fichier où les clés seront stockées
-const keysFilePath: string = path.resolve(__dirname, 'data/keys.json');
-
 // Fonction pour générer et sauvegarder les clés
-export async function generateAndSaveKeys(): Promise<void> {
+export async function generateAndSaveKeys(): Promise<{
+  secretKey: Buffer;
+  iv: Buffer;
+}> {
   const secretKey: Buffer = crypto.randomBytes(32);
   const iv: Buffer = crypto.randomBytes(16);
 
@@ -257,21 +259,46 @@ export async function generateAndSaveKeys(): Promise<void> {
     iv: iv.toString('hex'),
   };
 
-  await fsP.writeFile(keysFilePath, JSON.stringify(keys), 'utf8');
+  const verifyIfKeyExist = await prismaClient.key.findUnique({
+    where: {
+      uid: server_uid,
+    },
+  });
+
+  if (verifyIfKeyExist)
+    return {
+      secretKey: Buffer.from(verifyIfKeyExist.key, 'hex'),
+      iv: Buffer.from(verifyIfKeyExist.iv, 'hex'),
+    };
+
+  const newKey = await prismaClient.key.create({
+    data: {
+      key: keys.secretKey,
+      iv: keys.iv,
+      uid: server_uid,
+      type: 'SessionKey',
+    },
+  });
   console.log('Clés générées et sauvegardées avec succès !');
+  return {
+    secretKey: Buffer.from(newKey.key, 'hex'),
+    iv: Buffer.from(newKey.iv, 'hex'),
+  };
 }
 
 // Fonction pour charger les clés depuis le fichier
 export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
-  if (!fs.existsSync(keysFilePath)) {
-    await createDirIfNotExists(DATA_PATH);
-    await generateAndSaveKeys();
+  const keys = await prismaClient.key.findUnique({
+    where: {
+      uid: server_uid,
+    },
+  });
+  if (!keys) {
+    return await generateAndSaveKeys();
   }
-  const data: string = await fsP.readFile(keysFilePath, 'utf8');
-  const keys: Keys = JSON.parse(data);
 
   return {
-    secretKey: Buffer.from(keys.secretKey, 'hex'),
+    secretKey: Buffer.from(keys.key, 'hex'),
     iv: Buffer.from(keys.iv, 'hex'),
   };
 }
@@ -449,7 +476,6 @@ export const graphicsUploader = () => {
   return 'Night' as const;
 };
 
-
 export const termsMD = `
 # 📝 **Terms of Service**
 
@@ -613,4 +639,41 @@ export const cvDownloader = async (options: Record<string, unknown>) => {
   await browser.close();
 
   return pdf;
+};
+
+export enum Reactions {
+  Love = 'Love',
+  Laugh = 'Laugh',
+  Hurted = 'Hurted',
+  Good = 'Good',
 }
+
+export const orderReactions = (reactions: Reactions[]) => {
+  const reactionsObj = {
+    Love: {
+      index: 0,
+      component: `<i class="fa-solid fa-heart -ml-1 fa-lg text-red-600"></i>`,
+    },
+    Laugh: {
+      index: 0,
+      component: `<i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>`,
+    },
+    Hurted: {
+      index: 0,
+      component: `<i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>`,
+    },
+    Good: {
+      index: 0,
+      component: `<i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>`,
+    },
+  };
+  reactions.forEach((reaction) => {
+    reactionsObj[reaction].index++;
+  });
+  return Object.entries(reactionsObj)
+    .map((el) => el[1])
+    .filter((el) => el.index > 0)
+    .sort((a, b) => a.index - b.index)
+    .reverse()
+    .map((el) => el.component);
+};
