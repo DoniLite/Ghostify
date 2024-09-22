@@ -1,7 +1,7 @@
 name: setup github actions for the Repo
 run-name: ${{ github.actor }} 's' GitHub Actions
 env:
-  DATABASE_URL: "file:./prod.db"
+  DATABASE_URL: ""
 
 on: 
   push:
@@ -34,4 +34,4 @@ jobs:
       - name: install dependancies
         run: npm install -g pnpm && pnpm install
       - name: run build
-        run: pnpm build
+        run: pnpm exec tsc --outDir build

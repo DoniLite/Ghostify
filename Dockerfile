@@ -48,14 +48,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
-ENV DATABASE_URL=postgres://koyeb-adm:gFRL2ZhecxV9@ep-cool-glade-a2sb95zk.eu-central-1.pg.koyeb.app/koyebdb
-
-RUN pnpm dlx prisma
-
-RUN pnpx prisma generate
-
-RUN pnpx prisma migrate deploy
-
 # Run the build script.
 RUN pnpm build
 

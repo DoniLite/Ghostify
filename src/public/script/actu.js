@@ -69,16 +69,41 @@ addFileBtn.onclick = (e) => {
 fileInput.onchange = (e) => {
   e.preventDefault();
   const file = e.currentTarget.files[0];
+  console.log(fileInput.value);
   if(file) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
-      const img = document.createElement('img');
-      img.src = reader.result;
-      img.classList.add('w-full', 'rounded-lg', 'object-cover', 'mb-4')
-      img.style.height = '8rem';
+      const img = `<div class="w-full relative mt-1">
+          <div
+              class="absolute top-2 right-2 p-1 cursor-pointer flex justify-center items-center bg-orange-500 rounded-full"
+              id="removeFile"
+          >
+              <i class="fa-solid fa-circle-xmark fa-xl text-white"></i>
+          </div>
+          <img
+              src="${reader.result}"
+              alt=""
+              class="w-full h-auto rounded-lg"
+          />
+        </div>`;
       document.querySelector('#imgInput').style.display = 'none';
-      document.querySelector('#actuBtnInput').insertAdjacentElement('beforebegin', img);
+      document
+        .querySelector('#imgPrintDiv')
+        .insertAdjacentHTML('afterbegin', img);
+      document.querySelector('#imgPrintDiv').querySelectorAll('#removeFile').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.currentTarget.parentElement.remove();
+          /**
+           * @type {HTMLInputElement}
+           */
+          const inputFile = document.querySelector('input[type="file"]');
+          document.querySelector('#imgInput').style.display = 'block';
+          inputFile.value = '';
+          console.log(fileInput.value);
+        })
+      })
     }
   }
 };

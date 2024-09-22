@@ -1,7 +1,15 @@
 <div class="w-full">
   <form class="relative w-full" id="commentFormElement">
-    <input type="hidden" name="pointerId" value="<%= typeof pointer === 'undefined'? pointer = '' : pointer %>">
-    <input type="hidden" name="pointerType" value="<%= typeof pointerType === 'undefined'? pointerType : pointerType %>">
+    <input
+      type="hidden"
+      name="pointerId"
+      value="<%= typeof pointer === 'undefined'? pointer = '' : pointer %>"
+    />
+    <input
+      type="hidden"
+      name="pointerType"
+      value="<%= typeof pointerType === 'undefined'? pointerType : pointerType %>"
+    />
     <input
       type="file"
       name="commentFile"
@@ -41,54 +49,41 @@
   </form>
 
   <div class="flex flex-col mt-6 p-4 gap-y-4 w-full">
-    <div class="flex w-full lg:gap-x-4 justify-between" id="comment" data-index="">
-      <img
-        src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
-        class="w-8 h-8 rounded-full mt-3"
-        alt="user profil"
-      />
-      <div class="p-3 bg-gray-950 text-white rounded-lg w-full flex flex-col">
-        <span class=" mb-3"> <span class="text-orange-500 font-bold">Doni lite</span> - 1 hour ago</span>
-        <span class="font-bold"
-          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium,
-          porro.
-        </span>
-        <div class="w-full flex mt-4 justify-between">
-          <div id="reactions" class="flex gap-x-4">
-            <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
-            <span class="text-white">1k reactions</span>
+    <% replies.forEach(reply => { %>
+        <div
+          class="flex w-full lg:gap-x-4 justify-between"
+          id="comment"
+          data-index=""
+        >
+          <img
+            src="<% if (typeof reply.userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= reply.userIcon %> <% } %>"
+            class="w-8 h-8 rounded-full mt-3"
+            alt="user profil"
+          />
+          <div class="p-3 bg-gray-950 text-white rounded-lg w-full flex flex-col">
+            <span class="mb-3">
+              <span class="text-orange-500 font-bold"><%= reply.author %></span><%= reply.time %>
+            </span>
+            <span class="font-bold">
+              <%= reply.content %>
+            </span>
+            <% if (typeof reply.file !== 'undefined') { %>
+             <img
+              src="<%= reply.file %>"
+              alt=""
+              class="w-full h-auto rounded-lg"
+             />
+            <% } %>
+            <div class="w-full flex mt-4 justify-between">
+              <div id="reactions" class="flex gap-x-4">
+                <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
+                <span class="text-white"><%= reply.reactionsNumber %> reactions</span>
+              </div>
+              <span class="text-white font-bold"><%= reply.commentsNumber %> comments</span>
+            </div>
           </div>
-          <span class="text-white font-bold">1.5k comments</span>
         </div>
-      </div>
-    </div>
-
-    <div class="flex w-full lg:gap-x-4 justify-between" id="comment" data-index="">
-      <img
-        src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
-        class="w-8 h-8 rounded-full mt-3"
-        alt="user profil"
-      />
-      <div class="p-3 bg-gray-950 text-white rounded-lg w-full flex flex-col">
-        <span class=" mb-3"> <span class="text-orange-500 font-bold">Doni lite</span> - 1 hour ago</span>
-        <span class="font-bold"
-          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium,
-          porro.
-        </span>
-        <img
-          src="/static/img/random2.png"
-          alt=""
-          class="w-full h-auto rounded-lg"
-        />
-        <div class="w-full flex mt-4 justify-between">
-          <div id="reactions" class="flex gap-x-4">
-            <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
-            <span class="text-white">1k reactions</span>
-          </div>
-          <span class="text-white font-bold">1.5k comments</span>
-        </div>
-      </div>
-    </div>
+    <% }) %>
   </div>
 </div>
 <script type="module" src="/static/script/comment.js"></script>

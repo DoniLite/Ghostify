@@ -21,6 +21,12 @@ export const sessionStorageHook = async (req: FastifyRequest) => {
     req.session.ServerKeys = await loadKeys();
   }
   req.session.ServerKeys = keys;
+
+  if (!req.session.Auth ) {
+    req.session.Auth = {
+      authenticated: false,
+    };
+  }
   // req.setSession = async (payload: any, dest: 'Weather'|'Quote' ) => {
   //     if (dest === 'Weather') {
   //         req.session.Weather = payload;
