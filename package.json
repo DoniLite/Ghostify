@@ -44,7 +44,7 @@
     "@fastify/view": "^9.1.0",
     "@fastify/websocket": "^10.0.1",
     "@prisma/adapter-pg": "^5.19.1",
-    "@prisma/client": "5.15.0",
+    "@prisma/client": "5.19.1",
     "@types/dompurify": "^3.0.5",
     "@types/express-session": "^1.18.0",
     "@types/formidable": "^3.4.5",
