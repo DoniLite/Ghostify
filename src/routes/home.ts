@@ -17,6 +17,12 @@ export const home: RouteHandlerMethod = async (req, res) => {
     pagination: string;
   }>;
   const verifQuota = 300;
+
+  const userPosts = req.session.Auth.authenticated && typeof req.session.Auth.isSuperUser === 'undefined' ? await prismaClient.post.findMany({
+    where: {
+      userId: req.session.Auth.id,
+    }
+  }) : [];
   // const loaderCookie = req.cookies['ghostify_home_session'];
   const Theme = req.session.Theme;
   if (persisted) {
@@ -54,6 +60,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
     );
     res.setCookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
+      secure: 'auto',
     });
     return res.view('/src/views/index.ejs', {
       activeIndex: pagination ? Number(pagination) : 0,
@@ -69,6 +76,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
       theme: Theme,
       user: req.session.Auth.name || '@super user 🤖',
       userId: req.session.Auth.id || req.session.Auth.login || '',
+      userPosts,
     });
   }
 
@@ -103,7 +111,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
   const cookieExpiration = new Date();
   cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
   const cookie = JSON.stringify(cookieObj);
-  res.setCookie('ghostify_home_session', cookie, { expires: cookieExpiration });
+  res.setCookie('ghostify_home_session', cookie, { expires: cookieExpiration, secure: 'auto', });
   if (noApiData) {
     return res.view('/src/views/index.ejs', {
       activeIndex: pagination ? Number(pagination) : 0,
@@ -119,6 +127,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
       theme: Theme,
       user: req.session.Auth.name || '@super user 🤖',
       userId: req.session.Auth.id || req.session.Auth.login || '',
+      userPosts,
     });
   }
   return res.view('/src/views/index.ejs', {
@@ -135,5 +144,6 @@ export const home: RouteHandlerMethod = async (req, res) => {
     theme: Theme,
     user: req.session.Auth.name || '@super user 🤖',
     userId: req.session.Auth.id || req.session.Auth.login || '',
+    userPosts,
   });
 };
