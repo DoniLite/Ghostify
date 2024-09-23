@@ -56,6 +56,7 @@
 
                 <form method="post" action="/api/v1/register">
                   <input type="hidden" name="service" value="<%= service %>">
+                  <input type="hidden" name="defaultRoot" value="<%= typeof defaultRoot === 'undefined' ? false : defaultRoot %>">
                   <div class="mb-4">
                     <label
                       class="mb-2.5 block font-medium text-black dark:text-white"

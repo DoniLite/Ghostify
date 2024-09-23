@@ -12,7 +12,7 @@
     "typescript-eslint": "^8.4.0"
   },
   "scripts": {
-    "build": "npm run tailwind && pnpm prisma && pnpm generate && pnpm deployDB && pnpm exec tsc --outDir build",
+    "build": "npm run tailwind && pnpm prisma && pnpm generate && pnpm deployDB && pnpm pullDB && pnpm exec tsc --outDir build",
     "serve": "concurrently --kill-others \"npm run tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
     "start": "node ./build/server.js",
     "tailwind": "npx tailwindcss -i ./src/input.css -o ./src/public/output.css",
@@ -21,7 +21,9 @@
     "generate": "pnpx prisma generate",
     "migrate": "pnpx prisma migrate dev",
     "prisma": "pnpm dlx prisma",
-    "deployDB": "pnpx prisma migrate deploy",
+    "pullDB": "pnpx prisma db pull",
+    "deployDB": "prisma migrate deploy",
+    "resetDB": "pnpx prisma migrate reset",
     "push": "pnpx prisma db push",
     "test": "pnpm exec playwright test",
     "dbTest": "nodemon ./temp/test.spec.js",

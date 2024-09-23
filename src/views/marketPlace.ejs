@@ -2,80 +2,88 @@
   id="container"
   class="dp w-full overflow-y-scroll h-full bg-gradient-to-tr from-gray-900 to-blue-500"
 >
-
-        <% if (typeof auth === 'undefined' || auth === false) { %>
-          <a
-            href="/signin?service=blog"
-            class="bg-gray-900 absolute right-4 top-24 rounded-md lg:border-none border border-white lg:border-transparent font-bold text-white text-center p-2"
-            >Se connecter</a
-          >
-        <% } %>
-  <form
+  <% if (typeof auth === 'undefined' || auth === false) { %>
+  <div class="w-[95%] flex justify-between mt-16 p-4">
+    <div></div>
+    <a
+      href="/signin?service=blog&defaultRoot=true"
+      class="bg-gray-900 right-4 top-24 rounded-md lg:border-none border border-white lg:border-transparent font-bold text-white text-center p-2"
+      >Se connecter</a
+    >
+  </div>
+  <% } %>
+  <div
     id="actuForm"
-    class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] overflow-y-scroll p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
+    class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] lg:h-[30rem] h-[45rem] overflow-y-scroll p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
   >
-    <div class="mb-4">
-      <div class="flex justify-between mb-3 items-center">
-        <label class="mb-2.5 block text-black font-bold dark:text-white"
-          >Poster une atue dans le Hub</label
-        >
-        <div id="actuCloser" class="text-center text-white">
-          <i class="fa-solid fa-circle-xmark fa-2xl"></i>
+    <form>
+      <div class="mb-4">
+        <div class="flex justify-between mb-3 items-center">
+          <label class="mb-2.5 block text-black font-bold dark:text-white"
+            >Poster une actu dans le Hub</label
+          >
+          <div id="actuCloser" class="text-center text-white">
+            <i class="fa-solid fa-circle-xmark fa-2xl"></i>
+          </div>
+        </div>
+        <div class="relative">
+          <input
+            type="text"
+            name="title"
+            placeholder="Donnez un titre à votre actu"
+            class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+          />
         </div>
       </div>
-      <div class="relative">
+
+      <div class="mb-6">
+        <div class="relative">
+          <textarea
+            name="content"
+            class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+            id="actuContent"
+            placeholder="Tapez le contenu de votre actu"
+          ></textarea>
+        </div>
+      </div>
+
+      <div id="imgInput" class="mb-6">
         <input
-          type="text"
-          name="title"
-          placeholder="Donnez un titre à votre actu"
-          class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+          id="fileInput"
+          name="img"
+          accept="image/*"
+          type="file"
+          class="w-full hidden rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+        />
+        <div class="flex gap-x-3">
+          <div id="addFile">
+            <i class="fa-solid fa-cloud-arrow-up fa-2xl text-white"></i>
+          </div>
+          <label for="" id="fileName">Ajoutez un fichier</label>
+        </div>
+      </div>
+
+      <div class="w-full overflow-y-scroll h-auto" id="imgPrintDiv"></div>
+
+      <div id="actuBtnInput" class="mb-5">
+        <input
+          type="submit"
+          value="Soumettre"
+          class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
         />
       </div>
-    </div>
+    </form>
+  </div>
 
-    <div class="mb-6">
-      <div class="relative">
-        <textarea
-          name="content"
-          class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-          id="actuContent"
-          placeholder="Tapez le contenu de votre actu"
-        ></textarea>
-      </div>
-    </div>
-
-    <div id="imgInput" class="mb-6">
-      <input
-        id="fileInput"
-        name="img"
-        accept="image/*"
-        type="file"
-        class="w-full hidden rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-      />
-      <div class="flex gap-x-3">
-        <div id="addFile">
-          <i class="fa-solid fa-cloud-arrow-up fa-2xl text-white"></i>
-        </div>
-        <label for="" id="fileName">Ajoutez un fichier</label>
-      </div>
-    </div>
-
-    <div class="w-full overflow-y-scroll h-auto" id="imgPrintDiv"></div>
-
-    <div id="actuBtnInput" class="mb-5">
-      <input
-        type="submit"
-        value="Soumettre"
-        class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
-      />
-    </div>
-  </form>
+  <% if (typeof auth !== 'undefined' && auth === true) { %>
   <div
     id="actuAction"
     class="p-3 translate-x-[140%] flex transition-all justify-center items-center rounded-full bg-blue-900 fixed top-1/4 right-4"
   >
     <i class="fa-solid fa-circle-plus fa-xl text-white"></i>
   </div>
+  <% } %>
+
   <h1
     class="anton-sc-regular mx-auto mt-20 text-center lg:mt-24 text-white p-2"
     style="font-size: 40px"
@@ -189,12 +197,16 @@
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero,
           veniam!
         </p>
-        <div class="relative flex gap-x-8 justify-between lg:top-4 left-8">
+        <div class="relative flex gap-x-8 justify-between lg:top-4 left-4">
           <div class="flex gap-x-3 text-white">
             <div class="flex">
               <i class="fa-solid fa-heart fa-lg text-red-600"></i>
-              <i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-gray-950"></i>
-              <i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>
+              <i
+                class="fa-regular fa-thumbs-down fa-lg -ml-1 text-gray-950"
+              ></i>
+              <i
+                class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"
+              ></i>
               <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-gray-950"></i>
             </div>
             #555
@@ -210,7 +222,7 @@
   <h1
     class="bg-gradient-to-r my-3 from-orange-300 text-center w-full via-yellow-500 to-gray-300 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
   >
-    Ils sont tous passés par ici
+    Vous pourriez aussi aimer ceux-ci
   </h1>
   <div class="lg:grid lg:grid-cols-3 mb-4 lg:gap-3 flex flex-col w-full p-2">
     <div
@@ -230,12 +242,14 @@
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero,
           veniam!
         </p>
-        <div class="relative flex gap-x-8 justify-between lg:top-4 left-8">
+        <div class="relative flex gap-x-8 justify-between lg:top-4 left-4">
           <div class="flex gap-x-3 text-white">
             <div class="flex">
               <i class="fa-solid fa-heart fa-lg text-red-600"></i>
               <i class="fa-solid fa-heart-crack fa-lg -ml-1 text-red-950"></i>
-              <i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>
+              <i
+                class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"
+              ></i>
             </div>
             #555
           </div>
@@ -256,19 +270,21 @@
         perferendis?
       </p>
 
-      <div class="relative flex gap-x-8 justify-between lg:top-4 left-8">
-          <div class="flex gap-x-3 text-white">
-            <div class="flex">
-              <i class="fa-solid fa-heart fa-lg text-red-600"></i>
-              <i class="fa-solid fa-heart-crack fa-lg -ml-1 text-red-950"></i>
-              <i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>
-            </div>
-            #555
-          </div>
+      <div class="relative flex gap-x-8 justify-between lg:top-4 left-4">
+        <div class="flex gap-x-3 text-white">
           <div class="flex">
-            <i class="fa-solid fa-message fa-lg text-white mr-2"></i> #223
+            <i class="fa-solid fa-heart fa-lg text-red-600"></i>
+            <i class="fa-solid fa-heart-crack fa-lg -ml-1 text-red-950"></i>
+            <i
+              class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"
+            ></i>
           </div>
+          #555
         </div>
+        <div class="flex">
+          <i class="fa-solid fa-message fa-lg text-white mr-2"></i> #223
+        </div>
+      </div>
     </div>
   </div>
 

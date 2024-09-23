@@ -29,7 +29,7 @@
 }
 
 .card {
-  @apply lg:w-3/4 w-[90%] mx-auto p-2 lg:gap-y-0 gap-y-3 lg:p-4 rounded-lg flex lg:justify-between flex-col lg:flex-row h-auto lg:h-40 items-center bg-emerald-950;
+  @apply lg:w-3/4 w-[90%] mx-auto p-2 lg:gap-y-0 gap-y-3 lg:p-4 rounded-lg flex lg:justify-between flex-col lg:flex-row h-auto lg:h-auto items-center bg-emerald-950;
 }
 
 .mobile-nav {

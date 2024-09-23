@@ -12,13 +12,15 @@ interface PosterQuery {
   login: string;
   password: string;
   permission: Service;
+  defaultRoot: boolean;
 }
 
 export const authController = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { login, password, permission } = req.body as BodyXData<PosterQuery>;
+  const { login, password, permission, defaultRoot } =
+    req.body as BodyXData<PosterQuery>;
 
   console.log(req.body);
   req.session.Auth = {
@@ -97,6 +99,9 @@ export const authController = async (
     res.setCookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
+    if (defaultRoot) {
+      return res.redirect('/home');
+    }
     return res.redirect(`/service?userId=${user.id}&service=${permission}`);
   }
 
@@ -118,6 +123,7 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
   );
   res.setCookie('connection_time', req.session.Token, {
     expires: cookieExpriration,
+    secure: 'auto',
   });
 
   if (!req.session.Auth.authenticated)
@@ -191,13 +197,14 @@ export const tempLinkGenerator = async (
 interface Register {
   service: Service;
   token: string | undefined | null;
+  defailtRoot: string;
 }
 
 export const registrationView = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { service } = req.query as QueryXData<Register>;
+  const { service, defailtRoot } = req.query as QueryXData<Register>;
 
   console.log(service);
   if (!service) {
@@ -219,7 +226,14 @@ export const registrationView = async (
   // if (verifier) {
   //   throw new Error('The validation time expired');
   // }
-  return res.view('/src/views/signup.ejs', { service: service });
+  if (defailtRoot)
+    return res.view('/src/views/signup.ejs', {
+      service: service,
+      defaultRoot: Boolean(defailtRoot),
+    });
+  return res.view('/src/views/signup.ejs', {
+    service: service,
+  });
 };
 
 interface RegisterPost {
@@ -227,26 +241,27 @@ interface RegisterPost {
   name: string | undefined | null;
   email: string | undefined | null;
   password: string | undefined | null;
+  defaultRoot: boolean | undefined | null;
 }
 
 export const registrationController = async (
   req: FastifyRequest,
   res: FastifyReply
 ) => {
-  const { service, name, email, password } =
+  const { service, name, email, password, defaultRoot } =
     req.body as BodyXData<RegisterPost>;
 
-    console.log(name, email, password, service);
+  console.log(name, email, password, service);
 
-  if (!service || !name || !email || !password) 
+  if (!service || !name || !email || !password)
     throw new Error('Invalid credentials');
 
   const refifyIfUserExists = await prismaClient.user.findUnique({
     where: {
       email: email,
-    }
+    },
   });
-  
+
   if (refifyIfUserExists) throw new Error(`User ${email} already exists`);
 
   const spltPass = password.split(';');
@@ -269,6 +284,7 @@ export const registrationController = async (
       );
       res.setCookie('connection_time', req.session.Token, {
         expires: cookieExpriration,
+        secure: 'auto',
       });
       return res.redirect(
         `/service?userId=${req.session.Auth.login}&service=${service}`
@@ -277,6 +293,10 @@ export const registrationController = async (
       console.error(e);
       return res.send('something went wrong');
     }
+  }
+
+  if (defaultRoot) {
+    return res.redirect('/home');
   }
 
   if (service === Service.blog) {
@@ -317,6 +337,7 @@ export const registrationController = async (
         );
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
+          secure: 'auto',
         });
         return res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
@@ -363,6 +384,7 @@ export const registrationController = async (
         );
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
+          secure: 'auto',
         });
         return res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
@@ -411,6 +433,7 @@ export const registrationController = async (
         );
         res.setCookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
+          secure: 'auto',
         });
         return res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
@@ -425,11 +448,20 @@ export const registrationController = async (
 };
 
 export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
-  const { service } = req.query as QueryXData<{ service: Service }>;
+  const { service, defailtRoot } = req.query as QueryXData<{
+    service: Service;
+    defailtRoot: string;
+  }>;
   console.log(service);
   if (!service) {
     return res.send(JSON.stringify({ error: 'Service not found' }));
   }
+
+  if (defailtRoot)
+    return res.view('/src/views/signin.ejs', {
+      service: service,
+      defailtRoot: Boolean(defailtRoot),
+    });
   return res.view('/src/views/signin.ejs', { service: service });
 };
 
