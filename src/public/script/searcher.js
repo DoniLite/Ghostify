@@ -6,7 +6,7 @@
 const searchInput = document.querySelector("#PrimarySearch");
 const containerParser = document.querySelector("#containerPaser");
 const loader = document.querySelector("#searchLoader");
-console.log(searchInput);
+// console.log(searchInput);
 
 /**
  * 

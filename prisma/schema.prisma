@@ -166,7 +166,6 @@ model Post {
   userId        Int?
 
   @@index([published, createdAt, id, userId, indexerId])
-  @@map("posts")
 }
 
 model Indexer {

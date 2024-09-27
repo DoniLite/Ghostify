@@ -1,11 +1,11 @@
-import fastify, { FastifyInstance } from 'fastify';
+'use strict';
+import fastify from 'fastify';
 import view from '@fastify/view';
 import ejs from 'ejs';
 import staticPlugin from '@fastify/static';
 import fromBody from '@fastify/formbody';
 import session from '@fastify/session';
 import fastifyCookie from '@fastify/cookie';
-import path from 'node:path';
 import { prismaClient, redisStoreClient } from './config/db';
 import { ReqParams } from './@types';
 import { index } from './routes';
@@ -58,6 +58,12 @@ import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
 import RedisStore from 'connect-redis';
 import { setUp } from './hooks/setup';
+import compress from '@fastify/compress';
+// import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
+import fs from 'node:fs';
+import path from 'node:path';
+// import crypto from 'node:crypto';
 // import multer from 'fastify-multer';
 
 const Store = new RedisStore({
@@ -77,7 +83,13 @@ const protectedRoutes = [
   '/assetsPost',
 ];
 dotEnv.config();
-const server: FastifyInstance = fastify();
+const server = fastify({
+  logger: true,
+  https: {
+    key: fs.readFileSync(path.resolve(__dirname, '../keys/key.pem')),
+    cert: fs.readFileSync(path.resolve(__dirname, '../keys/cert.pem')),
+  }
+});
 // {logger: true}
 
 // Hooks...
@@ -105,6 +117,36 @@ export const tokenGenerator = (payload: string) => {
   return server.jwt.sign({ payload });
 };
 const registration = async () => {
+  await server.register(rateLimit, {
+    max: 100,
+    timeWindow: '1 minute',
+  });
+  // await server.register(helmet, {
+  //   contentSecurityPolicy: {
+  //     directives: {
+  //       defaultSrc: ["'self'"],
+  //       // scriptSrc: [
+  //       //   function (req, res) {
+  //           // "res" here is actually "reply.raw" in fastify
+  //       //     res.scriptNonce = crypto.randomBytes(16).toString('hex');
+  //           // make sure to return nonce-... directive to helmet, so it can be sent in the headers
+  //       //     return `'nonce-${res.scriptNonce}'`;
+  //       //   },
+  //       // ],
+  //       // styleSrc: [
+  //       //   function (req, res) {
+  //           // "res" here is actually "reply.raw" in fastify
+  //       //     res.styleNonce = crypto.randomBytes(16).toString('hex');
+  //           // make sure to return nonce-... directive to helmet, so it can be sent in the headers
+  //       //     return `'nonce-${res.styleNonce}'`;
+  //       //   },
+  //       // ],
+  //     },
+  //   },
+  // });
+  await server.register(compress, {
+    global: false,
+  });
   await server.register(fastifyJwt, {
     secret: process.env.JWT_SECRET,
   });
@@ -167,16 +209,16 @@ const registration = async () => {
   });
 };
 
-registration().then(() => {
-  console.log('Registration done');
-}).catch(console.error);
+registration()
+  .then(() => {
+    console.log('Registration done');
+  })
+  .catch(console.error);
 // routes...
 server.setErrorHandler((err, req, res) => {
   console.log(err);
   const errorCode = Number(err.code);
-  if (errorCode >= 400 && errorCode < 600) {
-    res.view('/src/views/error.ejs');
-  }
+  if (errorCode >= 400 && errorCode < 600) res.view('/src/views/error.ejs');
   res.send(JSON.stringify({ error: 'some error' }));
 });
 server.setNotFoundHandler((req, res) => {
@@ -263,9 +305,9 @@ server.get('/components/list', requestListComponent);
 // features and other thread specific
 server.get('/update/visitor', urlVisitor);
 server.get('/find', find);
-server.get('/feed', (req, res) =>{
+server.get('/feed', (req, res) => {
   return res.view('src/views/components/feed.ejs', { service: undefined });
-})
+});
 
 const port = parseInt(process.env.PORT) || 3081;
 server.listen({ port: port, host: '0.0.0.0' }, async (err, address) => {
