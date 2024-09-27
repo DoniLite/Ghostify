@@ -58,7 +58,6 @@
     "@types/showdown": "^2.0.6",
     "@types/ws": "^8.5.12",
     "apify-client": "^2.9.5",
-    "canvas": "^2.11.2",
     "concurrently": "^9.0.1",
     "connect-redis": "^7.1.1",
     "dompurify": "^3.1.6",
