@@ -6,10 +6,14 @@ import {
   loadKeys,
 } from '../utils';
 import { randomInt } from 'node:crypto';
+import fs from 'node:fs'
+import path from 'node:path';
 
 export const sessionStorageHook = async (req: FastifyRequest) => {
-  const randomNumber = randomInt(1, 9);
-  const footerImg = `/static/img/random${randomNumber}.png`;
+  const allDirsFiles = fs.readdirSync(path.resolve(__dirname, '../../src//public/img')).filter(file => /random/.test(file));
+  // console.log('fichiers trouvés :', allDirsFiles);
+  const randomNumber = randomInt(1, allDirsFiles.length);
+  const footerImg = `/static/img/${allDirsFiles[randomNumber]}`;
   req.session.Theme = {
     time: graphicsUploader(),
     footer: footerImg,

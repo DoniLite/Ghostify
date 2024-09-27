@@ -1,6 +1,6 @@
-import { RouteHandlerMethod } from "fastify";
+import { RouteHandler } from "fastify";
 import { encrypt } from "../utils";
-export const index: RouteHandlerMethod = async (req, res) => {
+export const index: RouteHandler = async (req, res) => {
   const loaderCookie = req.cookies["ghostify_home_session"];
   if (!loaderCookie || Object.keys(JSON.parse(loaderCookie)).length <= 0) {
     const cookieExpriration = new Date();
