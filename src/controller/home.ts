@@ -1,6 +1,5 @@
 // import { client } from "../config/db";
 import { RequestHandler } from 'express';
-import { client } from '../config/db';
 import { BodyXData, FetchFn } from 'index';
 
 export const homeControler: RequestHandler = async (req, res) => {
@@ -26,14 +25,6 @@ export const homeControler: RequestHandler = async (req, res) => {
 
 const apiRequester = async (...prom: FetchFn[]) => {
   try {
-    client
-      .connect()
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
     const res = await Promise.all([...prom]);
     return res;
   } catch (err) {
