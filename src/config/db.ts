@@ -24,3 +24,4 @@ export const redisStoreClient = createClient();
 export const prismaClient = new PrismaClient({ adapter });
 
 redisStoreClient.connect().catch(console.error);
+client.connect().catch(console.error);
