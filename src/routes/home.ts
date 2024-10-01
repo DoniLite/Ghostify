@@ -1,9 +1,9 @@
 import { encrypt } from '../utils';
 import { prismaClient } from '../config/db';
-import { RouteHandlerMethod } from 'fastify';
 import { Post, QueryXData } from 'index';
+import { RequestHandler } from 'express';
 
-export const home: RouteHandlerMethod = async (req, res) => {
+export const home: RequestHandler = async (req, res) => {
   // const value = await client.hGetAll("Weather");
   // const quote = await client.hGetAll("Quote");
   // console.log(value);
@@ -11,18 +11,23 @@ export const home: RouteHandlerMethod = async (req, res) => {
   // if (!connection_time || Number(decrypt(req.session.Token, req.session.ServerKeys.secretKey, req.session.ServerKeys.iv)) < Date.now()) {
   //   return res.redirect('/');
   // }
-  const { persisted, noApiData, pagination } = req.query as QueryXData<{
-    persisted: boolean;
-    noApiData: boolean;
-    pagination: string;
-  }>;
+  const { persisted, noApiData, pagination } =
+    req.query as unknown as QueryXData<{
+      persisted: boolean;
+      noApiData: boolean;
+      pagination: string;
+    }>;
   const verifQuota = 300;
 
-  const userPosts = req.session.Auth.authenticated && typeof req.session.Auth.isSuperUser === 'undefined' ? await prismaClient.post.findMany({
-    where: {
-      userId: req.session.Auth.id,
-    }
-  }) : [];
+  const userPosts =
+    req.session.Auth.authenticated &&
+    typeof req.session.Auth.isSuperUser === 'undefined'
+      ? await prismaClient.post.findMany({
+          where: {
+            userId: req.session.Auth.id,
+          },
+        })
+      : [];
   // const loaderCookie = req.cookies['ghostify_home_session'];
   const Theme = req.session.Theme;
   if (persisted) {
@@ -58,11 +63,10 @@ export const home: RouteHandlerMethod = async (req, res) => {
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
-    res.setCookie('connection_time', req.session.Token, {
+    res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
-      secure: 'auto',
     });
-    return res.view('/src/views/index.ejs', {
+    res.render('index', {
       activeIndex: pagination ? Number(pagination) : 0,
       projects,
       defaultArticles: articlesResults.defaultArticles,
@@ -78,6 +82,7 @@ export const home: RouteHandlerMethod = async (req, res) => {
       userId: req.session.Auth.id || req.session.Auth.login || '',
       userPosts,
     });
+    return;
   }
 
   const categories = await prismaClient.category.findMany();
@@ -111,9 +116,9 @@ export const home: RouteHandlerMethod = async (req, res) => {
   const cookieExpiration = new Date();
   cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
   const cookie = JSON.stringify(cookieObj);
-  res.setCookie('ghostify_home_session', cookie, { expires: cookieExpiration, secure: 'auto', });
+  res.cookie('ghostify_home_session', cookie, { expires: cookieExpiration });
   if (noApiData) {
-    return res.view('/src/views/index.ejs', {
+    res.render('index', {
       activeIndex: pagination ? Number(pagination) : 0,
       projects,
       defaultArticles: articlesResults.defaultArticles,
@@ -129,8 +134,9 @@ export const home: RouteHandlerMethod = async (req, res) => {
       userId: req.session.Auth.id || req.session.Auth.login || '',
       userPosts,
     });
+    return;
   }
-  return res.view('/src/views/index.ejs', {
+  res.render('index', {
     activeIndex: pagination ? Number(pagination) : 0,
     projects,
     defaultArticles: articlesResults.defaultArticles,

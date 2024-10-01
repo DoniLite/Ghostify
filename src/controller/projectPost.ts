@@ -1,39 +1,38 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { BodyXData } from "../@types";
-import { prismaClient } from "../config/db";
+import { Request, Response } from 'express';
+import { BodyXData } from '../@types';
+import { prismaClient } from '../config/db';
 
+export const projectPost = async (req: Request, res: Response) => {
+  const {
+    title,
+    description,
+    github,
+    gitlab,
+    bitbucket,
+    link,
+    license,
+    collaboration,
+    collaborationMessage,
+  } = req.body as BodyXData;
 
-export const projectPost = async (req: FastifyRequest, res: FastifyReply) => {
-    const {
-      title,
-      description,
-      github,
-      gitlab,
-      bitbucket,
-      link,
-      license,
-      collaboration,
-      collaborationMessage,
-    } = req.body as BodyXData;
+  const project = await prismaClient.project.create({
+    data: {
+      title: title,
+      description: description,
+      github: github,
+      gitLab: gitlab,
+      bitbucket: bitbucket,
+      license: license,
+      link: link,
+      participation: collaborationMessage,
+      participationType: collaboration,
+    },
+  });
 
-    const project = await prismaClient.project.create({
-        data: {
-            title: title,
-            description: description,
-            github: github,
-            gitLab: gitlab,
-            bitbucket: bitbucket,
-            license: license,
-            link: link,
-            participation: collaborationMessage,
-            participationType: collaboration
-        }
-    })
+  if (project) {
+    console.log(project);
+    res.send(JSON.stringify({ success: true, project }));
+  }
 
-    if(project) {
-        console.log(project)
-        return res.send(JSON.stringify({ success: true, project}));
-    }
-
-    return res.send(JSON.stringify({ success: false, project}));
-}
+  res.send(JSON.stringify({ success: false, project }));
+};

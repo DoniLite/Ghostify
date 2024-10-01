@@ -1,81 +1,83 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { prismaClient } from "../config/db";
+import { Request, Response } from 'express';
+import { prismaClient } from '../config/db';
 
-export const terms = async (req: FastifyRequest, res: FastifyReply) => {
-    const asset = await prismaClient.assets.findUnique({
-        where: {
-            type: 'Page',
-            uid: 'terms'
-        }
-    });
-    if(!asset) 
-        return res
-          .code(404)
-          .send(JSON.stringify({ message: 'No asset found' }));
-    return res.view('/src/views/page.ejs', {
-      content: asset.content,
-      title: asset.title,
-      service: undefined,
-      theme: req.session.Theme,
-      auth: false,
-    });
+export const terms = async (req: Request, res: Response) => {
+  const asset = await prismaClient.assets.findUnique({
+    where: {
+      type: 'Page',
+      uid: 'terms',
+    },
+  });
+  if (!asset)
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
+    content: asset.content,
+    title: asset.title,
+    service: undefined,
+    theme: req.session.Theme,
+    auth: false,
+    data: {},
+  });
 };
 
-export const license = async (req: FastifyRequest, res: FastifyReply) => {
-    const asset = await prismaClient.assets.findUnique({
-      where: {
-        type: 'Page',
-        uid: 'license',
-      },
-    });
-    if (!asset)
-      return res.code(404).send(JSON.stringify({ message: 'No asset found' }));
-    return res.view('/src/views/page.ejs', {
-      content: asset.content,
-      title: asset.title,
-      service: undefined,
-      theme: req.session.Theme,
-      auth: false,
-    });
+export const license = async (req: Request, res: Response) => {
+  const asset = await prismaClient.assets.findUnique({
+    where: {
+      type: 'Page',
+      uid: 'license',
+    },
+  });
+  if (!asset)
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
+    content: asset.content,
+    title: asset.title,
+    service: undefined,
+    theme: req.session.Theme,
+    auth: false,
+    data: {},
+  });
 };
 
-export const about = async (req: FastifyRequest, res: FastifyReply) => {
-    const asset = await prismaClient.assets.findUnique({
-      where: {
-        type: 'Page',
-        uid: 'about',
-      },
-    });
-    if (!asset)
-      return res.code(404).send(JSON.stringify({ message: 'No asset found' }));
-    return res.view('/src/views/page.ejs', {
-      content: asset.content,
-      title: asset.title,
-      service: undefined,
-      theme: req.session.Theme,
-      auth: false,
-    });
+export const about = async (req: Request, res: Response) => {
+  const asset = await prismaClient.assets.findUnique({
+    where: {
+      type: 'Page',
+      uid: 'about',
+    },
+  });
+  if (!asset)
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
+    content: asset.content,
+    title: asset.title,
+    service: undefined,
+    theme: req.session.Theme,
+    auth: false,
+    data: {},
+  });
 };
 
-export const policy = async (req: FastifyRequest, res: FastifyReply) => {
-    const asset = await prismaClient.assets.findUnique({
-      where: {
-        type: 'Page',
-        uid: 'policy',
-      },
-    });
-    if (!asset)
-      return res.code(404).send(JSON.stringify({ message: 'No asset found' }));
-    return res.view('/src/views/page.ejs', {
-      content: asset.content,
-      title: asset.title,
-      service: undefined,
-      theme: req.session.Theme,
-      auth: false,
-    });
+export const policy = async (req: Request, res: Response) => {
+  const asset = await prismaClient.assets.findUnique({
+    where: {
+      type: 'Page',
+      uid: 'policy',
+    },
+  });
+  if (!asset)
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
+    content: asset.content,
+    title: asset.title,
+    service: undefined,
+    theme: req.session.Theme,
+    auth: false,
+    data: {},
+  });
 };
 
-export const conditions = async (req: FastifyRequest, res: FastifyReply) => {
+export const conditions = async (req: Request, res: Response) => {
   const asset = await prismaClient.assets.findUnique({
     where: {
       type: 'Page',
@@ -83,17 +85,18 @@ export const conditions = async (req: FastifyRequest, res: FastifyReply) => {
     },
   });
   if (!asset)
-    return res.code(404).send(JSON.stringify({ message: 'No asset found' }));
-  return res.view('/src/views/page.ejs', {
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
     content: asset.content,
     title: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
+    data: {},
   });
 };
 
-export const FAQ = async (req: FastifyRequest, res: FastifyReply) => {
+export const FAQ = async (req: Request, res: Response) => {
   const asset = await prismaClient.assets.findUnique({
     where: {
       type: 'Page',
@@ -101,12 +104,13 @@ export const FAQ = async (req: FastifyRequest, res: FastifyReply) => {
     },
   });
   if (!asset)
-    return res.code(404).send(JSON.stringify({ message: 'No asset found' }));
-  return res.view('/src/views/page.ejs', {
+    res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  res.render('page', {
     content: asset.content,
     title: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
+    data: {},
   });
 };

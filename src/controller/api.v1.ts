@@ -1,10 +1,10 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { BodyXData, QueryXData } from 'index';
 import { decrypt, encrypt, Service } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 import { SuperUser } from '../class/SuperUser';
 import { Can } from '../utils';
+import { Request, Response } from 'express';
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -15,10 +15,7 @@ interface PosterQuery {
   defaultRoot: boolean;
 }
 
-export const authController = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
+export const authController = async (req: Request, res: Response) => {
   const { login, password, permission, defaultRoot } =
     req.body as BodyXData<PosterQuery>;
 
@@ -28,7 +25,7 @@ export const authController = async (
   };
 
   if (!login || !password || !permission)
-    return res.code(400).send(JSON.stringify({ error: 'Invalid credentials' }));
+    res.status(400).send(JSON.stringify({ error: 'Invalid credentials' }));
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -59,18 +56,19 @@ export const authController = async (
           req.session.ServerKeys.secretKey,
           req.session.ServerKeys.iv
         );
-        res.setCookie('connection_time', req.session.Token, {
+        res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
-        return res.redirect(
-          `/service?userId=${Su.userString}&service=${permission}`
-        );
+        res.redirect(`/service?userId=${Su.userString}&service=${permission}`);
+        return;
       } catch (e) {
         console.error(e);
-        return res.code(404).send('error during service connection');
+        res.status(404).send('error during service connection');
+        return;
       }
     }
-    return res.code(404).send('error during service connection');
+    res.status(404).send('error during service connection');
+    return;
   }
 
   const truePassword = decrypt(
@@ -79,7 +77,7 @@ export const authController = async (
     req.session.ServerKeys.iv
   );
 
-  if (truePassword !== password) return res.code(403).send('invalid password');
+  if (truePassword !== password) res.status(403).send('invalid password');
 
   if (permission === Service.blog || permission === Service.api) {
     req.session.Auth = {
@@ -96,19 +94,22 @@ export const authController = async (
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
-    res.setCookie('connection_time', req.session.Token, {
+    res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
     if (defaultRoot) {
-      return res.redirect('/home');
+      res.redirect('/home');
+      return;
     }
-    return res.redirect(`/service?userId=${user.id}&service=${permission}`);
+    res.redirect(`/service?userId=${user.id}&service=${permission}`);
+    return;
   }
 
-  return res.code(403).send('Not Matching Issue');
+  res.status(403).send('Not Matching Issue');
+  return;
 };
 
-export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
+export const serviceHome = async (req: Request, res: Response) => {
   const { userId, service } = req.query as QueryXData<{
     userId: string;
     service: Service;
@@ -121,32 +122,41 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
     req.session.ServerKeys.secretKey,
     req.session.ServerKeys.iv
   );
-  res.setCookie('connection_time', req.session.Token, {
+  res.cookie('connection_time', req.session.Token, {
     expires: cookieExpriration,
-    secure: 'auto',
   });
 
-  if (!req.session.Auth.authenticated)
-    return res.code(403).send('you cannot access to this service');
+  if (!req.session.Auth.authenticated) {
+    res.status(403).send('you cannot access to this service');
+    return;
+  }
 
-  if (!userId || !service) return res.code(404).send('invalid credentials');
+  if (!userId || !service) {
+    res.status(404).send('invalid credentials');
+    return;
+  }
 
-  if (!userId && !service) return res.code(404).send('invalid credentials');
+  if (!userId && !service) {
+    res.status(404).send('invalid credentials');
+    return;
+  }
 
   if (
     isNaN(Number(userId)) &&
     req.session.Auth.isSuperUser &&
     req.session.SuperUser
   ) {
-    return res.view('/src/views/serviceHome.ejs', {
+    res.render('serviceHome', {
       service: service,
       auth: true,
       data: { ...req.session.SuperUser },
     });
   }
 
-  if (isNaN(Number(userId)))
-    return res.code(404).send('invalide user information');
+  if (isNaN(Number(userId))) {
+    res.status(404).send('invalide user information');
+    return;
+  }
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -160,12 +170,17 @@ export const serviceHome = async (req: FastifyRequest, res: FastifyReply) => {
     },
   });
 
-  if (service !== Service.api && service !== Service.blog)
-    return res.redirect(`/signin?service=${service}`);
+  if (service !== Service.api && service !== Service.blog) {
+    res.redirect(`/signin?service=${service}`);
+    return;
+  }
 
-  if (!user) return res.code(404).send('failed to login');
+  if (!user) {
+    res.status(404).send('failed to login');
+    return;
+  }
 
-  return res.view('/src/views/serviceHome.ejs', {
+  res.render('serviceHome', {
     service: service,
     auth: true,
     data: { ...user },
@@ -177,11 +192,9 @@ interface TempLinkQuery {
   forTemp: number;
 }
 
-export const tempLinkGenerator = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
-  const { service, forTemp } = req.query as QueryXData<TempLinkQuery>;
+export const tempLinkGenerator = async (req: Request, res: Response) => {
+  const { service, forTemp } =
+    req.query as unknown as QueryXData<TempLinkQuery>;
   const date = new Date();
   date.setHours(date.getHours() + Number(forTemp));
   const expiration = date.getTime();
@@ -200,15 +213,13 @@ interface Register {
   defailtRoot: string;
 }
 
-export const registrationView = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
-  const { service, defailtRoot } = req.query as QueryXData<Register>;
+export const registrationView = async (req: Request, res: Response) => {
+  const { service, defailtRoot } = req.query as unknown as QueryXData<Register>;
 
   console.log(service);
   if (!service) {
-    return res.send(JSON.stringify({ error: 'Service not found' }));
+    res.send(JSON.stringify({ error: 'Service not found' }));
+    return;
   }
 
   // let d;
@@ -226,12 +237,14 @@ export const registrationView = async (
   // if (verifier) {
   //   throw new Error('The validation time expired');
   // }
-  if (defailtRoot)
-    return res.view('/src/views/signup.ejs', {
+  if (defailtRoot) {
+    res.render('signup', {
       service: service,
       defaultRoot: Boolean(defailtRoot),
     });
-  return res.view('/src/views/signup.ejs', {
+    return;
+  }
+  res.render('signup', {
     service: service,
   });
 };
@@ -244,10 +257,7 @@ interface RegisterPost {
   defaultRoot: boolean | undefined | null;
 }
 
-export const registrationController = async (
-  req: FastifyRequest,
-  res: FastifyReply
-) => {
+export const registrationController = async (req: Request, res: Response) => {
   const { service, name, email, password, defaultRoot } =
     req.body as BodyXData<RegisterPost>;
 
@@ -282,21 +292,23 @@ export const registrationController = async (
         req.session.ServerKeys.secretKey,
         req.session.ServerKeys.iv
       );
-      res.setCookie('connection_time', req.session.Token, {
+      res.cookie('connection_time', req.session.Token, {
         expires: cookieExpriration,
-        secure: 'auto',
       });
-      return res.redirect(
+      res.redirect(
         `/service?userId=${req.session.Auth.login}&service=${service}`
       );
+      return;
     } catch (e) {
       console.error(e);
-      return res.send('something went wrong');
+      res.send('something went wrong');
+      return;
     }
   }
 
   if (defaultRoot) {
-    return res.redirect('/home');
+    res.redirect('/home');
+    return;
   }
 
   if (service === Service.blog) {
@@ -335,16 +347,17 @@ export const registrationController = async (
           req.session.ServerKeys.secretKey,
           req.session.ServerKeys.iv
         );
-        res.setCookie('connection_time', req.session.Token, {
+        res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
-          secure: 'auto',
         });
-        return res.redirect(
+        res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
+        return;
       }
     } catch (err) {
       console.log(err);
+      return;
     }
   }
 
@@ -382,13 +395,13 @@ export const registrationController = async (
           req.session.ServerKeys.secretKey,
           req.session.ServerKeys.iv
         );
-        res.setCookie('connection_time', req.session.Token, {
+        res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
-          secure: 'auto',
         });
-        return res.redirect(
+        res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
+        return;
       }
     } catch (err) {
       console.log(err);
@@ -431,13 +444,13 @@ export const registrationController = async (
           req.session.ServerKeys.secretKey,
           req.session.ServerKeys.iv
         );
-        res.setCookie('connection_time', req.session.Token, {
+        res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
-          secure: 'auto',
         });
-        return res.redirect(
+        res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
+        return;
       }
     } catch (err) {
       console.log(err);
@@ -447,27 +460,30 @@ export const registrationController = async (
   throw new Error('Something went wrong');
 };
 
-export const connexion = async (req: FastifyRequest, res: FastifyReply) => {
+export const connexion = async (req: Request, res: Response) => {
   const { service, defailtRoot } = req.query as QueryXData<{
     service: Service;
     defailtRoot: string;
   }>;
   console.log(service);
   if (!service) {
-    return res.send(JSON.stringify({ error: 'Service not found' }));
+    res.send(JSON.stringify({ error: 'Service not found' }));
+    return;
   }
 
-  if (defailtRoot)
-    return res.view('/src/views/signin.ejs', {
+  if (defailtRoot) {
+    res.render('signin', {
       service: service,
       defailtRoot: Boolean(defailtRoot),
     });
-  return res.view('/src/views/signin.ejs', { service: service });
+    return;
+  }
+  res.render('signin', { service: service });
 };
 
-export const disconnection = async (req: FastifyRequest, res: FastifyReply) => {
+export const disconnection = async (req: Request, res: Response) => {
   req.session.Auth = {
     authenticated: false,
   };
-  return res.code(200).send(JSON.stringify({ success: true }));
+  res.status(200).send(JSON.stringify({ success: true }));
 };

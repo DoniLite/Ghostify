@@ -1,9 +1,9 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { Indexer, QueryXData } from 'index';
 import { prismaClient } from '../config/db';
 import { filterIncludesType } from '../utils';
+import { Request, Response } from 'express';
 
-export const find = async (req: FastifyRequest, res: FastifyReply) => {
+export const find = async (req: Request, res: Response) => {
   const { q } = req.query as QueryXData;
   const allIndexer = (await prismaClient.indexer.findMany()) as Indexer[];
   let allResources = [] as unknown[];
@@ -19,10 +19,10 @@ export const find = async (req: FastifyRequest, res: FastifyReply) => {
       ...(await prismaClient.project.findMany()),
       ...(await prismaClient.assets.findMany()),
       ...(await prismaClient.gameData.findMany()),
-    ].filter(el => {
+    ].filter((el) => {
       filterIncludesType(q, el);
     });
-    return res.send(JSON.stringify({data: someThatCanMatch}))
+    res.send(JSON.stringify({ data: someThatCanMatch }));
   }
   result.forEach(async (key) => {
     const urls = await prismaClient.url.findMany({
@@ -66,7 +66,7 @@ export const find = async (req: FastifyRequest, res: FastifyReply) => {
     ];
     allResources.sort();
   });
-  return res.send(JSON.stringify({ data: allResources }));
+  res.send(JSON.stringify({ data: allResources }));
 };
 
 interface KeyQuery {
@@ -74,8 +74,8 @@ interface KeyQuery {
   k: string;
 }
 
-export const updateKeys = async (req: FastifyRequest, res: FastifyReply) => {
-  const { k, keyType } = req.query as QueryXData<KeyQuery>;
+export const updateKeys = async (req: Request, res: Response) => {
+  const { k, keyType } = req.query as unknown as QueryXData<KeyQuery>;
   try {
     const serverKey = await prismaClient.indexer.findUnique({
       where: {
@@ -85,17 +85,28 @@ export const updateKeys = async (req: FastifyRequest, res: FastifyReply) => {
         keys: true,
       },
     });
-    if(!serverKey) {
+    if (!serverKey) {
       const newKey = await prismaClient.indexer.create({
         data: {
           type: keyType,
           keys: k,
-        }
+        },
       });
-      if(!newKey) {
-        return res.code(500).send(JSON.stringify({message: "Error during your current running operation"}));
+      if (!newKey) {
+        res
+          .status(500)
+          .send(
+            JSON.stringify({
+              message: 'Error during your current running operation',
+            })
+          );
       }
-      return res.send(JSON.stringify({message: 'The new indexer have been created successfully', data: newKey}));
+      res.send(
+        JSON.stringify({
+          message: 'The new indexer have been created successfully',
+          data: newKey,
+        })
+      );
     }
     const keys = k.split(',');
     keys.forEach(async (key) => {
@@ -108,7 +119,7 @@ export const updateKeys = async (req: FastifyRequest, res: FastifyReply) => {
             keys: serverKey + ',' + key,
           },
         });
-        return res.send(
+        res.send(
           JSON.stringify({
             message: 'The new indexer have been created successfully',
             data: updatedKey,
@@ -118,8 +129,6 @@ export const updateKeys = async (req: FastifyRequest, res: FastifyReply) => {
     });
   } catch (err) {
     console.log(err);
-    return res
-      .code(404)
-      .send(JSON.stringify({ error: 'this index not exist' }));
+    res.status(404).send(JSON.stringify({ error: 'this index not exist' }));
   }
 };

@@ -1,10 +1,9 @@
 // import { FastifyReply, FastifyRequest } from 'fastify';
-import { FastifyRequest } from 'fastify/types/request';
+import { Request, Response } from 'express';
 import { BodyXData } from '../@types';
 import { prismaClient } from '../config/db';
-import { FastifyReply } from 'fastify/types/reply';
 
-export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
+export const articlePost = async (req: Request, res: Response) => {
   const { title, slug, date, content, category, description, keys } =
     req.body as BodyXData;
 
@@ -33,7 +32,7 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
     });
     if (post) {
       console.log(post);
-      return res.send(JSON.stringify({ success: true, post }));
+       res.send(JSON.stringify({ success: true, post }));
     }
   }
 
@@ -57,8 +56,8 @@ export const articlePost = async (req: FastifyRequest, res: FastifyReply) => {
 
   if (post) {
     console.log(post);
-    return res.send(JSON.stringify({ success: true, post }));
+     res.send(JSON.stringify({ success: true, post }));
   }
 
-  return res.send(JSON.stringify({ success: false, post }));
+   res.send(JSON.stringify({ success: false, post }));
 };
