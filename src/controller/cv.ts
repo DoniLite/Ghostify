@@ -1,6 +1,5 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { Request, Response } from 'express';
 
-
-export const cv = async(req: FastifyRequest, res: FastifyReply) => {
-    return res.view('/src/views/components/cvForm.ejs', {service: undefined});
-}
+export const cv = async (req: Request, res: Response) => {
+  res.render('components/cvForm', { service: undefined });
+};

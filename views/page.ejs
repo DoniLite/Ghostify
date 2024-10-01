@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/static/md.css" />
 <div class="markdown-content"><%- content %></div>
 <div class="max-w-[800px] p-3 bg-gray-950 mx-auto rounded-lg">
-  <% if ( typeof requestView === 'undefined' || requestView === false ) { %>
+  <% if ( typeof requestView !== 'undefined' && requestView === true ) { %>
     <%- include('components/comment.ejs', {pointerType: 'post', pointer: id, replies: comments }) %>
   <% } %>
 </div>

@@ -1,4 +1,3 @@
-import { FastifyRequest } from 'fastify';
 import {
   colors,
   generateAndSaveKeys,
@@ -8,8 +7,9 @@ import {
 import { randomInt } from 'node:crypto';
 import fs from 'node:fs'
 import path from 'node:path';
+import { NextFunction, Request, Response } from 'express';
 
-export const sessionStorageHook = async (req: FastifyRequest) => {
+export const sessionStorageHook = async (req: Request, res: Response, next: NextFunction ) => {
   const allDirsFiles = fs.readdirSync(path.resolve(__dirname, '../../src//public/img')).filter(file => /random/.test(file));
   // console.log('fichiers trouvés :', allDirsFiles);
   const randomNumber = randomInt(1, allDirsFiles.length);
@@ -31,6 +31,7 @@ export const sessionStorageHook = async (req: FastifyRequest) => {
       authenticated: false,
     };
   }
+  next();
   // req.setSession = async (payload: any, dest: 'Weather'|'Quote' ) => {
   //     if (dest === 'Weather') {
   //         req.session.Weather = payload;

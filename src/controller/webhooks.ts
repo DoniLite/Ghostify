@@ -1,7 +1,6 @@
-import { RouteHandlerMethod } from "fastify";
+import { RequestHandler } from 'express';
 
-
-export const webhooks: RouteHandlerMethod = async (req, res) => {
-    req.socket.emit('data', JSON.stringify(req.query));
-    return res.code(200).send('event dispactched');
-}
+export const webhooks: RequestHandler = async (req, res) => {
+  req.socket.emit('data', JSON.stringify(req.query));
+  res.status(200).send('event dispactched');
+};

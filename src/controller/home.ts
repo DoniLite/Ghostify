@@ -1,26 +1,24 @@
 // import { client } from "../config/db";
-import { RouteHandlerMethod } from 'fastify';
+import { RequestHandler } from 'express';
 import { client } from '../config/db';
 import { BodyXData, FetchFn } from 'index';
 
-export const homeControler: RouteHandlerMethod = async (req, res) => {
+export const homeControler: RequestHandler = async (req, res) => {
   const { storageData } = req.body as BodyXData;
 
   const result = await apiRequester();
 
   if (result === false)
-    return res.code(400).send(
-      JSON.stringify({ err: 'not fulfilled service',})
-    );
+    res.status(400).send(JSON.stringify({ err: 'not fulfilled service' }));
 
   if (typeof storageData === 'string') {
     req.session.PersistedData = storageData;
     req.session.Services.Platform.API = true;
     req.session.Services.Platform.externals = true;
-    return res.send(JSON.stringify({ persisted: true }));
+    res.send(JSON.stringify({ persisted: true }));
   }
 
-  return res.send(JSON.stringify({ req: true }));
+  res.send(JSON.stringify({ req: true }));
 };
 
 const apiRequester = async (...prom: FetchFn[]) => {

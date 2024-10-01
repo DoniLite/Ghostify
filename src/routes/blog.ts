@@ -1,5 +1,5 @@
-import { RouteHandlerMethod } from "fastify";
+import { RequestHandler } from 'express';
 
-export const article: RouteHandlerMethod = async (req, res) => {
-  return res.view("/src/views/article.ejs", { pagination: 1, activeIndex: 3 });
+export const article: RequestHandler = async (req, res) => {
+  res.render('article', { pagination: 1, activeIndex: 3 });
 };

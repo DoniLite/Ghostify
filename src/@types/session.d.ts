@@ -1,15 +1,11 @@
-import 'fastify';
-import '@fastify/jwt';
+import 'express-session';
 import { Auth, DocumentStorage, Service, StatsData } from '.';
 import { SuperUser } from '../class/SuperUser';
 
-declare module 'fastify' {
-  interface jwt {
-    sign: (payload: unknown) => string; // Remplace `any` par le type approprié
-    // Ajoute d'autres propriétés de session ici si nécessaire
-  }
+declare module "express-session" {
+  
 
-  interface Session {
+  interface SessionData {
     Token?: string;
     ServerKeys?: {
       secretKey: Buffer;

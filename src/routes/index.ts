@@ -1,7 +1,7 @@
-import { RouteHandler } from "fastify";
-import { encrypt } from "../utils";
-export const index: RouteHandler = async (req, res) => {
-  const loaderCookie = req.cookies["ghostify_home_session"];
+import { RequestHandler } from 'express';
+import { encrypt } from '../utils';
+export const index: RequestHandler = async (req, res) => {
+  const loaderCookie = req.cookies['ghostify_home_session'];
   if (!loaderCookie || Object.keys(JSON.parse(loaderCookie)).length <= 0) {
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -10,13 +10,14 @@ export const index: RouteHandler = async (req, res) => {
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
-    res.setCookie('connection_time', req.session.Token, {
+    res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
-    return res.view('/src/views/loader.ejs', {
+    res.render('loader', {
       pagination: 0,
       activeIndex: 0,
     });
+    return;
   }
-  return res.redirect('/home?persisted=true');
+  res.redirect('/home?persisted=true');
 };

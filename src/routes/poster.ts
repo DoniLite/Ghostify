@@ -1,4 +1,3 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   DocDataUnion,
   DocumentStorage,
@@ -15,10 +14,11 @@ import path from 'path';
 // import { pipeline } from 'stream';
 import { randomInt } from 'crypto';
 import { IncomingForm, File as FormidableFile } from 'formidable';
+import { Request, Response } from 'express';
 
 // const pump = util.promisify(pipeline);
 
-export const poster = async (req: FastifyRequest, res: FastifyReply) => {
+export const poster = async (req: Request, res: Response) => {
   const { service } = req.query as QueryXData<{ service: Service }>;
   const cookie = req.cookies;
   const lastTime = cookie['connection_time'];
@@ -38,9 +38,9 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
       req.session.Auth = {
         authenticated: false,
       };
-      return res.redirect('/signin?service=blog');
+       res.redirect('/signin?service=blog');
     }
-    if (!req.session.Auth || req.session.Auth.authenticated === false) return res.redirect('/signin?service=blog');
+    if (!req.session.Auth || req.session.Auth.authenticated === false)  res.redirect('/signin?service=blog');
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
@@ -48,11 +48,11 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
-    res.setCookie('connection_time', req.session.Token, {
+    res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
 
-    return res.view('/src/views/poster.ejs', {
+     res.render('poster', {
       id: 1,
       index: 0,
       service: service,
@@ -62,44 +62,44 @@ export const poster = async (req: FastifyRequest, res: FastifyReply) => {
     });
   } catch (e) {
     console.log(e);
-    return res.redirect('/signin?service=blog');
+     res.redirect('/signin?service=blog');
   }
 };
 
-export const requestComponent = (req: FastifyRequest, res: FastifyReply) => {
+export const requestComponent = (req: Request, res: Response) => {
   const { section, index } = req.query as QueryXData<{
     section: string;
     index: string;
   }>;
   try {
-    return res.view('/src/views/components/section.ejs', {
+     res.render('components/section', {
       idIncr: Number(section) + 1,
       id: Number(section),
       index: Number(index) + 1,
     });
   } catch (e) {
     console.log(e);
-    return res.code(400).send('error happened');
+     res.status(400).send('error happened');
   }
 };
 
 export const requestListComponent = async (
-  req: FastifyRequest,
-  res: FastifyReply
+  req: Request,
+  res: Response
 ) => {
   const { section, index } = req.query as QueryXData;
   try {
-    return res.view('/src/views/components/list.ejs', {
+     res.render('components/list', {
       id: Number(section),
       index: Number(index) + 1,
     });
   } catch (e) {
     console.error(e);
-    return res.code(400).send('something went wrong');
+     res.status(400).send('something went wrong');
   }
 };
 
-export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
+export const docSaver = async (req: Request, res: Response) => {
   console.log('Starting docSaver');
   const form = new IncomingForm({
     uploadDir: path.resolve(__dirname, '../../src/public/uploads/posts'),
@@ -132,7 +132,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
           userId: req.session.Auth.id,
         },
       });
-  const [fields, files] = await form.parse(req.raw);
+  const [fields, files] = await form.parse(req);
 
   console.log('Fields:', fields);
   console.log('Files:', files);
@@ -142,7 +142,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
     console.log(req.session.Storage, json);
   } catch (parseError) {
     console.error('Error parsing fields data:', parseError);
-    return res.code(400).send('Invalid form data');
+     res.status(400).send('Invalid form data');
   }
   const dangerousExtension = [
     '.js',
@@ -164,7 +164,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
       // Vérifier les extensions dangereuses
       if (dangerousExtension.includes(ext)) {
         console.log('Inappropriate file detected');
-        return res.code(403).send('You want to send inappropriate content');
+         res.status(403).send('You want to send inappropriate content');
       }
       if (ext === '') continue;
       // Générer un nom de fichier unique
@@ -179,7 +179,7 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
       fs.rename(fileArray[i].filepath, uploadPath, async (renameErr) => {
         if (renameErr) {
           console.error('Error moving file:', renameErr);
-          return res.code(500).send('File upload error');
+           res.status(500).send('File upload error');
         }
         console.log('File uploaded:', fName);
         // Sauvegarder le fichier dans la base de données
@@ -221,14 +221,14 @@ export const docSaver = async (req: FastifyRequest, res: FastifyReply) => {
   console.log('updated content final:', up);
   console.log(json);
   if (json === true) {
-    return res.send(JSON.stringify({ success: true, article: post.id }));
+     res.send(JSON.stringify({ success: true, article: post.id }));
   }
-  return res.redirect(`/poster/view?post=${post.id}`);
+   res.redirect(`/poster/view?post=${post.id}`);
 };
 
-export const docView = async (req: FastifyRequest, res: FastifyReply) => {
+export const docView = async (req: Request, res: Response) => {
   const { post, api } = req.query as QueryXData<{ post: string; api: string }>;
-  if (!post) return res.code(404).send('no post specified');
+  if (!post)  res.status(404).send('no post specified');
 
   const article = await prismaClient.post.findUnique({
     where: {
@@ -302,14 +302,14 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
     });
     console.log(unifyingText);
     if (Boolean(api) === true) {
-      return res.send(
+       res.send(
         JSON.stringify({
           ...updatedContent,
           visites: updatedContent.visites.toString(),
         })
       );
     }
-    return res.view('/src/views/page.ejs', {
+     res.render('page', {
       id: updatedContent.id,
       content: updatedContent.parsedContent,
       title: updatedContent.title,
@@ -326,7 +326,7 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
     });
   }
 
-  return res.view('/src/views/page.ejs', {
+   res.render('page', {
     id: article.id,
     content: article.parsedContent,
     title: article.title,
@@ -342,17 +342,17 @@ export const docView = async (req: FastifyRequest, res: FastifyReply) => {
   });
 };
 
-export const storage = (req: FastifyRequest, res: FastifyReply) => {
+export const storage = (req: Request, res: Response) => {
   try {
     req.session.Storage = req.body as DocumentStorage;
-    return res.code(200).send(JSON.stringify({ success: true }));
+     res.status(200).send(JSON.stringify({ success: true }));
   } catch (err) {
     console.error(err);
-    res.code(400).send(JSON.stringify({ success: false }));
+    res.status(400).send(JSON.stringify({ success: false }));
   }
 };
 
-export const loadPost = async (req: FastifyRequest, res: FastifyReply) => {
+export const loadPost = async (req: Request, res: Response) => {
   const { postId } = req.query as QueryXData<{ postId: string }>;
   if (!postId) {
     res.status(404).send('this is not a post');
