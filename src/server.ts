@@ -65,7 +65,7 @@ import path from 'node:path';
 // import multer from 'fastify-multer';
 
 const Store = new RedisStore({
-  client: process.env.NODE_ENV === 'production' ? client : redisStoreClient,
+  client: process.env.NODE_ENV !== 'production' ? client : redisStoreClient,
 });
 
 export const ee = new EventEmitter();
