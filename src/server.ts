@@ -4,7 +4,7 @@ import ejs from 'ejs';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import cookie from 'cookie-parser';
-import { prismaClient, redisStoreClient } from './config/db';
+import { client, prismaClient, redisStoreClient } from './config/db';
 import { ReqParams } from './@types';
 import { index } from './routes';
 import cors from 'cors';
@@ -65,7 +65,7 @@ import path from 'node:path';
 // import multer from 'fastify-multer';
 
 const Store = new RedisStore({
-  client: redisStoreClient,
+  client: process.env.NODE_ENV === 'production' ? client : redisStoreClient,
 });
 
 export const ee = new EventEmitter();

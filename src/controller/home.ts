@@ -8,14 +8,17 @@ export const homeControler: RequestHandler = async (req, res) => {
 
   const result = await apiRequester();
 
-  if (result === false)
+  if (result === false) {
     res.status(400).send(JSON.stringify({ err: 'not fulfilled service' }));
+    return;
+  }
 
   if (typeof storageData === 'string') {
     req.session.PersistedData = storageData;
     req.session.Services.Platform.API = true;
     req.session.Services.Platform.externals = true;
     res.send(JSON.stringify({ persisted: true }));
+    return;
   }
 
   res.send(JSON.stringify({ req: true }));
