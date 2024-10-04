@@ -30,11 +30,13 @@ import { articlePost } from './controller/articlePost';
 import { projectPost } from './controller/projectPost';
 import { article } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
-import { loadKeys } from './utils';
 import {
   authController,
   connexion,
   disconnection,
+  getMd,
+  getMdScript,
+  parserRoute,
   registrationController,
   registrationView,
   serviceHome,
@@ -55,13 +57,13 @@ import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
 import RedisStore from 'connect-redis';
 import { setUp } from './hooks/setup';
-// import helmet from '@fastify/helmet';
+import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 // import { stats } from './hooks/statCounter';
 import { veriry } from './hooks/verify';
 // import fs from 'node:fs';
 import path from 'node:path';
-// import crypto from 'node:crypto';
+import crypto from 'node:crypto';
 // import multer from 'fastify-multer';
 
 const Store = new RedisStore({
@@ -70,7 +72,7 @@ const Store = new RedisStore({
 
 export const ee = new EventEmitter();
 
-dotEnv.config();
+dotEnv.config(); 
 const server = express();
 // const socketUrl =
 //   process.env.NODE_ENV !== 'production'
@@ -86,7 +88,6 @@ wss.on('connection', (ws, req) => {
 wss.on('error', (err) => {
   console.error(err);
 });
-export const router = express.Router();
 server.engine('html', ejs.renderFile);
 server.set('view engine', 'ejs');
 // {logger: true}
@@ -105,6 +106,63 @@ server.use(
     max: 100,
   })
 );
+
+server.options('*', cors());
+
+export const config = {
+    //+
+    contentSecurityPolicy: {
+      //+
+      useDefaults: true, //+
+      directives: {
+        //+
+        'default-src': ["'self'"], //+
+        'script-src': [
+          //+
+          "'self'", //+
+          (req: express.Request, res: express.Response) =>
+            `'nonce-${res.locals.cspNonce}'`, //+
+        ], //+
+        'style-src': [
+          //+
+          "'self'", // already existing//+
+          (req: express.Request, res: express.Response) =>
+            `'nonce-${res.locals.cspNonce}'`, //+
+          'https://fonts.googleapis.com',
+        ], //+
+        'font-src': [
+          "'self'",
+          (req: express.Request, res: express.Response) =>
+            `'nonce-${res.locals.cspNonce}'`,
+          'https://fonts.gstatic.com',
+        ], //+
+        // Add other directives if necessary//+
+      }, //+
+    }, //+
+    crossOriginEmbedderPolicy: false, // Disable for external resources//+
+    crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
+  }
+server.use((req, res, next) => {
+  // Générer un nonce unique pour chaque requête
+  res.locals.cspNonce = crypto.randomBytes(32).toString('hex');
+  next();
+});
+server.use(
+  //+
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: [
+          "'self'",
+          (req: express.Request, res: express.Response) =>
+            `'nonce-${res.locals.cspNonce}'`,
+        ],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  }) //+
+);;
 server.use(
   cors({
     origin: '*',
@@ -141,13 +199,16 @@ server.use(
 server.use(sessionStorageHook);
 // server.use(stats);
 server.use(veriry);
+server.on('reversion', (app) => {
+  console.log('reversion', app);
+})
 
 // routes...
 
 // server.setNotFoundHandler((req, res) => {
 //   res.view('/src/views/404.ejs');
 // });
-router.get('/auth/token', async (req, res, next) => {
+server.get('/auth/token', async (req, res, next) => {
   try {
     if (
       req.session.Auth &&
@@ -190,6 +251,9 @@ server.get('/test', (req, res) => {
 })
 server.get('/', index);
 server.post('/home', homeControler);
+server.get('/poll', (req, res) => {
+  res.render('components/poll');
+})
 server.get('/home', home);
 server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
@@ -242,6 +306,9 @@ server.post('/poster/save', docSaver);
 server.get('/poster/view', docView);
 // server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
+server.post('/api/v1/parser', parserRoute);
+server.get('/api/v1/md.css', getMd);
+server.get('/api/v1/md.js', getMdScript);
 
 
 // Plateform bin
@@ -270,8 +337,7 @@ server.listen(port, '0.0.0.0', async () => {
     ee.emit('evrymorningAndNyTask', 'beginning the task...');
 
     // Charger les clés et configurer les tokens
-    const keys = await loadKeys();
-    await setUp(keys.secretKey, keys.iv, tokenGenerator);
+    await setUp(tokenGenerator);
 
     // Attendre les événements émis et les loguer
     for await (const event of on(ee, 'evrymorningAndNyTask')) {

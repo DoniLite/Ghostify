@@ -12,6 +12,17 @@ import { JSDOM } from 'jsdom';
 import ejs from 'ejs';
 import puppeteer from 'puppeteer';
 import { prismaClient } from './config/db';
+import bcrypt from 'bcrypt';
+
+export const hashSomething = async (data: string | Buffer, saltRond?: number) => {
+  const round = saltRond || 14;
+  const salt = await bcrypt.genSalt(round);
+  return await bcrypt.hash(data, salt);
+};
+
+export const compareHash = async (data: string | Buffer, hash: string) => {
+  return await bcrypt.compare(data, hash);
+}
 
 const server_uid = process.env.SECRET_UID;
 export enum DocInputFormat {
@@ -108,7 +119,6 @@ export async function analyzeImage(
     flagged,
   };
 }
-
 
 export function shouldFlagImage(
   metadata: sharp.Metadata,

@@ -1,5 +1,5 @@
 import { prismaClient } from '../config/db';
-import { conditionsMD, encrypt, FAQMD, privacyMD, termsMD, unify } from '../utils';
+import { compareHash, conditionsMD, FAQMD, hashSomething, privacyMD, termsMD, unify } from '../utils';
 
 const SETUP_ASSETS = Boolean(process.env.SETUP_ASSETS);
 const uids = [
@@ -10,12 +10,10 @@ const uids = [
 ] as const 
 
 export const setUp = async (
-  secret: Buffer,
-  iv: Buffer,
   generator?: (payload: string) => string
 ) => {
   const login = process.env.ADMIN_LOGIN;
-  const password = encrypt(process.env.ADMIN_PASSWORD, secret, iv);
+  const password = await hashSomething(process.env.ADMIN_PASSWORD);
 
   [
     await prismaClient.assets.findUnique({
@@ -88,13 +86,14 @@ export const setUp = async (
       data: {
         role: 'admin',
         login: login,
-        password: encrypt(password, secret, iv),
+        password: password,
         token: generator(process.env.ADMIN_LOGIN),
       },
     });
     return;
   }
-  if (verifyIfadminPresent.password !== password) {
+  const compareResult = await compareHash(password, verifyIfadminPresent.password)
+  if (compareResult) {
     console.log('Updating...');
     await prismaClient.admin.update({
       where: {
