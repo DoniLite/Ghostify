@@ -1,10 +1,11 @@
 import { BodyXData, QueryXData } from 'index';
-import { decrypt, encrypt, Service } from '../utils';
+import { compareHash, encrypt, hashSomething, Service, unify } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 import { SuperUser } from '../class/SuperUser';
 import { Can } from '../utils';
 import { Request, Response } from 'express';
+import path from 'node:path';
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -71,13 +72,15 @@ export const authController = async (req: Request, res: Response) => {
     return;
   }
 
-  const truePassword = decrypt(
-    user.password,
-    req.session.ServerKeys.secretKey,
-    req.session.ServerKeys.iv
-  );
+  const verifiedPassword = await compareHash(password, user.password);
 
-  if (truePassword !== password) res.status(403).send('invalid password');
+  // const truePassword = decrypt(
+  //   user.password,
+  //   req.session.ServerKeys.secretKey,
+  //   req.session.ServerKeys.iv
+  // );
+
+  if (!verifiedPassword) res.status(403).send('invalid password');
 
   if (permission === Service.blog || permission === Service.api) {
     req.session.Auth = {
@@ -295,6 +298,10 @@ export const registrationController = async (req: Request, res: Response) => {
       res.cookie('connection_time', req.session.Token, {
         expires: cookieExpriration,
       });
+      if (defaultRoot) {
+        res.redirect('/home');
+        return;
+      }
       res.redirect(
         `/service?userId=${req.session.Auth.login}&service=${service}`
       );
@@ -306,18 +313,9 @@ export const registrationController = async (req: Request, res: Response) => {
     }
   }
 
-  if (defaultRoot) {
-    res.redirect('/home');
-    return;
-  }
-
   if (service === Service.blog) {
     try {
-      const cryptedPassword = encrypt(
-        password,
-        req.session.ServerKeys.secretKey,
-        req.session.ServerKeys.iv
-      );
+      const cryptedPassword = await hashSomething(password);
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
       const registrationTime = date.getTime();
@@ -350,6 +348,10 @@ export const registrationController = async (req: Request, res: Response) => {
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
+        if (defaultRoot) {
+          res.redirect('/home');
+          return;
+        }
         res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
@@ -363,11 +365,7 @@ export const registrationController = async (req: Request, res: Response) => {
 
   if (service === Service.api) {
     try {
-      const cryptedPassword = encrypt(
-        password,
-        req.session.ServerKeys.secretKey,
-        req.session.ServerKeys.iv
-      );
+      const cryptedPassword = await hashSomething(password);
       const date = new Date();
       date.setFullYear(date.getFullYear() + 1);
       const token = tokenGenerator(date.toDateString());
@@ -398,6 +396,10 @@ export const registrationController = async (req: Request, res: Response) => {
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
+        if (defaultRoot) {
+          res.redirect('/home');
+          return;
+        }
         res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
@@ -410,11 +412,7 @@ export const registrationController = async (req: Request, res: Response) => {
 
   if (service === Service.superUser) {
     try {
-      const cryptedPassword = encrypt(
-        password,
-        req.session.ServerKeys.secretKey,
-        req.session.ServerKeys.iv
-      );
+      const cryptedPassword = await hashSomething(password);
       const date = new Date();
       date.setMonth(date.getMonth() + 6);
       const registrationTime = date.getTime();
@@ -447,6 +445,10 @@ export const registrationController = async (req: Request, res: Response) => {
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
+        if (defaultRoot) {
+          res.redirect('/home');
+          return;
+        }
         res.redirect(
           `/service?userId=${req.session.Auth.id}&service=${service}`
         );
@@ -487,3 +489,52 @@ export const disconnection = async (req: Request, res: Response) => {
   };
   res.status(200).send(JSON.stringify({ success: true }));
 };
+
+interface Parser {
+  /**
+   * the document extension it will be integrated by the the program to know which parser it will use
+   */
+  ext: 'html' | 'md' | 'json' | 'ascii';
+  /**
+   * the string representation of the document that have to be parsed
+   */
+  content: string;
+  /**
+   * the target format that the document will be transformed into
+   */
+  target: 'html' | 'json' | 'md';
+}
+export const parserRoute = async (req: Request, res: Response) => {
+  const { ext, content, target } = req.body as BodyXData<Parser>;
+  console.log(req.body);
+
+  if (!ext || !content || !target) {
+    res.status(400).send(JSON.stringify({ message: 'Missing required fields', success: false }));
+    return;
+  }
+
+  if (ext === 'md' && target === 'html') {
+    const unifying = await unify(content);
+    res.status(200).send(JSON.stringify({ success: true, data: unifying }));
+    return;
+  }
+
+  if (ext === 'html' && target === 'md') {
+    res.app.emit('reverion', { ext, target });
+    return;
+  }
+
+  res.json({
+    message: 'this feature ' + target + ' is not implemented for now',
+    success: false,
+  });
+};
+
+
+export const getMd = async (req: Request, res: Response) => {
+  res.sendFile(path.resolve(__dirname, '../../src/public/md.css'))
+}
+
+export const getMdScript = async (req: Request, res: Response) => {
+  res.sendFile(path.resolve(__dirname, '../../src/public/script/md.js'));
+}
