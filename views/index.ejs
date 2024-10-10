@@ -1,41 +1,6 @@
-<%- include('header') %>
-<div class="swiper w-full" style="height: 100vh;">
-    <!-- Additional required wrapper -->
-    <div class="swiper-wrapper">
-        
-        <!-- Slides -->
-        <div class="swiper-slide">
-            <% if (typeof auth !== 'undefined' && auth === true) { %>
-             <%- include('components/user.ejs') %>
-            <% } else { %>
-                <%- include('home') %>
-            <% } %>
-        </div>
-        <div class="swiper-slide">
-            <%- include('projects') %>
-        </div>
-        <div class="swiper-slide">
-            <%- include('marketPlace') %>
-        </div>
-        <div class="swiper-slide">
-            <%- include('blog') %>
-        </div>
-        <div class="swiper-slide">
-            <%- include('gameHome') %>
-        </div>
-        <div class="swiper-slide">
-            <%- include('contact') %>
-        </div>
-    </div>
-    <!-- If we need pagination -->
-    <!-- <div class="swiper-pagination"></div> -->
-
-    <!-- If we need navigation buttons -->
-    <!-- <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div> -->
-
-    <!-- If we need scrollbar -->
-    <!-- <div class="swiper-scrollbar"></div> -->
-</div>
-<%- include('script') %>
+<% if (typeof auth !== 'undefined' && auth === true) {%> 
+    <%- include('components/user.ejs') %> 
+<% } else { %>
+     <%- include('home') %>
+<% } %> 
 

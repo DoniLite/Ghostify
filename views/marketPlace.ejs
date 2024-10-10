@@ -1,9 +1,10 @@
+<%- include('header') %>
 <div
   id="container"
-  class="dp w-full overflow-y-scroll h-full bg-gradient-to-tr from-gray-900 to-blue-500"
+  class="dp w-full bg-gradient-to-tr from-gray-900 to-blue-500"
 >
   <% if (typeof auth === 'undefined' || auth === false) { %>
-  <div class="w-[95%] flex justify-between lg:mt-16 p-4 mt-20">
+  <div class="w-[95%] flex justify-between lg:pt-16 p-4 pt-28">
     <div></div>
     <a
       href="/signin?service=blog&defaultRoot=true"
@@ -170,60 +171,7 @@
       </div>
     </div>
   </section>
-  <h1
-    class="bg-gradient-to-r from-orange-300 mb-3 text-center w-full via-yellow-500 to-gray-300 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
-  >
-    Sondages et votes
-  </h1>
-  <div class="w-auto flex overflow-x-scroll lg:h-[20rem] h-[25rem] p-3 gap-x-3">
-    <div
-      class="h-full border border-white lg:w-[60%] w-[85%] flex flex-col flex-none shadow-white rounded-lg lg:flex-row cursor-pointer hover:shadow-lg"
-    >
-      <div
-        class="lg:w-[30%] w-full flex justify-center items-center p-3 text-white font-bold"
-      >
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-        repellat hic perferendis numquam, quae architecto culpa dolorum laborum!
-        A, sed?
-      </div>
-      <div
-        class="lg:w-[70%] w-full flex relative flex-col gap-y-1 lg:border-l lg:border-white"
-      >
-        <div
-          class="h-8 bg-gray-950 rounded-r-lg w-full relative flex justify-center items-center text-white font-bold"
-        >
-          <span class="z-50">78%</span>
-          <div
-            class="absolute left-0 h-8 top-0 bg-orange-500 w-[80%] rounded-r-lg"
-          ></div>
-        </div>
-        <div
-          class="h-8 bg-gray-950 rounded-r-lg w-full relative flex justify-center items-center text-white font-bold"
-        >
-          <span class="z-50">78%</span>
-          <div
-            class="absolute left-0 h-8 top-0 bg-orange-500 w-[80%] rounded-r-lg"
-          ></div>
-        </div>
-        <div
-          class="h-8 bg-gray-950 rounded-r-lg relative flex justify-center items-center text-white font-bold"
-        >
-          <span class="z-50">78%</span>
-          <div
-            class="absolute left-0 h-8 top-0 bg-orange-500 w-[80%] rounded-r-lg"
-          ></div>
-        </div>
-        <div
-          class="h-8 bg-gray-950 rounded-r-lg -z-10 relative w-full flex justify-center items-center text-white font-bold"
-        >
-          <div
-            class="absolute left-0 h-8 top-0 bg-orange-500 w-[40%] rounded-r-lg"
-          ></div>
-          <!-- <span class="z-50 bg-transparent">78%</span> -->
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <h1
     class="bg-gradient-to-r from-orange-300 mb-3 text-center w-full via-yellow-500 to-gray-300 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
   >
@@ -347,3 +295,4 @@
 </div>
 <script type="module" src="/static/script/uploader.js"></script>
 <script type="module" src="/static/script/actu.js"></script>
+<%- include('script') %>

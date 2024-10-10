@@ -6,6 +6,9 @@ declare module "express-session" {
   
 
   interface SessionData {
+    Persisted?: boolean;
+    NoAPIsData?: boolean;
+    Cookies?: Record<string, unknown>;
     Token?: string;
     ServerKeys?: {
       secretKey: Buffer;

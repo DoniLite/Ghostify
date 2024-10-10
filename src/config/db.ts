@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { createClient } from 'redis';
+// import { createClient } from 'redis';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
@@ -10,25 +10,25 @@ const adapter = new PrismaPg(pool, {
   schema: 'own',
 });
 
-export const client = createClient({
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: 16063,
-  },
-});
+// export const client = createClient({
+//   password: process.env.REDIS_PASSWORD,
+//   socket: {
+//     host: process.env.REDIS_HOST,
+//     port: 16063,
+//   },
+// });
 
-client
-  .connect()
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// client
+//   .connect()
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
-export const redisStoreClient = createClient();
+// export const redisStoreClient = createClient();
 
 export const prismaClient = new PrismaClient({ adapter });
 
-redisStoreClient.connect().catch(console.error);
+// redisStoreClient.connect().catch(console.error);

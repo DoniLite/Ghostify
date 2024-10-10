@@ -239,13 +239,24 @@ model Url {
   indexerId Int?
 }
 
+enum Provider {
+  Google
+  Facebook
+  Twitter
+  Instagram
+  LinkedIn
+  Platform
+}
+
 model User {
   id            Int         @id @default(autoincrement())
-  name          String
+  username      String?      @unique
   email         String      @unique
-  password      String
-  token         String
-  service       String
+  password      String? // Optionnel, si tu prévois de conserver une option de connexion par mot de passe
+  googleId      String?     @unique // Pour stocker l'ID utilisateur de Google
+  token         String? // Optionnel, si nécessaire pour des fonctionnalités spécifiques
+  service       String?
+  provider      Provider?
   registration  DateTime?
   permission    Permission
   posterCredits Int         @default(300)

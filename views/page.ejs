@@ -9,7 +9,7 @@
 
 <script type="module" src="/static/script/md.js"></script>
 <script type="module" src="/static/all.min.js"></script>
-<script>
+<script nonce="<%= locals.cspNonce %>">
   const rawHeaderNav = document.querySelector('#rawHeaderNav');
   const NavCloserBtn = document.querySelector('#NavCloserBtn');
   const rawHeadIcon = document.querySelector('#rawHeadIcon');

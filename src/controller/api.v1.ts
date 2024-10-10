@@ -532,9 +532,11 @@ export const parserRoute = async (req: Request, res: Response) => {
 
 
 export const getMd = async (req: Request, res: Response) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.sendFile(path.resolve(__dirname, '../../src/public/md.css'))
 }
 
 export const getMdScript = async (req: Request, res: Response) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.sendFile(path.resolve(__dirname, '../../src/public/script/md.js'));
 }

@@ -23,6 +23,7 @@ export const find = async (req: Request, res: Response) => {
       filterIncludesType(q, el);
     });
     res.send(JSON.stringify({ data: someThatCanMatch }));
+    return;
   }
   result.forEach(async (key) => {
     const urls = await prismaClient.url.findMany({
@@ -76,6 +77,7 @@ interface KeyQuery {
 
 export const updateKeys = async (req: Request, res: Response) => {
   const { k, keyType } = req.query as unknown as QueryXData<KeyQuery>;
+  let updatedKey;
   try {
     const serverKey = await prismaClient.indexer.findUnique({
       where: {
@@ -100,18 +102,20 @@ export const updateKeys = async (req: Request, res: Response) => {
               message: 'Error during your current running operation',
             })
           );
+          return;
       }
-      res.send(
+      res.status(200).send(
         JSON.stringify({
           message: 'The new indexer have been created successfully',
           data: newKey,
         })
       );
+      return;
     }
     const keys = k.split(',');
     keys.forEach(async (key) => {
       if (!serverKey.keys.split(',').includes(key)) {
-        const updatedKey = await prismaClient.indexer.update({
+         updatedKey = await prismaClient.indexer.update({
           where: {
             type: keyType,
           },
@@ -119,16 +123,17 @@ export const updateKeys = async (req: Request, res: Response) => {
             keys: serverKey + ',' + key,
           },
         });
-        res.send(
-          JSON.stringify({
-            message: 'The new indexer have been created successfully',
-            data: updatedKey,
-          })
-        );
       }
     });
+    res.send(
+      JSON.stringify({
+        message: 'The new indexer have been created successfully',
+        data: updatedKey,
+      })
+    );
   } catch (err) {
     console.log(err);
     res.status(404).send(JSON.stringify({ error: 'this index not exist' }));
+    return;
   }
 };

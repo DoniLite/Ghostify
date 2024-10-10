@@ -19,8 +19,15 @@ export const homeControler: RequestHandler = async (req, res) => {
     res.send(JSON.stringify({ persisted: true }));
     return;
   }
-
+  const finalResult = result.map(async (res) =>
+    res instanceof Response ? await res.json() : res
+  );
+  const cookieExpiration = new Date();
+  cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+  const finalObj = JSON.stringify(finalResult);
+  res.cookie('ghostify_home_session', finalObj, { expires: cookieExpiration });
   res.send(JSON.stringify({ req: true }));
+  return;
 };
 
 const apiRequester = async (...prom: FetchFn[]) => {
