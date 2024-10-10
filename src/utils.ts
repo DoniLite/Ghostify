@@ -84,6 +84,13 @@ export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
 export async function analyzeImage(
   imagePath: string
 ): Promise<ImageAnalysisResult> {
+  /*  // const arr = [
+    ['#df750c', '#753911', '#f9d88a', '#ac7860', '#513d28', '#ae9d9c'][
+      ('#c04c1c', '#6b4115', '#f5c17e', '#507c9a', '#524d31', '#cdc4b6')
+    ][('#b47c53', '#041419', '#ecb28c', '#a58266', '#4d3e33', '#d0c3b5')][
+      ('#509ca8', '#21696f', '#ec9d7f', '#9b6c59', '#344851', '#aec1d0')
+    ][('#e62050', '#783d32', '#eeb699', '#a87460', '#523629', '#cb9b8f')],
+  ]; */
   // Analyse des métadonnées
   const metadata = await sharp(imagePath).metadata();
 

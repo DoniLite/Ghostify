@@ -4,23 +4,32 @@ const mobileAuth = document.querySelector('#ghostifyPowerMob');
 const ghostifyPower = document.querySelector('#ghostifyPower');
 
 /**
- * 
- * @param {Event} e 
+ *
+ * @param {Event} e
  */
 const disconnection = async (e) => {
-    e.preventDefault();
-    const el = e.currentTarget;
-    const req = await fetch('/disconnection');
-    if(!req.ok) {
-        alert('something went wrong');
-        return;
+  e.preventDefault();
+  /**
+   * @type {HTMLElement}
+   */
+  const el = e.currentTarget;
+  const req = await fetch('/disconnection');
+  if (!req.ok) {
+    alert('something went wrong');
+    return;
+  }
+  const data = await req.json();
+  if (data.success) {
+    const attr = el.getAttribute('id');
+    if (typeof attr === 'string' && attr === 'ghostifyPower') {
+      el.remove();
+      window.location.reload();
+      return;
     }
-    const data = await req.json();
-    if(data.success) {
-        el.style.display = 'none';
-        ghostifyPower.style.display = 'none';
-        window.location.reload();
-    }
-}
+    el.style.display = 'none';
+    window.location.reload();
+  }
+};
 
 mobileAuth.addEventListener('click', disconnection);
+ghostifyPower.addEventListener('click', disconnection);

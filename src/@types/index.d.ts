@@ -144,7 +144,7 @@ export interface CrawlerClient {
   ): Promise<StoreValue<T> | undefined>;
 }
 
-export type FetchFn = typeof fetch;
+export type FetchFn<T = unknown> = Promise<T>;
 
 export type RunOptions = Record<string, string>;
 

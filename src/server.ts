@@ -4,9 +4,8 @@ import ejs from 'ejs';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import cookie from 'cookie-parser';
-import { client, prismaClient, redisStoreClient } from './config/db';
+import { prismaClient } from './config/db';
 import { ReqParams } from './@types';
-import { index } from './routes';
 import cors from 'cors';
 import { home } from './routes/home';
 import { homeControler } from './controller/home';
@@ -28,7 +27,7 @@ import {
 // import { stats } from './hooks/statCounter';
 import { articlePost } from './controller/articlePost';
 import { projectPost } from './controller/projectPost';
-import { article } from './routes/blog';
+import { blog } from './routes/blog';
 import { on, EventEmitter } from 'node:events';
 import {
   authController,
@@ -55,7 +54,7 @@ import { cv } from './controller/cv';
 // import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
-import RedisStore from 'connect-redis';
+// import RedisStore from 'connect-redis';
 import { setUp } from './hooks/setup';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -64,15 +63,50 @@ import { veriry } from './hooks/verify';
 // import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-// import multer from 'fastify-multer';
+import i18n from 'i18n';
+import sql3 from 'connect-sqlite3';
+import { redirector } from './hooks/redirector';
+import { projects } from './routes/project';
+import { meta } from './routes/meta';
+import { contact } from './routes/contact';
+import { apiGaming } from './routes/APIs';
+import passport from 'passport';
+import  { Strategy as GoogleStrategy} from 'passport-google-oauth20';
 
-const Store = new RedisStore({
-  client: process.env.NODE_ENV === 'production' ? client : redisStoreClient,
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env['GOOGLE_CLIENT_ID'],
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
+      callbackURL:
+        process.env.NODE_ENV === 'production'
+          ? 'https://ghostify.site/login/federated/google'
+          : 'http://localhost:3085/login/federated/google',
+      scope: ['profile'],
+      state: true,
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      // const checkExistedUser = await prismaClient.user.findUnique({where: })
+    }
+  )
+);
+
+i18n.configure({
+  locales: ['en', 'fr', 'es'], // Liste des langues supportées
+  directory: path.resolve(__dirname, '../locales'), // Répertoire où se trouvent les fichiers de traduction
+  defaultLocale: 'fr', // Langue par défaut
+  extension: '.yml',
 });
+
+// export const Store = new RedisStore({
+//   client: process.env.NODE_ENV === 'production' ? client : redisStoreClient,
+// });
+
+const SQLStore = sql3(session);
 
 export const ee = new EventEmitter();
 
-dotEnv.config(); 
+dotEnv.config();
 const server = express();
 // const socketUrl =
 //   process.env.NODE_ENV !== 'production'
@@ -101,6 +135,15 @@ export const tokenGenerator = (payload: string, opt?: SignOptions) => {
   return jwt.sign(payload, process.env.JWT_SECRET);
 };
 
+server.use(i18n.init);
+
+// Détecter la langue via les paramètres de requête
+server.use((req, res, next) => {
+  const lang = (req.query.lang as string) || 'fr'; // Par défaut 'en' si la langue n'est pas spécifiée
+  res.setLocale(lang);
+  next();
+});
+
 server.use(
   rateLimit({
     max: 100,
@@ -110,38 +153,38 @@ server.use(
 server.options('*', cors());
 
 export const config = {
+  //+
+  contentSecurityPolicy: {
     //+
-    contentSecurityPolicy: {
+    useDefaults: true, //+
+    directives: {
       //+
-      useDefaults: true, //+
-      directives: {
+      'default-src': ["'self'"], //+
+      'script-src': [
         //+
-        'default-src': ["'self'"], //+
-        'script-src': [
-          //+
-          "'self'", //+
-          (req: express.Request, res: express.Response) =>
-            `'nonce-${res.locals.cspNonce}'`, //+
-        ], //+
-        'style-src': [
-          //+
-          "'self'", // already existing//+
-          (req: express.Request, res: express.Response) =>
-            `'nonce-${res.locals.cspNonce}'`, //+
-          'https://fonts.googleapis.com',
-        ], //+
-        'font-src': [
-          "'self'",
-          (req: express.Request, res: express.Response) =>
-            `'nonce-${res.locals.cspNonce}'`,
-          'https://fonts.gstatic.com',
-        ], //+
-        // Add other directives if necessary//+
-      }, //+
+        "'self'", //+
+        (req: express.Request, res: express.Response) =>
+          `'nonce-${res.locals.cspNonce}'`, //+
+      ], //+
+      'style-src': [
+        //+
+        "'self'", // already existing//+
+        (req: express.Request, res: express.Response) =>
+          `'nonce-${res.locals.cspNonce}'`, //+
+        'https://fonts.googleapis.com',
+      ], //+
+      'font-src': [
+        "'self'",
+        (req: express.Request, res: express.Response) =>
+          `'nonce-${res.locals.cspNonce}'`,
+        'https://fonts.gstatic.com',
+      ], //+
+      // Add other directives if necessary//+
     }, //+
-    crossOriginEmbedderPolicy: false, // Disable for external resources//+
-    crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
-  }
+  }, //+
+  crossOriginEmbedderPolicy: false, // Disable for external resources//+
+  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
+};
 server.use((req, res, next) => {
   // Générer un nonce unique pour chaque requête
   res.locals.cspNonce = crypto.randomBytes(32).toString('hex');
@@ -162,7 +205,16 @@ server.use(
       },
     },
   }) //+
-);;
+);
+// server.use(
+//   helmet.crossOriginResourcePolicy({
+//     policy: 'cross-origin',
+//   })
+// );
+// server.use((req, res, next) => {
+//   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+//   next();
+// });
 server.use(
   cors({
     origin: '*',
@@ -175,9 +227,12 @@ server.use(
   express.static(path.resolve(__dirname, '../src/public'), {
     maxAge: '1d', // Définit une durée de vie du cache de 1 jour
     etag: false, // Désactive les ETags (facultatif)
-    setHeaders: (res) => {
-      res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
-    },
+    setHeaders:
+      process.env.NODE_ENV !== 'production'
+        ? null
+        : (res) => {
+            res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
+          },
   })
 );
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -190,7 +245,13 @@ server.use(
       secure: 'auto', // true in production for HTTPS
     },
     name: 'sessionId',
-    store: Store,
+    store: new SQLStore({
+      db:
+        process.env.NODE_EN === 'production'
+          ? 'sessionProduction.db'
+          : 'sessions.db',
+      dir: path.resolve(__dirname, '../src/config'),
+    }) as session.Store,
     saveUninitialized: false,
     resave: false,
   })
@@ -199,9 +260,10 @@ server.use(
 server.use(sessionStorageHook);
 // server.use(stats);
 server.use(veriry);
+server.use(redirector);
 server.on('reversion', (app) => {
   console.log('reversion', app);
-})
+});
 
 // routes...
 
@@ -248,12 +310,8 @@ server.get('/auth/token', async (req, res, next) => {
 server.get('/test', (req, res) => {
   // console.log(req);
   res.render('test');
-})
-server.get('/', index);
+});
 server.post('/home', homeControler);
-server.get('/poll', (req, res) => {
-  res.render('components/poll');
-})
 server.get('/home', home);
 server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
@@ -282,7 +340,11 @@ server.get('/api/token', async (req, res) => {
 });
 
 // Pages...
-server.get('/article', article);
+server.get('/blog', blog);
+server.get('/projects', projects);
+server.get('/hub', meta);
+server.get('/contact', contact);
+server.get('/api-gaming', apiGaming);
 server.get('/terms', terms);
 server.get('/conditions', conditions);
 server.get('/FAQ', FAQ);
@@ -309,7 +371,7 @@ server.get('/cvMaker', cv);
 server.post('/api/v1/parser', parserRoute);
 server.get('/api/v1/md.css', getMd);
 server.get('/api/v1/md.js', getMdScript);
-
+server.get('/login/federated/google');
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -328,7 +390,7 @@ server.get('/feed', (req, res) => {
   return res.render('src/views/components/feed.ejs', { service: undefined });
 });
 
-const port = parseInt(process.env.PORT) || 3081;
+const port = parseInt(process.env.PORT) || 3085;
 server.listen(port, '0.0.0.0', async () => {
   console.log(`Server listening at port: ${port}`);
 
