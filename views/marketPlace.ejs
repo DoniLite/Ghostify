@@ -120,19 +120,21 @@
     Notre référenciel contient des milliers de sites et utilise un algorithme
     performant afin de veuiller à la mise à jour des données. <br />
     Ces données sont récupérer depuis vos sites et utilisés selon certaines
-    <a href="#">conditions légales</a>. Nous vous donnons autant un moyen de
+    <a href="/policy">conditions légales</a>. Nous vous donnons autant un moyen de
     vous faire de découvrir au monde entier et de nous aider à développer nos
     outils de scraping et de crawling à travers le web pour vous propser
     davantage de meilleurs ressources pour votre business.
   </p>
   <div class="mt-8 p-3 flex lg:gap-x-8 lg:grid lg:grid-cols-2 flex-col gap-y-6">
-    <a href="#" id="promEl">
+    <% promotions.forEach(prom => { %>
+     <a href="<%= prom.link %>" id="promEl">
       <img
-        src="/static/img/random1.png"
+        src="<%= prom.file %>"
         class="mx-auto h-96 mb-4 w-full flex-none rounded-lg object-cover"
         alt=""
       />
     </a>
+    <% }) %>
   </div>
   <section class="bg-transparent text-white">
     <div
@@ -156,7 +158,7 @@
         <div class="mt-8 flex flex-wrap justify-center gap-4">
           <a
             class="block w-full rounded hover:border hover:border-white bg-blue-900 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
-            href="#"
+            href="/promotion?reduction=5"
           >
             Promotion
           </a>
@@ -183,21 +185,23 @@
   </div>
 
   <div class="w-auto flex overflow-x-scroll lg:h-[20rem] h-[25rem] p-3 gap-x-3">
-    <div
+    <% popularActues.forEach(actu => { %>
+     <div
       id="commentXel"
       class="h-full border border-white lg:w-[60%] w-[85%] flex flex-col flex-none shadow-white rounded-lg lg:flex-row cursor-pointer hover:shadow-lg"
     >
-      <img
-        src="/static/img/random1.png"
+      <% if (typeof actu.file !== 'undefined' && typeof actu.file === 'string' ) { %>
+       <img
+        src="<%= actu.file %>"
         class="object-cover rounded-t-lg w-full lg:h-full lg:w-[65%] h-[70%]"
         alt=""
       />
+      <% } %>
       <div
         class="w-full lg:h-full lg:w-[35%] h-[30%] text-white font-bold flex flex-col lg:gap-y-4 justify-center items-center p-3"
       >
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero,
-          veniam!
+          <%= actu.content %>
         </p>
         <div class="relative flex gap-x-8 justify-between lg:top-4 left-4">
           <div class="flex gap-x-3 text-white">
@@ -211,7 +215,7 @@
               ></i>
               <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-gray-950"></i>
             </div>
-            #555
+            <!-- nombre de reactions -->
           </div>
           <div class="flex">
             <i class="fa-solid fa-message fa-lg text-white mr-2"></i> #223
@@ -219,6 +223,7 @@
         </div>
       </div>
     </div>
+    <% }) %>
   </div>
 
   <h1

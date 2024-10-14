@@ -639,6 +639,62 @@ Make sure to check out our latest updates and follow us on social media for tips
 
 `;
 
+export const About = `# À propos de notre plateforme
+
+Bienvenue sur notre plateforme, un espace innovant dédié à la création et à la publication de contenu de qualité. Nous avons conçu notre service pour répondre aux besoins des utilisateurs souhaitant s'exprimer, partager des idées et développer des compétences professionnelles. Voici un aperçu des trois services principaux que nous proposons :
+
+## 1. Création et publication d'articles de blog
+
+Notre plateforme vous permet de **créer et publier facilement des articles de blog** sur des sujets qui vous passionnent. Que vous soyez un écrivain débutant ou un blogueur expérimenté, vous trouverez des outils intuitifs pour rédiger, formater et partager votre contenu avec le monde. 
+
+### Caractéristiques :
+
+- Éditeur de texte riche avec des options de formatage.
+- Possibilité d'ajouter des images et des vidéos.
+- Fonctionnalité de prévisualisation avant publication.
+- Gestion des catégories et des balises pour une meilleure organisation.
+
+## 2. Génération et conversion de documents
+
+Nous facilitons également la **génération et la conversion de documents** en divers formats. Que vous ayez besoin de créer des PDF à partir de vos articles ou de convertir des fichiers dans des formats spécifiques, notre service est là pour vous aider.
+
+### Caractéristiques :
+
+- Conversion rapide et fiable entre différents formats de fichiers.
+- Options de personnalisation pour les documents générés.
+- Téléchargement facile et sécurisé de vos fichiers.
+
+## 3. Création de CV
+
+Notre outil de **création de CV** vous permet de concevoir des curriculums vitae professionnels qui attirent l'attention des recruteurs. Grâce à des modèles variés et à des conseils de rédaction, vous serez en mesure de présenter vos compétences et expériences de manière efficace.
+
+### Caractéristiques :
+
+- Modèles de CV personnalisables adaptés à différents secteurs.
+- Assistance à la rédaction pour mettre en valeur vos compétences.
+- Exportation de votre CV dans des formats populaires (PDF, DOCX).
+
+## 4. API
+
+Pour les développeurs et les entreprises, nous proposons également des **API** qui vous permettent d'intégrer nos services dans vos propres applications. Profitez de la puissance de notre plateforme pour enrichir vos projets avec des fonctionnalités de création de contenu.
+
+### Caractéristiques :
+
+- Documentation complète pour une intégration facile.
+- Accès à des fonctionnalités de génération de contenu et de gestion de documents.
+- Support technique dédié pour répondre à vos questions.
+
+## Rejoignez-nous !
+
+Nous sommes passionnés par l'idée de vous aider à créer, partager et développer vos compétences. Rejoignez notre communauté et découvrez tout ce que notre plateforme a à offrir.
+
+Pour toute question ou suggestion, n'hésitez pas à nous contacter à l'adresse suivante : [contact@votreplateforme.com](mailto:contact@votreplateforme.com).
+
+---
+
+Merci de faire partie de notre aventure !
+`;
+
 export const cvDownloader = async (options: Record<string, unknown>) => {
   const compiledCv = await ejs.renderFile('./views/components/cv.ejs', {
     ...options,

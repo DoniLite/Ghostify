@@ -71,7 +71,7 @@ import { meta } from './routes/meta';
 import { contact } from './routes/contact';
 import { apiGaming } from './routes/APIs';
 import passport from 'passport';
-import  { Strategy as GoogleStrategy} from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 passport.use(
   new GoogleStrategy(
@@ -86,7 +86,32 @@ passport.use(
       state: true,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      // const checkExistedUser = await prismaClient.user.findUnique({where: })
+      const verifEmails = profile.emails.filter(email => email.verified === true);
+      if(verifEmails.length <= 0) {
+        const error = new Error('User not authenticated');
+        cb(error, null);
+        return;
+      }
+      try {
+        const checkExistedUser = await prismaClient.user.findUnique({
+          where: { email: verifEmails[0].value },
+        });
+        if(checkExistedUser) {
+          const error = new Error(`User ${profile.emails[0].value} already exists`);
+          cb(error, null);
+          return;
+        }
+        const newUser = await prismaClient.user.create({
+          data: {
+            email: verifEmails[0].value,
+            provider: 'Google',
+            permission: 'User',
+          }
+        });
+        cb(null, newUser);
+      } catch (err) {
+        cb(err, null);
+      }
     }
   )
 );
@@ -351,6 +376,9 @@ server.get('/FAQ', FAQ);
 server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
+server.get('/promotion', (req, res) => {
+  res.render('components/promotion', { auth: undefined, service: 'promotion' });
+});
 
 // Admin conn
 server.post('/articlePost', articlePost);

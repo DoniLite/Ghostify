@@ -13,7 +13,6 @@ export const homeControler: RequestHandler = async (req, res) => {
   }
 
   if (typeof storageData === 'string') {
-    req.session.PersistedData = storageData;
     req.session.Services.Platform.API = true;
     req.session.Services.Platform.externals = true;
     res.send(JSON.stringify({ persisted: true }));

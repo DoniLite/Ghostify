@@ -88,7 +88,6 @@ export const authController = async (req: Request, res: Response) => {
       isSuperUser: false,
       login: login,
       id: user.id,
-      name: user.name,
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -166,7 +165,6 @@ export const serviceHome = async (req: Request, res: Response) => {
       id: Number(userId),
     },
     select: {
-      name: true,
       email: true,
       service: true,
       registration: true,
@@ -322,7 +320,6 @@ export const registrationController = async (req: Request, res: Response) => {
       const token = tokenGenerator(String(registrationTime));
       const user = await prismaClient.user.create({
         data: {
-          name: name,
           email: email,
           service: service,
           token: token,
@@ -371,7 +368,6 @@ export const registrationController = async (req: Request, res: Response) => {
       const token = tokenGenerator(date.toDateString());
       const user = await prismaClient.user.create({
         data: {
-          name: name,
           email: email,
           service: service,
           token: token,
@@ -419,7 +415,6 @@ export const registrationController = async (req: Request, res: Response) => {
       const token = tokenGenerator(String(registrationTime));
       const user = await prismaClient.user.create({
         data: {
-          name: name,
           email: email,
           service: service,
           token: token,
