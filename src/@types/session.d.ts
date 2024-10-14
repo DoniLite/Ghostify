@@ -42,11 +42,11 @@ declare module "express-session" {
       }[];
     };
     Stats?: StatsData;
-    PersistedData?: string;
     Services?: Service;
     Auth?: Auth;
     SuperUser?: SuperUser;
     Storage?: DocumentStorage;
+    RedirectUrl?: string;
   }
 
 }

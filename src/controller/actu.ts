@@ -73,7 +73,7 @@ export const uploadActu = async (req: Request, res: Response) => {
       meta: title,
       content: content,
       file: `/static/uploads/actues/${fName}`,
-      isAnActu: false,
+      isAnActu: true,
     },
   });
   const resData = await prismaClient.comment.update({

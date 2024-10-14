@@ -250,7 +250,7 @@ enum Provider {
 
 model User {
   id            Int         @id @default(autoincrement())
-  username      String?      @unique
+  username      String?     @unique
   email         String      @unique
   password      String? // Optionnel, si tu prévois de conserver une option de connexion par mot de passe
   googleId      String?     @unique // Pour stocker l'ID utilisateur de Google
@@ -267,6 +267,7 @@ model User {
   GamerStat     GamerStat[]
   Post          Post[]
   Comment       Comment[]
+  promotion     Promotion[]
 }
 
 enum KeyType {
@@ -274,6 +275,7 @@ enum KeyType {
   SecretKey
   SessionKey
   ApiKey
+  PlateformKey
   AccessToken
   RefreshToken
   TwoFactorCode
@@ -322,4 +324,19 @@ model Admin {
   token      String
   activities String?
   connection DateTime?
+}
+
+model Promotion {
+  id          Int      @id @default(autoincrement())
+  title       String
+  file        String?
+  description String?
+  link        String?
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true) // Indique si la promotion est active
+  createdAt   DateTime @default(now()) // Date de création de la promotion
+  updatedAt   DateTime @updatedAt // Date de mise à jour de la promotion
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      Int?
 }
