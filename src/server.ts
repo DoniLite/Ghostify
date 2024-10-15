@@ -120,7 +120,6 @@ i18n.configure({
   locales: ['en', 'fr', 'es'], // Liste des langues supportées
   directory: path.resolve(__dirname, '../locales'), // Répertoire où se trouvent les fichiers de traduction
   defaultLocale: 'fr', // Langue par défaut
-  extension: '.yml',
 });
 
 // export const Store = new RedisStore({

@@ -15,58 +15,17 @@
 
           <% if (typeof auth === 'undefined' || auth === false) { %>
           <a
-            href="/signin?service=blog"
+            href="/signin?service=poster"
             class="bg-gray-900 rounded-md lg:border-none border border-white lg:border-transparent font-bold text-white text-center p-2"
             >Se connecter</a
           >
           <% } %>
-
-          <!-- <div class="relative lg:w-1/3 w-full">
-            <label for="Search" class="sr-only"> Search for... </label>
-
-            <input
-              type="text"
-              id="Search"
-              placeholder="rechercher un article..."
-              class="w-full rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white px-3"
-            />
-
-            <span
-              class="absolute inset-y-0 end-0 grid w-10 place-content-center"
-            >
-              <button
-                type="button"
-                class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <span class="sr-only">Search</span>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                  />
-                </svg>
-              </button>
-            </span>
-          </div> -->
         </div>
         <p class="mt-2 text-lg leading-8 max-w-2xl text-white w-full">
-          Bienvenue dans le monde fascinant de la programmation et des
-          technologies modernes. Que vous soyez un développeur expérimenté ou
-          novice passionné, vous trouverez ici des articles enrichissants, des
-          tutoriels pratiques, et des astuces pour améliorer vos compétences!...
-          Ou votre savoir tout simplement
+          <%= __('blog').intro %>
         </p>
       </div>
-      <h1 class="text-center text-2xl mt-6 font-bold">Les plus consultés...</h1>
+      <h1 class="text-center text-2xl mt-6 font-bold"><%= __('blog').popular %></h1>
       <div
         class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-4 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3"
       >
@@ -159,7 +118,7 @@
           <!-- More posts... -->
         </div>
         <div class="mt-4 flex flex-col gap-y-3">
-          <h1 class="text-white text-center font-bold text-2xl">Categories</h1>
+          <h1 class="text-white text-center font-bold text-2xl"><%= __('blog').category %></h1>
           <ul
             class="flex lg:flex-col flex-row overflow-x-scroll font-bold lg:gap-y-3 gap-x-3 justify-center items-center text-white"
           >

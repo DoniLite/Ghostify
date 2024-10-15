@@ -169,15 +169,16 @@ model Post {
 }
 
 model Indexer {
-  id      Int        @id @default(autoincrement())
-  keys    String
-  type    String     @unique
-  post    Post[]
-  url     Url[]
-  game    GameData[]
-  Project Project[]
-  Assets  Assets[]
-  Comment Comment[]
+  id        Int         @id @default(autoincrement())
+  keys      String
+  type      String      @unique
+  post      Post[]
+  url       Url[]
+  game      GameData[]
+  Project   Project[]
+  Assets    Assets[]
+  Comment   Comment[]
+  ApiModule ApiModule[]
 }
 
 model GamerStat {
@@ -203,6 +204,28 @@ model GameData {
   data        String? // json data
   Indexer     Indexer     @relation(fields: [indexerId], references: [id])
   indexerId   Int
+}
+
+enum ApiModuleType {
+  Api
+  Module
+  Ressource
+  Snippet
+}
+
+model ApiModule {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String
+  url         String
+  type        ApiModuleType
+  scripts     String[]
+  testHook    String?
+  user        User          @relation(fields: [userId], references: [id])
+  indexed     Boolean       @default(false)
+  Indexer     Indexer?      @relation(fields: [indexerId], references: [id])
+  indexerId   Int?
+  userId      Int
 }
 
 model Project {
@@ -268,6 +291,7 @@ model User {
   Post          Post[]
   Comment       Comment[]
   promotion     Promotion[]
+  ApiModule     ApiModule[]
 }
 
 enum KeyType {

@@ -1,5 +1,5 @@
-<%- include('components/rawHeader') %> 
-<% if (typeof service !== 'undefined') { %>
+<%- include('components/rawHeader') %> <% if (typeof service !== 'undefined') {
+%>
 <input type="hidden" name="serice" id="service" value="<%= service %>" />
 <% } %>
 
@@ -55,8 +55,12 @@
                 </h2>
 
                 <form method="post" action="/api/v1/register">
-                  <input type="hidden" name="service" value="<%= service %>">
-                  <input type="hidden" name="defaultRoot" value="<%= typeof defaultRoot === 'undefined' ? false : defaultRoot %>">
+                  <input type="hidden" name="service" value="<%= service %>" />
+                  <input
+                    type="hidden"
+                    name="defaultRoot"
+                    value="<%= typeof defaultRoot === 'undefined' ? false : defaultRoot %>"
+                  />
                   <div class="mb-4">
                     <label
                       class="mb-2.5 block font-medium text-black dark:text-white"
@@ -123,7 +127,10 @@
                     </div>
                   </div>
 
-                  <span id="emailEroor" class=" text-red-700 font-bold my-3"></span>
+                  <span
+                    id="emailEroor"
+                    class="text-red-700 font-bold my-3"
+                  ></span>
 
                   <div class="mb-6">
                     <label
@@ -200,19 +207,36 @@
                     </div>
                   </div>
 
-                  <span id="alertElement" class=" my-3 font-bold text-red-700"></span>
+                  <span
+                    id="alertElement"
+                    class="my-3 font-bold text-red-700"
+                  ></span>
 
-                  <div class=" my-4">
-                    
+                  <div class="my-4">
                     <div>
                       <label
                         for="checkboxLabelOne"
                         class="flex cursor-pointer select-none items-center text-sm font-medium"
                       >
                         <div class="relative">
-                          <input type="checkbox" name="userAgry" class="border-primary bg-gray bg-transparent mr-4 flex h-5 w-5 items-center justify-center rounded border">
+                          <input
+                            type="checkbox"
+                            name="userAgry"
+                            class="border-primary bg-gray bg-transparent mr-4 flex h-5 w-5 items-center justify-center rounded border"
+                          />
                         </div>
-                        <p>En cliquant sur ce bouton vous acceptez toutes les politiques de confidentialités qui définissent l'usage qui est fait de vos informations comme mentionné dans : <span><a href="/assets/policy" class=" font-bold text-orange-600">ce document</a></span>
+                        <p>
+                          En cliquant sur ce bouton vous acceptez toutes les
+                          politiques de confidentialités qui définissent l'usage
+                          qui est fait de vos informations comme mentionné dans
+                          :
+                          <span
+                            ><a
+                              href="/assets/policy"
+                              class="font-bold text-orange-600"
+                              >ce document</a
+                            ></span
+                          >
                         </p>
                       </label>
                     </div>
@@ -225,6 +249,13 @@
                       value="Sign Up"
                       class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
                     />
+                    <a href="#" class="btn w-full mt-4 flex relative gap-x-0">
+                      <i class="fa-brands fa-google fa-2xl text-white p-0"></i>
+                      <span
+                        class="text-white font-bold text-2xl relative -left-3.5"
+                        >oogle</span
+                      >
+                    </a>
                   </div>
                 </form>
               </div>
@@ -239,38 +270,42 @@
   <!-- ===== Content Area End ===== -->
 </div>
 <script>
-
   const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
-  
+
   document.querySelector('#emailInput').addEventListener('keyup', (e) => {
-    console.log(isValidEmail(e.currentTarget.value))
+    console.log(isValidEmail(e.currentTarget.value));
     if (!isValidEmail(e.currentTarget.value)) {
-      console.log(e.currentTarget.value)
-      document.querySelector('#emailEroor').innerHTML = 'Please enter a valid email address';
+      console.log(e.currentTarget.value);
+      document.querySelector('#emailEroor').innerHTML =
+        'Please enter a valid email address';
       return;
     }
     document.querySelector('#emailEroor').innerHTML = '';
-  })
+  });
   /**
-  * @type {HTMLInputElement}
-  */
+   * @type {HTMLInputElement}
+   */
   const secondPasswordInput = document.querySelector('#secondTryPassword');
   /**
-  * @type {HTMLButtonElement}
-  */
+   * @type {HTMLButtonElement}
+   */
   const submitBtn = document.querySelector('#submitBtn');
   secondPasswordInput.addEventListener('keyup', (e) => {
-    if(document.querySelector('#firstTryPassword').value !== e.currentTarget.value) {
-      document.querySelector('#alertElement').innerHTML = 'Your password must match the first';
+    if (
+      document.querySelector('#firstTryPassword').value !==
+      e.currentTarget.value
+    ) {
+      document.querySelector('#alertElement').innerHTML =
+        'Your password must match the first';
       submitBtn.disabled = true;
       return;
     }
     document.querySelector('#alertElement').innerHTML = '';
     submitBtn.disabled = false;
-  })
+  });
 </script>
 <!-- ===== Page Wrapper End ===== -->
 <%- include('components/rawFooter') %>

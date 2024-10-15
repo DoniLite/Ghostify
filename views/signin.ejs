@@ -2,29 +2,19 @@
   <% if (typeof service !== 'undefined') { %>
    <input type="hidden" name="serice" id="service" value="<%= service %>">
   <% } %>
-
-    <!-- ===== Page Wrapper Start ===== -->
     <div class="flex h-screen overflow-hidden">
-
-      <!-- ===== Content Area Start ===== -->
       <div
         class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-900 dark:text-gray-100 dark:bg-gray-800"
       >
-
-        <!-- ===== Main Content Start ===== -->
         <main>
           <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-            <!-- Breadcrumb Start -->
             <div
               class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <h2 class="text-title-md2 font-bold text-black dark:text-white">
-                Connection
+                Connexion
               </h2>
             </div>
-            <!-- Breadcrumb End -->
-
-            <!-- ====== Forms Section Start -->
             <div
               class="rounded-xl text-gray-900 dark:text-gray-100 dark:bg-gray-950 shadow-default"
             >
@@ -34,14 +24,12 @@
                     <h1 class=" text-white font-bold text-3xl text-center">
                       Ghostify <%= service %>
                     </h1>
-                    <img src="/static/SVG/gostify.svg" alt="Site logo" class=" w-16 h-16 mx-auto">
-
                     <p class="font-medium mt-4 2xl:px-20">
                       Deviens membre du service: <%= service %> de la plateforme pour profiter de nombreux avantages et promotions,
                     </p>
 
                     <span class="mt-15 inline-block mt-3">
-                      <a href="/assets/billing/" class=" font-bold text-orange-600">Achete un pass</a> ou tente d'en décrocher un sur la plateforme 🤑
+                      <a href="/billing" class=" font-bold text-orange-600">Achete un pass</a> ou tente d'en décrocher un sur la plateforme 😃
                     </span>
                   </div>
                 </div>
@@ -49,7 +37,7 @@
                   class="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2"
                 >
                   <div class="w-full p-4 sm:p-12.5 xl:p-17.5">
-                    <span class="mb-1.5 block font-medium">Step by step</span>
+                    <a href="/support?target=FAQ&topic=accounts" class="mb-1.5 block font-medium">Besoin d'aide <i class="fa-solid fa-question text-white"></i></a>
                     <h2
                       class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2"
                     >
@@ -68,7 +56,7 @@
                           <input
                             name="login"
                             type="text"
-                            placeholder="Enter your email"
+                            placeholder="Entrez votre email"
                             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                           />
 
@@ -101,7 +89,7 @@
                           <input
                             name="password"
                             type="password"
-                            placeholder="Type your Password"
+                            placeholder="Tapez votre mot de passe"
                             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                           />
 
@@ -135,6 +123,10 @@
                           value="Sign In"
                           class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white hover:bg-opacity-90"
                         />
+                        <a href="#" class="btn w-full mt-4 flex relative gap-x-0">
+                          <i class="fa-brands fa-google fa-2xl text-white p-0"></i>
+                          <span class="text-white font-bold text-2xl relative -left-3.5">oogle</span>
+                        </a>
                       </div>
 
                      
@@ -154,13 +146,9 @@
                 </div>
               </div>
             </div>
-            <!-- ====== Forms Section End -->
           </div>
         </main>
-        <!-- ===== Main Content End ===== -->
       </div>
-      <!-- ===== Content Area End ===== -->
     </div>
-    <!-- ===== Page Wrapper End ===== -->
      <script type="module" src="/static/script/auth.js"></script>
 <%- include('components/rawFooter') %>
