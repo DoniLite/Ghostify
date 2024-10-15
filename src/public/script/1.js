@@ -45,7 +45,7 @@ scrollParent.forEach((el) => {
 
 mobileNavBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  mobileNav.classList.remove('hide');
+  mobileNav.classList.remove('hide', '-translate-x-full');
   mobileNav.classList.add('show');
 });
 

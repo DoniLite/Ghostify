@@ -253,7 +253,7 @@ export async function saveStatistic(stat: StatsData) {
 
 export enum Service {
   api = 'api',
-  blog = 'blog',
+  poster = 'poster',
   superUser = 'superUser',
 }
 

@@ -313,7 +313,7 @@ export const docView = async (req: Request, res: Response) => {
       id: updatedContent.id,
       content: updatedContent.parsedContent,
       title: updatedContent.title,
-      service: Service.blog,
+      service: Service.poster,
       theme: req.session.Theme,
       auth:
         typeof req.session.Auth !== 'undefined' &&
@@ -330,7 +330,7 @@ export const docView = async (req: Request, res: Response) => {
     id: article.id,
     content: article.parsedContent,
     title: article.title,
-    service: Service.blog,
+    service: Service.poster,
     theme: req.session.Theme,
     auth:
       typeof req.session.Auth !== 'undefined' && req.session.Auth.authenticated

@@ -25,8 +25,10 @@ export const authController = async (req: Request, res: Response) => {
     authenticated: false,
   };
 
-  if (!login || !password || !permission)
+  if (!login || !password || !permission) {
     res.status(400).send(JSON.stringify({ error: 'Invalid credentials' }));
+    return;
+  }
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -38,7 +40,7 @@ export const authController = async (req: Request, res: Response) => {
     const spltPass = password.split(';');
     if (
       (spltPass[1] === SUPER_USER_PASS_CODE && permission === Service.api) ||
-      permission === Service.blog
+      permission === Service.poster
     ) {
       try {
         const Su = new SuperUser(login, spltPass[0]);
@@ -82,7 +84,7 @@ export const authController = async (req: Request, res: Response) => {
 
   if (!verifiedPassword) res.status(403).send('invalid password');
 
-  if (permission === Service.blog || permission === Service.api) {
+  if (permission === Service.poster || permission === Service.api) {
     req.session.Auth = {
       authenticated: true,
       isSuperUser: false,
@@ -171,7 +173,7 @@ export const serviceHome = async (req: Request, res: Response) => {
     },
   });
 
-  if (service !== Service.api && service !== Service.blog) {
+  if (service !== Service.api && service !== Service.poster) {
     res.redirect(`/signin?service=${service}`);
     return;
   }
@@ -311,7 +313,7 @@ export const registrationController = async (req: Request, res: Response) => {
     }
   }
 
-  if (service === Service.blog) {
+  if (service === Service.poster) {
     try {
       const cryptedPassword = await hashSomething(password);
       const date = new Date();
@@ -504,7 +506,11 @@ export const parserRoute = async (req: Request, res: Response) => {
   console.log(req.body);
 
   if (!ext || !content || !target) {
-    res.status(400).send(JSON.stringify({ message: 'Missing required fields', success: false }));
+    res
+      .status(400)
+      .send(
+        JSON.stringify({ message: 'Missing required fields', success: false })
+      );
     return;
   }
 
@@ -525,13 +531,12 @@ export const parserRoute = async (req: Request, res: Response) => {
   });
 };
 
-
 export const getMd = async (req: Request, res: Response) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.sendFile(path.resolve(__dirname, '../../src/public/md.css'))
-}
+  res.sendFile(path.resolve(__dirname, '../../src/public/md.css'));
+};
 
 export const getMdScript = async (req: Request, res: Response) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.sendFile(path.resolve(__dirname, '../../src/public/script/md.js'));
-}
+};

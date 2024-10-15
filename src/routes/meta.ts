@@ -25,15 +25,15 @@ export const meta = async (req: Request, res: Response) => {
       isAnActu: true,
     },
   });
-
+  type FrontActues = {
+    reactionsEls: string[];
+    reactionsLength: number;
+    commentsLength: number;
+  }[] &
+    Comment[];
   const actus: {
-    popular: {
-      reactionsEls: string[];
-      reactionsLength: number;
-      commentsLength: number;
-    }[] &
-      Comment[];
-    rest: Comment[];
+    popular: FrontActues;
+    rest: FrontActues;
   } = {
     popular: [],
     rest: [],
@@ -56,7 +56,19 @@ export const meta = async (req: Request, res: Response) => {
         };
       })
   );
-  actus.rest = [...mostPopularActues];
+  actus.rest = await Promise.all([...mostPopularActues].map(async (actu) => {
+    const commentsLenght = await prismaClient.comment.count({
+      where: {
+        commentId: actu.id,
+      }
+    });
+    return {
+      ...actu,
+      reactionsEls: orderReactions(actu.reactions as Reactions[]),
+      reactionsLength: actu.reactions.length,
+      commentsLength: commentsLenght,
+    }
+  }));
 
   res.render('marketPlace', {
     popularActues: actus.popular,
