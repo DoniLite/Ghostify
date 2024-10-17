@@ -82,7 +82,10 @@ export const authController = async (req: Request, res: Response) => {
   //   req.session.ServerKeys.iv
   // );
 
-  if (!verifiedPassword) res.status(403).send('invalid password');
+  if (!verifiedPassword) {
+    res.status(403).send('invalid password');
+    return;
+  }
 
   if (permission === Service.poster || permission === Service.api) {
     req.session.Auth = {
@@ -98,13 +101,17 @@ export const authController = async (req: Request, res: Response) => {
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
+    console.log('before cookie setting')
     res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
+    console.log('after cookie setting')
     if (defaultRoot) {
+      console.log('redirecting to default root path')
       res.redirect('/home');
       return;
     }
+    console.log('rediecting to service view')
     res.redirect(`/service?userId=${user.id}&service=${permission}`);
     return;
   }
@@ -130,7 +137,7 @@ export const serviceHome = async (req: Request, res: Response) => {
     expires: cookieExpriration,
   });
 
-  if (!req.session.Auth.authenticated) {
+  if (!req.session.Auth.authenticated || !req.session.Auth) {
     res.status(403).send('you cannot access to this service');
     return;
   }
@@ -155,6 +162,7 @@ export const serviceHome = async (req: Request, res: Response) => {
       auth: true,
       data: { ...req.session.SuperUser },
     });
+    return;
   }
 
   if (isNaN(Number(userId))) {
@@ -254,20 +262,19 @@ export const registrationView = async (req: Request, res: Response) => {
 
 interface RegisterPost {
   service: Service;
-  name: string | undefined | null;
   email: string | undefined | null;
   password: string | undefined | null;
   defaultRoot: boolean | undefined | null;
 }
 
 export const registrationController = async (req: Request, res: Response) => {
-  const { service, name, email, password, defaultRoot } =
+  const { service, email, password, defaultRoot } =
     req.body as BodyXData<RegisterPost>;
 
-  console.log(name, email, password, service);
+  if (process.env.NODE_ENV !== 'production')
+    console.log(email, password, service);
 
-  if (!service || !name || !email || !password)
-    throw new Error('Invalid credentials');
+  if (!service || !email || !password) throw new Error('Invalid credentials');
 
   const refifyIfUserExists = await prismaClient.user.findUnique({
     where: {
@@ -280,7 +287,7 @@ export const registrationController = async (req: Request, res: Response) => {
   const spltPass = password.split(';');
   if (spltPass.length > 1 && spltPass[1] === SUPER_USER_PASS_CODE) {
     try {
-      const Su = new SuperUser(name, spltPass[0], false, [Can.CreateUser]);
+      const Su = new SuperUser(email, spltPass[0], false, [Can.CreateUser]);
       Su.checkPermissions();
       req.session.Auth = {
         authenticated: true,

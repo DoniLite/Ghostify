@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 const action = document.querySelector('#actuAction');
-const parent = document.querySelector('.dp');
+// const parent = document.querySelector('.dp');
 const actuForm = document.querySelector('#actuForm');
 const closer = document.querySelector('#actuCloser');
 const fileInput = document.querySelector('#fileInput');
@@ -35,14 +35,14 @@ actuForm.addEventListener('submit', async (e) => {
   console.log(result);
 });
 
-parent.onscroll = (e) => {
-  e.preventDefault();
+window.onscroll = (e) => {
+  // e.preventDefault();
   console.log('scroll');
   action.classList.add('translate-x-[140%]');
 };
 
-parent.onscrollend = (e) => {
-  e.preventDefault();
+window.onscrollend = (e) => {
+  // e.preventDefault();
   console.log('scrollend');
   action.classList.remove('translate-x-[140%]');
 };

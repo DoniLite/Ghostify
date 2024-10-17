@@ -50,7 +50,7 @@ export const redirector = async (req: Request, res: Response, next: NextFunction
         ...req.session.Cookies,
         ...cookieObj
     };
-    if(req.url === '/') {
+    if(req.url === '/' || req.url === '') {
         res.redirect('/home');
         next();
         return;

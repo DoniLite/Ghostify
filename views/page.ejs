@@ -1,11 +1,11 @@
 <%- include('components/rawHeader.ejs') %>
 <link rel="stylesheet" href="/static/md.css" />
 <div class="markdown-content"><%- content %></div>
+<% if ( typeof requestView !== 'undefined' && requestView === true ) { %>
 <div class="max-w-[800px] p-3 bg-gray-950 mx-auto rounded-lg">
-  <% if ( typeof requestView !== 'undefined' && requestView === true ) { %>
     <%- include('components/comment.ejs', {pointerType: 'post', pointer: id, replies: comments }) %>
-  <% } %>
 </div>
+<% } %>
 
 <script type="module" src="/static/script/md.js"></script>
 <script type="module" src="/static/all.min.js"></script>

@@ -27,7 +27,7 @@
     </div>
     <h1 class="mt-4 font-bold">Services</h1>
     <div class="mt-4 flex lg:flex-row flex-col gap-y-3 gap-x-6">
-      <a href="/service?service=blog&userId=<%= userId %>">
+      <a href="/service?service=poster&userId=<%= userId %>">
         <div
           class="border-2 border-orange-500 rounded-lg p-3 w-[98%] lg:w-80 h-40 bg-transparent text-white flex flex-col gap-y-3"
         >
@@ -97,7 +97,7 @@
     >
       <% if (userPosts.length <= 0) { %>
        <div class=" w-full flex justify-center items-center my-4">
-        <span class=" text-white font-bold">Vous ne disposez d'aucun post pour l'instant... Pensez à en <a href="/poster/new?service=blog" class=" text-orange-500">Créer</a></span>
+        <span class=" text-white font-bold">Vous ne disposez d'aucun post pour l'instant... Pensez à en <a href="/poster/new?service=poster" class=" text-orange-500">Créer</a></span>
        </div>
       <% } %>
       <% userPosts.forEach(article => { %>
@@ -140,3 +140,6 @@
     <h1 class="mt-4 font-bold">Activity</h1>
   </div>
 </div>
+<%- include('../script') %>
+<script type="module" src="/static/script/auth.js"></script>
+</body>
