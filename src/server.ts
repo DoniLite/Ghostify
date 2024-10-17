@@ -72,6 +72,7 @@ import { contact } from './routes/contact';
 import { apiGaming } from './routes/APIs';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { test as testRoute } from './routes/test';
 
 passport.use(
   new GoogleStrategy(
@@ -331,10 +332,7 @@ server.get('/auth/token', async (req, res, next) => {
     return next();
   }
 });
-server.get('/test', (req, res) => {
-  // console.log(req);
-  res.render('test');
-});
+server.get('/test', testRoute);
 server.post('/home', homeControler);
 server.get('/home', home);
 server.post('/sitesUpload', siteUrls);

@@ -301,3 +301,8 @@ export interface List {
 }
 
 export type DocDataUnion = PostFile | List
+
+export interface Checker {
+  pass: boolean;
+  services: Service['APIs'];
+}

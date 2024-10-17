@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,7 +39,7 @@
           href="<% if (typeof auth === 'undefined') { %>/home<% } else { %>/service?userId=<%= typeof data.id === 'undefined' ? data.userString : data.id  %>&service=<%= service %><% } %>"
         >
           <i class="fa-solid fa-ghost mr-3"></i>
-          <% if (service === 'blog') { %> <%= 'Poster->Ghost' %> <% } else if
+          <% if (service === 'poster') { %> <%= 'Poster->Ghost' %> <% } else if
           (service=== 'api') { %> <%= 'APIs->Ghost' %> <% } else { %> <%=
           'Ghost' %> <% } %>
         </a>
@@ -80,7 +80,7 @@
         </a>
       </ul>
     </nav>
-    <% if (typeof auth !== 'undefined') { %> <% if (service === 'blog') { %>
+    <% if (typeof auth !== 'undefined') { %> <% if (service === 'poster') { %>
     <div
       id="navHead"
       class="w-full h-16 fixed top-0 flex items-center justify-between bg-gray-950 text-white p-4"

@@ -32,4 +32,5 @@ export const home: RequestHandler = async (req, res) => {
     userId: req.session.Auth.id || req.session.Auth.login || '',
     userPosts,
   });
+  return;
 };

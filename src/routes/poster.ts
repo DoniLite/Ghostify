@@ -38,9 +38,10 @@ export const poster = async (req: Request, res: Response) => {
       req.session.Auth = {
         authenticated: false,
       };
-       res.redirect('/signin?service=blog');
+      res.redirect('/signin?service=blog');
     }
-    if (!req.session.Auth || req.session.Auth.authenticated === false)  res.redirect('/signin?service=blog');
+    if (!req.session.Auth || req.session.Auth.authenticated === false)
+      res.redirect('/signin?service=blog');
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
@@ -52,17 +53,19 @@ export const poster = async (req: Request, res: Response) => {
       expires: cookieExpriration,
     });
 
-     res.render('poster', {
+    res.render('poster', {
       id: 1,
       index: 0,
       service: service,
       auth: true,
       writterMode: true,
-      data: req.session.Auth.isSuperUser ? {...req.session.SuperUser} : {id: req.session.Auth.id}
+      data: req.session.Auth.isSuperUser
+        ? { ...req.session.SuperUser }
+        : { id: req.session.Auth.id },
     });
   } catch (e) {
     console.log(e);
-     res.redirect('/signin?service=blog');
+    res.redirect('/signin?service=blog');
   }
 };
 
@@ -72,30 +75,27 @@ export const requestComponent = (req: Request, res: Response) => {
     index: string;
   }>;
   try {
-     res.render('components/section', {
+    res.render('components/section', {
       idIncr: Number(section) + 1,
       id: Number(section),
       index: Number(index) + 1,
     });
   } catch (e) {
     console.log(e);
-     res.status(400).send('error happened');
+    res.status(400).send('error happened');
   }
 };
 
-export const requestListComponent = async (
-  req: Request,
-  res: Response
-) => {
+export const requestListComponent = async (req: Request, res: Response) => {
   const { section, index } = req.query as QueryXData;
   try {
-     res.render('components/list', {
+    res.render('components/list', {
       id: Number(section),
       index: Number(index) + 1,
     });
   } catch (e) {
     console.error(e);
-     res.status(400).send('something went wrong');
+    res.status(400).send('something went wrong');
   }
 };
 
@@ -142,7 +142,8 @@ export const docSaver = async (req: Request, res: Response) => {
     console.log(req.session.Storage, json);
   } catch (parseError) {
     console.error('Error parsing fields data:', parseError);
-     res.status(400).send('Invalid form data');
+    res.status(400).send('Invalid form data');
+    return;
   }
   const dangerousExtension = [
     '.js',
@@ -164,7 +165,8 @@ export const docSaver = async (req: Request, res: Response) => {
       // Vérifier les extensions dangereuses
       if (dangerousExtension.includes(ext)) {
         console.log('Inappropriate file detected');
-         res.status(403).send('You want to send inappropriate content');
+        res.status(403).send('You want to send inappropriate content');
+        return;
       }
       if (ext === '') continue;
       // Générer un nom de fichier unique
@@ -179,7 +181,8 @@ export const docSaver = async (req: Request, res: Response) => {
       fs.rename(fileArray[i].filepath, uploadPath, async (renameErr) => {
         if (renameErr) {
           console.error('Error moving file:', renameErr);
-           res.status(500).send('File upload error');
+          res.status(500).send('File upload error');
+          return;
         }
         console.log('File uploaded:', fName);
         // Sauvegarder le fichier dans la base de données
@@ -221,14 +224,15 @@ export const docSaver = async (req: Request, res: Response) => {
   console.log('updated content final:', up);
   console.log(json);
   if (json === true) {
-     res.send(JSON.stringify({ success: true, article: post.id }));
+    res.send(JSON.stringify({ success: true, article: post.id }));
+    return;
   }
-   res.redirect(`/poster/view?post=${post.id}`);
+  res.redirect(`/poster/view?post=${post.id}`);
 };
 
 export const docView = async (req: Request, res: Response) => {
   const { post, api } = req.query as QueryXData<{ post: string; api: string }>;
-  if (!post)  res.status(404).send('no post specified');
+  if (!post) res.status(404).send('no post specified');
 
   const article = await prismaClient.post.findUnique({
     where: {
@@ -302,14 +306,14 @@ export const docView = async (req: Request, res: Response) => {
     });
     console.log(unifyingText);
     if (Boolean(api) === true) {
-       res.send(
+      res.send(
         JSON.stringify({
           ...updatedContent,
           visites: updatedContent.visites.toString(),
         })
       );
     }
-     res.render('page', {
+    res.render('page', {
       id: updatedContent.id,
       content: updatedContent.parsedContent,
       title: updatedContent.title,
@@ -324,9 +328,10 @@ export const docView = async (req: Request, res: Response) => {
         ? { ...req.session.SuperUser }
         : { id: req.session.Auth.id },
     });
+    return;
   }
 
-   res.render('page', {
+  res.render('page', {
     id: article.id,
     content: article.parsedContent,
     title: article.title,
@@ -345,7 +350,7 @@ export const docView = async (req: Request, res: Response) => {
 export const storage = (req: Request, res: Response) => {
   try {
     req.session.Storage = req.body as DocumentStorage;
-     res.status(200).send(JSON.stringify({ success: true }));
+    res.status(200).send(JSON.stringify({ success: true }));
   } catch (err) {
     console.error(err);
     res.status(400).send(JSON.stringify({ success: false }));

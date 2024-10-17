@@ -15,8 +15,7 @@ const protectedRoutes = [
 
 export const veriry = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization
-    console.log(token);
-    console.log(req.session);
+    // console.log(token);
     let decoded
     if (protectedRoutes.includes(req.url)) {
         if(!token || typeof token !== 'string') {
