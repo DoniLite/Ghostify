@@ -51,7 +51,7 @@ import {
 import { find } from './controller/finder';
 import ws from 'ws';
 import { cv } from './controller/cv';
-// import { uploadActu } from './controller/actu';
+import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
 // import RedisStore from 'connect-redis';
@@ -332,7 +332,6 @@ server.get('/auth/token', async (req, res, next) => {
     return next();
   }
 });
-server.get('/test', testRoute);
 server.post('/home', homeControler);
 server.get('/home', home);
 server.post('/sitesUpload', siteUrls);
@@ -383,6 +382,7 @@ server.post('/projectPost', projectPost);
 server.post('/assetsPost', assetPoster);
 
 // API
+server.get('/test', testRoute);
 server.get('/signin', connexion);
 server.get('/register', registrationView);
 server.post('/api/v1/register', registrationController);
@@ -391,7 +391,7 @@ server.get('/service', serviceHome);
 server.get('/poster/new', poster);
 server.post('/poster/save', docSaver);
 server.get('/poster/view', docView);
-// server.post('/actu/post', uploadActu);
+server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 server.post('/api/v1/parser', parserRoute);
 server.get('/api/v1/md.css', getMd);

@@ -2,22 +2,24 @@ import { Request, Response } from 'express';
 import { QueryXData } from 'index';
 import { healthChecker } from '../hooks/healthChecker';
 
+
 interface TestQuery {
   health: string;
   /**
-   * The type of the data you want to retrieve
+   * The type of the data you want to retrieve  
    * it may be some `posts` or some `chunk` of html snippets
    */
   data: TestLabel;
   ordered: string;
   by: 'type' | 'key';
   service: string;
+  endpoint: string;
 }
 
 type TestLabel = 'url' | 'random' | 'post' | 'comment' | 'chunk';
 
 export const test = async (req: Request, res: Response) => {
-  const { health, data, service, ordered, by } =
+  const { health, data, service, ordered, by, endpoint } =
     req.query as unknown as QueryXData<TestQuery>;
 
   if (!health || !data || !service) {
@@ -55,6 +57,7 @@ export const test = async (req: Request, res: Response) => {
   try {
     if (Boolean(health)) {
       const checker = await healthChecker();
+
     }
   } catch (err) {
     console.error(err);

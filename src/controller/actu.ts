@@ -11,7 +11,6 @@ import { IncomingForm } from 'formidable';
 // const pump = util.promisify(pipeline);
 
 export const uploadActu = async (req: Request, res: Response) => {
-
   const form = new IncomingForm({
     uploadDir: path.resolve(__dirname, '../../src/public/uploads/actues'),
     keepExtensions: true,
@@ -38,9 +37,11 @@ export const uploadActu = async (req: Request, res: Response) => {
     }
   }
   console.log(title, content);
-  const file = files.file[0];
-  if (typeof title !== 'string' || typeof content !== 'string')
-     res.status(404).json({ message: 'bad data type provided' });
+  const file = files?.file?.[0];
+  if (typeof title !== 'string' || typeof content !== 'string') {
+    res.status(404).json({ message: 'bad data type provided' });
+    return;
+  }
 
   const dPath = path.resolve(__dirname, '../../src/public/uploads/actues');
 
@@ -60,9 +61,9 @@ export const uploadActu = async (req: Request, res: Response) => {
     const uploadPath = path.join(xPath, fName);
     try {
       fs.renameSync(file.filepath, uploadPath);
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-      res.status(400).json({message: 'file have \'nt be saved properly'});
+      res.status(400).json({ message: "file have 'nt be saved properly" });
       return;
     }
   }
@@ -72,7 +73,7 @@ export const uploadActu = async (req: Request, res: Response) => {
       promoted: false,
       meta: title,
       content: content,
-      file: `/static/uploads/actues/${fName}`,
+      file: typeof fName === 'undefined' ? null : `/static/uploads/actues/${fName}`,
       isAnActu: true,
     },
   });
@@ -86,6 +87,7 @@ export const uploadActu = async (req: Request, res: Response) => {
   });
 
   res.send(JSON.stringify({ link: resData.url }));
+  return;
 };
 
 export const comment = async (req: Request, res: Response) => {
@@ -103,8 +105,8 @@ export const comment = async (req: Request, res: Response) => {
     const connectedComments = await prismaClient.comment.findMany({
       where: {
         commentId: actu.id,
-      }
-    })
+      },
+    });
     if (actu) {
       const clientActu = {
         link: actu.url,
@@ -114,9 +116,9 @@ export const comment = async (req: Request, res: Response) => {
         replies: connectedComments,
         root: true,
       };
-       res.render('components/actu', { data: clientActu });
+      res.render('components/actu', { data: clientActu });
     }
-     res.status(404).send('access denied');
+    res.status(404).send('access denied');
   }
 
   if (ref && typeof ref === 'string') {
@@ -138,8 +140,8 @@ export const comment = async (req: Request, res: Response) => {
         content: actu.content,
         replies: connectedComments,
       };
-       res.render('components/actu', { data: clientActu });
+      res.render('components/actu', { data: clientActu });
     }
-     res.status(404).send('not available');
+    res.status(404).send('not available');
   }
 };

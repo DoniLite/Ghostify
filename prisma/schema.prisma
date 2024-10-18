@@ -19,9 +19,13 @@ enum Service {
 }
 
 model Services {
-  id     Int     @id @default(autoincrement())
-  type   Service @unique
-  active Boolean @default(false)
+  id       Int     @id @default(autoincrement())
+  type     Service @unique
+  name     String
+  endpoint String
+  isSecure Boolean @default(true)
+  docs     String?
+  active   Boolean @default(false)
 }
 
 enum Class {
@@ -292,6 +296,7 @@ model User {
   Comment       Comment[]
   promotion     Promotion[]
   ApiModule     ApiModule[]
+  Key           Key[]
 }
 
 enum KeyType {
@@ -315,11 +320,14 @@ enum KeyType {
 }
 
 model Key {
-  id   Int     @id @default(autoincrement())
-  key  String
-  iv   String
-  type KeyType
-  uid  String  @unique
+  id     Int     @id @default(autoincrement())
+  key    String?
+  iv     String?
+  token  String?
+  user   User?   @relation(fields: [userId], references: [id])
+  type   KeyType
+  uid    String? @unique
+  userId Int?
 }
 
 enum AssetType {

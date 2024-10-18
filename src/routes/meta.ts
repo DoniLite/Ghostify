@@ -70,6 +70,8 @@ export const meta = async (req: Request, res: Response) => {
     }
   }));
 
+  console.log(actus);
+
   res.render('marketPlace', {
     popularActues: actus.popular,
     restActues: actus.rest,

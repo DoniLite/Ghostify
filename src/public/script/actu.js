@@ -3,11 +3,12 @@
 const action = document.querySelector('#actuAction');
 // const parent = document.querySelector('.dp');
 const actuForm = document.querySelector('#actuForm');
+const actuFormDiv = document.querySelector('#actuFormDiv');
 const closer = document.querySelector('#actuCloser');
 const fileInput = document.querySelector('#fileInput');
 const addFileBtn = document.querySelector('#addFile');
 // const fileNameLabel = document.querySelector('#fileName');
-
+console.log(action);
 actuForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = new FormData(e.currentTarget);
@@ -17,17 +18,17 @@ actuForm.addEventListener('submit', async (e) => {
   const data = {
     title,
     content,
-    file
+    file,
   };
   console.log(data);
   const fetcher = await fetch('/actu/post', {
     method: 'POST',
     headers: {
-      contentType: 'multipart/form-data'
+      contentType: 'multipart/form-data',
     },
     body: form,
   });
-  if(!fetcher.ok) {
+  if (!fetcher.ok) {
     console.error(fetcher.statusText);
     return;
   }
@@ -35,26 +36,24 @@ actuForm.addEventListener('submit', async (e) => {
   console.log(result);
 });
 
-window.onscroll = (e) => {
-  // e.preventDefault();
+document.addEventListener('windowScrollStart', () => {
   console.log('scroll');
   action.classList.add('translate-x-[140%]');
-};
+});
 
-window.onscrollend = (e) => {
-  // e.preventDefault();
+document.addEventListener('windowScrollEnd', () => {
   console.log('scrollend');
   action.classList.remove('translate-x-[140%]');
-};
+});
 
 action.onclick = (e) => {
   e.preventDefault();
-  actuForm.classList.remove('-translate-y-[300%]');
+  actuFormDiv.classList.remove('-translate-y-[300%]');
 };
 
 closer.onclick = (e) => {
   e.preventDefault();
-  actuForm.classList.add('-translate-y-[300%]');
+  actuFormDiv.classList.add('-translate-y-[300%]');
 };
 
 addFileBtn.onclick = (e) => {
@@ -63,14 +62,14 @@ addFileBtn.onclick = (e) => {
 };
 
 /**
- * 
- * @param {InputEvent} e 
+ *
+ * @param {InputEvent} e
  */
 fileInput.onchange = (e) => {
   e.preventDefault();
   const file = e.currentTarget.files[0];
   console.log(fileInput.value);
-  if(file) {
+  if (file) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -91,19 +90,22 @@ fileInput.onchange = (e) => {
       document
         .querySelector('#imgPrintDiv')
         .insertAdjacentHTML('afterbegin', img);
-      document.querySelector('#imgPrintDiv').querySelectorAll('#removeFile').forEach(el => {
-        el.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.currentTarget.parentElement.remove();
-          /**
-           * @type {HTMLInputElement}
-           */
-          const inputFile = document.querySelector('input[type="file"]');
-          document.querySelector('#imgInput').style.display = 'block';
-          inputFile.value = '';
-          console.log(fileInput.value);
-        })
-      })
-    }
+      document
+        .querySelector('#imgPrintDiv')
+        .querySelectorAll('#removeFile')
+        .forEach((el) => {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.currentTarget.parentElement.remove();
+            /**
+             * @type {HTMLInputElement}
+             */
+            const inputFile = document.querySelector('input[type="file"]');
+            document.querySelector('#imgInput').style.display = 'block';
+            inputFile.value = '';
+            console.log(fileInput.value);
+          });
+        });
+    };
   }
 };
