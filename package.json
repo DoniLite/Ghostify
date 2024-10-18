@@ -1,5 +1,7 @@
 {
-  "homepage": "https://DoniLite.github.io/Ghostify",
+  "author": "DoniLite https://github.com/DoniLite",
+  "description": "",
+  "homepage": "https://donilite.github.io/Ghostify",
   "devDependencies": {
     "@eslint/js": "^9.12.0",
     "@playwright/test": "^1.47.2",
@@ -26,11 +28,11 @@
     "resetDB": "pnpx prisma migrate reset",
     "push": "pnpx prisma db push",
     "test": "pnpm exec playwright test",
-    "dbTest": "nodemon ./temp/test.spec.js",
     "show-reporter": "pnpm exec playwright show-report",
     "lint": "pnpm eslint",
     "dockerBuild": "docker build -t test:latest .",
-    "dockerStart": "docker run -p 3081:3081 test:latest"
+    "dockerStart": "docker run -p 3081:3081 test:latest",
+    "report": "pnpm exec playwright show-report"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^5.20.0",

@@ -14,10 +14,10 @@
   </div>
   <% } %>
   <div
-    id="actuForm"
+    id="actuFormDiv"
     class="fixed top-[20%] lg:left-[10%] left-[5%] lg:w-3/4 w-[90%] lg:h-[30rem] h-[45rem] overflow-y-scroll p-4 rounded-md bg-gray-950 text-white font-bold transition-all -translate-y-[300%] z-[900]"
   >
-    <form>
+    <form id="actuForm">
       <div class="mb-4">
         <div class="flex justify-between mb-3 items-center">
           <label class="mb-2.5 block text-black font-bold dark:text-white"
@@ -79,7 +79,7 @@
   <% if (typeof auth !== 'undefined' && auth === true) { %>
   <div
     id="actuAction"
-    class="p-3 translate-x-[140%] flex transition-all justify-center items-center rounded-full bg-blue-900 fixed top-1/4 right-4"
+    class="p-3 translate-x-[140%] z-50 flex transition-all justify-center items-center rounded-full bg-blue-900 fixed top-1/4 right-4"
   >
     <i class="fa-solid fa-circle-plus fa-xl text-white"></i>
   </div>
@@ -218,7 +218,7 @@
     <%= __('meta').likable %>
   </h1>
   <div class="lg:grid lg:grid-cols-3 mb-4 lg:gap-3 flex flex-col w-full p-2">
-    <% restActues.forEach(element => { %>
+    <% restActues.forEach(actu => { %>
     <div
       id="commentEl"
       class="lg:w-full w-[95%] mx-auto mb-4 rounded-lg flex flex-col h-[25rem] border border-white cursor-pointer"

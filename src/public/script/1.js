@@ -9,12 +9,15 @@ const scrollParent = document.querySelectorAll('.swiper-slide');
 const mobileNav = document.querySelector('.mobile-nav');
 const mobileNavBtn = document.querySelector('.mobile-nav-icon');
 const closerBtn = document.querySelector('.close-btn');
+const ghostifyPowerMob = document.querySelector('#ghostifyPowerMob');;
 window.onscroll = (e) => {
   e.preventDefault();
   navContainer.classList.add('-translate-y-[300%]');
   searchInput.classList.add('-translate-y-[300%]');
   mobileIcon.classList.add('-translate-y-[300%]');
   mobileNavBtn.classList.add('-translate-y-[300%]');
+  ghostifyPowerMob.classList.add('-translate-y-[300%]');
+  document.dispatchEvent(new Event('windowScrollStart'));
 };
 window.onscrollend = (e) => {
   e.preventDefault();
@@ -22,6 +25,8 @@ window.onscrollend = (e) => {
   searchInput.classList.remove('-translate-y-[300%]');
   mobileIcon.classList.remove('-translate-y-[300%]');
   mobileNavBtn.classList.remove('-translate-y-[300%]');
+  ghostifyPowerMob.classList.remove('-translate-y-[300%]');
+  document.dispatchEvent(new Event('windowScrollEnd'));
 };
 
 window.onload = (e) => {

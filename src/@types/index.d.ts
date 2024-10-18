@@ -306,3 +306,8 @@ export interface Checker {
   pass: boolean;
   services: Service['APIs'];
 }
+
+export interface HealthCheckerInterface {
+  check(service: string, endpoint?: string): Promise<boolean> ;
+  health(): Promise<boolean>
+}

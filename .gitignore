@@ -10,3 +10,4 @@
 /.vscode
 /articles
 /data
+node_modules/
