@@ -32,9 +32,9 @@ export interface Service {
   chekHealth?: (service: string, endpoint: string) => boolean;
   Platform?: {
     internals: boolean;
-    externals: boolean;
+    externals?: boolean;
     API: boolean;
-    Sockets: boolean;
+    Sockets?: boolean;
   };
 }
 
@@ -309,5 +309,5 @@ export interface Checker {
 
 export interface HealthCheckerInterface {
   check(service: string, endpoint?: string): Promise<boolean> ;
-  health(): Promise<boolean>
+  health(): Promise<Service['Platform']>
 }
