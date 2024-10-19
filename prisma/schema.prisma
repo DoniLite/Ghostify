@@ -19,13 +19,15 @@ enum Service {
 }
 
 model Services {
-  id       Int     @id @default(autoincrement())
-  type     Service @unique
-  name     String
-  endpoint String
-  isSecure Boolean @default(true)
-  docs     String?
-  active   Boolean @default(false)
+  id          Int     @id @default(autoincrement())
+  type        Service @unique
+  name        String
+  endpoint    String
+  isSecure    Boolean @default(true)
+  docs        String?
+  plateform   Boolean @default(true)
+  active      Boolean @default(false)
+  testingData String
 }
 
 enum Class {
