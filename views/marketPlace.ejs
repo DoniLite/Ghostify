@@ -143,7 +143,7 @@
         </h1>
 
         <p class="mx-auto mt-4 max-w-xl sm:text-xl/relaxed">
-           <%= __('meta').thirdHDesc %>
+          <%= __('meta').thirdHDesc %>
         </p>
 
         <div class="mt-8 flex flex-wrap justify-center gap-4">
@@ -209,10 +209,8 @@
     </div>
     <% }) %>
   </div>
-  <% } %>
-
-  <% if (restActues.length > 0) { %>
-   <h1
+  <% } %> <% if (restActues.length > 0) { %>
+  <h1
     class="bg-gradient-to-r my-3 from-orange-300 text-center w-full via-yellow-500 to-gray-300 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
   >
     <%= __('meta').likable %>
@@ -251,10 +249,9 @@
     </div>
     <% }) %>
   </div>
-  <% } %>
-  
-  <%- include('footer', {linear: 'bg-gradient-to-tr', from: 'from-gray-900', to:
-  'to-blue-500', text: 'text-white', title: 'text-gray-400'}) %>
+  <% } %> <%- include('footer', {linear: 'bg-gradient-to-tr', from:
+  'from-gray-900', to: 'to-blue-500', text: 'text-white', title:
+  'text-gray-400'}) %>
 </div>
 <script type="module" src="/static/script/uploader.js"></script>
 <script type="module" src="/static/script/actu.js"></script>

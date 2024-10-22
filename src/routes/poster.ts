@@ -219,6 +219,10 @@ export const docSaver = async (req: Request, res: Response) => {
     data: {
       title: req.session.Storage.title,
       description: req.session.Storage.desc_or_meta,
+      userId:
+        req.session.Auth.id && typeof req.session.Auth.id === 'number'
+          ? req.session.Auth.id
+          : null,
     },
   });
   console.log('updated content final:', up);

@@ -12,6 +12,7 @@ const closerBtn = document.querySelector('.close-btn');
 const ghostifyPowerMob = document.querySelector('#ghostifyPowerMob');;
 window.onscroll = (e) => {
   e.preventDefault();
+  console.log('scrolling');
   navContainer.classList.add('-translate-y-[300%]');
   searchInput.classList.add('-translate-y-[300%]');
   mobileIcon.classList.add('-translate-y-[300%]');

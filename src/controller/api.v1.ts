@@ -93,6 +93,7 @@ export const authController = async (req: Request, res: Response) => {
       isSuperUser: false,
       login: login,
       id: user.id,
+      file: user.file
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);

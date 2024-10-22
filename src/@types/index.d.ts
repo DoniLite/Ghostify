@@ -21,6 +21,7 @@ import sharp from 'sharp';
 import { prismaClient } from '../config/db';
 import { Can } from '../utils';
 export { Post } from '@prisma/client';
+import { WebSocket as WebSocketS } from 'ws';
 
 export interface Service {
   APIs?: {
@@ -78,6 +79,7 @@ export interface Auth {
   isSuperUser?: boolean;
   authenticated: boolean;
   name?: string;
+  file?: string;
 }
 
 export interface Indexer {
@@ -310,4 +312,11 @@ export interface Checker {
 export interface HealthCheckerInterface {
   check(service: string, endpoint?: string): Promise<boolean> ;
   health(): Promise<Service['Platform']>
+}
+
+
+declare global {
+  interface WebSocket extends WebSocketS {
+    on: WebSocketS['on'];
+  }
 }
