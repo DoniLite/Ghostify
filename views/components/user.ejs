@@ -14,14 +14,16 @@
     <div class="w-full flex justify-between items-center">
       <div class="flex items-center gap-x-4">
         <img
-          src="/static/SVG/user.svg"
+          src="<%= typeof userFile !== 'undefined' ? userFile : '/static/SVG/user.svg' %>"
           class="w-20 h-20 object-cover border-2 border-orange-500 rounded-full p-2 cursor-pointer"
           alt=" user profile"
+          id="userProfileImg"
         />
         <span class="text-orange-500 font-bold"><%= user %></span>
       </div>
 
-      <div class="cursor-pointer">
+      <div class="cursor-pointer indicator">
+        <span class="indicator-item badge badge-secondary bg-red-400 rounded-full p-2 left-3 relative">99+</span>
         <i class="fa-solid fa-bell fa-2xl text-white"></i>
       </div>
     </div>
@@ -105,14 +107,14 @@
         id="articleToFetch"
         data-id="<%= article.id %>"
         data-url="<%= article.url %>"
-        class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] dark:shadow-gray-700/25"
+        class="hover:animate-background rounded-xl bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 p-0.5 shadow-xl transition hover:bg-[length:400%_400%] hover:shadow-sm hover:[animation-duration:_4s] shadow-gray-700/25"
       >
         <div class="rounded-[10px] bg-white p-4 !pt-20 sm:p-6 dark:bg-gray-900">
           <time
             datetime="2022-10-10"
             class="block text-xs text-gray-500 dark:text-gray-400"
           >
-            <%= article.date %>
+            <%= article.createdAt %>
           </time>
 
           <a href="#">
@@ -124,7 +126,7 @@
           </a>
 
           <div class="mt-4 flex flex-wrap gap-1">
-            <% slugs.forEach(slug => { %>
+            <% article.slugs.forEach(slug => { %>
             <span
               class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
             >
@@ -138,8 +140,11 @@
     </div>
 
     <h1 class="mt-4 font-bold">Activity</h1>
+    <hr class=" w-full mt-3">
   </div>
 </div>
 <%- include('../script') %>
 <script type="module" src="/static/script/auth.js"></script>
+<script type="module" src="/static/script/user.js"></script>
 </body>
+</html>

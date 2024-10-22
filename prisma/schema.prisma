@@ -292,7 +292,7 @@ model User {
   cvCredits     Int         @default(300)
   apiCredits    Int         @default(300)
   apiAccess     Boolean     @default(false)
-  meta          String?
+  file          String?
   GamerStat     GamerStat[]
   Post          Post[]
   Comment       Comment[]

@@ -50,6 +50,9 @@ importers:
       '@types/express-session':
         specifier: ^1.18.0
         version: 1.18.0
+      '@types/express-ws':
+        specifier: ^3.0.5
+        version: 3.0.5
       '@types/formidable':
         specifier: ^3.4.5
         version: 3.4.5
@@ -140,6 +143,9 @@ importers:
       express-simple-cdn:
         specifier: ^1.0.1
         version: 1.0.1
+      express-ws:
+        specifier: ^5.0.2
+        version: 5.0.2(bufferutil@4.0.8)(express@4.21.0)
       formidable:
         specifier: ^3.5.1
         version: 3.5.1
@@ -154,7 +160,7 @@ importers:
         version: 5.3.2
       jsdom:
         specifier: ^25.0.1
-        version: 25.0.1(canvas@2.11.2(encoding@0.1.13))
+        version: 25.0.1(bufferutil@4.0.8)(canvas@2.11.2(encoding@0.1.13))
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -187,10 +193,10 @@ importers:
         version: 5.20.0
       puppeteer:
         specifier: ^23.5.0
-        version: 23.5.0(typescript@5.6.2)
+        version: 23.5.0(bufferutil@4.0.8)(typescript@5.6.2)
       puppeteer-core:
         specifier: ^23.5.0
-        version: 23.5.0
+        version: 23.5.0(bufferutil@4.0.8)
       redis:
         specifier: ^4.7.0
         version: 4.7.0
@@ -211,7 +217,7 @@ importers:
         version: 3.0.2
       ws:
         specifier: ^8.18.0
-        version: 8.18.0
+        version: 8.18.0(bufferutil@4.0.8)
     devDependencies:
       '@eslint/js':
         specifier: ^9.12.0
@@ -712,6 +718,9 @@ packages:
   '@types/express-session@1.18.0':
     resolution: {integrity: sha512-27JdDRgor6PoYlURY+Y5kCakqp5ulC0kmf7y+QwaY+hv9jEFuQOThgkjyA53RP3jmKuBsH5GR6qEfFmvb8mwOA==}
 
+  '@types/express-ws@3.0.5':
+    resolution: {integrity: sha512-lbWMjoHrm/v85j81UCmb/GNZFO3genxRYBW1Ob7rjRI+zxUBR+4tcFuOpKKsYQ1LYTYiy3356epLeYi/5zxUwA==}
+
   '@types/express@5.0.0':
     resolution: {integrity: sha512-DvZriSMehGHL1ZNLzi6MidnsDhUZM/x2pRdDIKdwbUNqqwHxMlRdkxtn6/EPKyqKpHqTl/4nRZsRNLpZxZRpPQ==}
 
@@ -1128,6 +1137,10 @@ packages:
 
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+
+  bufferutil@4.0.8:
+    resolution: {integrity: sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==}
+    engines: {node: '>=6.14.2'}
 
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
@@ -1606,6 +1619,12 @@ packages:
 
   express-simple-cdn@1.0.1:
     resolution: {integrity: sha512-351nuqixCuXw6pEeWTM96HR1gW05bR3pj0sck04ADkKIcQkq1hL3hXhVmsc8rq2D5B8qQbRmTVhwbV/vMAhSEw==}
+
+  express-ws@5.0.2:
+    resolution: {integrity: sha512-0uvmuk61O9HXgLhGl3QhNSEtRsQevtmbL94/eILaliEADZBHZOQUAiHFrGPrgsjikohyrmSG5g+sCfASTt0lkQ==}
+    engines: {node: '>=4.5.0'}
+    peerDependencies:
+      express: ^4.0.0 || ^5.0.0-alpha.1
 
   express@4.21.0:
     resolution: {integrity: sha512-VqcNGcj/Id5ZT1LZ/cfihi3ttTn+NJmkli2eZADigjq29qTlWi/hAQ43t/VLPq8+UX06FCEx3ByOYet6ZFblng==}
@@ -2365,6 +2384,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-gyp-build@4.8.2:
+    resolution: {integrity: sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==}
+    hasBin: true
 
   node-gyp@8.4.1:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
@@ -3410,6 +3433,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@7.5.10:
+    resolution: {integrity: sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==}
+    engines: {node: '>=8.3.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   ws@8.18.0:
     resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
     engines: {node: '>=10.0.0'}
@@ -4003,6 +4038,12 @@ snapshots:
     dependencies:
       '@types/express': 5.0.0
 
+  '@types/express-ws@3.0.5':
+    dependencies:
+      '@types/express': 5.0.0
+      '@types/express-serve-static-core': 5.0.0
+      '@types/ws': 8.5.12
+
   '@types/express@5.0.0':
     dependencies:
       '@types/body-parser': 1.19.5
@@ -4509,6 +4550,11 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  bufferutil@4.0.8:
+    dependencies:
+      node-gyp-build: 4.8.2
+    optional: true
+
   bytes@3.1.2: {}
 
   cacache@15.3.0:
@@ -5012,6 +5058,14 @@ snapshots:
   express-simple-cdn@1.0.1:
     dependencies:
       crc: 0.2.1
+
+  express-ws@5.0.2(bufferutil@4.0.8)(express@4.21.0):
+    dependencies:
+      express: 4.21.0
+      ws: 7.5.10(bufferutil@4.0.8)
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   express@4.21.0:
     dependencies:
@@ -5522,7 +5576,7 @@ snapshots:
 
   jsbn@1.1.0: {}
 
-  jsdom@25.0.1(canvas@2.11.2(encoding@0.1.13)):
+  jsdom@25.0.1(bufferutil@4.0.8)(canvas@2.11.2(encoding@0.1.13)):
     dependencies:
       cssstyle: 4.1.0
       data-urls: 5.0.0
@@ -5543,7 +5597,7 @@ snapshots:
       whatwg-encoding: 3.1.1
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.0.0
-      ws: 8.18.0
+      ws: 8.18.0(bufferutil@4.0.8)
       xml-name-validator: 5.0.0
     optionalDependencies:
       canvas: 2.11.2(encoding@0.1.13)
@@ -5846,6 +5900,9 @@ snapshots:
       whatwg-url: 5.0.0
     optionalDependencies:
       encoding: 0.1.13
+
+  node-gyp-build@4.8.2:
+    optional: true
 
   node-gyp@8.4.1:
     dependencies:
@@ -6276,26 +6333,26 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  puppeteer-core@23.5.0:
+  puppeteer-core@23.5.0(bufferutil@4.0.8):
     dependencies:
       '@puppeteer/browsers': 2.4.0
       chromium-bidi: 0.8.0(devtools-protocol@0.0.1342118)
       debug: 4.3.7(supports-color@5.5.0)
       devtools-protocol: 0.0.1342118
       typed-query-selector: 2.12.0
-      ws: 8.18.0
+      ws: 8.18.0(bufferutil@4.0.8)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  puppeteer@23.5.0(typescript@5.6.2):
+  puppeteer@23.5.0(bufferutil@4.0.8)(typescript@5.6.2):
     dependencies:
       '@puppeteer/browsers': 2.4.0
       chromium-bidi: 0.8.0(devtools-protocol@0.0.1342118)
       cosmiconfig: 9.0.0(typescript@5.6.2)
       devtools-protocol: 0.0.1342118
-      puppeteer-core: 23.5.0
+      puppeteer-core: 23.5.0(bufferutil@4.0.8)
       typed-query-selector: 2.12.0
     transitivePeerDependencies:
       - bufferutil
@@ -7034,7 +7091,13 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.18.0: {}
+  ws@7.5.10(bufferutil@4.0.8):
+    optionalDependencies:
+      bufferutil: 4.0.8
+
+  ws@8.18.0(bufferutil@4.0.8):
+    optionalDependencies:
+      bufferutil: 4.0.8
 
   xhr@2.6.0:
     dependencies:

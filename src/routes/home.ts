@@ -10,15 +10,23 @@ export const home: RequestHandler = async (req, res) => {
   //   return res.redirect('/');
   // }
 
-  const userPosts =
+  const firstUserPosts =
     req.session.Auth.authenticated &&
-    typeof req.session.Auth.isSuperUser === 'undefined'
+    typeof req.session.Auth.id === 'number'
       ? await prismaClient.post.findMany({
           where: {
             userId: req.session.Auth.id,
           },
         })
       : [];
+
+      const userPosts = firstUserPosts.map((post) => {
+        return {
+          ...post,
+          slugs: post.slug ? post.slug.split(',') : [],
+        };
+      })
+      console.log('user posts: ',userPosts)
   // const loaderCookie = req.cookies['ghostify_home_session'];
   const Theme = req.session.Theme;
 
@@ -31,6 +39,7 @@ export const home: RequestHandler = async (req, res) => {
     user: req.session.Auth.name || '@super user 🤖',
     userId: req.session.Auth.id || req.session.Auth.login || '',
     userPosts,
+    userFile: req.session.Auth.file || undefined,
   });
   return;
 };

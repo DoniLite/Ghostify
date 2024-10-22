@@ -13,6 +13,7 @@ import ejs from 'ejs';
 import puppeteer from 'puppeteer';
 import { prismaClient } from './config/db';
 import bcrypt from 'bcrypt';
+import formidable from 'formidable';
 
 export const hashSomething = async (data: string | Buffer, saltRond?: number) => {
   const round = saltRond || 14;
@@ -750,3 +751,21 @@ export const orderReactions = (reactions: Reactions[]) => {
     .reverse()
     .map((el) => el.component);
 };
+
+
+export const renaming = async (file: formidable.File, pathTo: string) => {
+  const ext = path.extname(file.originalFilename);
+  const date = new Date();
+  const r = crypto.randomInt(date.getTime()).toString();
+  const fName = `${date.getTime().toString() + r}${ext}`;
+  console.log(fName);
+  const xPath = path.resolve(__dirname, pathTo);
+  const uploadPath = path.join(xPath, fName);
+  try {
+    fs.renameSync(file.filepath, uploadPath);
+    return fName
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}

@@ -49,7 +49,6 @@ import {
   requestListComponent,
 } from './routes/poster';
 import { find } from './controller/finder';
-import ws from 'ws';
 import { cv } from './controller/cv';
 import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
@@ -73,6 +72,8 @@ import { apiGaming } from './routes/APIs';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { test as testRoute } from './routes/test';
+import expressWs from 'express-ws';
+import { updateProfile } from './routes/user';
 
 passport.use(
   new GoogleStrategy(
@@ -87,8 +88,10 @@ passport.use(
       state: true,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      const verifEmails = profile.emails.filter(email => email.verified === true);
-      if(verifEmails.length <= 0) {
+      const verifEmails = profile.emails.filter(
+        (email) => email.verified === true
+      );
+      if (verifEmails.length <= 0) {
         const error = new Error('User not authenticated');
         cb(error, null);
         return;
@@ -97,8 +100,10 @@ passport.use(
         const checkExistedUser = await prismaClient.user.findUnique({
           where: { email: verifEmails[0].value },
         });
-        if(checkExistedUser) {
-          const error = new Error(`User ${profile.emails[0].value} already exists`);
+        if (checkExistedUser) {
+          const error = new Error(
+            `User ${profile.emails[0].value} already exists`
+          );
           cb(error, null);
           return;
         }
@@ -107,7 +112,7 @@ passport.use(
             email: verifEmails[0].value,
             provider: 'Google',
             permission: 'User',
-          }
+          },
         });
         cb(null, newUser);
       } catch (err) {
@@ -133,20 +138,11 @@ export const ee = new EventEmitter();
 
 dotEnv.config();
 const server = express();
+expressWs(server);
 // const socketUrl =
 //   process.env.NODE_ENV !== 'production'
 //     ? 'ws://localhost/notifications'
 //     : 'ws://ghostify.site/notifications';
-const wss = new ws.Server({
-  port: 8080,
-  path: '/notifications',
-});
-wss.on('connection', (ws, req) => {
-  console.log(req);
-});
-wss.on('error', (err) => {
-  console.error(err);
-});
 server.engine('html', ejs.renderFile);
 server.set('view engine', 'ejs');
 // {logger: true}
@@ -177,39 +173,40 @@ server.use(
 
 server.options('*', cors());
 
-export const config = {
-  //+
-  contentSecurityPolicy: {
-    //+
-    useDefaults: true, //+
-    directives: {
-      //+
-      'default-src': ["'self'"], //+
-      'script-src': [
-        //+
-        "'self'", //+
-        (req: express.Request, res: express.Response) =>
-          `'nonce-${res.locals.cspNonce}'`, //+
-      ], //+
-      'style-src': [
-        //+
-        "'self'", // already existing//+
-        (req: express.Request, res: express.Response) =>
-          `'nonce-${res.locals.cspNonce}'`, //+
-        'https://fonts.googleapis.com',
-      ], //+
-      'font-src': [
-        "'self'",
-        (req: express.Request, res: express.Response) =>
-          `'nonce-${res.locals.cspNonce}'`,
-        'https://fonts.gstatic.com',
-      ], //+
-      // Add other directives if necessary//+
-    }, //+
-  }, //+
-  crossOriginEmbedderPolicy: false, // Disable for external resources//+
-  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
-};
+// export const config = {
+//   //+
+//   contentSecurityPolicy: {
+//     //+
+//     useDefaults: true, //+
+//     directives: {
+//       //+
+//       'default-src': ["'self'"], //+
+//       'script-src': [
+//         //+
+//         "'self'", //+
+//         (req: express.Request, res: express.Response) =>
+//           `'nonce-${res.locals.cspNonce}'`, //+
+//       ], //+
+//       'style-src': [
+//         //+
+//         "'self'", // already existing//+
+//         (req: express.Request, res: express.Response) =>
+//           `'nonce-${res.locals.cspNonce}'`, //+
+//         'https://fonts.googleapis.com',
+//       ], //+
+//       'font-src': [
+//         "'self'",
+//         (req: express.Request, res: express.Response) =>
+//           `'nonce-${res.locals.cspNonce}'`,
+//         'https://fonts.gstatic.com',
+//       ], //+
+//       'connect-src': ["'self' ws://localhost:3081 wss://0.0.0.0:3081"],
+//       // Add other directives if necessary//+
+//     }, //+
+//   }, //+
+//   crossOriginEmbedderPolicy: false, // Disable for external resources//+
+//   crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
+// };
 server.use((req, res, next) => {
   // Générer un nonce unique pour chaque requête
   res.locals.cspNonce = crypto.randomBytes(32).toString('hex');
@@ -227,6 +224,9 @@ server.use(
         ],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
+        connectSrc: [
+          "'self' ws://localhost:3085 wss://0.0.0.0:3085 ws://ghostify.site wss://ghostify.site",
+        ],
       },
     },
   }) //+
@@ -289,6 +289,22 @@ server.use(redirector);
 server.on('reversion', (app) => {
   console.log('reversion', app);
 });
+
+
+// Websocket routes
+server.ws('/', (socket) => {
+  console.log('New client connected');
+  socket.on('message', (msg) => {
+    console.log('Received:', msg);
+    socket.send('Hello from server');
+  });
+
+  socket.on('close', () => {
+    console.log('Client disconnected');
+  });
+
+})
+
 
 // routes...
 
@@ -397,6 +413,7 @@ server.post('/api/v1/parser', parserRoute);
 server.get('/api/v1/md.css', getMd);
 server.get('/api/v1/md.js', getMdScript);
 server.get('/login/federated/google');
+server.post('/user/profile/file', updateProfile)
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -434,3 +451,5 @@ server.listen(port, '0.0.0.0', async () => {
     console.error('Error during setup:', err);
   }
 });
+
+
