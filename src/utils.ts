@@ -79,6 +79,8 @@ export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   if (typeof obj['content'] === 'string') {
     obj['content'].split(' ').forEach((key) => keys.push(key));
   }
+  // console.log(keys, k);
+  // console.log(keys.includes(k));
   return keys.includes(k);
 };
 

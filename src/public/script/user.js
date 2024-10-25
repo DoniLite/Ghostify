@@ -2,8 +2,6 @@
 
 import { notificationPush, notificationsComponent } from "./notifications.js";
 
-console.log('okay it\'s the user script');
-
 
 const userIMG = document.querySelector('#userProfileImg');
 const inputFile = document.querySelector('#profileUpdateInput');

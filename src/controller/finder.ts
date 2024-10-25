@@ -20,8 +20,9 @@ export const find = async (req: Request, res: Response) => {
       ...(await prismaClient.assets.findMany()),
       ...(await prismaClient.gameData.findMany()),
     ].filter((el) => {
-      filterIncludesType(q, el);
+      return filterIncludesType(q, el);
     });
+    // console.log(someThatCanMatch)
     res.send(JSON.stringify({ data: someThatCanMatch }));
     return;
   }

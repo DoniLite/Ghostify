@@ -202,7 +202,7 @@ model GamerStat {
 model GameData {
   id          Int         @id @default(autoincrement())
   gamers      GamerStat[]
-  gameUrl     String
+  url      String
   title       String
   icon        String
   description String
