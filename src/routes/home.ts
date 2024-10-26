@@ -36,7 +36,7 @@ export const home: RequestHandler = async (req, res) => {
         ? req.session.Auth.authenticated
         : undefined,
     theme: Theme,
-    user: req.session.Auth.name || '@super user 🤖',
+    user: req.session.Auth.name || 'setup username 🤖',
     userId: req.session.Auth.id || req.session.Auth.login || '',
     userPosts,
     userFile: req.session.Auth.file || undefined,

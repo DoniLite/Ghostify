@@ -5,6 +5,31 @@ import { notificationPush, notificationsComponent } from "./notifications.js";
 
 const userIMG = document.querySelector('#userProfileImg');
 const inputFile = document.querySelector('#profileUpdateInput');
+const userName = document.querySelector('#userNamePrint');
+
+document.onclick = async (e) => {
+    e.preventDefault();
+    if(e.target.getAttribute('id') === 'userNamePrint' ) return
+    console.log(e);
+    userName.setAttribute('readonly', 'true');
+}
+
+userName.addEventListener('keyup', async (e) => {
+    console.log(e.currentTarget.value);
+    const req = await fetch(`/user/exists/${e.currentTarget.value}`);
+    const res = await req.json();
+    if (res.exist) {
+        //adding red border...
+        e.currentTarget.classList.add('wrong-data');
+    }
+    console.log('not exist');
+})
+
+userName.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log('user name clicked');
+    e.currentTarget.removeAttribute('readonly')
+})
 
 userIMG.addEventListener('click', (e) => {
     e.preventDefault();

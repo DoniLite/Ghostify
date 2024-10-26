@@ -68,20 +68,20 @@ export enum Can {
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   const keys = [] as string[];
   if (typeof obj['title'] === 'string') {
-    obj['title'].split(' ').forEach((key) => keys.push(key));
+    obj['title'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['description'] === 'string') {
-    obj['description'].split(' ').forEach((key) => keys.push(key));
+    obj['description'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['desc'] === 'string') {
-    obj['desc'].split(' ').forEach((key) => keys.push(key));
+    obj['desc'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['content'] === 'string') {
-    obj['content'].split(' ').forEach((key) => keys.push(key));
+    obj['content'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   // console.log(keys, k);
   // console.log(keys.includes(k));
-  return keys.includes(k);
+  return keys.includes(k.toLocaleLowerCase());
 };
 
 export async function analyzeImage(

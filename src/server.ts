@@ -73,7 +73,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { test as testRoute } from './routes/test';
 import expressWs from 'express-ws';
-import { updateProfile } from './routes/user';
+import { checkIfUserExist, updateProfile } from './routes/user';
 
 passport.use(
   new GoogleStrategy(
@@ -414,6 +414,7 @@ server.get('/api/v1/md.css', getMd);
 server.get('/api/v1/md.js', getMdScript);
 server.get('/login/federated/google');
 server.post('/user/profile/file', updateProfile)
+server.get('/user/exists/:username', checkIfUserExist);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);

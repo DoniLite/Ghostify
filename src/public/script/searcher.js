@@ -16,7 +16,7 @@ const postAndCommentsIcon = `<svg fill="#f1f1f1" xmlns="http://www.w3.org/2000/s
  * @param {Record<string, unknown>} data
  */
 const componentConstructor = (data) => {
-  if (typeof data['url'] === 'string' && typeof data['title'] !== 'string') {
+  if (typeof data['url'] === 'string' && typeof data['title'] !== 'string' && typeof data['visit'] === 'number') {
     return `<div class="w-full flex gap-x-2 items-center">
           ${urlIcon}
           <a href="${data.url}" class="text-sm w-full"
