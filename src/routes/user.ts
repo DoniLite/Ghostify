@@ -3,6 +3,7 @@ import { IncomingForm } from 'formidable';
 import { renaming } from '../utils';
 import path from 'node:path';
 import { prismaClient } from '../config/db';
+import { BodyXData } from 'index';
 
 export const updateProfile = async (req: Request, res: Response) => {
   const form = new IncomingForm({
@@ -41,12 +42,10 @@ export const updateProfile = async (req: Request, res: Response) => {
       });
       console.log(updatedUser);
       req.session.Auth.file = updatedUser.file; // Update the session file path to the new one
-      res
-        .status(200)
-        .json({
-          message: 'Profile picture updated successfully',
-          file: updatedUser.file,
-        });
+      res.status(200).json({
+        message: 'Profile picture updated successfully',
+        file: updatedUser.file,
+      });
       return;
     } catch (err) {
       console.error(err);
@@ -72,4 +71,31 @@ export const checkIfUserExist = async (req: Request, res: Response) => {
   }
 
   res.status(200).json({ message: 'User does not exist', exist: false });
+};
+
+export const updateUserName = async (req: Request, res: Response) => {
+  const { id, username } = req.body as BodyXData<{
+    id: string;
+    username: string;
+  }>;
+
+  try {
+    const updatedUser = await prismaClient.user.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        username,
+      },
+    });
+    req.session.Auth.name = updatedUser.username;
+    res.status(200).json({ success: true, data: updatedUser.username });
+    return;
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: 'Error while updating username' });
+    return;
+  }
 };

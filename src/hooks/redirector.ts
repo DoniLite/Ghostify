@@ -6,7 +6,6 @@ import { QueryXData } from "index";
 const matchedRoutes = [
     '',
     '/',
-    '/home',
 ];
 
 

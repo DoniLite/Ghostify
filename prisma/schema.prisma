@@ -286,6 +286,7 @@ model User {
   token         String? // Optionnel, si nécessaire pour des fonctionnalités spécifiques
   service       String?
   provider      Provider?
+  providerId    String?         @unique
   registration  DateTime?
   permission    Permission
   posterCredits Int             @default(300)
