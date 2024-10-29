@@ -4,6 +4,14 @@
   class="w-full overflow-y-scroll bg-gray-950 text-white p-4"
   style="height: 100vh"
 >
+  <div class="fixed  top-[40%] w-[70%] mx-auto shadow-lg bg-gray-800 text-white h-[15rem] overflow-y-scroll">
+    <div class="flex">
+      <div></div>
+      <div>
+        <i class="fa-solid fa-x-mark fa-2xl text-white"></i>
+      </div>
+    </div>
+  </div>
   <div class="w-full lg:w-[95%] mx-auto mt-24">
     <input
       type="file"
@@ -19,7 +27,7 @@
           alt=" user profile"
           id="userProfileImg"
         />
-        <span class="text-orange-500 font-bold"><%= user %></span>
+        <input type="text" data-id="<%= userId %>" value="<%= user %>" class="text-orange-500 font-bold outline-none bg-transparent p-2" id="userNamePrint" readonly />
       </div>
 
       <div class="cursor-pointer indicator">

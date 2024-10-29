@@ -6,6 +6,7 @@ import { SuperUser } from '../class/SuperUser';
 import { Can } from '../utils';
 import { Request, Response } from 'express';
 import path from 'node:path';
+import { User } from '@prisma/client/default';
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -93,7 +94,8 @@ export const authController = async (req: Request, res: Response) => {
       isSuperUser: false,
       login: login,
       id: user.id,
-      file: user.file
+      file: user.file,
+      name: user.username,
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -102,17 +104,17 @@ export const authController = async (req: Request, res: Response) => {
       req.session.ServerKeys.secretKey,
       req.session.ServerKeys.iv
     );
-    console.log('before cookie setting')
+    console.log('before cookie setting');
     res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
-    console.log('after cookie setting')
+    console.log('after cookie setting');
     if (defaultRoot) {
-      console.log('redirecting to default root path')
+      console.log('redirecting to default root path');
       res.redirect('/home');
       return;
     }
-    console.log('rediecting to service view')
+    console.log('rediecting to service view');
     res.redirect(`/service?userId=${user.id}&service=${permission}`);
     return;
   }
@@ -547,4 +549,19 @@ export const getMd = async (req: Request, res: Response) => {
 export const getMdScript = async (req: Request, res: Response) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.sendFile(path.resolve(__dirname, '../../src/public/script/md.js'));
+};
+
+export const googleAuth = async (req: Request, res: Response) => {
+  const user = req.user as User;
+  console.log(user);
+  console.log(req.app.locals.user);
+  // req.session.Auth = {
+  //   authenticated: true,
+  //   id: user.id,
+  //   login: user.email,
+  //   isSuperUser: false,
+  //   name: user.username,
+  //   file: user.file,
+  // };
+  res.redirect('/home');
 };

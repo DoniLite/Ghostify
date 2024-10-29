@@ -4,11 +4,11 @@ import { filterIncludesType } from '../utils';
 import { Request, Response } from 'express';
 
 export const find = async (req: Request, res: Response) => {
-  const { q } = req.query as QueryXData;
+  const { q } = req.query as QueryXData<{q: string}>;
   const allIndexer = (await prismaClient.indexer.findMany()) as Indexer[];
   let allResources = [] as unknown[];
   const result = allIndexer.filter((index) => {
-    return index.keys.split(',').includes(q);
+    return index.keys.split(',').includes(q.toLocaleLowerCase());
   });
   if (result.length <= 0) {
     // y'a problem nigga

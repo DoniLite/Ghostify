@@ -35,6 +35,7 @@ import {
   disconnection,
   getMd,
   getMdScript,
+  googleAuth,
   parserRoute,
   registrationController,
   registrationView,
@@ -73,7 +74,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { test as testRoute } from './routes/test';
 import expressWs from 'express-ws';
-import { updateProfile } from './routes/user';
+import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 
 passport.use(
   new GoogleStrategy(
@@ -91,6 +92,8 @@ passport.use(
       const verifEmails = profile.emails.filter(
         (email) => email.verified === true
       );
+      const picture = profile._json.picture;
+      const userId = profile.id;
       if (verifEmails.length <= 0) {
         const error = new Error('User not authenticated');
         cb(error, null);
@@ -100,11 +103,15 @@ passport.use(
         const checkExistedUser = await prismaClient.user.findUnique({
           where: { email: verifEmails[0].value },
         });
-        if (checkExistedUser) {
+        if (checkExistedUser && checkExistedUser.providerId !== userId) {
           const error = new Error(
             `User ${profile.emails[0].value} already exists`
           );
           cb(error, null);
+          return;
+        }
+        if(checkExistedUser && checkExistedUser.providerId === userId) {
+          cb(null, checkExistedUser.id);
           return;
         }
         const newUser = await prismaClient.user.create({
@@ -112,15 +119,32 @@ passport.use(
             email: verifEmails[0].value,
             provider: 'Google',
             permission: 'User',
+            file: picture,
+            providerId: userId,
           },
         });
-        cb(null, newUser);
+        cb(null, newUser.id);
       } catch (err) {
         cb(err, null);
       }
     }
   )
 );
+
+passport.serializeUser((userId, done) => {
+  done(null, userId);
+});
+
+passport.deserializeUser(async (userId, done) => {
+  try {
+    const user = await prismaClient.user.findUnique({
+      where: { providerId: String(userId) },
+    });
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
 
 i18n.configure({
   locales: ['en', 'fr', 'es'], // Liste des langues supportées
@@ -282,6 +306,10 @@ server.use(
   })
 );
 
+server.use(passport.initialize());
+server.use(passport.authenticate('session'));
+server.use(passport.session());
+
 server.use(sessionStorageHook);
 // server.use(stats);
 server.use(veriry);
@@ -403,6 +431,11 @@ server.get('/signin', connexion);
 server.get('/register', registrationView);
 server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
+server.get(
+  '/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+server.get('/login/federated/google', googleAuth);
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
 server.post('/poster/save', docSaver);
@@ -414,6 +447,8 @@ server.get('/api/v1/md.css', getMd);
 server.get('/api/v1/md.js', getMdScript);
 server.get('/login/federated/google');
 server.post('/user/profile/file', updateProfile)
+server.get('/user/exists/:username', checkIfUserExist);
+server.post('/user/update', updateUserName);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);

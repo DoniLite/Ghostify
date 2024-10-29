@@ -162,3 +162,7 @@
 .show-reactions {
     animation: showing-reactions .1s ease-out forwards;
 }
+
+.wrong-data {
+  @apply border border-red-600
+}
