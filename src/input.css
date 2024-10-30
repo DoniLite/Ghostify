@@ -164,5 +164,13 @@
 }
 
 .wrong-data {
-  @apply border border-red-600
+  @apply border border-red-600;
+}
+
+.transNotificationShow {
+  @apply translate-x-0;
+}
+
+.transNotificationHide {
+  @apply translate-x-[300%];
 }

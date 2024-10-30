@@ -31,6 +31,15 @@ export const sessionStorageHook = async (req: Request, res: Response, next: Next
       authenticated: false,
     };
   }
+
+  if(!req.session.Services) {
+    req.session.Services = {
+      Platform: {
+        internals: true,
+        API: true,
+      }
+    }
+  }
   next();
   // req.setSession = async (payload: any, dest: 'Weather'|'Quote' ) => {
   //     if (dest === 'Weather') {

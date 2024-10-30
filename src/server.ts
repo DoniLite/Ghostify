@@ -89,19 +89,17 @@ passport.use(
       state: true,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      const verifEmails = profile.emails.filter(
-        (email) => email.verified === true
-      );
+      const verifEmail = profile._json.email
       const picture = profile._json.picture;
       const userId = profile.id;
-      if (verifEmails.length <= 0) {
+      if (!verifEmail) {
         const error = new Error('User not authenticated');
         cb(error, null);
         return;
       }
       try {
         const checkExistedUser = await prismaClient.user.findUnique({
-          where: { email: verifEmails[0].value },
+          where: { email: verifEmail },
         });
         if (checkExistedUser && checkExistedUser.providerId !== userId) {
           const error = new Error(
@@ -116,7 +114,7 @@ passport.use(
         }
         const newUser = await prismaClient.user.create({
           data: {
-            email: verifEmails[0].value,
+            email: verifEmail,
             provider: 'Google',
             permission: 'User',
             file: picture,
@@ -132,18 +130,22 @@ passport.use(
 );
 
 passport.serializeUser((userId, done) => {
-  done(null, userId);
+  process.nextTick(function() {
+    done(null, userId);
+  })
 });
 
-passport.deserializeUser(async (userId, done) => {
-  try {
-    const user = await prismaClient.user.findUnique({
-      where: { providerId: String(userId) },
-    });
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
+passport.deserializeUser((userId, done) => {
+  process.nextTick(async function() {
+    try {
+      const user = await prismaClient.user.findUnique({
+        where: { providerId: String(userId) },
+      });
+      return done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
+  })
 });
 
 i18n.configure({
@@ -249,8 +251,9 @@ server.use(
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
         connectSrc: [
-          "'self' ws://localhost:3085 wss://0.0.0.0:3085 ws://ghostify.site wss://ghostify.site",
+          "'self'", 'ws://localhost:3085', 'wss://0.0.0.0:3085', 'ws://ghostify.site', 'wss://ghostify.site',
         ],
+        imgSrc: ["'self'", 'data:', 'https://lh3.googleusercontent.com'],
       },
     },
   }) //+
@@ -433,9 +436,13 @@ server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
 server.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
+  passport.authenticate('google', { scope: ['profile', 'email'] })
 );
-server.get('/login/federated/google', googleAuth);
+server.get(
+  '/login/federated/google',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  googleAuth
+);
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
 server.post('/poster/save', docSaver);
