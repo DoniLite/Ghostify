@@ -85,10 +85,11 @@ export const updateUserName = async (req: Request, res: Response) => {
         id: Number(id),
       },
       data: {
-        username,
+        username: username,
       },
     });
     req.session.Auth.name = updatedUser.username;
+    console.log(req.session.Auth);
     res.status(200).json({ success: true, data: updatedUser.username });
     return;
   } catch (err) {

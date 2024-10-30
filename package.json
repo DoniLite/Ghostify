@@ -14,11 +14,12 @@
     "typescript-eslint": "^8.8.0"
   },
   "scripts": {
-    "build": "pnpm tailwind && pnpm prisma && pnpm deployDB && pnpm pullDB && pnpm generate &&  pnpm exec tsc --outDir build",
+    "build": "pnpm tailwind && pnpm prisma && pnpm deployDB && pnpm pullDB && pnpm generate &&  pnpm exec tsc --outDir build && pnpm setupAssets",
     "serve": "concurrently --kill-others \"pnpm tailwindDev\" \"tsc --watch\" \"nodemon ./temp/server.js\"",
     "start": "node ./build/server.js",
     "tailwind": "pnpx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "pnpx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
+    "setupAssets": "bash ./cmd/assets.sh ./src/public",
     "deploy": "gh-pages -d build",
     "generate": "pnpx prisma generate",
     "migrate": "pnpx prisma migrate dev",

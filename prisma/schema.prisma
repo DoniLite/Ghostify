@@ -282,12 +282,12 @@ model User {
   username      String?         @unique
   email         String          @unique
   password      String? // Optionnel, si tu prévois de conserver une option de connexion par mot de passe
-  googleId      String?         @unique // Pour stocker l'ID utilisateur de Google
   token         String? // Optionnel, si nécessaire pour des fonctionnalités spécifiques
   service       String?
   provider      Provider?
   providerId    String?         @unique
   registration  DateTime?
+  registered    Boolean         @default(false)
   permission    Permission
   posterCredits Int             @default(300)
   cvCredits     Int             @default(300)
@@ -344,8 +344,10 @@ enum AssetType {
 model Assets {
   id        Int       @id @default(autoincrement())
   type      AssetType
-  uid       String    @unique
-  content   String
+  uid       String?   @unique
+  link      String?
+  content   String?
+  file      String?
   title     String
   indexed   Boolean   @default(false)
   Indexer   Indexer?  @relation(fields: [indexerId], references: [id])

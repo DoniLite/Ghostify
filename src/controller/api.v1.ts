@@ -6,7 +6,6 @@ import { SuperUser } from '../class/SuperUser';
 import { Can } from '../utils';
 import { Request, Response } from 'express';
 import path from 'node:path';
-import { User } from '@prisma/client/default';
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -552,9 +551,21 @@ export const getMdScript = async (req: Request, res: Response) => {
 };
 
 export const googleAuth = async (req: Request, res: Response) => {
-  const user = req.user as User;
-  console.log(user);
-  console.log(req.app.locals.user);
+  const user = req.user as number;
+  // console.log(user);
+  const authUser = await prismaClient.user.findUnique({
+    where: {
+      id: user
+    }
+  });
+  req.session.Auth = {
+    authenticated: true,
+    isSuperUser: false,
+    id: authUser.id,
+    name: authUser.username,
+    file: authUser.file,
+    login: authUser.email
+  }
   // req.session.Auth = {
   //   authenticated: true,
   //   id: user.id,
