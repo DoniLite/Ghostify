@@ -60,7 +60,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 // import { stats } from './hooks/statCounter';
 import { veriry } from './hooks/verify';
-// import fs from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import i18n from 'i18n';
@@ -290,19 +290,23 @@ server.use(
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookie(process.env.SESSION_SECRET));
+const sessionStorePath =
+  process.env.NODE_ENV === 'production'
+    ? path.resolve('/home/ubuntu/Ghostify/sessions', 'sessionProduction.db')
+    : path.join(path.resolve(__dirname, '../src/config'), 'sessions.db');
+
+// Assurez-vous que le dossier existe
+fs.mkdirSync(path.dirname(sessionStorePath), { recursive: true });
+
 server.use(
   session({
     secret: process.env.SESSION_SECRET,
     cookie: {
-      secure: 'auto', // true in production for HTTPS
+      secure: 'auto',
     },
     name: 'sessionId',
     store: new SQLStore({
-      db:
-        process.env.NODE_EN === 'production'
-          ? 'sessionProduction.db'
-          : 'sessions.db',
-      dir: path.resolve(__dirname, '../src/config'),
+      db: sessionStorePath,
     }) as session.Store,
     saveUninitialized: false,
     resave: false,
