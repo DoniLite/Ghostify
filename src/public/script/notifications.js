@@ -17,11 +17,13 @@ export const notificationsComponent = {
 
 export const notificationPush = (notification) => {
   const notificationContainer = document.querySelector('#flash');
+  let interval
   notificationContainer.insertAdjacentHTML('beforeend', notification);
-  if(notificationContainer.childNodes.length > 0) {
-    setInterval(() => {
+  if(notificationContainer && notificationContainer.childNodes.length > 0) {
+    interval = setInterval(() => {
       notificationContainer.childNodes[0].remove();
     }, 2000);
   }
+  clearInterval(interval)
 }
 

@@ -5,10 +5,63 @@ import { notificationPush, notificationsComponent } from './notifications.js';
 const userIMG = document.querySelector('#userProfileImg');
 const inputFile = document.querySelector('#profileUpdateInput');
 const userName = document.querySelector('#userNamePrint');
-const verifyingChangedUser = document.querySelector('#usernameChanged');;
 const closeNotificationPanel = document.querySelector('#closeNotificationPane');
 const notificationPanel = document.querySelector('#notificationPanel');
 const notificationShower = document.querySelector('#notificationShower');
+const userUpdatePanel = document.querySelector('#userUpdatePanel');
+const closeUserUpdatePanel = document.querySelector('#closeUserUpdatePanel');
+const profileEditor = document.querySelector('#editProfileBtn');
+const modificationSubmitForm = document.querySelector(
+  '#submitUserProfileModifications'
+);
+/**
+ * @type {HTMLElement}
+ */
+const userDataset = document.querySelector('#userIdDataSet');
+/**
+ * @type {HTMLButtonElement}
+ */
+const submissionBtn = document.querySelector('#userUpdateSubmitionBtn');
+
+
+modificationSubmitForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  const username = form.get('username');
+  const bio = form.get('bio');
+  const link = form.get('link');
+  const id = userDataset.dataset.id;
+  const fetchBody = {
+    username,
+    bio,
+    link,
+    id,
+  }
+  const req = await fetch('/user/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(fetchBody),
+  });
+  const res = await req.json();
+  if(res.success) {
+    window.location.reload();
+  }
+  notificationPush(notificationsComponent.info('something went wrong'));
+})
+
+profileEditor.addEventListener('click', (e) => {
+  e.preventDefault();
+  userUpdatePanel.classList.remove('transUpdatePanelHide');
+  userUpdatePanel.classList.add('transNotificationShow');
+});
+
+closeUserUpdatePanel.addEventListener('click', (e) => {
+  e.preventDefault();
+  userUpdatePanel.classList.remove('transNotificationShow');
+  userUpdatePanel.classList.add('transUpdatePanelHide');
+})
 
 // document.onclick = async (e) => {
 //   e.preventDefault();
@@ -46,9 +99,13 @@ userName.addEventListener('keyup', async (e) => {
   console.log(e.currentTarget);
   if (res.exist) {
     //adding red border...
+    console.log('user exist');
+    submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
+    return;
   }
   console.log('not exist');
+  submissionBtn.disabled = false;
   userName.classList.remove('wrong-data');
 });
 

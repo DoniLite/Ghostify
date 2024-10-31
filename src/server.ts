@@ -292,8 +292,8 @@ server.use(bodyParser.json());
 server.use(cookie(process.env.SESSION_SECRET));
 const sessionStorePath =
   process.env.NODE_ENV === 'production'
-    ? path.resolve('/home/ubuntu/Ghostify/sessions', 'sessionProduction.db')
-    : path.join(path.resolve(__dirname, '../src/config'), 'sessions.db');
+    ? path.resolve('/home/ubuntu/Ghostify/sessions')
+    : path.resolve(__dirname, '../src/config');
 
 // Assurez-vous que le dossier existe
 fs.mkdirSync(path.dirname(sessionStorePath), { recursive: true });
@@ -306,7 +306,11 @@ server.use(
     },
     name: 'sessionId',
     store: new SQLStore({
-      db: sessionStorePath,
+      db:
+        process.env.NODE_ENV === 'production'
+          ? 'sessionProduction.db'
+          : 'sessions.db',
+      dir: sessionStorePath,
     }) as session.Store,
     saveUninitialized: false,
     resave: false,

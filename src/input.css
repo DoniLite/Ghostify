@@ -174,3 +174,7 @@
 .transNotificationHide {
   @apply translate-x-[300%];
 }
+
+.transUpdatePanelHide {
+  @apply -translate-x-[300%];
+}
