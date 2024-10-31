@@ -4,8 +4,26 @@
   class="w-full overflow-y-scroll bg-gray-950 text-white p-4"
   style="height: 100vh"
 >
-  <input type="hidden" name="usernameChanged", id="usernameChanged" value="<%= user %>">
-  <div id="notificationPanel" class="fixed transNotificationHide  rounded-md transition-all top-[25%] lg:w-[40%] w-[80%] lg:left-[30%] left-[10%] shadow-lg bg-gray-800 text-white h-[25rem] overflow-y-scroll">
+  <div id="userUpdatePanel" class="fixed transUpdatePanelHide rounded-md transition-all top-[25%] lg:w-[40%] w-[80%] lg:left-[30%] left-[10%] shadow-lg bg-gray-800 text-white h-[25rem] z-40">
+    <div class="flex w-full justify-between p-2">
+      <div></div>
+      <div id="closeUserUpdatePanel" class=" z-50 cursor-pointer">
+        <i class="fa-solid fa-xmark fa-2xl text-white"></i>
+      </div>
+    </div>
+    <h1 class="font-bold text-xl relative -top-8 text-center">Modify your profile</h1>
+    <form class="flex w-full flex-col gap-y-2 p-2 relative bottom-4" id="submitUserProfileModifications">
+      <span class=" font-bold">User name</span>
+      <input type="text" name="username" id="userNamePrint" class=" outline-none p-3 placeholder:text-gray-500 w-full bg-gray-950 rounded-lg" placeholder="change your username">
+      <span class=" font-bold">Bio</span>
+      <input type="text" name="bio" id="bioInput" class=" outline-none p-3 placeholder:text-gray-500 w-full bg-gray-950 rounded-lg" placeholder="update your bio">
+      <span class=" font-bold">Link</span>
+      <input type="text" name="link" id="linkInput" class=" outline-none p-3 placeholder:text-gray-500 w-full bg-gray-950 rounded-lg" placeholder="add a link to your profile">
+      <input type="submit" value="Update" id="userUpdateSubmitionBtn" class="btn text-white bg-gray-950">
+    </form>
+  </div>
+
+  <div id="notificationPanel" class="fixed transNotificationHide  rounded-md transition-all top-[25%] lg:w-[40%] w-[80%] lg:left-[30%] left-[10%] shadow-lg bg-gray-800 text-white h-[25rem] overflow-y-scroll z-40">
     <div class="flex w-full justify-between p-2">
       <div></div>
       <div id="closeNotificationPane" class=" z-50 cursor-pointer">
@@ -37,20 +55,40 @@
       id="profileUpdateInput"
       class="hidden"
     />
-    <div class="w-full flex justify-between items-center">
-      <div class="flex items-center gap-x-1 w-[60%]">
-        <img
-          src="<%= typeof userFile !== 'undefined' ? userFile : '/static/SVG/user.svg' %>"
-          class="w-16 h-16 object-cover border-2 border-orange-500 rounded-full p-1 cursor-pointer"
-          alt=" user profile"
-          id="userProfileImg"
-        />
-        <input type="text" data-id="<%= userId %>" value="<%= user %>" class="text-orange-500 font-bold outline-none bg-transparent p-2" id="userNamePrint" readonly />
+    <div class="w-full gap-y-4 flex-col lg:flex-row flex justify-between lg:items-center">
+      <div class="flex items-center gap-x-1 lg:w-[60%] w-full">
+        <div class="relative">
+          <img
+            src="<%= typeof userFile !== 'undefined' ? userFile : '/static/SVG/user.svg' %>"
+            class="w-16 h-16 object-cover border-2 border-orange-500 rounded-full p-1 cursor-pointer"
+            alt=" user profile"
+            id="userProfileImg"
+          />
+          <i class="fa-solid fa-pen text-orange-500 left-11 top-8 absolute"></i>
+        </div>
+        <div class=" ml-2 flex flex-col gap-y-0.5 w-[70%] lg:w-auto">
+          <h2 data-id="<%= userId %>" class="text-orange-500 font-bold bg-transparent text-lg" id="userIdDataSet" ><%= user %></h2>
+          <% if (typeof bio === 'string')  { %>
+           <span><%= bio %></span>
+          <% } %>
+          <% if (typeof link === 'string') { %>
+           <a class="flex text-orange-500 font-bold items-center gap-x-0.5 line-clamp-2 hover:underline" href="<%= link %>" target="_blank" rel="noopener noreferrer">>
+              <i class="fa-solid fa-link text-orange-500"></i>
+              <%= link %>
+            </a>
+          <% } %>
+        </div>
       </div>
 
-      <div class="cursor-pointer indicator" id="notificationShower">
-        <span class="indicator-item badge badge-secondary bg-red-400 rounded-full p-2 left-3 relative">99+</span>
-        <i class="fa-solid fa-bell fa-2xl text-white"></i>
+      <div class="flex items-center lg:gap-x-4 w-full lg:w-auto justify-between lg:justify-normal">
+        <div id="editProfileBtn" class=" cursor-pointer p-1.5 text-white border border-orange-500 rounded-lg flex gap-x-2 font-bold items-center">
+          <i class="fa-solid fa-pen text-white"></i>
+          Edit your profile
+        </div>
+        <div class="cursor-pointer indicator" id="notificationShower">
+          <span class="indicator-item badge badge-secondary bg-red-400 rounded-full p-2 left-3 relative">99+</span>
+          <i class="fa-solid fa-bell fa-xl text-white"></i>
+        </div>
       </div>
     </div>
     <h1 class="mt-4 font-bold">Services</h1>
@@ -245,8 +283,8 @@
 
     <h1 class="mt-4 font-bold">Activity</h1>
     <hr class=" w-full mt-3">
-    <div class=" max-w-2xl mx-auto p-3 gap-y-6 grid grid-cols-1 lg:grid-cols-3 lg:max-w-full lg:mx-0 lg:gap-x-2">
-      <a href="#" class="w-full rounded-md flex flex-col gap-y-2 p-1 border-orange-500 border lg:w-[23%]">
+    <div class=" w-full mx-auto p-3 gap-y-6 grid grid-cols-1 lg:grid-cols-3 lg:mx-0 lg:gap-x-2">
+      <a href="#" class="w-full rounded-md flex flex-col gap-y-2 p-1 border-orange-500 border justify-center items-center">
         <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur rem non delectus error nobis a soluta quam quo nisi voluptate?</span>
         <img src="/static/img/random1.png" alt="content image" class="rounded-md w-full h-32 lg:h-64 object-cover">
       </a>

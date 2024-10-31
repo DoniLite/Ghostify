@@ -74,23 +74,52 @@ export const checkIfUserExist = async (req: Request, res: Response) => {
 };
 
 export const updateUserName = async (req: Request, res: Response) => {
-  const { id, username } = req.body as BodyXData<{
+  const { id, username, bio, link } = req.body as BodyXData<{
     id: string;
-    username: string;
+    username: string | undefined;
+    bio: string | undefined;
+    link: string | undefined;
   }>;
 
+  const lastInfo = await prismaClient.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
   try {
+    if (username) {
+      const updatedUser = await prismaClient.user.update({
+        where: {
+          id: Number(id),
+        },
+        data: {
+          username: username ?? lastInfo.username,
+          bio: bio ?? lastInfo.bio,
+          link: link ?? lastInfo.link,
+        },
+      });
+      req.session.Auth.name = updatedUser.username;
+      console.log(req.session.Auth);
+      console.log('new user:', updatedUser);
+      res.status(200).json({ success: true });
+      return;
+    }
     const updatedUser = await prismaClient.user.update({
       where: {
         id: Number(id),
       },
       data: {
-        username: username,
+        bio: bio ?? lastInfo.bio,
+        link: link ?? lastInfo.link,
       },
     });
-    req.session.Auth.name = updatedUser.username;
-    console.log(req.session.Auth);
-    res.status(200).json({ success: true, data: updatedUser.username });
+    res
+      .status(200)
+      .json({
+        success: true,
+        data: { bio: updatedUser.bio, link: updatedUser.link },
+      });
     return;
   } catch (err) {
     console.error(err);

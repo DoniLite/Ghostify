@@ -284,6 +284,8 @@ model User {
   password      String? // Optionnel, si tu prévois de conserver une option de connexion par mot de passe
   token         String? // Optionnel, si nécessaire pour des fonctionnalités spécifiques
   service       String?
+  bio           String?
+  link          String?
   provider      Provider?
   providerId    String?         @unique
   registration  DateTime?
