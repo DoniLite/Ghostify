@@ -771,3 +771,22 @@ export const renaming = async (file: formidable.File, pathTo: string) => {
     return false;
   }
 }
+
+export function ensureDirectoryAccess(directory: string) {
+  try {
+    // Vérifie si le dossier existe et est accessible
+    fs.accessSync(directory, fs.constants.W_OK);
+  } catch (error) {
+    console.error(`Problème d'accès au dossier : ${directory}`);
+    console.error(`Erreur : ${error.message}`);
+
+    // Tente de créer le dossier avec les permissions appropriées
+    try {
+      fs.mkdirSync(directory, { recursive: true, mode: 0o755 });
+      console.log(`Dossier créé : ${directory}`);
+    } catch (mkdirError) {
+      console.error(`Impossible de créer le dossier : ${mkdirError.message}`);
+      throw mkdirError;
+    }
+  }
+}
