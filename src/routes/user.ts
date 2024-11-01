@@ -4,10 +4,12 @@ import { renaming } from '../utils';
 import path from 'node:path';
 import { prismaClient } from '../config/db';
 import { BodyXData } from 'index';
+import { tokenGenerator } from '../server';
 
 export const updateProfile = async (req: Request, res: Response) => {
+  const STATIC_DIR = '../../static/users';
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, '../../src/public/uploads/users'),
+    uploadDir: path.resolve(__dirname, STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -24,7 +26,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     try {
       const result = await renaming(
         file,
-        path.resolve(__dirname, '../../src/public/uploads/users')
+        path.resolve(__dirname, STATIC_DIR)
       );
       if (result === false) {
         res
@@ -32,12 +34,18 @@ export const updateProfile = async (req: Request, res: Response) => {
           .json({ message: 'Error while renaming profile picture' });
         return;
       }
+      const fileXPathService =
+        process.env.NODE_ENV === 'production'
+          ? 'https://ghostify.site/staticFile/' +
+            tokenGenerator(`users/${result}`)
+          : 'http://localhost:3085/staticFile/' +
+            tokenGenerator(`users/${result}`);
       const updatedUser = await prismaClient.user.update({
         where: {
           id: Number(req.session.Auth.id),
         },
         data: {
-          file: `/static/uploads/users/${result}`,
+          file: fileXPathService,
         },
       });
       console.log(updatedUser);
@@ -94,9 +102,9 @@ export const updateUserName = async (req: Request, res: Response) => {
           id: Number(id),
         },
         data: {
-          username: username ?? lastInfo.username,
-          bio: bio ?? lastInfo.bio,
-          link: link ?? lastInfo.link,
+          username: username,
+          bio: bio ? bio : lastInfo.bio,
+          link: link ? link : lastInfo.link,
         },
       });
       req.session.Auth.name = updatedUser.username;
@@ -110,8 +118,8 @@ export const updateUserName = async (req: Request, res: Response) => {
         id: Number(id),
       },
       data: {
-        bio: bio ?? lastInfo.bio,
-        link: link ?? lastInfo.link,
+        bio: bio ? bio : lastInfo.bio,
+        link: link ? link : lastInfo.link,
       },
     });
     res

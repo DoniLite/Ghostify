@@ -7,12 +7,14 @@ import { randomInt } from 'crypto';
 import { prismaClient } from '../config/db';
 import { Request, Response } from 'express';
 import { IncomingForm } from 'formidable';
+import { tokenGenerator } from '../server';
 
 // const pump = util.promisify(pipeline);
 
 export const uploadActu = async (req: Request, res: Response) => {
+  const STATIC_DIR = `../../static/actues`;
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, '../../src/public/uploads/actues'),
+    uploadDir: path.resolve(__dirname, STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -43,7 +45,7 @@ export const uploadActu = async (req: Request, res: Response) => {
     return;
   }
 
-  const dPath = path.resolve(__dirname, '../../src/public/uploads/actues');
+  const dPath = path.resolve(__dirname, STATIC_DIR);
 
   if (!fs.existsSync(dPath)) await fsP.mkdir(dPath);
 
@@ -57,7 +59,7 @@ export const uploadActu = async (req: Request, res: Response) => {
     const r = randomInt(date.getTime()).toString();
     fName = `${date.getTime().toString() + r}${ext}`;
     console.log(fName);
-    const xPath = path.resolve(__dirname, '../../src/public/uploads/actues');
+    const xPath = path.resolve(__dirname, STATIC_DIR);
     const uploadPath = path.join(xPath, fName);
     try {
       fs.renameSync(file.filepath, uploadPath);
@@ -68,12 +70,18 @@ export const uploadActu = async (req: Request, res: Response) => {
     }
   }
 
+  const fileXServicePath =
+    process.env.NODE_ENV !== 'production'
+      ? 'https://ghostify.site/staticFile/' + tokenGenerator(`actues/${fName}`)
+      : 'http://localhost:3085/staticFile/' + tokenGenerator(`actues/${fName}`);
+
   const newComment = await prismaClient.comment.create({
     data: {
       promoted: false,
       meta: title,
       content: content,
-      file: typeof fName === 'undefined' ? null : `/static/uploads/actues/${fName}`,
+      file:
+        typeof fName === 'undefined' ? null : fileXServicePath,
       isAnActu: true,
     },
   });

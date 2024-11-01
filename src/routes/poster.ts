@@ -15,6 +15,7 @@ import path from 'path';
 import { randomInt } from 'crypto';
 import { IncomingForm, File as FormidableFile } from 'formidable';
 import { Request, Response } from 'express';
+import { tokenGenerator } from '../server';
 
 // const pump = util.promisify(pipeline);
 
@@ -101,8 +102,9 @@ export const requestListComponent = async (req: Request, res: Response) => {
 
 export const docSaver = async (req: Request, res: Response) => {
   console.log('Starting docSaver');
+  const STATIC_DIR = '../../static/posts';
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, '../../src/public/uploads/posts'),
+    uploadDir: path.resolve(__dirname, STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -174,7 +176,7 @@ export const docSaver = async (req: Request, res: Response) => {
       const r = randomInt(date.getTime()).toString();
       const fName = `${date.getTime().toString() + r}${ext}`;
       const uploadPath = path.join(
-        path.resolve(__dirname, '../../src/public/uploads/posts'),
+        path.resolve(__dirname, STATIC_DIR),
         fName
       );
       // Déplacer le fichier téléchargé
@@ -185,10 +187,16 @@ export const docSaver = async (req: Request, res: Response) => {
           return;
         }
         console.log('File uploaded:', fName);
+        const fileXPathService =
+          process.env.NODE_ENV !== 'production'
+            ? `https://ghostify.site/staticFile/` +
+              tokenGenerator(`posts/${fName}`)
+            : `http://localhost:3085/staticFile/` +
+              tokenGenerator(`posts/${fName}`);
         // Sauvegarder le fichier dans la base de données
         const nFile = await prismaClient.postFile.create({
           data: {
-            filePath: `/static/uploads/posts/${fName}`,
+            filePath: fileXPathService,
             index: Number(req.session.Storage.image[i].index),
             sectionId: Number(req.session.Storage.image[i].section),
             postId: post.id,

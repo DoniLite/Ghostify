@@ -13,7 +13,7 @@ const protectedRoutes = [
   '/assetsPost',
 ];
 
-export const veriry = (req: Request, res: Response, next: NextFunction) => {
+export const verify = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization
     // console.log(token);
     let decoded

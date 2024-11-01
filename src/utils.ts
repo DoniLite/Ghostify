@@ -755,6 +755,12 @@ export const orderReactions = (reactions: Reactions[]) => {
 };
 
 
+/**
+ * Function to rename a file using its location returns false if the operation fails and the file new full name if not
+ * @param file {formidable.File}
+ * @param pathTo {string}
+ * @returns {false | string}
+ */
 export const renaming = async (file: formidable.File, pathTo: string) => {
   const ext = path.extname(file.originalFilename);
   const date = new Date();
