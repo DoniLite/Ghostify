@@ -69,8 +69,8 @@ export const home: RequestHandler = async (req, res) => {
     userPosts,
     userFile: req.session.Auth.file || undefined,
     assets,
-    bio: userData.bio || undefined,
-    link: userData.link || undefined
+    bio: userData ? userData.bio : undefined,
+    link: userData ? userData.link : undefined
   });
   return;
 };

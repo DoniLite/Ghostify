@@ -59,7 +59,7 @@ import { setUp } from './hooks/setup';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 // import { stats } from './hooks/statCounter';
-import { veriry } from './hooks/verify';
+import { verify } from './hooks/verify';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -75,6 +75,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { test as testRoute } from './routes/test';
 import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
+import { serveStatic } from './routes/serveStatic';
 
 passport.use(
   new GoogleStrategy(
@@ -323,7 +324,7 @@ server.use(passport.session());
 
 server.use(sessionStorageHook);
 // server.use(stats);
-server.use(veriry);
+server.use(verify);
 server.use(redirector);
 server.on('reversion', (app) => {
   console.log('reversion', app);
@@ -464,6 +465,7 @@ server.get('/login/federated/google');
 server.post('/user/profile/file', updateProfile)
 server.get('/user/exists/:username', checkIfUserExist);
 server.post('/user/update', updateUserName);
+server.get('/staticFile/:file', serveStatic);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);

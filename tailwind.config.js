@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 
@@ -12,4 +13,5 @@ export const plugins = [
   require('@tailwindcss/aspect-ratio'),
   require('@tailwindcss/line-clamp'),
   require('daisyui'),
+  require('tailwind-scrollbar-hide'),
 ];

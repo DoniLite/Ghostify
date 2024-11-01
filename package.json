@@ -102,6 +102,7 @@
     "redis": "^4.7.0",
     "sharp": "^0.33.5",
     "showdown": "^2.1.0",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "tesseract.js": "^5.1.1",
     "typescript": "^5.6.2",
     "vhost": "^3.0.2",

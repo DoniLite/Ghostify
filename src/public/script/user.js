@@ -94,6 +94,19 @@ closeUserUpdatePanel.addEventListener('click', (e) => {
 
 userName.addEventListener('keyup', async (e) => {
   console.log(e.currentTarget.value);
+  submissionBtn.disabled = false;
+  userName.classList.remove('wrong-data');
+  const errorComponent = document.querySelector('#componentErrorForm');
+  if(errorComponent) errorComponent.remove();
+  const regex = /[A-Z\s]/;
+  if(e.currentTarget.value.length <= 0) return;
+  if(regex.test(e.currentTarget.value)) {
+    submissionBtn.disabled = true;
+    userName.classList.add('wrong-data');
+    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${e.currentTarget.value}" have majuscule or space</span>`;
+    userName.insertAdjacentHTML('afterend', errorMessage);
+    return;
+  };
   const req = await fetch(`/user/exists/${e.currentTarget.value}`);
   const res = await req.json();
   console.log(e.currentTarget);
@@ -102,6 +115,8 @@ userName.addEventListener('keyup', async (e) => {
     console.log('user exist');
     submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
+    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">username is not valid</span>`;
+    userName.insertAdjacentHTML('afterend', errorMessage);
     return;
   }
   console.log('not exist');
