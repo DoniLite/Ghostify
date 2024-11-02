@@ -319,7 +319,7 @@ const addExperience = (e) => {
    */
   const lastParent = secondParent.parentElement;
   const listItemComponent = `
-      <div class="w-full mx-auto p-3 justify-center items-center">
+      <div id="experienceGroupEl" class="w-full mx-auto p-3 justify-center items-center">
         <div class="flex justify-between items-center w-full lg:p-2">
           <div id="addExperience">
             <i
@@ -627,4 +627,71 @@ document.querySelector('#fileInput').addEventListener('change', (e) => {
 
 document.querySelector('#parentCVForm').addEventListener('submit', (e) => {
   e.preventDefault();
+  const form = new FormData(e.currentTarget);
+  const cvType = form.get('cvType');
+  const name = form.get('name');
+  const email = form.get('email');
+  const phone = form.get('phone');
+  const address = form.get('adresse');
+  const birthday = form.get('birthday');
+  const profile = form.get('profile');
+  const skills = form.getAll('skill');
+  const interest = form.getAll('interest');
+  const formationGroup = document.querySelector('#formationGroupEl');
+  const experienceGroup = document.querySelector('#experienceGroup');
+  const languageGroup = document.querySelector('#languageGroup');
+  /**
+   * @type {{formation: string; certificate: string; certificationDate: string}[]}
+   */
+  const formations = [];
+  /**
+   * @type {{experience: string; details: {task: string; taskDate: string}[]}[]}
+   */
+  const experiences = [];
+  /**
+   * @type {{lang: string; level: string}[]}
+   */
+  const languages = [];
+  formationGroup.querySelectorAll('.lst-component').forEach((el) => {
+    const formation = el.querySelector('input[name="formation"]').value;
+    const certificate = el.querySelector('input[name="certificate"]').value;
+    const certificationDate = el.querySelector(
+      'input[name="certificationDate"]'
+    ).value;
+    formations.push({
+      formation,
+      certificate,
+      certificationDate,
+    });
+  });
+  experienceGroup.querySelectorAll('#experienceGroupEl').forEach(el => {
+    const details = [];
+    const exp = el.querySelector('input[name="experience"]').value;
+    el.querySelectorAll('.lst-component').forEach(el => {
+      const task = el.querySelector('input[name="task"]').value;
+      const taskDate = el.querySelector('input[name="taskDate"]').value;
+      details.push({ task, taskDate });
+    });
+    experiences.push({ experience: exp, details });
+  });
+  languageGroup.querySelectorAll('.lst-component').forEach(el => {
+    const lang = el.querySelector('#languageInput').value;
+    const level = el.querySelector('#languageOption').value || el.querySelector('#languageOption').getAttribute('name');
+    languages.push({lang, level});
+  });
+  const data = {
+    cvType,
+    name,
+    email,
+    phone,
+    address,
+    birthday,
+    profile,
+    skills,
+    interest,
+    formations,
+    experiences,
+    languages,
+  }
+  console.log(data);
 });

@@ -72,6 +72,7 @@
           <input
             type="file"
             name="userProfileFile"
+            accept="image/*"
             id="fileInput"
             class="hidden"
           />
@@ -167,7 +168,7 @@
             </div>
           </div>
 
-          <div class="w-full mx-auto p-3 justify-center items-center">
+          <div id="formationGroupEl" class="w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full p-2">
               <h1 class="text-white font-bold text-2xl">Formations</h1>
               <div id="addFormation">
@@ -176,7 +177,7 @@
                 ></i>
               </div>
             </div>
-            <div id="" class="lst-component w-full flex flex-col gap-y-3">
+            <div  class="lst-component w-full flex flex-col gap-y-3">
               <div
                 data-index="1"
                 class="vl-parent flex gap-x-4 w-full items-center mt-4"
@@ -226,7 +227,7 @@
         </div>
       </div>
 
-      <div class="w-full flex-none overflow-y-scroll">
+      <div id="experienceGroup" class="w-full flex-none overflow-y-scroll">
         <div
           data-translate="400"
           class="lg:w-[80%] w-[98%] mx-auto mt-4 bg-gray-950 text-white p-4 rounded-lg shadow-lg shadow-black flex flex-col gap-y-6 mb-4 relative"
@@ -235,7 +236,7 @@
             <i class="fa-solid fa-arrow-left fa-lg text-white"></i>
           </button>
           <h1 class="text-2xl font-bold ml-8">Expérience professionnelle</h1>
-          <div class="w-full mx-auto p-3 justify-center items-center">
+          <div id="experienceGroupEl" class="w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full lg:p-2">
               <div id="addExperience">
                 <i
@@ -339,7 +340,7 @@
             </div>
           </div>
 
-          <div class="w-full mx-auto p-3 justify-center items-center">
+          <div id="languageGroup" class="w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full p-2">
               <h1 class="text-white font-bold text-2xl">Langues</h1>
               <div id="addLanguage">
