@@ -6,7 +6,7 @@ const actionComponent = document.querySelector('#actionComponent');
  * @type {Element}
  */
 const posterForm = document.querySelector('#posterForm');
-const requestSetionBtn = document.querySelector('#requestSetionBtn');
+const requestSectionBtn = document.querySelector('#requestSetionBtn');
 const requestListBtn = document.querySelector('#requestList');
 // const sectionRemoveBtn = document.querySelector('#sectionRemoveBtn');
 // const listRemoveBtn = document.querySelector('#listRemoveBtn');
@@ -408,7 +408,7 @@ actionBtn.addEventListener('mouseenter', showComponent);
 actionBtn.addEventListener('mouseleave', hideComponent);
 actionComponent.addEventListener('mouseenter', showComponent);
 actionComponent.addEventListener('mouseleave', hideComponent);
-requestSetionBtn.addEventListener('click', requestNewSection);
+requestSectionBtn.addEventListener('click', requestNewSection);
 requestListBtn.addEventListener('click', requestNewList);
 requestFileBtn.addEventListener('click', requestFile);
 viewIcon.addEventListener('click', requesterFunc);

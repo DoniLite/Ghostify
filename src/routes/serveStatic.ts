@@ -5,10 +5,11 @@ import path from "node:path";
 
 
 export const serveStatic = (req: Request, res: Response) => {
-    const {tokenPath} = req.params
+    const {file} = req.params
+    console.log(file);
     const resourceDir = path.resolve(__dirname, '../../static');
     try {
-        const rPath = jwt.verify(tokenPath, process.env.JWT_SECRET);
+        const rPath = jwt.verify(file, process.env.JWT_SECRET);
         if(typeof rPath === 'string') {
             const resourcePath = path.join(resourceDir, rPath);
             res.status(200).sendFile(resourcePath);

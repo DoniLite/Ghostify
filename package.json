@@ -20,7 +20,7 @@
     "tailwind": "pnpx tailwindcss -i ./src/input.css -o ./src/public/output.css",
     "tailwindDev": "pnpx tailwindcss -i ./src/input.css -o ./src/public/output.css --watch",
     "setupAssets": "bash ./cmd/assets.sh ./src/public",
-    "deploy": "gh-pages -d build",
+    "deploy": "bash ./cmd/deploy.sh",
     "generate": "pnpx prisma generate",
     "migrate": "pnpx prisma migrate dev",
     "prisma": "pnpm dlx prisma",

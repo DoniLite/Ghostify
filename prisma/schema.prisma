@@ -1,7 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// schema.prisma
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
@@ -12,40 +8,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Service {
-  Poster
-  CVMaker
-  APIs
-}
-
 model Services {
   id          Int     @id @default(autoincrement())
   type        Service @unique
-  name        String
+  active      Boolean @default(false)
+  docs        String?
   endpoint    String
   isSecure    Boolean @default(true)
-  docs        String?
+  name        String
   plateform   Boolean @default(true)
-  active      Boolean @default(false)
   testingData String
-}
-
-enum Class {
-  A
-  B
-  S
-  SS
-  D
 }
 
 model Vote {
   id      Int    @id @default(autoincrement())
   title   String
   votes   Int    @default(0)
-  poll    String // json data for the poll
+  poll    String
   class   Class
-  Topic   Topic? @relation(fields: [topicId], references: [id])
   topicId Int?
+  Topic   Topic? @relation(fields: [topicId], references: [id])
 }
 
 model Topic {
@@ -54,17 +36,6 @@ model Topic {
   keyword String
   comment Comment[]
   vote    Vote[]
-}
-
-enum Permission {
-  User
-  Admin
-  Root
-}
-
-enum Visibility {
-  Public
-  Private
 }
 
 model Contact {
@@ -83,39 +54,28 @@ model Category {
 
 model PostSection {
   id        Int      @id @default(autoincrement())
-  parent    Post     @relation(fields: [postId], references: [id])
   postId    Int
   title     String
   updatedAt DateTime @updatedAt
   content   String?
-  index     Int
   header    Boolean  @default(false)
-  meta      String? //like list or injeted metadata
-}
-
-enum Reactions {
-  Love
-  Laugh
-  Hurted
-  Good
+  meta      String?
+  index     Int
+  parent    Post     @relation(fields: [postId], references: [id])
 }
 
 model Comment {
   id          Int         @id @default(autoincrement())
-  post        Post?       @relation(fields: [postId], references: [id])
   file        String?
   reactions   Reactions[]
   postId      Int?
   content     String?
   author      String?
-  comments    Comment[]   @relation(name: "CommentToComment")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  comment     Comment?    @relation(name: "CommentToComment", fields: [commentId], references: [id])
   commentId   Int?
   signaled    Int         @default(0)
   referred    String?
-  user        User?       @relation(fields: [userId], references: [id])
   meta        String?
   isAnActu    Boolean     @default(false)
   isForumPost Boolean     @default(false)
@@ -124,11 +84,15 @@ model Comment {
   indexed     Boolean     @default(false)
   visitors    Int         @default(0)
   url         String?
-  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
   indexerId   Int?
   userId      Int?
-  Topic       Topic?      @relation(fields: [topicId], references: [id])
   topicId     Int?
+  comment     Comment?    @relation("CommentToComment", fields: [commentId], references: [id])
+  comments    Comment[]   @relation("CommentToComment")
+  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
+  post        Post?       @relation(fields: [postId], references: [id])
+  Topic       Topic?      @relation(fields: [topicId], references: [id])
+  user        User?       @relation(fields: [userId], references: [id])
 
   @@index([id, userId, topicId, postId, commentId, indexerId])
 }
@@ -137,10 +101,10 @@ model postFile {
   id          Int    @id @default(autoincrement())
   filePath    String
   sectionId   Int
-  filePost    Post   @relation(fields: [postId], references: [id])
   index       Int
   description String @default("")
   postId      Int
+  filePost    Post   @relation(fields: [postId], references: [id])
 }
 
 model Post {
@@ -155,21 +119,21 @@ model Post {
   updatedAt     DateTime      @updatedAt
   content       String?
   published     Boolean       @default(false)
-  section       PostSection[]
   slug          String?
-  category      Category?     @relation(fields: [categoryId], references: [id])
   categoryId    Int?
   visibility    Visibility
   visites       Int           @default(0)
-  user          User?         @relation(fields: [userId], references: [id]) // If the post is from `Api` then require the user. the user is a sjon string data
   fromApi       Boolean       @default(false)
   parsedContent String?
-  Comment       Comment[]
-  files         postFile[]
-  indexer       Indexer?      @relation(fields: [indexerId], references: [id])
   indexerId     Int?
   indexed       Boolean       @default(false)
   userId        Int?
+  Comment       Comment[]
+  category      Category?     @relation(fields: [categoryId], references: [id])
+  indexer       Indexer?      @relation(fields: [indexerId], references: [id])
+  user          User?         @relation(fields: [userId], references: [id])
+  section       PostSection[]
+  files         postFile[]
 
   @@index([published, createdAt, id, userId, indexerId])
 }
@@ -178,13 +142,13 @@ model Indexer {
   id        Int         @id @default(autoincrement())
   keys      String
   type      String      @unique
-  post      Post[]
-  url       Url[]
-  game      GameData[]
-  Project   Project[]
+  ApiModule ApiModule[]
   Assets    Assets[]
   Comment   Comment[]
-  ApiModule ApiModule[]
+  game      GameData[]
+  post      Post[]
+  Project   Project[]
+  url       Url[]
 }
 
 model GamerStat {
@@ -192,31 +156,24 @@ model GamerStat {
   ip         String
   url        String?   @unique
   gamingDay  DateTime
-  game       GameData? @relation(fields: [gameId], references: [id])
   gameId     Int?
-  user       User?     @relation(fields: [userId], references: [id])
   gamerStats String
   userId     Int?
+  game       GameData? @relation(fields: [gameId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id])
 }
 
 model GameData {
   id          Int         @id @default(autoincrement())
-  gamers      GamerStat[]
-  url         String
   title       String
   icon        String
   description String
   indexed     Boolean     @default(true)
-  data        String? // json data
-  Indexer     Indexer     @relation(fields: [indexerId], references: [id])
+  data        String?
   indexerId   Int
-}
-
-enum ApiModuleType {
-  Api
-  Module
-  Ressource
-  Snippet
+  url         String
+  Indexer     Indexer     @relation(fields: [indexerId], references: [id])
+  gamers      GamerStat[]
 }
 
 model ApiModule {
@@ -227,11 +184,11 @@ model ApiModule {
   type        ApiModuleType
   scripts     String[]
   testHook    String?
-  user        User          @relation(fields: [userId], references: [id])
   indexed     Boolean       @default(false)
-  Indexer     Indexer?      @relation(fields: [indexerId], references: [id])
   indexerId   Int?
   userId      Int
+  Indexer     Indexer?      @relation(fields: [indexerId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
 }
 
 model Project {
@@ -246,8 +203,8 @@ model Project {
   link              String
   participation     String
   participationType String
-  indexer           Indexer? @relation(fields: [indexerId], references: [id])
   indexerId         Int?
+  indexer           Indexer? @relation(fields: [indexerId], references: [id])
 }
 
 model GeneratorData {
@@ -264,96 +221,60 @@ model Url {
   updatedAt DateTime @updatedAt
   indexed   Boolean  @default(false)
   health    Boolean  @default(false)
-  Indexer   Indexer? @relation(fields: [indexerId], references: [id])
   indexerId Int?
-}
-
-enum Provider {
-  Google
-  Facebook
-  Twitter
-  Instagram
-  LinkedIn
-  Platform
+  Indexer   Indexer? @relation(fields: [indexerId], references: [id])
 }
 
 model User {
   id            Int             @id @default(autoincrement())
-  username      String?         @unique
   email         String          @unique
-  password      String? // Optionnel, si tu prévois de conserver une option de connexion par mot de passe
-  token         String? // Optionnel, si nécessaire pour des fonctionnalités spécifiques
+  password      String?
+  token         String?
   service       String?
+  registration  DateTime?
+  permission    Permission
+  apiAccess     Boolean         @default(false)
+  apiCredits    Int             @default(300)
+  cvCredits     Int             @default(300)
+  posterCredits Int             @default(300)
+  provider      Provider?
+  username      String?         @unique
+  file          String?
+  providerId    String?         @unique
+  registered    Boolean         @default(false)
   bio           String?
   link          String?
-  provider      Provider?
-  providerId    String?         @unique
-  registration  DateTime?
-  registered    Boolean         @default(false)
-  permission    Permission
-  posterCredits Int             @default(300)
-  cvCredits     Int             @default(300)
-  apiCredits    Int             @default(300)
-  apiAccess     Boolean         @default(false)
-  file          String?
-  GamerStat     GamerStat[]
-  Post          Post[]
-  Comment       Comment[]
-  promotion     Promotion[]
   ApiModule     ApiModule[]
+  Comment       Comment[]
+  GamerStat     GamerStat[]
   Key           Key[]
   notifications Notifications[]
-}
-
-enum KeyType {
-  Password
-  SecretKey
-  SessionKey
-  ApiKey
-  PlateformKey
-  AccessToken
-  RefreshToken
-  TwoFactorCode
-  GoogleAuthCode
-  AppleAuthCode
-  GitHubAuthCode
-  DiscordAuthCode
-  TwitterAuthCode
-  InstagramAuthCode
-  LinkedInAuthCode
-  FacebookAuthCode
-  RedditAuthCode
+  Post          Post[]
+  promotion     Promotion[]
 }
 
 model Key {
   id     Int     @id @default(autoincrement())
   key    String?
   iv     String?
-  token  String?
-  user   User?   @relation(fields: [userId], references: [id])
   type   KeyType
   uid    String? @unique
+  token  String?
   userId Int?
-}
-
-enum AssetType {
-  Component
-  Script
-  Page
-  Snippet
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 model Assets {
   id        Int       @id @default(autoincrement())
   type      AssetType
   uid       String?   @unique
-  link      String?
   content   String?
-  file      String?
   title     String
   indexed   Boolean   @default(false)
-  Indexer   Indexer?  @relation(fields: [indexerId], references: [id])
   indexerId Int?
+  file      String?
+  link      String?
+  Indexer   Indexer?  @relation(fields: [indexerId], references: [id])
 }
 
 model Admin {
@@ -369,16 +290,101 @@ model Admin {
 model Promotion {
   id          Int      @id @default(autoincrement())
   title       String
-  file        String?
   description String?
-  link        String?
   startDate   DateTime
   endDate     DateTime
-  isActive    Boolean  @default(true) // Indique si la promotion est active
-  createdAt   DateTime @default(now()) // Date de création de la promotion
-  updatedAt   DateTime @updatedAt // Date de mise à jour de la promotion
-  User        User?    @relation(fields: [userId], references: [id])
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  file        String?
+  link        String?
   userId      Int?
+  User        User?    @relation(fields: [userId], references: [id])
+}
+
+model Notifications {
+  id        Int              @id @default(autoincrement())
+  type      NotificationType
+  content   String
+  createdAt DateTime         @default(now())
+  seen      Boolean          @default(false)
+  userId    Int?
+  User      User?            @relation(fields: [userId], references: [id])
+}
+
+enum Service {
+  Poster
+  CVMaker
+  APIs
+}
+
+enum Class {
+  A
+  B
+  S
+  SS
+  D
+}
+
+enum Permission {
+  User
+  Admin
+  Root
+}
+
+enum Visibility {
+  Public
+  Private
+}
+
+enum Reactions {
+  Love
+  Laugh
+  Hurted
+  Good
+}
+
+enum ApiModuleType {
+  Api
+  Module
+  Ressource
+  Snippet
+}
+
+enum Provider {
+  Google
+  Facebook
+  Twitter
+  Instagram
+  LinkedIn
+  Platform
+}
+
+enum KeyType {
+  Password
+  SecretKey
+  SessionKey
+  ApiKey
+  AccessToken
+  RefreshToken
+  TwoFactorCode
+  GoogleAuthCode
+  AppleAuthCode
+  GitHubAuthCode
+  DiscordAuthCode
+  TwitterAuthCode
+  InstagramAuthCode
+  LinkedInAuthCode
+  FacebookAuthCode
+  RedditAuthCode
+  PlateformKey
+}
+
+enum AssetType {
+  Component
+  Script
+  Page
+  Snippet
 }
 
 enum NotificationType {
@@ -388,14 +394,4 @@ enum NotificationType {
   Post
   Info
   Message
-}
-
-model Notifications {
-  id        Int              @id @default(autoincrement())
-  type      NotificationType
-  content   String
-  createdAt DateTime         @default(now())
-  seen      Boolean          @default(false)
-  User      User?            @relation(fields: [userId], references: [id])
-  userId    Int?
 }
