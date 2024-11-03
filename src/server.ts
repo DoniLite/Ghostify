@@ -75,7 +75,8 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { test as testRoute } from './routes/test';
 import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
-import { serveStatic } from './routes/serveStatic';
+import { downloader, serveStatic } from './routes/serveStatic';
+import { processCV } from './controller/processCv';
 
 passport.use(
   new GoogleStrategy(
@@ -466,6 +467,8 @@ server.post('/user/profile/file', updateProfile)
 server.get('/user/exists/:username', checkIfUserExist);
 server.post('/user/update', updateUserName);
 server.get('/staticFile/:file', serveStatic);
+server.get('/downloader/:file', downloader);
+server.post('/cv/process', processCV)
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);

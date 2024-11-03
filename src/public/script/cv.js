@@ -319,7 +319,7 @@ const addExperience = (e) => {
    */
   const lastParent = secondParent.parentElement;
   const listItemComponent = `
-      <div id="experienceGroupEl" class="w-full mx-auto p-3 justify-center items-center">
+      <div id="" class="experienceGroupEl w-full mx-auto p-3 justify-center items-center">
         <div class="flex justify-between items-center w-full lg:p-2">
           <div id="addExperience">
             <i
@@ -625,7 +625,7 @@ document.querySelector('#fileInput').addEventListener('change', (e) => {
   }
 });
 
-document.querySelector('#parentCVForm').addEventListener('submit', (e) => {
+document.querySelector('#parentCVForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = new FormData(e.currentTarget);
   const cvType = form.get('cvType');
@@ -654,9 +654,9 @@ document.querySelector('#parentCVForm').addEventListener('submit', (e) => {
   const languages = [];
   formationGroup.querySelectorAll('.lst-component').forEach((el) => {
     const formation = el.querySelector('input[name="formation"]').value;
-    const certificate = el.querySelector('input[name="certificate"]').value;
+    const certificate = el.querySelector('input[id="certificateInput"]').value;
     const certificationDate = el.querySelector(
-      'input[name="certificationDate"]'
+      'input[id="certificationDateInput"]'
     ).value;
     formations.push({
       formation,
@@ -664,19 +664,21 @@ document.querySelector('#parentCVForm').addEventListener('submit', (e) => {
       certificationDate,
     });
   });
-  experienceGroup.querySelectorAll('#experienceGroupEl').forEach(el => {
+  experienceGroup.querySelectorAll('.experienceGroupEl').forEach(el => {
     const details = [];
     const exp = el.querySelector('input[name="experience"]').value;
     el.querySelectorAll('.lst-component').forEach(el => {
-      const task = el.querySelector('input[name="task"]').value;
-      const taskDate = el.querySelector('input[name="taskDate"]').value;
+      const task = el.querySelector('input[id="taskInput"]').value;
+      const taskDate = el.querySelector('input[id="taskDateInput"]').value;
       details.push({ task, taskDate });
     });
     experiences.push({ experience: exp, details });
   });
   languageGroup.querySelectorAll('.lst-component').forEach(el => {
     const lang = el.querySelector('#languageInput').value;
-    const level = el.querySelector('#languageOption').value || el.querySelector('#languageOption').getAttribute('name');
+    const languageOption = el.querySelector('#languageOption');
+    const level =
+      languageOption?.value ?? languageOption?.getAttribute('name') ?? '';
     languages.push({lang, level});
   });
   const data = {
@@ -694,4 +696,14 @@ document.querySelector('#parentCVForm').addEventListener('submit', (e) => {
     languages,
   }
   console.log(data);
+  const jsonData = JSON.stringify(data);
+  form.append('jsonData', jsonData);
+  const fetcher = await fetch('/cv/process', {
+    method: 'POST',
+    body: form,
+  });
+  const res = await fetcher.json();
+  if(res.success) {
+    console.log(res.link);
+  }
 });

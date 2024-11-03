@@ -2,10 +2,14 @@ import {IncomingForm} from 'formidable'
 import { Request, Response } from "express";
 import path from 'node:path';
 import { renaming } from '../utils';
+import { RawCV } from 'index';
+import { prismaClient } from '../config/db';
+import { tokenGenerator } from '../server';
 
 
 export const processCV = async (req: Request, res: Response) => {
     const STATIC_DIR = '../../static/cv';
+    const date = new Date();
     const form = new IncomingForm({
       uploadDir: path.resolve(__dirname, STATIC_DIR),
       keepExtensions: true,
@@ -34,4 +38,27 @@ export const processCV = async (req: Request, res: Response) => {
             return;
         }
     }
+
+    const fileXPath =
+      process.env.NODE_ENV === 'production'
+        ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
+        : `http://localhost:3085/staticFile/` + tokenGenerator(`cv/${result}`);
+    const data = JSON.parse(fields.jsonData[0]) as RawCV;
+    if(req.session.Auth.authenticated && !req.session.Auth.isSuperUser) {
+      const uid = tokenGenerator(date.getTime().toString())
+        const newCV = await prismaClient.cV.create({data: {
+            metaData: JSON.stringify(data),
+            userId: req.session.Auth.id,
+            img: file ? fileXPath : null,
+            uid: uid,
+            url: process.env.NODE_ENV === 'production' ? `https://ghostify.site/cv/${uid}` : `http://localhost:3085/cv/${uid}`,
+        }});
+        req.session.CVData = {
+          ...data,
+          img: fileXPath
+        };
+        res.status(200).json({success: true, link: newCV.url});
+        return;
+    }
+    console.log(data);
 }
