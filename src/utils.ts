@@ -9,13 +9,16 @@ import Tesseract from 'tesseract.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import ejs from 'ejs';
 import puppeteer from 'puppeteer';
 import { prismaClient } from './config/db';
 import bcrypt from 'bcrypt';
 import formidable from 'formidable';
+import { tokenGenerator } from './server';
 
-export const hashSomething = async (data: string | Buffer, saltRond?: number) => {
+export const hashSomething = async (
+  data: string | Buffer,
+  saltRond?: number
+) => {
   const round = saltRond || 14;
   const salt = await bcrypt.genSalt(round);
   return await bcrypt.hash(data, salt);
@@ -23,7 +26,7 @@ export const hashSomething = async (data: string | Buffer, saltRond?: number) =>
 
 export const compareHash = async (data: string | Buffer, hash: string) => {
   return await bcrypt.compare(data, hash);
-}
+};
 
 const server_uid = process.env.SECRET_UID;
 export enum DocInputFormat {
@@ -68,16 +71,22 @@ export enum Can {
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   const keys = [] as string[];
   if (typeof obj['title'] === 'string') {
-    obj['title'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
+    obj['title']
+      .split(' ')
+      .forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['description'] === 'string') {
-    obj['description'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
+    obj['description']
+      .split(' ')
+      .forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['desc'] === 'string') {
     obj['desc'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   if (typeof obj['content'] === 'string') {
-    obj['content'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
+    obj['content']
+      .split(' ')
+      .forEach((key) => keys.push(key.toLocaleLowerCase()));
   }
   // console.log(keys, k);
   // console.log(keys.includes(k));
@@ -698,23 +707,48 @@ Pour toute question ou suggestion, n'hésitez pas à nous contacter à l'adresse
 Merci de faire partie de notre aventure !
 `;
 
-export const cvDownloader = async (options: Record<string, unknown>) => {
-  const compiledCv = await ejs.renderFile('./views/components/cv.ejs', {
-    ...options,
-  });
-
+export const cvDownloader = async (options: { url: string; id: number }) => {
+  const date = new Date();
+  const pdf = date.getTime().toString() + '.pdf';
+  const png = date.getTime().toString() + '.png';
+  const STATIC_DIR = path.resolve(__dirname, '../static/downloads/doc');
+  const STATIC_IMG_DIR = path.resolve(__dirname, '../static/downloads/cv');
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.setContent(compiledCv);
-
-  const pdf = await page.pdf({ path: 'cv.pdf', format: 'A4' });
+  await page.goto(options.url);
+  const pdfFilePath = path.join(STATIC_DIR, pdf);
+  const pngFilePath = path.join(STATIC_IMG_DIR, png);
+  await page.pdf({ path: pdfFilePath, format: 'A4' });
 
   // Prendre un screenshot de la page entière
-  await page.screenshot({ path: 'cv-screenshot.png', fullPage: true });
+  await page.screenshot({ path: pngFilePath, fullPage: true });
+
+  const pngServicePath =
+    process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/staticFile/' + tokenGenerator(png)
+      : 'http://localhost:3085/staticFile/' + tokenGenerator(png);
+
+  const pdfServicePath =
+    process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/downloader/' + tokenGenerator(pdf)
+      : 'http://localhost:3085/downloader/' + tokenGenerator(pdf);
+
+  const cvUpdating = await prismaClient.cV.update({
+    where: {
+      id: options.id,
+    },
+    data: {
+      screenshot: pngServicePath,
+      pdf: pdfServicePath
+    },
+  });
 
   await browser.close();
 
-  return pdf;
+  return {
+    screenshot: cvUpdating.screenshot,
+    downloader: cvUpdating.pdf
+  };
 };
 
 export enum Reactions {
@@ -754,7 +788,6 @@ export const orderReactions = (reactions: Reactions[]) => {
     .map((el) => el.component);
 };
 
-
 /**
  * Function to rename a file using its location returns false if the operation fails and the file new full name if not
  * @param file {formidable.File}
@@ -771,12 +804,12 @@ export const renaming = async (file: formidable.File, pathTo: string) => {
   const uploadPath = path.join(xPath, fName);
   try {
     fs.renameSync(file.filepath, uploadPath);
-    return fName
+    return fName;
   } catch (err) {
     console.error(err);
     return false;
   }
-}
+};
 
 export function ensureDirectoryAccess(directory: string) {
   try {

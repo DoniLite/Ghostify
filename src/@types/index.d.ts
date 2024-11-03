@@ -273,15 +273,20 @@ export interface DocumentStorage {
     index: number;
     section: number;
   }[];
-  list: Record<string, [{
-      index: number;
-      items: {
-        item: string;
-        description: string;
+  list: Record<
+    string,
+    [
+      {
         index: number;
-        section: number;
-      }[];
-    }]>;
+        items: {
+          item: string;
+          description: string;
+          index: number;
+          section: number;
+        }[];
+      }
+    ]
+  >;
 }
 
 export interface PostFile {
@@ -302,7 +307,7 @@ export interface List {
   }[];
 }
 
-export type DocDataUnion = PostFile | List
+export type DocDataUnion = PostFile | List;
 
 export interface Checker {
   pass: boolean;
@@ -310,13 +315,41 @@ export interface Checker {
 }
 
 export interface HealthCheckerInterface {
-  check(service: string, endpoint?: string): Promise<boolean> ;
-  health(): Promise<Service['Platform']>
+  check(service: string, endpoint?: string): Promise<boolean>;
+  health(): Promise<Service['Platform']>;
 }
-
 
 declare global {
   interface WebSocket extends WebSocketS {
     on: WebSocketS['on'];
   }
+}
+
+export interface RawCV {
+  img?: string;
+  cvType: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  birthday: string;
+  profile: string;
+  skills: string[];
+  interest: string[];
+  formations: {
+    formation: string;
+    certificate: string;
+    certificationDate: string;
+  }[];
+  experiences: {
+    experience: string;
+    details: {
+      task: string;
+      taskDate: string;
+    }[];
+  }[];
+  languages: {
+    lang: string;
+    level: string;
+  }[];
 }

@@ -1,5 +1,5 @@
 import 'express-session';
-import { Auth, DocumentStorage, Service, StatsData } from '.';
+import { Auth, DocumentStorage, RawCV, Service, StatsData } from '.';
 import { SuperUser } from '../class/SuperUser';
 
 declare module "express-session" {
@@ -46,6 +46,7 @@ declare module "express-session" {
     Auth?: Auth;
     SuperUser?: SuperUser;
     Storage?: DocumentStorage;
+    CVData?: RawCV;
     RedirectUrl?: string;
   }
 
