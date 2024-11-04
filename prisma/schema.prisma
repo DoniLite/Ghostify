@@ -109,6 +109,7 @@ model postFile {
 
 model Post {
   id            Int           @id @default(autoincrement())
+  uid           String?        @unique
   title         String
   description   String
   safe          Boolean

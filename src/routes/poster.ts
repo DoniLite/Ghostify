@@ -103,6 +103,7 @@ export const requestListComponent = async (req: Request, res: Response) => {
 export const docSaver = async (req: Request, res: Response) => {
   console.log('Starting docSaver');
   const STATIC_DIR = '../../static/posts';
+  const date = new Date();
   const form = new IncomingForm({
     uploadDir: path.resolve(__dirname, STATIC_DIR),
     keepExtensions: true,
@@ -115,12 +116,14 @@ export const docSaver = async (req: Request, res: Response) => {
     },
   });
   let json: boolean | undefined;
+  const uid = tokenGenerator((date.getTime() + randomInt(1000)).toString());
   // Crée un post vide au début
   const post = req.session.Auth.isSuperUser
     ? await prismaClient.post.create({
         data: {
           title: '',
           description: '',
+          uid,
           visibility: 'Private',
           safe: false,
         },
@@ -128,6 +131,7 @@ export const docSaver = async (req: Request, res: Response) => {
     : await prismaClient.post.create({
         data: {
           title: '',
+          uid,
           description: '',
           visibility: 'Private',
           safe: false,
@@ -236,10 +240,10 @@ export const docSaver = async (req: Request, res: Response) => {
   console.log('updated content final:', up);
   console.log(json);
   if (json === true) {
-    res.send(JSON.stringify({ success: true, article: post.id }));
+    res.send(JSON.stringify({ success: true, article: post.uid }));
     return;
   }
-  res.redirect(`/poster/view?post=${post.id}`);
+  res.redirect(`/poster/view?post=${post.uid}`);
 };
 
 export const docView = async (req: Request, res: Response) => {
@@ -248,7 +252,7 @@ export const docView = async (req: Request, res: Response) => {
 
   const article = await prismaClient.post.findUnique({
     where: {
-      id: parseInt(post),
+      uid: post,
     },
   });
 
