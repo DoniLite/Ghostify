@@ -8,7 +8,7 @@
     <input
       type="hidden"
       name="pointerType"
-      value="<%= typeof pointerType === 'undefined'? pointerType : pointerType %>"
+      value="<%= typeof pointerType === 'undefined'? pointerType = '' : pointerType %>"
     />
     <input
       type="file"
@@ -53,7 +53,7 @@
         <div
           class="flex w-full lg:gap-x-4 justify-between"
           id="comment"
-          data-index=""
+          data-index="<%= reply.id %>"
         >
           <img
             src="<% if (typeof reply.userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= reply.userIcon %> <% } %>"

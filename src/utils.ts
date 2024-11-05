@@ -14,6 +14,12 @@ import { prismaClient } from './config/db';
 import bcrypt from 'bcrypt';
 import formidable from 'formidable';
 import { tokenGenerator } from './server';
+import {
+  // formatDistanceToNow,
+  // formatDuration,
+  intervalToDuration,
+} from 'date-fns';
+
 
 export const hashSomething = async (
   data: string | Buffer,
@@ -708,30 +714,42 @@ Merci de faire partie de notre aventure !
 `;
 
 export const cvDownloader = async (options: { url: string; id: number }) => {
+  console.log('function running start')
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
   const STATIC_DIR = path.resolve(__dirname, '../static/downloads/doc');
   const STATIC_IMG_DIR = path.resolve(__dirname, '../static/downloads/cv');
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath:
+      process.env.NODE_ENV === 'production'
+        ? '/usr/bin/chromium-browser'
+        : '/usr/bin/google-chrome',
+    args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
-  await page.goto(options.url);
+  await page.goto(options.url, {waitUntil: 'networkidle0'});
   const pdfFilePath = path.join(STATIC_DIR, pdf);
   const pngFilePath = path.join(STATIC_IMG_DIR, png);
-  await page.pdf({ path: pdfFilePath, format: 'A4' });
+  await page.pdf({ path: pdfFilePath, format: 'A4', printBackground: true });
 
   // Prendre un screenshot de la page entière
   await page.screenshot({ path: pngFilePath, fullPage: true });
 
   const pngServicePath =
     process.env.NODE_ENV === 'production'
-      ? 'https://ghostify.site/staticFile/' + tokenGenerator(png)
-      : 'http://localhost:3085/staticFile/' + tokenGenerator(png);
+      ? 'https://ghostify.site/staticFile/' +
+        tokenGenerator(`downloads/cv/${png}`)
+      : 'http://localhost:3085/staticFile/' +
+        tokenGenerator(`downloads/cv/${png}`);
 
   const pdfServicePath =
     process.env.NODE_ENV === 'production'
-      ? 'https://ghostify.site/downloader/' + tokenGenerator(pdf)
-      : 'http://localhost:3085/downloader/' + tokenGenerator(pdf);
+      ? 'https://ghostify.site/downloader/' +
+        tokenGenerator(`downloads/doc/${pdf}`)
+      : 'http://localhost:3085/downloader/' +
+        tokenGenerator(`downloads/doc/${pdf}`);
 
   const cvUpdating = await prismaClient.cV.update({
     where: {
@@ -744,10 +762,11 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
   });
 
   await browser.close();
+  console.log('function running end');
 
   return {
     screenshot: cvUpdating.screenshot,
-    downloader: cvUpdating.pdf
+    downloadLink: cvUpdating.pdf
   };
 };
 
@@ -828,4 +847,16 @@ export function ensureDirectoryAccess(directory: string) {
       throw mkdirError;
     }
   }
+}
+
+export function getTimeElapsed(date: Date) {
+  const duration = intervalToDuration({ start: date, end: new Date() });
+
+  if (duration.weeks >= 1) return `${duration.weeks}w`;
+  if (duration.days >= 1) return `${duration.days}d`;
+  if (duration.hours >= 1) return `${duration.hours}h`;
+  if (duration.minutes >= 1) return `${duration.minutes}m`;
+  if (duration.seconds >= 1) return `${duration.seconds}s`;
+
+  return '0s';
 }

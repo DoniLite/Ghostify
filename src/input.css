@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton+SC&display=swap');
 
 @tailwind base;
@@ -10,20 +10,19 @@
 }
 
 .cookie-regular {
-  font-family: "Cookie", cursive;
+  font-family: 'Cookie', cursive;
   font-weight: 400;
   font-style: normal;
 }
 
 .anton-sc-regular {
-  font-family: "Anton SC", sans-serif;
+  font-family: 'Anton SC', sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
-
 .pacifico-regular {
-  font-family: "Pacifico", cursive;
+  font-family: 'Pacifico', cursive;
   font-weight: 400;
   font-style: normal;
 }
@@ -37,7 +36,7 @@
 }
 
 .poster-hidden {
-  @apply translate-x-full
+  @apply translate-x-full;
 }
 
 @keyframes showing-nav {
@@ -95,12 +94,11 @@
 }
 
 .hide {
-    animation: hiding-nav .2s ease-out forwards;
+  animation: hiding-nav 0.2s ease-out forwards;
 }
 .show {
-    animation: showing-nav .2s ease-out forwards;
+  animation: showing-nav 0.2s ease-out forwards;
 }
-
 
 @keyframes showing-reactions {
   0% {
@@ -157,10 +155,10 @@
 }
 
 .hide-reactions {
-    animation: hiding-reactions .1s ease-out forwards;
+  animation: hiding-reactions 0.1s ease-out forwards;
 }
 .show-reactions {
-    animation: showing-reactions .1s ease-out forwards;
+  animation: showing-reactions 0.1s ease-out forwards;
 }
 
 .wrong-data {
@@ -177,4 +175,72 @@
 
 .transUpdatePanelHide {
   @apply -translate-x-[300%];
+}
+
+.triangle-left {
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  border-right: 100px solid red;
+  border-bottom: 50px solid transparent;
+}
+
+.triangle-right {
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  border-left: 100px solid red;
+  border-bottom: 50px solid transparent;
+}
+
+.cv1-top1-col1 {
+  @apply bg-gray-500;
+}
+
+.cv1-top2-col1 {
+  @apply bg-gray-300;
+}
+
+.cv1-mod1-text1 {
+  @apply text-neutral-900;
+}
+
+.cv1-mod1-text2 {
+  @apply text-neutral-900;
+}
+
+
+
+.cv1-top1-col2 {
+  @apply bg-red-500;
+}
+
+.cv1-top2-col2 {
+  @apply bg-red-300;
+}
+
+.cv1-mod2-text1 {
+  @apply text-white;
+}
+
+.cv1-mod2-text2 {
+  @apply text-neutral-700;
+}
+
+
+
+.cv1-top1-col3 {
+  @apply bg-blue-500;
+}
+
+.cv1-top2-col3 {
+  @apply bg-blue-300;
+}
+
+.cv1-mod3-text1 {
+  @apply text-white;
+}
+
+.cv1-mod3-text2 {
+  @apply text-neutral-700;
 }

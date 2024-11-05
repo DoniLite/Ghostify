@@ -47,6 +47,9 @@ declare module "express-session" {
     SuperUser?: SuperUser;
     Storage?: DocumentStorage;
     CVData?: RawCV;
+    JobsIDs?: {
+      cvJob?: string | number;
+    };
     RedirectUrl?: string;
   }
 

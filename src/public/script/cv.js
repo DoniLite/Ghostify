@@ -703,7 +703,6 @@ document.querySelector('#parentCVForm').addEventListener('submit', async (e) => 
     body: form,
   });
   const res = await fetcher.json();
-  if(res.success) {
-    console.log(res.link);
-  }
+  // console.log(res.redirect);
+  window.location.href = res.redirect;
 });

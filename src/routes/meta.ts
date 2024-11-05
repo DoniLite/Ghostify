@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../config/db';
 import { Comment } from '@prisma/client';
-import { orderReactions, Reactions } from '../utils';
+import { getTimeElapsed, orderReactions, Reactions } from '../utils';
+import {} from 'date-fns'
 
 export const meta = async (req: Request, res: Response) => {
   const theme = req.session.Theme;
@@ -29,6 +30,7 @@ export const meta = async (req: Request, res: Response) => {
     reactionsEls: string[];
     reactionsLength: number;
     commentsLength: number;
+    time: string;
   }[] &
     Comment[];
   const actus: {
@@ -53,6 +55,7 @@ export const meta = async (req: Request, res: Response) => {
           reactionsEls: orderReactions(popular.reactions as Reactions[]),
           reactionsLength: popular.reactions.length,
           commentsLength: commentsLength,
+          time: getTimeElapsed(popular.createdAt),
         };
       })
   );
@@ -67,6 +70,7 @@ export const meta = async (req: Request, res: Response) => {
       reactionsEls: orderReactions(actu.reactions as Reactions[]),
       reactionsLength: actu.reactions.length,
       commentsLength: commentsLenght,
+      time: getTimeElapsed(actu.createdAt)
     }
   }));
 

@@ -2,7 +2,7 @@
 import { RequestHandler } from 'express';
 import { BodyXData, FetchFn } from 'index';
 
-export const homeControler: RequestHandler = async (req, res) => {
+export const homeController: RequestHandler = async (req, res) => {
   const { storageData } = req.body as BodyXData;
 
   const result = await apiRequester();
