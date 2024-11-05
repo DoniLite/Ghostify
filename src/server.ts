@@ -440,6 +440,9 @@ server.get('/about', about);
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
+server.get('/cv2', (req, res) => {
+  res.render('components/cv4', { auth: undefined, service: 'cvMaker' });
+})
 
 // Admin conn
 server.post('/articlePost', articlePost);

@@ -109,7 +109,7 @@ model postFile {
 
 model Post {
   id            Int           @id @default(autoincrement())
-  uid           String?        @unique
+  uid           String?       @unique
   title         String
   description   String
   safe          Boolean
@@ -253,6 +253,7 @@ model User {
   Post          Post[]
   promotion     Promotion[]
   CV            CV[]
+  Document      Document[]
 }
 
 model Key {
@@ -312,6 +313,17 @@ model Notifications {
   seen      Boolean          @default(false)
   userId    Int?
   User      User?            @relation(fields: [userId], references: [id])
+}
+
+model Document {
+  id           Int      @id @default(autoincrement())
+  uid          String?   @unique
+  type         String
+  downloadLink String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int?
+  User         User?    @relation(fields: [userId], references: [id])
 }
 
 model CV {

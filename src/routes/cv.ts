@@ -57,6 +57,7 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
 
 export const getCV = async (req: Request, res: Response) => {
   const { cv } = req.params;
+  const { mode } = req.query;
   req.app.emit('downloader');
   const cvData = await prismaClient.cV.findUnique({
     where: {
@@ -113,6 +114,14 @@ export const getCV = async (req: Request, res: Response) => {
         : 'w-full',
     level: language.level,
   }));
+  if(mode && mode === 'view') {
+    res.render(`components/cv1.ejs`, {
+      ...cvObject,
+      service: 'cvMaker',
+      mode,
+    });
+    return;
+  }
   res.render(`components/cv1.ejs`, {
     ...cvObject,
     service: 'cvMaker',
