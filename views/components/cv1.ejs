@@ -7,7 +7,7 @@
       class="bg-gray-500 text-black p-4 flex flex-col gap-y-3 justify-center"
     >
       <div class="flex w-full justify-between items-center">
-        <% if (typeof img !== 'undefined') { %>
+        <% if (typeof img === 'string') { %>
          <img src="<%= img %>" alt="profile image" class=" w-28 h-28 rounded-full object-cover">
         <% } %>
         <h1 class="text-4xl font-bold text-neutral-900 relative"><%= fullName %></h1>

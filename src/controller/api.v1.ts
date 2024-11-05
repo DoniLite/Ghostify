@@ -530,7 +530,7 @@ export const parserRoute = async (req: Request, res: Response) => {
   }
 
   if (ext === 'html' && target === 'md') {
-    res.app.emit('reverion', { ext, target });
+    res.app.emit('reversion', { ext, target });
     return;
   }
 

@@ -66,6 +66,7 @@
     "apify-client": "^2.9.6",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
+    "bull": "^4.16.4",
     "concurrently": "^9.0.1",
     "connect-redis": "^7.1.1",
     "connect-sqlite3": "^0.9.15",

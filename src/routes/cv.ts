@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../config/db';
-import { tokenGenerator } from '../server';
+import { cvQueue, tokenGenerator } from '../server';
 import { randomInt } from 'node:crypto';
 import { RawCV } from 'index';
 import { format } from 'date-fns'
@@ -42,11 +42,22 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
     });
     console.log('user rest points:', updateUserPoints.cvCredits);
   }
+  const cvJob = await cvQueue.add(
+    { url: newCV.url, id: newCV.id },
+    {
+      attempts: 5,
+    }
+  );
+  req.session.JobsIDs = {
+    ...req.session.JobsIDs,
+    cvJob: cvJob.id,
+  };
   res.redirect(newCV.url);
 };
 
 export const getCV = async (req: Request, res: Response) => {
   const { cv } = req.params;
+  req.app.emit('downloader');
   const cvData = await prismaClient.cV.findUnique({
     where: {
       uid: cv,
@@ -82,13 +93,13 @@ export const getCV = async (req: Request, res: Response) => {
   cvObject.formations = data.formations.map((formation) => ({
     title: formation.formation,
     description: formation.certificate,
-    date: format(new Date(formation.certificationDate), 'dd /MM/yyyy'),
+    date: formation.certificationDate,
   }));
-  cvObject.experience = data.experiences.map(experience => ({
+  cvObject.experience = data.experiences.map((experience) => ({
     title: experience.experience,
-    contents: experience.details.map(detail => ({
+    contents: experience.details.map((detail) => ({
       description: detail.task,
-      duration: format(new Date(detail.taskDate), 'dd /MM/yyyy'),
+      duration: detail.taskDate,
     })),
   }));
   cvObject.interest = data.interest;
@@ -102,5 +113,46 @@ export const getCV = async (req: Request, res: Response) => {
         : 'w-full',
     level: language.level,
   }));
-  res.render('components/cv', {...cvObject});
+  res.render(`components/cv1.ejs`, {
+    ...cvObject,
+    service: 'cvMaker',
+  });
+};
+
+
+export const checkCVStatus = async (req: Request, res: Response) => {
+  const jobId = req.session.JobsIDs.cvJob;
+  const cvJob = await cvQueue.getJob(jobId);
+  const status = await cvJob.getState();
+  if (status === 'completed') {
+    const cvData = await prismaClient.cV.findUnique({
+      where: {
+        id: cvJob.data.id,
+      },
+      select: {
+        screenshot: true,
+        pdf: true,
+      },
+    });
+    res.status(200).json({ img: cvData.screenshot, doc: cvData.pdf });
+    return;
+  }
+  if (status === 'failed') {
+    await cvJob.retry();
+    res.json({
+      success: false,
+      message: "we have any problem getting your files let' try again",
+    });
+    return;
+  }
+
+  if (status === 'active' || status === 'waiting') {
+    res.json({
+      success: false,
+      message:
+        'your CV is being processed, you will get notified once it is ready',
+    });
+    return;
+  }
+  res.json({ success: false, message: 'your data are processing please wait' });
 };

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { renaming } from '../utils';
 import { RawCV } from 'index';
 import { prismaClient } from '../config/db';
-import { tokenGenerator } from '../server';
+import { cvQueue, tokenGenerator } from '../server';
 import { randomInt } from 'node:crypto';
 
 export const processCV = async (req: Request, res: Response) => {
@@ -38,7 +38,7 @@ export const processCV = async (req: Request, res: Response) => {
       return;
     }
   }
-
+  const cvType = fields.selectedCVType[0];
   const fileXPath =
     process.env.NODE_ENV === 'production'
       ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
@@ -47,6 +47,7 @@ export const processCV = async (req: Request, res: Response) => {
   req.session.CVData = {
     ...data,
     img: fileXPath,
+    cvType,
   };
   if (req.session.Auth.authenticated && !req.session.Auth.isSuperUser) {
     const checkIfUserHavePoints = await prismaClient.user.findUnique({
@@ -93,7 +94,14 @@ export const processCV = async (req: Request, res: Response) => {
       });
       console.log('user rest points:', updateUserPoints.cvCredits);
     }
-    res.status(200).json({ success: true, link: newCV.url });
+    const cvJob = await cvQueue.add({url: newCV.url, id: newCV.id}, {
+      attempts: 5,
+    });
+    req.session.JobsIDs = {
+      ...req.session.JobsIDs,
+      cvJob: cvJob.id,
+    };
+    res.status(200).json({ success: true, redirect: newCV.url });
     return;
   }
   req.session.RedirectUrl = '/cv/processApi'
@@ -102,6 +110,6 @@ export const processCV = async (req: Request, res: Response) => {
     redirect:
       process.env.NODE_ENV === 'production'
         ? 'https://ghostify.site/signin?service=poster'
-        : '',
+        : 'http://localhost:3085/signin?service=poster',
   });
 };

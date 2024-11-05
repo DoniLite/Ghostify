@@ -8,7 +8,7 @@ import { prismaClient } from './config/db';
 import { ReqParams } from './@types';
 import cors from 'cors';
 import { home } from './routes/home';
-import { homeControler } from './controller/home';
+import { homeController } from './controller/home';
 import dotEnv from 'dotenv';
 import { siteUrls } from './controller/siteUrls';
 import jwt, { SignOptions } from 'jsonwebtoken';
@@ -77,7 +77,9 @@ import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 import { downloader, serveStatic } from './routes/serveStatic';
 import { processCV } from './controller/processCv';
-import { cvProcessAPI, getCV } from './routes/cv';
+import { checkCVStatus, cvProcessAPI, getCV } from './routes/cv';
+import Queue from 'bull'
+import { cvDownloader } from './utils';
 
 passport.use(
   new GoogleStrategy(
@@ -172,8 +174,10 @@ expressWs(server);
 //   process.env.NODE_ENV !== 'production'
 //     ? 'ws://localhost/notifications'
 //     : 'ws://ghostify.site/notifications';
+const viewsPath = path.resolve(__dirname, '../views');
 server.engine('html', ejs.renderFile);
 server.set('view engine', 'ejs');
+server.set('views', viewsPath);
 // {logger: true}
 
 // Hooks...
@@ -364,7 +368,7 @@ server.get('/auth/token', async (req, res, next) => {
       return next();
     }
 
-    const userId = req.session.Auth ? req.session.Auth.login : null;
+    const userId = req.session.Auth.authenticated ? req.session.Auth.login : null;
 
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
@@ -375,6 +379,9 @@ server.get('/auth/token', async (req, res, next) => {
       where: {
         id: Number(userId),
       },
+      select: {
+        token: true,
+      }
     });
 
     if (user) {
@@ -390,7 +397,7 @@ server.get('/auth/token', async (req, res, next) => {
     return next();
   }
 });
-server.post('/home', homeControler);
+server.post('/home', homeController);
 server.get('/home', home);
 server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
@@ -472,6 +479,7 @@ server.get('/downloader/:file', downloader);
 server.post('/cv/process', processCV)
 server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
+server.get('/cv/job/status', checkCVStatus);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -510,4 +518,27 @@ server.listen(port, '0.0.0.0', async () => {
   }
 });
 
+// events...
 
+server.on('downloader', (app) => {
+  console.log('Download');
+  console.log(app);
+  console.log(server.request.session);
+})
+
+
+// workers 
+
+export const cvQueue = new Queue<{ url: string; id: number }>(
+  'cv-processor',
+  'redis://127.0.0.1:6379'
+);
+
+cvQueue.process(async (job, done) => {
+  try {
+    const downLoaderData = await cvDownloader(job.data);
+    done(null, downLoaderData);
+  } catch(e) {
+    done(e);
+  }
+})
