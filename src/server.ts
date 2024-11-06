@@ -80,6 +80,7 @@ import { processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV } from './routes/cv';
 import Queue from 'bull'
 import { cvDownloader } from './utils';
+import { billing } from './routes/billing';
 
 passport.use(
   new GoogleStrategy(
@@ -437,6 +438,7 @@ server.get('/FAQ', FAQ);
 server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
+server.get('/billing', billing);
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });

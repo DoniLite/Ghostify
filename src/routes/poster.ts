@@ -40,9 +40,12 @@ export const poster = async (req: Request, res: Response) => {
         authenticated: false,
       };
       res.redirect('/signin?service=blog');
+      return;
     }
-    if (!req.session.Auth || req.session.Auth.authenticated === false)
+    if (!req.session.Auth || req.session.Auth.authenticated === false) {
       res.redirect('/signin?service=blog');
+      return;
+    }
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
