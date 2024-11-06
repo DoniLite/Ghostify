@@ -53,6 +53,14 @@ export const home: RequestHandler = async (req, res) => {
       slugs: post.slug ? post.slug.split(',') : [],
     };
   });
+  const CVs =
+    req.session.Auth.authenticated && typeof req.session.Auth.id === 'number'
+      ? await prismaClient.cV.findMany({
+          where: {
+            userId: req.session.Auth.id,
+          },
+        })
+      : [];
   console.log('user posts: ', userPosts);
   console.log('session object:', req.session.Auth);
   // const loaderCookie = req.cookies['ghostify_home_session'];
@@ -70,7 +78,8 @@ export const home: RequestHandler = async (req, res) => {
     userFile: req.session.Auth.file || undefined,
     assets,
     bio: userData ? userData.bio : undefined,
-    link: userData ? userData.link : undefined
+    link: userData ? userData.link : undefined,
+    CVs,
   });
   return;
 };

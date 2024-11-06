@@ -50,7 +50,6 @@ import {
   requestListComponent,
 } from './routes/poster';
 import { find } from './controller/finder';
-import { cv } from './controller/cv';
 import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
@@ -76,7 +75,7 @@ import { test as testRoute } from './routes/test';
 import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 import { downloader, serveStatic } from './routes/serveStatic';
-import { processCV } from './controller/processCv';
+import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV } from './routes/cv';
 import Queue from 'bull'
 import { cvDownloader } from './utils';
@@ -443,7 +442,7 @@ server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
 server.get('/cv2', (req, res) => {
-  res.render('components/cv4', { auth: undefined, service: 'cvMaker' });
+  res.render('components/cv3', { auth: undefined, service: 'cvMaker' });
 })
 
 // Admin conn

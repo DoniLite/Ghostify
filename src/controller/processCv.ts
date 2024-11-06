@@ -7,6 +7,10 @@ import { prismaClient } from '../config/db';
 import { cvQueue, tokenGenerator } from '../server';
 import { randomInt } from 'node:crypto';
 
+export const cv = async (req: Request, res: Response) => {
+  res.render('components/cvForm', { service: undefined });
+};
+
 export const processCV = async (req: Request, res: Response) => {
   const STATIC_DIR = '../../static/cv';
   const date = new Date();

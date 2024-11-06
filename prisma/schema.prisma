@@ -319,6 +319,7 @@ model Notifications {
 model Document {
   id           Int      @id @default(autoincrement())
   uid          String?  @unique
+  title        String?
   type         String
   downloadLink String?
   createdAt    DateTime @default(now())
