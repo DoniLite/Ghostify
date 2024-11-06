@@ -26,64 +26,34 @@
       <i class="fa-solid fa-plus fa-2xl text-white text-center"></i>
     </div>
 
-    <div class="flex flex-col gap-y-1">
+    <% data.userDocs.forEach((doc, id) => { %>
+     <div class="flex flex-col gap-y-1">
       <div
         class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
       >
-        <img src="/static/SVG/word.svg" alt="doc-icon" class="object-cover" />
+        <% if (doc.type === 'docx' || doc.type === 'doc') { %>
+         <img src="/static/SVG/word.svg" alt="doc-icon" class="object-cover" />
+        <% } else if (doc.type === 'xls') { %>
+          <img src="/static/SVG/excel.svg" alt="doc-icon" class="object-cover" />
+        <% } else if (doc.type === 'csv') { %>
+          <img src="/static/SVG/csv.svg" alt="doc-icon" class="object-cover" />
+        <% } else if (doc.type === 'pdf') { %>
+          <img src="/static/SVG/pdf.svg" alt="doc-icon" class="object-cover" />
+        <% } else if (doc.type === 'ppt') { %>
+          <img
+            src="/static/SVG/powerPoint.svg"
+            alt="doc-icon"
+            class="object-cover"
+          />
+        <% } else { %>
+          <img src="/static/SVG/file.svg" alt="doc-icon" class="object-cover" />
+        <% } %>
       </div>
       <small class="font-bold text-gray-950 text-center w-full"
-        >document#1</small
+        > <%= typeof doc.title === 'string' ? doc.title : id %></small
       >
     </div>
-
-    <div class="flex flex-col gap-y-1">
-      <div
-        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
-      >
-        <img src="/static/SVG/pdf.svg" alt="doc-icon" class="object-cover" />
-      </div>
-      <small class="font-bold text-gray-950 text-center w-full"
-        >Le document</small
-      >
-    </div>
-
-    <div class="flex flex-col gap-y-1">
-      <div
-        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
-      >
-        <img src="/static/SVG/csv.svg" alt="doc-icon" class="object-cover" />
-      </div>
-      <small class="font-bold text-gray-950 text-center w-full"
-        >Le document</small
-      >
-    </div>
-
-    <div class="flex flex-col gap-y-1">
-      <div
-        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
-      >
-        <img
-          src="/static/SVG/powerPoint.svg"
-          alt="doc-icon"
-          class="object-cover"
-        />
-      </div>
-      <small class="font-bold text-gray-950 text-center w-full"
-        >Le document</small
-      >
-    </div>
-
-    <div class="flex flex-col gap-y-1">
-      <div
-        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
-      >
-        <img src="/static/SVG/excel.svg" alt="doc-icon" class="object-cover" />
-      </div>
-      <small class="font-bold text-gray-950 text-center w-full"
-        >Le document</small
-      >
-    </div>
+    <% }) %>
   </div>
 </div>
 <script type="module" src="/static/script/posterHome.js"></script>

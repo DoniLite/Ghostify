@@ -193,10 +193,18 @@ export const serviceHome = async (req: Request, res: Response) => {
     return;
   }
 
+  const userDocs = req.session.Auth.id
+    ? await prismaClient.document.findMany({
+        where: {
+          userId: req.session.Auth.id,
+        },
+      })
+    : [];
+
   res.render('serviceHome', {
     service: service,
     auth: true,
-    data: { ...user },
+    data: { ...user, userDocs },
   });
 };
 
@@ -555,8 +563,8 @@ export const googleAuth = async (req: Request, res: Response) => {
   // console.log(user);
   const authUser = await prismaClient.user.findUnique({
     where: {
-      id: user
-    }
+      id: user,
+    },
   });
   req.session.Auth = {
     authenticated: true,
@@ -564,8 +572,8 @@ export const googleAuth = async (req: Request, res: Response) => {
     id: authUser.id,
     name: authUser.username,
     file: authUser.file,
-    login: authUser.email
-  }
+    login: authUser.email,
+  };
   // req.session.Auth = {
   //   authenticated: true,
   //   id: user.id,

@@ -1,5 +1,48 @@
-<%- include('rawHeader.ejs') %>
-<div class=" max-w-4xl p-3 bg-white shadow-lg mx-auto mt-4">
+<%- include('rawHeader.ejs') %> 
+<% if (typeof mode === 'string' && mode === 'view') { %>
+<div data-uid="<%= uid %>" id="action" class="z-[40] fixed top-8 left-7">
+  <i
+    class="fa-solid fa-link fa-2xl text-white font-bold rounded-full shadow-xl bg-orange-400 p-2 cursor-pointer"
+  ></i>
+</div>
+
+<div
+  id="cvActionModal"
+  class="transUpdatePanelHide transition-all fixed w-[90vw] lg:w-[60vw] left-[10vw] lg:left-[20vw] h-[90vh] top-[5vh] bg-gray-950 rounded-md z-50 overflow-y-hidden p-2"
+>
+  <div class="flex w-full justify-between p-2">
+    <div></div>
+    <div id="closeCvActionModal" class="z-50 cursor-pointer">
+      <i class="fa-solid fa-xmark fa-2xl text-white"></i>
+    </div>
+  </div>
+  <div class=" w-full h-4 flex rounded-md mb-3">
+    <div data-index="1" class=" zapping-btn w-[50%] h-full bg-orange-500  cursor-pointer transition-all rounded-l-md"></div>
+    <div data-index="2" class=" zapping-btn w-[50%] h-full bg-white  cursor-pointer transition-all rounded-r-md"></div>
+  </div>
+  <div class="absolute w-full h-full overflow-x-hidden">
+    <div id="translatorParent" class="w-full flex h-full items-stretch transition-all">
+      <div data-translate="0" id="translatorFirst" class=" w-full flex-none self-auto overflow-y-scroll p-3">
+        <h1 class=" text-orange-500 font-bold text-2xl">Accedez aux données de votre CV</h1>
+        <div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
+          Chargement en cours veuillez patienter
+          <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
+        </div>
+      </div>
+      <div data-translate="100" id="translatorSecond" class=" w-full flex-none self-auto overflow-y-scroll p-3">
+        <h1 class=" text-orange-500 font-bold text-2xl">Modifiez votre CV</h1>
+        <span class=" text-white">Notez que ces modification peuvent vous coûter du crédit si vous n'ètes pas un abonné premium</span>
+        <div class=" w-full flex gap-4 mt-3">
+          <button id="changeTheme" class="btn bg-orange-500 text-white border-none hover:bg-white hover:text-orange-500">Changer de Theme</button>
+          <button id="formModifierBtn" class="btn bg-orange-500 text-white border-none hover:bg-white hover:text-orange-500">Formulaire</button>
+        </div>
+        <div id="assetEl" class=" w-full mt-4"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+<div class="w-[49.6rem] p-3 bg-white shadow-lg mx-auto mt-4">
   <!-- Group 1 -->
   <div class="grid grid-cols-[40%,60%] gap-0">
     <!-- Section Présentation -->
@@ -8,9 +51,15 @@
     >
       <div class="flex w-full justify-between items-center">
         <% if (typeof img === 'string') { %>
-         <img src="<%= img %>" alt="profile image" class=" w-28 h-28 rounded-full object-cover">
+        <img
+          src="<%= img %>"
+          alt="profile image"
+          class="w-28 h-28 rounded-full object-cover"
+        />
         <% } %>
-        <h1 class="text-4xl font-bold text-neutral-900 relative"><%= fullName %></h1>
+        <h1 class="text-4xl font-bold text-neutral-900 relative">
+          <%= fullName %>
+        </h1>
       </div>
       <div class="w-16 h-[2px] bg-black"></div>
       <div class="mt-4 flex flex-col justify-center gap-y-4 p-4">
@@ -52,73 +101,91 @@
       </div>
     </div>
     <!-- Profile container -->
-    <div class=" p-8 bg-gray-300">
+    <div class="p-8 bg-gray-300">
       <!-- Section profile -->
       <h1 class="text-2xl font-bold text-neutral-900 mt-12">Profile</h1>
-      <p>
-        <%= profile %>
-      </p>
+      <p><%= profile %></p>
     </div>
   </div>
   <!-- Group 2 -->
   <div class="grid grid-cols-[40%,60%] gap-0">
     <div class="bg-gray-300 text-black p-4 flex flex-col gap-y-3">
       <!-- Section compétences -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Compétences</h1>
-      <ul class=" list-disc flex flex-col ml-8 gap-y-4 mb-4">
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+        Compétences
+      </h1>
+      <ul class="list-disc flex flex-col ml-8 gap-y-4 mb-4">
         <% skills.forEach(skill => { %>
-         <li><%= skill %></li>
+        <li><%= skill %></li>
         <% }) %>
       </ul>
       <!-- Section formations -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Formations</h1>
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+        Formations
+      </h1>
 
       <% formations.forEach(formation => { %>
-       <div class="flex flex-col gap-y-1 mb-2">
-         <h3 class=" font-bold"><%= formation.title %></h3>
-         <p> <%= formation.description %> : <%= formation.date %></p>
-       </div>
+      <div class="flex flex-col gap-y-1 mb-2">
+        <h3 class="font-bold"><%= formation.title %></h3>
+        <p><%= formation.description %> : <%= formation.date %></p>
+      </div>
       <% }) %>
     </div>
-    <div class="bg-white text-black p-4 flex flex-col gap-y-3 ">
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Expérience</h1>
+    <div class="bg-white text-black p-4 flex flex-col gap-y-3">
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+        Expérience
+      </h1>
       <% experience.forEach(el => { %>
-       <div class="flex flex-col gap-y-4 mb-2">
-        <h3 class=" text-center text-lg font-bold"><%= el.title %></h3>
+      <div class="flex flex-col gap-y-4 mb-2">
+        <h3 class="text-center text-lg font-bold"><%= el.title %></h3>
         <% if (typeof el.contents !== 'undefined') { %>
-         <ul class=" flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3">
+        <ul
+          class="flex flex-col justify-center list-disc items-center w-[90%] mx-auto gap-y-3"
+        >
           <% el.contents.forEach(content => { %>
-           <li class=" flex gap-x-4">
-            <span><span class=" font-bold">- </span><%= content.description %> :</span>
+          <li class="flex gap-x-4">
+            <span
+              ><span class="font-bold">- </span><%= content.description %>
+              :</span
+            >
             <span><%= content.duration %></span>
-           </li>
+          </li>
           <% }) %>
-         </ul>
+        </ul>
         <% } %>
       </div>
       <% }) %>
       <!-- Section centres d'intérets -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Centres d'intéret</h1>
-      <ul class=" list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+        Centres d'intéret
+      </h1>
+      <ul class="list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
         <% interest.forEach(el => { %>
-         <li><%= el %></li>
+        <li><%= el %></li>
         <% }) %>
       </ul>
 
       <!-- Section langues -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">Langues</h1>
-      <ul class=" list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
+      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+        Langues
+      </h1>
+      <ul class="list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
         <% languages.forEach(language => { %>
-         <li class=" flex flex-col gap-2">
-          <h3 class=" font-bold"><%= language.title %></h3>
-          <div class=" w-full h-[6px] rounded-lg bg-gray-300">
-            <div class=" h-full bg-gray-500 rounded-lg <%= language.css %>"></div>
+        <li class="flex flex-col gap-2">
+          <h3 class="font-bold"><%= language.title %></h3>
+          <div class="w-full h-[6px] rounded-lg bg-gray-300">
+            <div
+              class="h-full bg-gray-500 rounded-lg <%= language.css %>"
+            ></div>
           </div>
           <span class=""><%= language.level %></span>
-         </li>
+        </li>
         <% }) %>
       </ul>
     </div>
   </div>
 </div>
+<% if (typeof mode === 'string' && mode === 'view') { %>
+  <script type="module" src="/static/script/cvMode.js"></script>
+<% } %>
 <%- include('rawFooter.ejs') %>

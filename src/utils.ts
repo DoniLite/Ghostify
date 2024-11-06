@@ -1,7 +1,7 @@
 import { ImageAnalysisResult, month, StatsData } from './@types';
 import fs, { promises as fsP } from 'node:fs';
 import path from 'node:path';
-import crypto from 'node:crypto';
+import crypto, { randomInt } from 'node:crypto';
 import sharp from 'sharp';
 import Vibrant from 'node-vibrant';
 import imageHash from 'image-hash';
@@ -760,6 +760,17 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
       pdf: pdfServicePath
     },
   });
+
+  const newDoc = await prismaClient.document.create({
+    data: {
+      uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
+      type: 'pdf',
+      userId: cvUpdating.userId,
+      downloadLink: cvUpdating.pdf
+    }
+  });
+
+  console.log('user doc created: ', newDoc);
 
   await browser.close();
   console.log('function running end');
