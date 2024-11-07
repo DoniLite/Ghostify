@@ -43,7 +43,68 @@ const themComponent = `<div
               class="w-full h-[30rem] rounded-lg object-cover"
             />
           </div>`;
-const formComponent = `<form class=" w-full flex-col gap-y-3">
+
+changeThemeBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  assetEl.childNodes.forEach((node) => node.remove());
+  assetEl.insertAdjacentHTML('beforeend', themComponent);
+});
+let isProcessing = false;
+modifFormBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  if (isProcessing) return;
+  isProcessing = true;
+  try {
+    const loaderComponent = `<div class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
+          Chargement en cours veuillez patienter
+          <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
+        </div>`;
+    assetEl.childNodes.forEach((node) => node.remove());
+    assetEl.insertAdjacentHTML('beforeend', loaderComponent);
+    const uid = actionBtn.dataset.uid;
+    const req = await fetch(`/cv/${uid}?api=true`);
+    if (!req.ok) {
+      assetEl.childNodes.forEach((node) => node.remove());
+      assetEl.insertAdjacentHTML(
+        'beforeend',
+        `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`
+      );
+      return;
+    }
+    /**
+   * @type {{
+    img?: string;
+    fullName?: string;
+    email?: string;
+    phoneNumber?: string;
+    location?: string;
+    birthday?: string;
+    profile?: string;
+    skills?: string[];
+    formations?: {
+        title: string;
+        description: string;
+        date: string;
+    }[];
+    experience?: {
+        title: string;
+        contents: {
+            description: string;
+            duration: string;
+        }[];
+    }[];
+    interest?: string[];
+    languages?: {
+        title: string;
+        css: "w-[30%]" | "w-[60%]" | "w-full";
+        level: string;
+    }[];
+    css?: unknown;
+  }}
+   */
+    const res = await req.json();
+    console.log(res);
+    const formComponent = `<form id="formUpdateElementParent" class=" w-full flex-col gap-y-3">
         <div
           data-translate="200"
           id="first"
@@ -58,7 +119,7 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
             class="hidden"
           />
           <img
-            src="/static/SVG/user.svg"
+            src="${res.img ? res.img : '/static/SVG/user.svg'}"
             alt="user profile"
             id="userSrcImg"
             class="w-24 h-24 mx-auto rounded-full object-cover border-2 border-orange-500 p-2"
@@ -66,30 +127,35 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
           <input
             type="text"
             name="name"
+            value="${res.fullName}"
             placeholder="Saisissez votre nom complet"
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
           />
           <input
             type="text"
             name="email"
+            value="${res.email}"
             placeholder="Saisissez votre email"
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
           />
           <input
             type="text"
             name="phone"
+            value="${res.phoneNumber}"
             placeholder="Saisissez votre numéro de téléphone"
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
           />
           <input
             type="text"
             name="adresse"
+            value="${res.location}"
             placeholder="Votre adresse/pays/ville"
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
           />
           <input
             type="date"
             name="birthday"
+            value="${res.birthday}"
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
           />
         </div>
@@ -104,7 +170,7 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
             class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
             id="actuContent"
             placeholder="Décrivez-vous"
-          ></textarea>
+          >${res.profile}</textarea>
           <div class="w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full p-2">
               <h1 class="text-white font-bold text-2xl">Compétences</h1>
@@ -115,26 +181,33 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              <div
-                data-index="1"
-                class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
-              >
-                <div
-                  class="w-4 h-4 hidden lg:block rounded-full bg-white"
-                ></div>
-                <input
-                  type="text"
-                  name="skill"
-                  id="listElement"
-                  placeholder="Element"
-                  class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                />
-                <div id="listRemoveBtn">
-                  <i
-                    class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
-                  ></i>
-                </div>
-              </div>
+              ${res.skills
+                .map((skill, index) => {
+                  return `
+                  <div
+                    data-index="${index}"
+                    class="vl-parent flex gap-x-4 w-full items-center mt-4"
+                  >
+                    <div
+                      class="w-4 h-4 hidden lg:block rounded-full bg-white"
+                    ></div>
+                    <input
+                      type="text"
+                      name="skill"
+                      value="${skill}"
+                      id="listElement"
+                      placeholder="Element"
+                      class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                    />
+                    <div id="listRemoveBtn">
+                      <i
+                        class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                      ></i>
+                    </div>
+                  </div>
+                `;
+                })
+                .join('')}
             </div>
           </div>
 
@@ -148,44 +221,52 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
               </div>
             </div>
             <div  class="lst-component w-full flex flex-col gap-y-3">
-              <div
-                data-index="1"
-                class="vl-parent flex gap-x-4 w-full items-center mt-4"
-              >
-                <div
-                  class="w-4 h-4 hidden lg:block rounded-full bg-white"
-                ></div>
-                <div
-                  class="w-full lg:grid lg:grid-cols-2 flex flex-col gap-y-3"
-                >
-                  <input
-                    type="text"
-                    name="formation"
-                    id="formationInput"
-                    placeholder="Institut de formation"
-                    class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                  />
-                  <input
-                    type="text"
-                    name="certificate"
-                    id="certificateInput"
-                    placeholder="diplôme"
-                    class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                  />
-                  <input
-                    type="text"
-                    name="certificationDate"
-                    id="certificationDateInput"
-                    placeholder="période d'obtention"
-                    class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                  />
-                </div>
-                <div id="listRemoveBtn">
-                  <i
-                    class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
-                  ></i>
-                </div>
-              </div>
+              ${res.formations
+                .map((formation, index) => {
+                  return `<div
+                          data-index="${index}"
+                          class="vl-parent flex gap-x-4 w-full items-center mt-4"
+                        >
+                          <div
+                            class="w-4 h-4 hidden lg:block rounded-full bg-white"
+                          ></div>
+                          <div
+                            class="w-full lg:grid lg:grid-cols-2 flex flex-col gap-y-3"
+                          >
+                            <input
+                              type="text"
+                              name="formation"
+                              id="formationInput"
+                              value="${formation.title}"
+                              placeholder="Institut de formation"
+                              class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                            />
+                            <input
+                              type="text"
+                              name="certificate"
+                              id="certificateInput"
+                              value="${formation.description}"
+                              placeholder="diplôme"
+                              class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                            />
+                            <input
+                              type="text"
+                              name="certificationDate"
+                              value="${formation.date}"
+                              id="certificationDateInput"
+                              placeholder="période d'obtention"
+                              class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                            />
+                          </div>
+                          <div id="listRemoveBtn">
+                            <i
+                              class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                            ></i>
+                          </div>
+                        </div>`;
+                })
+                .join('')}
+              
             </div>
           </div>
         </div>
@@ -195,7 +276,10 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
           class="w-full mx-auto mt-4 bg-gray-950 text-white p-4 rounded-lg shadow-lg shadow-black flex flex-col gap-y-6 mb-4 relative"
         >
           <h1 class="text-2xl font-bold ml-8">Expérience professionnelle</h1>
-          <div id="" class="experienceGroupEl w-full mx-auto p-3 justify-center items-center">
+          ${res.experience
+            .map((el) => {
+              return `
+            <div id="" class="experienceGroupEl w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full lg:p-2">
               <div id="addExperience">
                 <i
@@ -206,47 +290,60 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
                 type="text"
                 name="experience"
                 id="experienceInput"
+                value="${el.title}"
                 data-group="1"
                 placeholder="Titre"
                 class="lg:w-9/12 w-w-full mr-2 bg-transparent p-2 text-white font-bold"
               />
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              <div
-                data-index="1"
-                class="vl-parent flex gap-x-4 w-full items-center mt-4"
-              >
-                <div id="addTask">
-                  <i
-                    class="fa-regular fa-square-plus fa-xl text-white hover:cursor-pointer"
-                  ></i>
-                </div>
+              ${el.contents
+                .map((element, index) => {
+                  return `
                 <div
-                  class="w-full lg:grid lg:grid-cols-2 flex flex-col gap-y-3"
+                  data-index="${index}"
+                  class="vl-parent flex gap-x-4 w-full items-center mt-4"
                 >
-                  <input
-                    type="text"
-                    name="task"
-                    id="taskInput"
-                    placeholder="descrition des tàches accomplies"
-                    class="lg:w-9/12 w-full bg-transparent p-2 text-white font-bold"
-                  />
-                  <input
-                    type="text"
-                    name="taskDate"
-                    id="taskDateInput"
-                    placeholder="période"
-                    class="lg:w-9/12 w-full bg-transparent p-2 text-white font-bold"
-                  />
+                  <div id="addTask">
+                    <i
+                      class="fa-regular fa-square-plus fa-xl text-white hover:cursor-pointer"
+                    ></i>
+                  </div>
+                  <div
+                    class="w-full lg:grid lg:grid-cols-2 flex flex-col gap-y-3"
+                  >
+                    <input
+                      type="text"
+                      name="task"
+                      id="taskInput"
+                      value="${element.description}"
+                      placeholder="descrition des tàches accomplies"
+                      class="lg:w-9/12 w-full bg-transparent p-2 text-white font-bold"
+                    />
+                    <input
+                      type="text"
+                      name="taskDate"
+                      id="taskDateInput"
+                      value="${element.duration}"
+                      placeholder="période"
+                      class="lg:w-9/12 w-full bg-transparent p-2 text-white font-bold"
+                    />
+                  </div>
+                  <div id="listRemoveBtn">
+                    <i
+                      class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                    ></i>
+                  </div>
                 </div>
-                <div id="listRemoveBtn">
-                  <i
-                    class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
-                  ></i>
-                </div>
-              </div>
+                `;
+                })
+                .join('')}
             </div>
           </div>
+            `;
+            })
+            .join('')}
+          
         </div>
 
         <div
@@ -265,26 +362,31 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              <div
-                data-index="1"
-                class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
-              >
-                <div
-                  class="w-4 h-4 hidden lg:block rounded-full bg-white"
-                ></div>
-                <input
-                  type="text"
-                  name="interest"
-                  id="listElement"
-                  placeholder="Element"
-                  class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                />
-                <div id="interestRemoveBtn">
-                  <i
-                    class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
-                  ></i>
-                </div>
-              </div>
+              ${res.interest
+                .map((el, index) => {
+                  return `<div
+                          data-index="${index}"
+                          class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
+                        >
+                          <div
+                            class="w-4 h-4 hidden lg:block rounded-full bg-white"
+                          ></div>
+                          <input
+                            type="text"
+                            name="interest"
+                            id="listElement"
+                            value="${el}"
+                            placeholder="Element"
+                            class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                          />
+                          <div id="interestRemoveBtn">
+                            <i
+                              class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                            ></i>
+                          </div>
+                        </div>`;
+                })
+                .join('')}
             </div>
           </div>
 
@@ -298,40 +400,46 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              <div
-                data-index="1"
-                class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
-              >
+              ${res.languages
+                .map((lang, i) => {
+                  return `
                 <div
-                  class="w-4 h-4 hidden lg:block rounded-full bg-white"
-                ></div>
-                <div
-                  class="flex lg:flex-row flex-col gap-y-3 w-full justify-between"
+                  data-index="${i}"
+                  class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
                 >
-                  <input
-                    type="text"
-                    name="language"
-                    id="languageInput"
-                    placeholder="Element"
-                    class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
-                  />
-                  <select
-                    name=""
-                    id="languageOption"
-                    class="bg-gray-950 text-white"
+                  <div
+                    class="w-4 h-4 hidden lg:block rounded-full bg-white"
+                  ></div>
+                  <div
+                    class="flex lg:flex-row flex-col gap-y-3 w-full justify-between"
                   >
-                    <option value="">niveau de langue</option>
-                    <option value="basique">Basique</option>
-                    <option value="intermédiaire">intermédiaire</option>
-                    <option value="expérimenté">expérimenté</option>
-                  </select>
-                </div>
-                <div id="languageRemoveBtn">
-                  <i
-                    class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
-                  ></i>
-                </div>
-              </div>
+                    <input
+                      type="text"
+                      name="language"
+                      value="${lang.title}"
+                      id="languageInput"
+                      placeholder="Element"
+                      class="lg:w-9/12 w-11/12 bg-transparent p-2 text-white font-bold"
+                    />
+                    <select
+                      name=""
+                      id="languageOption"
+                      class="bg-gray-950 text-white"
+                    >
+                      <option value="">niveau de langue</option>
+                      <option value="basique">Basique</option>
+                      <option value="intermédiaire">intermédiaire</option>
+                      <option value="expérimenté">expérimenté</option>
+                    </select>
+                  </div>
+                  <div id="languageRemoveBtn">
+                    <i
+                      class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                    ></i>
+                  </div>
+                </div>`;
+                })
+                .join('')}
             </div>
             <button
                 type="submit"
@@ -344,20 +452,22 @@ const formComponent = `<form class=" w-full flex-col gap-y-3">
 
         
 </form>`;
-
-changeThemeBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    assetEl.childNodes.forEach(node => node.remove());
-    assetEl.insertAdjacentHTML('beforeend', themComponent);
-});
-modifFormBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    assetEl.childNodes.forEach(node => node.remove());
+    assetEl.childNodes.forEach((node) => node.remove());
     assetEl.insertAdjacentHTML('beforeend', formComponent);
-})
+  } catch (e) {
+    console.error(e);
+    assetEl.childNodes.forEach((node) => node.remove());
+    assetEl.insertAdjacentHTML(
+      'beforeend',
+      `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`
+    );
+  } finally {
+    isProcessing = false;
+  }
+});
 
 const fetchRessource = async () => {
-    console.log(actionBtn.dataset.uid);
+  console.log(actionBtn.dataset.uid);
   const req = await fetch(`/cv/job/status?uid=${actionBtn.dataset.uid}`);
   const res = await req.json();
   if (res.success) {
@@ -393,9 +503,6 @@ const fetchRessource = async () => {
 };
 
 window.onload = fetchRessource;
-
-
-
 
 actionBtn.addEventListener('click', (e) => {
   e.preventDefault();

@@ -20,7 +20,6 @@ import {
   intervalToDuration,
 } from 'date-fns';
 
-
 export const hashSomething = async (
   data: string | Buffer,
   saltRond?: number
@@ -714,7 +713,7 @@ Merci de faire partie de notre aventure !
 `;
 
 export const cvDownloader = async (options: { url: string; id: number }) => {
-  console.log('function running start')
+  console.log('function running start');
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
@@ -729,7 +728,7 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
     args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
-  await page.goto(options.url, {waitUntil: 'networkidle0'});
+  await page.goto(options.url, { waitUntil: 'networkidle0' });
   const pdfFilePath = path.join(STATIC_DIR, pdf);
   const pngFilePath = path.join(STATIC_IMG_DIR, png);
   await page.pdf({ path: pdfFilePath, format: 'A4', printBackground: true });
@@ -757,7 +756,7 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
     },
     data: {
       screenshot: pngServicePath,
-      pdf: pdfServicePath
+      pdf: pdfServicePath,
     },
   });
 
@@ -766,8 +765,8 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
       uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
       type: 'pdf',
       userId: cvUpdating.userId,
-      downloadLink: cvUpdating.pdf
-    }
+      downloadLink: cvUpdating.pdf,
+    },
   });
 
   console.log('user doc created: ', newDoc);
@@ -777,7 +776,7 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
 
   return {
     screenshot: cvUpdating.screenshot,
-    downloadLink: cvUpdating.pdf
+    downloadLink: cvUpdating.pdf,
   };
 };
 
@@ -871,3 +870,92 @@ export function getTimeElapsed(date: Date) {
 
   return '0s';
 }
+
+export const cvClass = {
+  v1: {
+    mode1: {
+      bg1: 'cv1-top1-col1',
+      bg2: 'cv1-top2-col1',
+      text1: 'cv1-mod1-text1',
+      text2: 'cv1-mod1-text2',
+    },
+    mode2: {
+      bg1: 'cv1-top1-col2',
+      bg2: 'cv1-top2-col2',
+      text1: 'cv1-mod2-text1',
+      text2: 'cv1-mod2-text2',
+    },
+    mode3: {
+      bg1: 'cv1-top1-col3',
+      bg2: 'cv1-top2-col3',
+      text1: 'cv1-mod3-text1',
+      text2: 'cv1-mod3-text2',
+    },
+  },
+  v2: {
+    mode1: {
+      bg1: 'cv2-mode1-bg1',
+      text1: 'cv2-mode1-text1',
+      bg2: 'cv2-mode1-bg2',
+      text2: 'cv2-mode1-text2',
+    },
+    mode2: {
+      bg1: 'cv2-mode2-bg1',
+      text1: 'cv2-mode2-text1',
+      bg2: 'cv2-mode2-bg2',
+      text2: 'cv2-mode2-text2',
+    },
+    mode3: {
+      bg1: 'cv2-mode3-bg1',
+      text1: 'cv2-mode3-text1',
+      bg2: 'cv2-mode3-bg2',
+      text2: 'cv2-mode3-text2',
+    },
+    mode4: {
+      bg1: 'cv2-mode4-bg1',
+      text1: 'cv2-mode4-text1',
+      bg2: 'cv2-mode4-bg2',
+      text2: 'cv2-mode4-text2',
+    },
+    mode5: {
+      bg1: 'cv2-mode5-bg1',
+      text1: 'cv2-mode5-text1',
+      bg2: 'cv2-mode5-bg2',
+      text2: 'cv2-mode5-text2',
+    },
+  },
+  v3: {
+    mode1: {
+      gradient: 'cv3-gradient1',
+      bg: 'cv3-bg1',
+      text: 'cv3-text1',
+      level: 'cv3-level1',
+    },
+    mode2: {
+      gradient: 'cv3-gradient2',
+      bg: 'cv3-bg2',
+      text: 'cv3-text2',
+      level: 'cv3-level2',
+    },
+    mode3: {
+      gradient: 'cv3-gradient3',
+      bg: 'cv3-bg3',
+      text: 'cv3-text3',
+      level: 'cv3-level3',
+    },
+    mode4: {
+      gradient: 'cv3-gradient4',
+      bg: 'cv3-bg4',
+      text: 'cv3-text4',
+      level: 'cv3-level4',
+    },
+    mode5: {
+      gradient: 'cv3-gradient5',
+      bg: 'cv3-bg5',
+      text: 'cv3-text5',
+      level: 'cv3-level5',
+    },
+  },
+  v4: {},
+} as const;
+

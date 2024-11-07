@@ -244,3 +244,157 @@
 .cv1-mod3-text2 {
   @apply text-neutral-700;
 }
+
+
+.cv3-gradient1 {
+  @apply from-indigo-500 via-purple-500 to-pink-500 border-indigo-500;
+}
+
+.cv3-bg1 {
+  @apply bg-white;
+}
+
+.cv3-text1 {
+  @apply text-neutral-900;
+}
+
+.cv3-level1 {
+  @apply bg-blue-500;
+}
+
+.cv3-gradient2 {
+  @apply from-blue-500 via-indigo-500 to-purple-500 border-blue-500;
+}
+
+.cv3-bg2 {
+  @apply bg-rose-950;
+}
+
+.cv3-text2 {
+  @apply text-white;
+}
+
+.cv3-level2 {
+  @apply bg-orange-500;
+}
+
+.cv3-gradient3 {
+  @apply from-teal-500 via-cyan-500 to-sky-500 border-teal-500;
+}
+
+.cv3-text3 {
+  @apply text-white;
+}
+
+.cv3-bg3 {
+  @apply bg-blue-500;
+}
+
+.cv3-level3 {
+  @apply bg-violet-950;
+}
+
+.cv3-gradient4 {
+  @apply from-emerald-500 via-green-500 to-lime-500 border-emerald-500;
+}
+
+.cv3-bg4 {
+  @apply bg-green-950;
+}
+
+.cv3-text4 {
+  @apply text-white;
+}
+
+.cv3-level4 {
+  @apply bg-orange-500;
+}
+
+
+.cv3-gradient5 {
+  @apply from-amber-500 via-orange-500 to-red-500 border-amber-500;
+}
+
+.cv3-bg5 {
+  @apply bg-gray-900;
+}
+
+.cv3-text5 {
+  @apply text-orange-500;
+}
+
+.cv3-level5 {
+  @apply bg-orange-500;
+}
+
+.cv2-mode5-bg1 {
+  @apply bg-red-500;
+}
+
+.cv2-mode5-text1 {
+  @apply text-white;
+}
+
+.cv2-mode5-bg2 {
+  @apply bg-white;
+}
+
+.cv2-mode5-text2 {
+  @apply text-gray-600;
+}
+
+/* Group 1 - Blue */
+.cv2-mode1-bg1 {
+  @apply bg-blue-500;
+}
+.cv2-mode1-text1 {
+  @apply text-white;
+}
+.cv2-mode1-bg2 {
+  @apply bg-blue-200;
+}
+.cv2-mode1-text2 {
+  @apply text-blue-700;
+}
+
+/* Group 2 - Green */
+.cv2-mode2-bg1 {
+  @apply bg-green-500;
+}
+.cv2-mode2-text1 {
+  @apply text-white;
+}
+.cv2-mode2-bg2 {
+  @apply bg-green-200;
+}
+.cv2-mode2-text2 {
+  @apply text-green-700;
+}
+
+/* Group 3 - Yellow */
+.cv2-mode3-bg1 {
+  @apply bg-yellow-500;
+}
+.cv2-mode3-text1 {
+  @apply text-gray-800;
+}
+.cv2-mode3-bg2 {
+  @apply bg-yellow-200;
+}
+.cv2-mode3-text2 {
+  @apply text-yellow-700;
+}
+
+/* Group 4 - Purple */
+.cv2-mode4-bg1 {
+  @apply bg-purple-500;
+}
+.cv2-mode4-text1 {
+  @apply text-white;
+}
+.cv2-mode4-bg2 {
+  @apply bg-purple-200;
+}
+.cv2-mode4-text2 {
+  @apply text-purple-700;
+}
