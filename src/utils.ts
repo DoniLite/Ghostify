@@ -894,11 +894,34 @@ export const cvClass = {
   },
   v2: {
     mode1: {
-      bg1: '',
-      text1: '',
-      bg2: '',
-      text2: '',
-      text3: '',
+      bg1: 'cv2-mode1-bg1',
+      text1: 'cv2-mode1-text1',
+      bg2: 'cv2-mode1-bg2',
+      text2: 'cv2-mode1-text2',
+    },
+    mode2: {
+      bg1: 'cv2-mode2-bg1',
+      text1: 'cv2-mode2-text1',
+      bg2: 'cv2-mode2-bg2',
+      text2: 'cv2-mode2-text2',
+    },
+    mode3: {
+      bg1: 'cv2-mode3-bg1',
+      text1: 'cv2-mode3-text1',
+      bg2: 'cv2-mode3-bg2',
+      text2: 'cv2-mode3-text2',
+    },
+    mode4: {
+      bg1: 'cv2-mode4-bg1',
+      text1: 'cv2-mode4-text1',
+      bg2: 'cv2-mode4-bg2',
+      text2: 'cv2-mode4-text2',
+    },
+    mode5: {
+      bg1: 'cv2-mode5-bg1',
+      text1: 'cv2-mode5-text1',
+      bg2: 'cv2-mode5-bg2',
+      text2: 'cv2-mode5-text2',
     },
   },
   v3: {

@@ -326,3 +326,75 @@
 .cv3-level5 {
   @apply bg-orange-500;
 }
+
+.cv2-mode5-bg1 {
+  @apply bg-red-500;
+}
+
+.cv2-mode5-text1 {
+  @apply text-white;
+}
+
+.cv2-mode5-bg2 {
+  @apply bg-white;
+}
+
+.cv2-mode5-text2 {
+  @apply text-gray-600;
+}
+
+/* Group 1 - Blue */
+.cv2-mode1-bg1 {
+  @apply bg-blue-500;
+}
+.cv2-mode1-text1 {
+  @apply text-white;
+}
+.cv2-mode1-bg2 {
+  @apply bg-blue-200;
+}
+.cv2-mode1-text2 {
+  @apply text-blue-700;
+}
+
+/* Group 2 - Green */
+.cv2-mode2-bg1 {
+  @apply bg-green-500;
+}
+.cv2-mode2-text1 {
+  @apply text-white;
+}
+.cv2-mode2-bg2 {
+  @apply bg-green-200;
+}
+.cv2-mode2-text2 {
+  @apply text-green-700;
+}
+
+/* Group 3 - Yellow */
+.cv2-mode3-bg1 {
+  @apply bg-yellow-500;
+}
+.cv2-mode3-text1 {
+  @apply text-gray-800;
+}
+.cv2-mode3-bg2 {
+  @apply bg-yellow-200;
+}
+.cv2-mode3-text2 {
+  @apply text-yellow-700;
+}
+
+/* Group 4 - Purple */
+.cv2-mode4-bg1 {
+  @apply bg-purple-500;
+}
+.cv2-mode4-text1 {
+  @apply text-white;
+}
+.cv2-mode4-bg2 {
+  @apply bg-purple-200;
+}
+.cv2-mode4-text2 {
+  @apply text-purple-700;
+}
