@@ -442,7 +442,7 @@ server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
 server.get('/cv2', (req, res) => {
-  res.render('components/cv3', { auth: undefined, service: 'cvMaker' });
+  res.render('components/cv2', { auth: undefined, service: 'cvMaker' });
 })
 
 // Admin conn

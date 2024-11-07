@@ -1,95 +1,75 @@
 <%- include('rawHeader.ejs') %>
-<div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex justify-center items-center p-6">
-  <div class="bg-transparent rounded-lg shadow-lg w-[49.6rem] p-8 ">
-    <div class="flex items-center mb-6 bg-white p-3">
-      <img src="profile-picture.jpg" alt="Hélène Chauvet" class="rounded-full w-24 h-24 mr-4">
-      <h1 class="text-2xl font-bold">Hélène Chauvet</h1>
-    </div>
-    <div class="grid grid-cols-2 gap-8 bg-white p-3">
-      <div>
-        <h2 class="text-lg font-bold mb-2">Profil</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris iaculis lobortis diam, porttitor vestibulum urna molestie.</p>
+<% if (typeof mode === 'string' && mode === 'view') { %>
+  <%- include('cvModal.ejs') %>
+<% } %>
+<div
+  class="bg-gradient-to-r <%= cvTheme.gradient %> <%= cvTheme.text %> flex w-[49.6rem] mx-auto border rounded-md justify-center items-center mb-4 mt-4 p-2"
+>
+  <div class="bg-transparent rounded-lg shadow-lg w-full">
+    <div class="flex items-center mb-6 <%= cvTheme.bg %> p-3 rounded-md">
+      <% if (typeof img === 'string') { %>
+      <img
+        src="<%= img %>"
+        alt="<%= fullName %>"
+        class="rounded-full w-24 h-24 mr-4 object-cover"
+      />
+      <% } %>
+      <div class="flex flex-col gap-y-2">
+        <h1 class="text-2xl font-bold"><%= fullName %></h1>
+        <h1 class=" font-bold"><%= email %></h1>
+        <h1 class=" font-bold"><%= phoneNumber %></h1>
       </div>
-      <div>
+    </div>
+    <div class="grid grid-cols-2 gap-8">
+      <div class="p-3 <%= cvTheme.bg %> rounded-md">
+        <h2 class="text-lg font-bold mb-2">Profil</h2>
+        <p><%= profile %></p>
+      </div>
+      <div class="p-3 <%= cvTheme.bg %> rounded-md">
         <h2 class="text-lg font-bold mb-2">Compétences</h2>
         <ul class="list-disc pl-5">
-          <li>Gestion</li>
-          <li>Direction</li>
-          <li>Organisation</li>
-          <li>Prise de parole en public</li>
-          <li>Résolution de problème</li>
+          <% skills.forEach(skill => { %>
+          <li><%= skill %></li>
+          <% }) %>
         </ul>
       </div>
-      <div>
+      <div class="p-3 <%= cvTheme.bg %> rounded-md">
         <h2 class="text-lg font-bold mb-2">Éducation</h2>
+        <% formations.forEach(formation => { %>
         <div class="mb-4">
-          <h3 class="font-bold">Université</h3>
-          <p>2010 - 2013</p>
-          <p>Certificat de formation</p>
+          <h3 class="font-bold"><%= formation.title %></h3>
+          <p><%= formation.date %></p>
+          <p><%= formation.description %></p>
         </div>
-        <div>
-          <h3 class="font-bold">Université</h3>
-          <p>2010 - 2013</p>
-          <p>Certificat de formation</p>
-        </div>
+        <% }) %>
       </div>
-      <div>
+      <div class="p-3 <%= cvTheme.bg %> rounded-md">
         <h2 class="text-lg font-bold mb-2">Expérience</h2>
-        <div class="mb-4">
-          <h3 class="font-bold">Titre de poste</h3>
-          <p>Nom de la compagnie</p>
-        </div>
-        <div class="mb-4">
-          <h3 class="font-bold">Titre de poste</h3>
-          <p>Nom de la compagnie</p>
-        </div>
-        <div>
-          <h3 class="font-bold">Titre de poste</h3>
-          <p>Nom de la compagnie</p>
-        </div>
+        <% experience.forEach(el => { %>
+         <div class="mb-4">
+            <h3 class="font-bold"><%= el.title %></h3>
+            <% if (typeof el.contents !== 'undefined') { %>
+              <% el.contents.forEach(element => { %>
+               <p>Nom de la compagnie</p>
+              <% }) %>
+            <% } %>
+         </div>
+        <% }) %>
       </div>
     </div>
-    <div class="mt-8 bg-white p-3">
-      <h2 class="text-lg font-bold mb-2">Logiciels</h2>
-      <div class="flex justify-between">
-        <div class="w-1/3">
-          <p class="font-bold">Photoshop</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 80%;"></div>
+    <div class="mt-8 p-3 rounded-md <%= cvTheme.bg %>">
+      <h2 class="text-lg font-bold mb-2">Langues</h2>
+      <div class="grid grid-cols-3 gap-x-2 gap-y-4">
+        <% languages.forEach(language => { %>
+        <div class="w-full">
+          <p class="font-bold"><%= language.title %></p>
+          <div class="bg-gray-300 h-2 rounded-full">
+            <div
+              class="<%= cvTheme.level %> h-2 rounded-full <%= language.css %>"
+            ></div>
           </div>
         </div>
-        <div class="w-1/3">
-          <p class="font-bold">Illustrateur</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 75%;"></div>
-          </div>
-        </div>
-        <div class="w-1/3">
-          <p class="font-bold">InDesign</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 65%;"></div>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-between mt-4">
-        <div class="w-1/3">
-          <p class="font-bold">MS Office</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 90%;"></div>
-          </div>
-        </div>
-        <div class="w-1/3">
-          <p class="font-bold">HTML 5</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 85%;"></div>
-          </div>
-        </div>
-        <div class="w-1/3">
-          <p class="font-bold">CSS</p>
-          <div class="bg-gray-200 h-2 rounded-full">
-            <div class="bg-blue-500 h-2 rounded-full" style="width: 80%;"></div>
-          </div>
-        </div>
+        <% }) %>
       </div>
     </div>
   </div>
