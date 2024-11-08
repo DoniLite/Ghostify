@@ -51,7 +51,7 @@ btns.forEach((btn) => {
  *
  * @param {Event} e
  */
-const removeItemList = (e) => {
+export const removeItemList = (e) => {
   e.preventDefault();
   const el = e.currentTarget;
   /**
@@ -71,7 +71,7 @@ const removeItemList = (e) => {
  *
  * @param {Event} e
  */
-const addListItem = (e) => {
+export const addListItem = (e) => {
   e.preventDefault();
   /**
    * @type {EventTarget}
@@ -120,7 +120,7 @@ const addListItem = (e) => {
  *
  * @param {Event} e
  */
-const removeFormation = (e) => {
+export const removeFormation = (e) => {
   e.preventDefault();
   const el = e.currentTarget;
   /**
@@ -140,7 +140,7 @@ const removeFormation = (e) => {
  *
  * @param {MouseEvent} e
  */
-const addFormation = (e) => {
+export const addFormation = (e) => {
   e.preventDefault();
   /**
    * @type {EventTarget}

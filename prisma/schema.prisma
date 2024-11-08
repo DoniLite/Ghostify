@@ -332,6 +332,8 @@ model CV {
   id         Int      @id @default(autoincrement())
   uid        String?  @unique
   url        String?
+  type       String?
+  mode       String?
   pdf        String?
   screenshot String?
   metaData   String

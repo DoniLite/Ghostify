@@ -956,6 +956,5 @@ export const cvClass = {
       level: 'cv3-level5',
     },
   },
-  v4: {},
 } as const;
 

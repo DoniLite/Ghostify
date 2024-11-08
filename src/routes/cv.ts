@@ -209,3 +209,39 @@ export const checkCVStatus = async (req: Request, res: Response) => {
     res.json({ success: false, error: true });
   }
 };
+
+export const getCVTheme = async (req: Request, res: Response) => {
+  const { uid } = req.params;
+  const { set, data } = req.query as QueryXData<{ set: string; data: string }>;
+  try {
+    const theme = await prismaClient.cV.findUnique({
+      where: {
+        uid,
+      },
+    });
+    if (set && data && set === 'true') {
+      const [type, mode] = data.split(';');
+      const updatingTheme = await prismaClient.cV.update({
+        where: {
+          uid,
+        },
+        data: {
+          type: type,
+          mode: mode,
+        },
+      });
+      console.log('theme updated successfully : ', updatingTheme.type, updatingTheme.mode);
+      res
+        .status(200)
+        .json({ success: true });
+      return;
+    }
+    res.status(200).json({
+      type: theme.type ? theme.type : 1,
+      mode: theme.mode ? theme.mode : 1,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(400).json({ success: false });
+  }
+};

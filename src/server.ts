@@ -76,7 +76,7 @@ import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
-import { checkCVStatus, cvProcessAPI, getCV } from './routes/cv';
+import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull'
 import { cvDownloader } from './utils';
 import { billing } from './routes/billing';
@@ -480,6 +480,7 @@ server.get('/downloader/:file', downloader);
 server.post('/cv/process', processCV)
 server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
+server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
 
 // Plateform bin
