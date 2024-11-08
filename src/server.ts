@@ -76,10 +76,11 @@ import expressWs from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
-import { checkCVStatus, cvProcessAPI, getCV } from './routes/cv';
+import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull'
 import { cvDownloader } from './utils';
 import { billing } from './routes/billing';
+import { documentView } from './routes/doc';
 
 passport.use(
   new GoogleStrategy(
@@ -438,6 +439,7 @@ server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
 server.get('/billing', billing);
+server.get('/poster/docs/', documentView );
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
@@ -480,6 +482,7 @@ server.get('/downloader/:file', downloader);
 server.post('/cv/process', processCV)
 server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
+server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
 
 // Plateform bin
@@ -497,6 +500,16 @@ server.get('/update/visitor', urlVisitor);
 server.get('/find', find);
 server.get('/feed', (req, res) => {
   return res.render('src/views/components/feed.ejs', { service: undefined });
+});
+
+server.use((req, res) => {
+  res.status(404).render('404'); // Remplace par le chemin de ton fichier HTML 404
+
+  // Ou pour un message simple en texte
+  // res.send('404 - Page non trouvée');
+
+  // Ou pour une réponse JSON
+  // res.json({ error: '404 - Page non trouvée' });
 });
 
 const port = parseInt(process.env.PORT) || 3085;

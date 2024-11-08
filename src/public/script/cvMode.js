@@ -1,5 +1,17 @@
 /* eslint-disable no-undef */
 
+import {
+  addExperience,
+  addFormation,
+  addInterest,
+  addLanguage,
+  addListItem,
+  addTask,
+  experienceTrigger,
+  formationTrigger,
+  languageTrigger,
+} from './eventHandlers.js';
+
 const cvActionModal = document.querySelector('#cvActionModal');
 const actionBtn = document.querySelector('#action');
 const closeCvActionModal = document.querySelector('#closeCvActionModal');
@@ -7,15 +19,47 @@ const firstTarget = document.querySelector('#translatorFirst');
 const secondTarget = document.querySelector('#translatorSecond');
 const zappingBtns = document.querySelectorAll('.zapping-btn');
 const translatorParent = document.querySelector('#translatorParent');
-const ressourceLoader = document.querySelector('#ressourceLoader');
+// const ressourceLoader = document.querySelector('#ressourceLoader');
 const assetEl = document.querySelector('#assetEl');
 const changeThemeBtn = document.querySelector('#changeTheme');
 const modifFormBtn = document.querySelector('#formModifierBtn');
-const ressourceLoaderComponent = `<div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
+const resourceLoaderComponent = `<div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
           Chargement en cours veuillez patienter
           <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
         </div>`;
-const themComponent = `<div
+
+changeThemeBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const uid = actionBtn.dataset.uid;
+  const req = await fetch(`/cv/theme/${uid}`);
+  /**
+   *
+   * @param {typeof res} data
+   */
+  const updatingFrontWithTheme = (data) => {
+    const cvType = `${data.type};${data.mode}`;
+    assetEl
+      .querySelector('#changingThemeFormParent')
+      .querySelectorAll('input')
+      .forEach((el) => {
+        if (el.value === cvType) {
+          assetEl
+            .querySelector('#changingThemeFormParent')
+            .querySelectorAll('input')
+            .forEach((input) =>
+              input.classList.remove('border-4', 'border-orange-500')
+            );
+          el.classList.toggle('border-4');
+          el.classList.toggle('border-orange-500');
+          return;
+        }
+      });
+  };
+  /**
+   * @type {{type: string | number; mode: string | number;}}
+   */
+  const res = await req.json();
+  const themeComponent = `<div id="changingThemeFormParent"
             class="lg:grid w-full lg:gap-4 lg:grid-cols-2 flex flex-col gap-y-4"
           >
             <input
@@ -23,14 +67,54 @@ const themComponent = `<div
               src="/static/screen/cv1.png"
               alt="cv-type"
               name="cvType"
-              value="1"
+              value="1;1"
               class="w-full h-[30rem] rounded-lg object-cover border-4 border-orange-500"
             />
             <input
               type="image"
               src="/static/screen/cv1.png"
               alt="cv-type"
-              value="2"
+              name="cvType"
+              value="1;2"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;3"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;4"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;5"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;6"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="2;1"
               name="cvType"
               class="w-full h-[30rem] rounded-lg object-cover"
             />
@@ -38,16 +122,103 @@ const themComponent = `<div
               type="image"
               src="/static/screen/cv1.png"
               alt="cv-type"
-              value="3"
+              value="2;2"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="2;3"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="2;4"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="2;5"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="3;1"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="3;2"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="3;3"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="3;4"
+              name="cvType"
+              class="w-full h-[30rem] rounded-lg object-cover"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              value="3;5"
               name="cvType"
               class="w-full h-[30rem] rounded-lg object-cover"
             />
           </div>`;
-
-changeThemeBtn.addEventListener('click', (e) => {
-  e.preventDefault();
   assetEl.childNodes.forEach((node) => node.remove());
-  assetEl.insertAdjacentHTML('beforeend', themComponent);
+  assetEl.insertAdjacentHTML('beforeend', themeComponent);
+  assetEl
+    .querySelector('#changingThemeFormParent')
+    .querySelectorAll('input')
+    .forEach((input) => {
+      input.addEventListener('click', async (e) => {
+        e.preventDefault();
+        assetEl
+          .querySelector('#changingThemeFormParent')
+          .querySelectorAll('input')
+          .forEach((input) =>
+            input.classList.remove('border-4', 'border-orange-500')
+          );
+        e.currentTarget.classList.toggle('border-4');
+        e.currentTarget.classList.toggle('border-orange-500');
+        const req2 = await fetch(
+          `/cv/theme/${uid}?set=true&data=${e.currentTarget.value}`
+        );
+        const res2 = await req2.json();
+        if (res2.success) {
+          window.location.reload();
+        }
+      });
+    });
+  if (req.ok) {
+    updatingFrontWithTheme(res);
+  }
 });
 let isProcessing = false;
 modifFormBtn.addEventListener('click', async (e) => {
@@ -55,12 +226,8 @@ modifFormBtn.addEventListener('click', async (e) => {
   if (isProcessing) return;
   isProcessing = true;
   try {
-    const loaderComponent = `<div class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
-          Chargement en cours veuillez patienter
-          <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
-        </div>`;
     assetEl.childNodes.forEach((node) => node.remove());
-    assetEl.insertAdjacentHTML('beforeend', loaderComponent);
+    assetEl.insertAdjacentHTML('beforeend', resourceLoaderComponent);
     const uid = actionBtn.dataset.uid;
     const req = await fetch(`/cv/${uid}?api=true`);
     if (!req.ok) {
@@ -272,6 +439,7 @@ modifFormBtn.addEventListener('click', async (e) => {
         </div>
 
         <div
+          id="experienceGroup"
           data-translate="400"
           class="w-full mx-auto mt-4 bg-gray-950 text-white p-4 rounded-lg shadow-lg shadow-black flex flex-col gap-y-6 mb-4 relative"
         >
@@ -454,6 +622,53 @@ modifFormBtn.addEventListener('click', async (e) => {
 </form>`;
     assetEl.childNodes.forEach((node) => node.remove());
     assetEl.insertAdjacentHTML('beforeend', formComponent);
+    assetEl
+      .querySelector('#formUpdateElementParent')
+      .addEventListener('submit', processCVForAPI);
+    assetEl.querySelector('#listAdd').addEventListener('click', addListItem);
+    assetEl
+      .querySelector('#addFormation')
+      .addEventListener('click', addFormation);
+    assetEl.querySelector('#addTask').addEventListener('click', addTask);
+    assetEl
+      .querySelector('#addExperience')
+      .addEventListener('click', addExperience);
+    assetEl
+      .querySelector('#addLanguage')
+      .addEventListener('click', addLanguage);
+    assetEl
+      .querySelector('#addInterest')
+      .addEventListener('click', addInterest);
+    assetEl
+      .querySelector('#formationInput')
+      .addEventListener('change', formationTrigger);
+    assetEl
+      .querySelector('#experienceInput')
+      .addEventListener('change', experienceTrigger);
+    assetEl
+      .querySelector('#languageInput')
+      .addEventListener('change', languageTrigger);
+
+    assetEl.querySelector('#userSrcImg').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('#fileInput').click();
+    });
+
+    assetEl.querySelector('#fileInput').addEventListener('change', (e) => {
+      e.preventDefault();
+      const file = e.currentTarget.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          /**
+           * @type {HTMLImageElement}
+           */
+          const img = document.querySelector('#userSrcImg');
+          img.src = reader.result;
+        };
+      }
+    });
   } catch (e) {
     console.error(e);
     assetEl.childNodes.forEach((node) => node.remove());
@@ -466,7 +681,7 @@ modifFormBtn.addEventListener('click', async (e) => {
   }
 });
 
-const fetchRessource = async () => {
+const fetchResource = async () => {
   console.log(actionBtn.dataset.uid);
   const req = await fetch(`/cv/job/status?uid=${actionBtn.dataset.uid}`);
   const res = await req.json();
@@ -475,7 +690,7 @@ const fetchRessource = async () => {
       return;
     }
     firstTarget.children[1].remove();
-    const ressourceComponent = `<div class=" flex w-full flex-col gap-y-4  mt-4">
+    const ressourceComponent = `<div id="" class=" flex w-full flex-col gap-y-4  mt-4">
           <div class="flex gap-x-2 text-orange-500 font-bold items-center">
             <span class="text-white">PDF: </span>
             <a href="${res.doc}" class=" hover:underline line-clamp-2" target="_blank">
@@ -502,10 +717,13 @@ const fetchRessource = async () => {
   }
 };
 
-window.onload = fetchRessource;
+window.onload = fetchResource;
 
-actionBtn.addEventListener('click', (e) => {
+actionBtn.addEventListener('click', async (e) => {
   e.preventDefault();
+  if (firstTarget.children[1].getAttribute('id') === 'ressourceLoader') {
+    await fetchResource();
+  }
   cvActionModal.classList.remove('transUpdatePanelHide');
   cvActionModal.classList.add('transNotificationShow');
 });
@@ -539,3 +757,92 @@ zappingBtns.forEach((btn) => {
     });
   });
 });
+
+/**
+ *
+ * @param {FormDataEvent} event
+ */
+const processCVForAPI = async (event) => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const name = form.get('name');
+  const email = form.get('email');
+  const phone = form.get('phone');
+  const address = form.get('adresse');
+  const birthday = form.get('birthday');
+  const profile = form.get('profile');
+  const skills = form.getAll('skill');
+  const interest = form.getAll('interest');
+  const formationGroup = assetEl.querySelector('#formationGroupEl');
+  const experienceGroup = assetEl.querySelector('#experienceGroup');
+  console.log(formationGroup);
+  const languageGroup = assetEl.querySelector('#languageGroup');
+  /**
+   * @type {{formation: string; certificate: string; certificationDate: string}[]}
+   */
+  const formations = [];
+  /**
+   * @type {{experience: string; details: {task: string; taskDate: string}[]}[]}
+   */
+  const experiences = [];
+  /**
+   * @type {{lang: string; level: string}[]}
+   */
+  const languages = [];
+  formationGroup.querySelectorAll('.lst-component').forEach((el) => {
+    const formation = el.querySelector('input[name="formation"]').value;
+    const certificate = el.querySelector('input[id="certificateInput"]').value;
+    const certificationDate = el.querySelector(
+      'input[id="certificationDateInput"]'
+    ).value;
+    formations.push({
+      formation,
+      certificate,
+      certificationDate,
+    });
+  });
+  experienceGroup.querySelectorAll('.experienceGroupEl').forEach((el) => {
+    const details = [];
+    const exp = el.querySelector('input[name="experience"]').value;
+    el.querySelectorAll('.lst-component').forEach((el) => {
+      const task = el.querySelector('input[id="taskInput"]').value;
+      const taskDate = el.querySelector('input[id="taskDateInput"]').value;
+      details.push({ task, taskDate });
+    });
+    experiences.push({ experience: exp, details });
+  });
+  languageGroup.querySelectorAll('.lst-component').forEach((el) => {
+    const lang = el.querySelector('#languageInput').value;
+    const languageOption = el.querySelector('#languageOption');
+    const level =
+      languageOption?.value ?? languageOption?.getAttribute('name') ?? '';
+    languages.push({ lang, level });
+  });
+  const data = {
+    name,
+    email,
+    phone,
+    address,
+    birthday,
+    profile,
+    skills,
+    interest,
+    formations,
+    experiences,
+    languages,
+  };
+  console.log(data);
+  const jsonData = JSON.stringify(data);
+  form.append('jsonData', jsonData);
+  console.log(form.get('userProfileFile'));
+  const fetcher = await fetch('/cv/process', {
+    method: 'POST',
+    headers: {
+      contentType: 'multipart/form-data',
+    },
+    body: form,
+  });
+  const res = await fetcher.json();
+  // console.log(res.redirect);
+  window.location.href = res.redirect;
+};

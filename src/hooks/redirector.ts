@@ -34,7 +34,6 @@ export const redirector = async (req: Request, res: Response, next: NextFunction
         pagination: 0,
         activeIndex: 0,
       });
-      next();
       return;
     }
     const { persisted, noApiData } =
@@ -51,7 +50,6 @@ export const redirector = async (req: Request, res: Response, next: NextFunction
     };
     if(req.url === '/' || req.url === '') {
         res.redirect('/home');
-        next();
         return;
     }
     next();

@@ -28,7 +28,9 @@ export const processCV = async (req: Request, res: Response) => {
   let result: false | string;
   const [fields, files] = await form.parse(req);
 
-  const file = files?.file?.[0];
+  console.log('formidable files: ',files);
+
+  const file = files?.userProfileFile?.[0];
   if (file) {
     try {
       result = await renaming(file, path.resolve(__dirname, STATIC_DIR));
@@ -42,7 +44,9 @@ export const processCV = async (req: Request, res: Response) => {
       return;
     }
   }
-  const cvType = fields.selectedCVType[0];
+  console.log('file : ' + file);
+  console.log(result);
+  const cvType = fields.selectedCVType ? fields.selectedCVType[0] : undefined;
   const fileXPath =
     process.env.NODE_ENV === 'production'
       ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
@@ -105,7 +109,7 @@ export const processCV = async (req: Request, res: Response) => {
       ...req.session.JobsIDs,
       cvJob: cvJob.id,
     };
-    res.status(200).json({ success: true, redirect: newCV.url });
+    res.status(200).json({ success: true, redirect: `${newCV.url}?mode=view` });
     return;
   }
   req.session.RedirectUrl = '/cv/processApi'

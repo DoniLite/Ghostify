@@ -2,12 +2,12 @@
 <% if (typeof mode === 'string' && mode === 'view') { %>
   <%- include('cvModal.ejs') %>
 <% } %>
-<div class="w-[49.6rem] p-3 bg-white shadow-lg mx-auto mt-4">
+<div class="w-[49.6rem] min-h-[52.6rem] <%= cvTheme.bg3 %> shadow-lg mx-auto mt-4">
   <!-- Group 1 -->
   <div class="grid grid-cols-[40%,60%] gap-0">
     <!-- Section Présentation -->
     <div
-      class="bg-gray-500 text-black p-4 flex flex-col gap-y-3 justify-center"
+      class=" <%= cvTheme.bg1 %> <%= cvTheme.text1 %> p-4 flex flex-col gap-y-3 justify-center"
     >
       <div class="flex w-full justify-between items-center">
         <% if (typeof img === 'string') { %>
@@ -17,11 +17,11 @@
           class="w-28 h-28 rounded-full object-cover"
         />
         <% } %>
-        <h1 class="text-4xl font-bold text-neutral-900 relative">
+        <h1 class="text-4xl font-bold relative">
           <%= fullName %>
         </h1>
       </div>
-      <div class="w-16 h-[2px] bg-black"></div>
+      <div class="w-16 h-[2px] <%= cvTheme.bg3 %>"></div>
       <div class="mt-4 flex flex-col justify-center gap-y-4 p-4">
         <div class="flex gap-x-4 items-center font-bold">
           <img
@@ -35,7 +35,7 @@
         <div class="flex gap-x-4 items-center font-bold">
           <img
             src="/static/SVG/phone.svg"
-            class="w-8 h-8 p-0.5 object-contain bg-white rounded-full flex"
+            class="w-8 h-8 p-0.5 object-contain <%= cvTheme.bg3 %> rounded-full flex"
             alt=""
           />
           <%= phoneNumber %>
@@ -44,7 +44,7 @@
         <div class="flex gap-x-4 items-center font-bold">
           <img
             src="/static/SVG/location-dot.svg"
-            class="w-8 h-8 p-0.5 object-contain bg-white rounded-full flex"
+            class="w-8 h-8 p-0.5 object-contain <%= cvTheme.bg3 %> rounded-full flex"
             alt=""
           />
           <%= location %>
@@ -53,7 +53,7 @@
         <div class="flex gap-x-4 items-center font-bold">
           <img
             src="/static/SVG/calendar.svg"
-            class="w-8 h-8 p-0.5 object-contain bg-white rounded-full flex"
+            class="w-8 h-8 p-0.5 object-contain <%= cvTheme.bg3 %> rounded-full flex"
             alt=""
           />
           <%= birthday %>
@@ -61,17 +61,17 @@
       </div>
     </div>
     <!-- Profile container -->
-    <div class="p-8 bg-gray-300">
+    <div class="p-8 <%= cvTheme.bg2 %> <%= cvTheme.text2 %>">
       <!-- Section profile -->
-      <h1 class="text-2xl font-bold text-neutral-900 mt-12">Profile</h1>
+      <h1 class="text-2xl font-bold mt-12">Profile</h1>
       <p><%= profile %></p>
     </div>
   </div>
   <!-- Group 2 -->
   <div class="grid grid-cols-[40%,60%] gap-0">
-    <div class="bg-gray-300 text-black p-4 flex flex-col gap-y-3">
+    <div class="<%= cvTheme.bg2 %> <%= cvTheme.text2 %> p-4 flex flex-col gap-y-3">
       <!-- Section compétences -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+      <h1 class="text-2xl font-bold mb-4 text-center">
         Compétences
       </h1>
       <ul class="list-disc flex flex-col ml-8 gap-y-4 mb-4">
@@ -80,7 +80,7 @@
         <% }) %>
       </ul>
       <!-- Section formations -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+      <h1 class="text-2xl font-bold mb-4 text-center">
         Formations
       </h1>
 
@@ -91,8 +91,8 @@
       </div>
       <% }) %>
     </div>
-    <div class="bg-white text-black p-4 flex flex-col gap-y-3">
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+    <div class="<%= cvTheme.bg3 %> <%= cvTheme.text3 %> p-4 flex flex-col gap-y-3">
+      <h1 class="text-2xl font-bold mb-4 text-center">
         Expérience
       </h1>
       <% experience.forEach(el => { %>
@@ -116,7 +116,7 @@
       </div>
       <% }) %>
       <!-- Section centres d'intérets -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+      <h1 class="text-2xl font-bold mb-4 text-center">
         Centres d'intéret
       </h1>
       <ul class="list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
@@ -126,7 +126,7 @@
       </ul>
 
       <!-- Section langues -->
-      <h1 class="text-2xl font-bold text-neutral-900 mb-4 text-center">
+      <h1 class="text-2xl font-bold  mb-4 text-center">
         Langues
       </h1>
       <ul class="list-disc flex flex-col mx-auto w-[70%] gap-y-4 mb-4">
@@ -135,7 +135,7 @@
           <h3 class="font-bold"><%= language.title %></h3>
           <div class="w-full h-[6px] rounded-lg bg-gray-300">
             <div
-              class="h-full bg-gray-500 rounded-lg <%= language.css %>"
+              class="h-full <%= cvTheme.level %> rounded-lg <%= language.css %>"
             ></div>
           </div>
           <span class=""><%= language.level %></span>
