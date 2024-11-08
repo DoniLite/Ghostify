@@ -4,11 +4,14 @@
     id="newDocumentRequester"
   >
     <div class="flex justify-between w-full">
-      <a class="flex items-center cursor-pointer gap-x-3" href="/poster/new?service=<%= service %>">
+      <a
+        class="flex items-center cursor-pointer gap-x-3"
+        href="/poster/new?service=<%= service %>"
+      >
         <img src="/static/SVG/file.svg" alt="doc-icon" class="w-8 h-8" />
         Nouveau document / article
       </a>
-      <div id="actionCloser" class=" p-2 cursor-pointer">
+      <div id="actionCloser" class="p-2 cursor-pointer">
         <i class="fa-solid fa-xmark fa-lg text-white"></i>
       </div>
     </div>
@@ -18,7 +21,9 @@
     </a>
   </div>
   <h1 class="font-bold mb-4 text-2xl">Documents récents</h1>
-  <div class="flex sm:gap-x-8 gap-y-4 gap-x-2 mx-auto w-[90%] lg:w-full flex-wrap">
+  <div
+    class="flex sm:gap-x-8 gap-y-4 gap-x-2 mx-auto w-[90%] lg:w-full flex-wrap"
+  >
     <div
       id="posterNewAction"
       class="p-3 rounded-md w-16 flex h-16 justify-center cursor-pointer items-center bg-gray-950"
@@ -27,30 +32,31 @@
     </div>
 
     <% data.userDocs.forEach((doc, id) => { %>
-     <div class="flex flex-col gap-y-1">
-      <div
+    <div class="flex flex-col gap-y-1">
+      <a
+        href="<%= doc.downloadLink %>"
         class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
       >
         <% if (doc.type === 'docx' || doc.type === 'doc') { %>
-         <img src="/static/SVG/word.svg" alt="doc-icon" class="object-cover" />
+        <img src="/static/SVG/word.svg" alt="doc-icon" class="object-cover" />
         <% } else if (doc.type === 'xls') { %>
-          <img src="/static/SVG/excel.svg" alt="doc-icon" class="object-cover" />
+        <img src="/static/SVG/excel.svg" alt="doc-icon" class="object-cover" />
         <% } else if (doc.type === 'csv') { %>
-          <img src="/static/SVG/csv.svg" alt="doc-icon" class="object-cover" />
+        <img src="/static/SVG/csv.svg" alt="doc-icon" class="object-cover" />
         <% } else if (doc.type === 'pdf') { %>
-          <img src="/static/SVG/pdf.svg" alt="doc-icon" class="object-cover" />
+        <img src="/static/SVG/pdf.svg" alt="doc-icon" class="object-cover" />
         <% } else if (doc.type === 'ppt') { %>
-          <img
-            src="/static/SVG/powerPoint.svg"
-            alt="doc-icon"
-            class="object-cover"
-          />
+        <img
+          src="/static/SVG/powerPoint.svg"
+          alt="doc-icon"
+          class="object-cover"
+        />
         <% } else { %>
-          <img src="/static/SVG/file.svg" alt="doc-icon" class="object-cover" />
+        <img src="/static/SVG/file.svg" alt="doc-icon" class="object-cover" />
         <% } %>
-      </div>
-      <small class="font-bold text-gray-950 text-center w-full"
-        > <%= typeof doc.title === 'string' ? doc.title : id %></small
+      </a>
+      <small class="font-bold text-gray-950 text-center w-full">
+        <%= typeof doc.title === 'string' ? doc.title : id %></small
       >
     </div>
     <% }) %>

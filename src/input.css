@@ -193,58 +193,143 @@
   border-bottom: 50px solid transparent;
 }
 
-.cv1-top1-col1 {
+/* Mode 1 - Gray */
+.cv1-mode1-bg1 {
+  @apply bg-gray-500;
+}
+.cv1-mode1-bg2 {
+  @apply bg-gray-300;
+}
+.cv1-mode1-bg3 {
+  @apply bg-white;
+}
+.cv1-mode1-text1 {
+  @apply text-gray-900;
+}
+.cv1-mode1-text2 {
+  @apply text-gray-900;
+}
+.cv1-mode1-text3 {
+  @apply text-gray-900;
+}
+.cv1-mode1-level {
   @apply bg-gray-500;
 }
 
-.cv1-top2-col1 {
-  @apply bg-gray-300;
+/* Mode 2 - Blue */
+.cv1-mode2-bg1 {
+  @apply bg-blue-500;
 }
-
-.cv1-mod1-text1 {
-  @apply text-neutral-900;
+.cv1-mode2-bg2 {
+  @apply bg-blue-300;
 }
-
-.cv1-mod1-text2 {
-  @apply text-neutral-900;
+.cv1-mode2-bg3 {
+  @apply bg-white;
 }
-
-
-
-.cv1-top1-col2 {
-  @apply bg-red-500;
+.cv1-mode2-text1 {
+  @apply text-blue-200;
 }
-
-.cv1-top2-col2 {
-  @apply bg-red-300;
+.cv1-mode2-text2 {
+  @apply text-blue-700;
 }
-
-.cv1-mod2-text1 {
-  @apply text-white;
+.cv1-mode2-text3 {
+  @apply text-blue-700;
 }
-
-.cv1-mod2-text2 {
-  @apply text-neutral-700;
-}
-
-
-
-.cv1-top1-col3 {
+.cv1-mode2-level {
   @apply bg-blue-500;
 }
 
-.cv1-top2-col3 {
-  @apply bg-blue-300;
+/* Mode 3 - Green */
+.cv1-mode3-bg1 {
+  @apply bg-green-500;
 }
-
-.cv1-mod3-text1 {
+.cv1-mode3-bg2 {
+  @apply bg-green-300;
+}
+.cv1-mode3-bg3 {
+  @apply bg-white;
+}
+.cv1-mode3-text1 {
   @apply text-white;
 }
-
-.cv1-mod3-text2 {
-  @apply text-neutral-700;
+.cv1-mode3-text2 {
+  @apply text-green-700;
+}
+.cv1-mode3-text3 {
+  @apply text-green-700;
+}
+.cv1-mode3-level {
+  @apply bg-green-500;
 }
 
+/* Mode 4 - Purple */
+.cv1-mode4-bg1 {
+  @apply bg-purple-500;
+}
+.cv1-mode4-bg2 {
+  @apply bg-purple-300;
+}
+.cv1-mode4-bg3 {
+  @apply bg-white;
+}
+.cv1-mode4-text1 {
+  @apply text-white;
+}
+.cv1-mode4-text2 {
+  @apply text-purple-700;
+}
+.cv1-mode4-text3 {
+  @apply text-purple-700;
+}
+.cv1-mode4-level {
+  @apply bg-purple-500;
+}
+
+/* Mode 5 - Red */
+.cv1-mode5-bg1 {
+  @apply bg-red-500;
+}
+.cv1-mode5-bg2 {
+  @apply bg-red-300;
+}
+.cv1-mode5-bg3 {
+  @apply bg-white;
+}
+.cv1-mode5-text1 {
+  @apply text-white;
+}
+.cv1-mode5-text2 {
+  @apply text-red-700;
+}
+.cv1-mode5-text3 {
+  @apply text-red-700;
+}
+.cv1-mode5-level {
+  @apply bg-red-500;
+}
+
+/* Mode 6 - Orange */
+.cv1-mode6-bg1 {
+  @apply bg-orange-500;
+}
+.cv1-mode6-bg2 {
+  @apply bg-orange-300;
+}
+.cv1-mode6-bg3 {
+  @apply bg-white;
+}
+.cv1-mode6-text1 {
+  @apply text-white;
+}
+.cv1-mode6-text2 {
+  @apply text-orange-700;
+}
+.cv1-mode6-text3 {
+  @apply text-orange-700;
+}
+.cv1-mode6-level {
+  @apply bg-orange-500;
+}
 
 .cv3-gradient1 {
   @apply from-indigo-500 via-purple-500 to-pink-500 border-indigo-500;
@@ -309,7 +394,6 @@
 .cv3-level4 {
   @apply bg-orange-500;
 }
-
 
 .cv3-gradient5 {
   @apply from-amber-500 via-orange-500 to-red-500 border-amber-500;

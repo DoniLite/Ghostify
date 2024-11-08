@@ -1,5 +1,17 @@
 /* eslint-disable no-undef */
 
+import {
+  addExperience,
+  addFormation,
+  addInterest,
+  addLanguage,
+  addListItem,
+  addTask,
+  experienceTrigger,
+  formationTrigger,
+  languageTrigger,
+} from './eventHandlers.js';
+
 const cvActionModal = document.querySelector('#cvActionModal');
 const actionBtn = document.querySelector('#action');
 const closeCvActionModal = document.querySelector('#closeCvActionModal');
@@ -25,7 +37,7 @@ changeThemeBtn.addEventListener('click', async (e) => {
    * @param {typeof res} data
    */
   const updatingFrontWithTheme = (data) => {
-    const cvType = `${data.type}:${data.mode}`;
+    const cvType = `${data.type};${data.mode}`;
     assetEl
       .querySelector('#changingThemeFormParent')
       .querySelectorAll('input')
@@ -72,6 +84,30 @@ changeThemeBtn.addEventListener('click', async (e) => {
               alt="cv-type"
               name="cvType"
               value="1;3"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;4"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;5"
+              class="w-full h-[30rem] rounded-lg object-cove"
+            />
+            <input
+              type="image"
+              src="/static/screen/cv1.png"
+              alt="cv-type"
+              name="cvType"
+              value="1;6"
               class="w-full h-[30rem] rounded-lg object-cove"
             />
             <input
@@ -403,6 +439,7 @@ modifFormBtn.addEventListener('click', async (e) => {
         </div>
 
         <div
+          id="experienceGroup"
           data-translate="400"
           class="w-full mx-auto mt-4 bg-gray-950 text-white p-4 rounded-lg shadow-lg shadow-black flex flex-col gap-y-6 mb-4 relative"
         >
@@ -588,6 +625,50 @@ modifFormBtn.addEventListener('click', async (e) => {
     assetEl
       .querySelector('#formUpdateElementParent')
       .addEventListener('submit', processCVForAPI);
+    assetEl.querySelector('#listAdd').addEventListener('click', addListItem);
+    assetEl
+      .querySelector('#addFormation')
+      .addEventListener('click', addFormation);
+    assetEl.querySelector('#addTask').addEventListener('click', addTask);
+    assetEl
+      .querySelector('#addExperience')
+      .addEventListener('click', addExperience);
+    assetEl
+      .querySelector('#addLanguage')
+      .addEventListener('click', addLanguage);
+    assetEl
+      .querySelector('#addInterest')
+      .addEventListener('click', addInterest);
+    assetEl
+      .querySelector('#formationInput')
+      .addEventListener('change', formationTrigger);
+    assetEl
+      .querySelector('#experienceInput')
+      .addEventListener('change', experienceTrigger);
+    assetEl
+      .querySelector('#languageInput')
+      .addEventListener('change', languageTrigger);
+
+    assetEl.querySelector('#userSrcImg').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('#fileInput').click();
+    });
+
+    assetEl.querySelector('#fileInput').addEventListener('change', (e) => {
+      e.preventDefault();
+      const file = e.currentTarget.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          /**
+           * @type {HTMLImageElement}
+           */
+          const img = document.querySelector('#userSrcImg');
+          img.src = reader.result;
+        };
+      }
+    });
   } catch (e) {
     console.error(e);
     assetEl.childNodes.forEach((node) => node.remove());
@@ -683,8 +764,7 @@ zappingBtns.forEach((btn) => {
  */
 const processCVForAPI = async (event) => {
   event.preventDefault();
-  e.preventDefault();
-  const form = new FormData(e.currentTarget);
+  const form = new FormData(event.currentTarget);
   const name = form.get('name');
   const email = form.get('email');
   const phone = form.get('phone');
@@ -693,9 +773,10 @@ const processCVForAPI = async (event) => {
   const profile = form.get('profile');
   const skills = form.getAll('skill');
   const interest = form.getAll('interest');
-  const formationGroup = document.querySelector('#formationGroupEl');
-  const experienceGroup = document.querySelector('#experienceGroup');
-  const languageGroup = document.querySelector('#languageGroup');
+  const formationGroup = assetEl.querySelector('#formationGroupEl');
+  const experienceGroup = assetEl.querySelector('#experienceGroup');
+  console.log(formationGroup);
+  const languageGroup = assetEl.querySelector('#languageGroup');
   /**
    * @type {{formation: string; certificate: string; certificationDate: string}[]}
    */
@@ -753,8 +834,12 @@ const processCVForAPI = async (event) => {
   console.log(data);
   const jsonData = JSON.stringify(data);
   form.append('jsonData', jsonData);
+  console.log(form.get('userProfileFile'));
   const fetcher = await fetch('/cv/process', {
     method: 'POST',
+    headers: {
+      contentType: 'multipart/form-data',
+    },
     body: form,
   });
   const res = await fetcher.json();

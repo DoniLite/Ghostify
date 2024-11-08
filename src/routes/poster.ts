@@ -195,7 +195,7 @@ export const docSaver = async (req: Request, res: Response) => {
         }
         console.log('File uploaded:', fName);
         const fileXPathService =
-          process.env.NODE_ENV !== 'production'
+          process.env.NODE_ENV === 'production'
             ? `https://ghostify.site/staticFile/` +
               tokenGenerator(`posts/${fName}`)
             : `http://localhost:3085/staticFile/` +

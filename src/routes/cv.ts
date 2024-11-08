@@ -4,6 +4,7 @@ import { cvQueue, tokenGenerator } from '../server';
 import { randomInt } from 'node:crypto';
 import { QueryXData, RawCV } from 'index';
 import { format } from 'date-fns';
+import { cvClass } from '../utils';
 
 export const cvProcessAPI = async (req: Request, res: Response) => {
   const date = new Date();
@@ -52,7 +53,7 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
     ...req.session.JobsIDs,
     cvJob: cvJob.id,
   };
-  res.redirect(newCV.url);
+  res.redirect(`${newCV.url}?mode=view`);
 };
 
 export const getCV = async (req: Request, res: Response) => {
@@ -65,6 +66,11 @@ export const getCV = async (req: Request, res: Response) => {
         uid: cv,
       },
     });
+    console.log('cvData: ', cvData);
+    const cvType = cvData.type ? Number(cvData.type) : 1;
+    const cvMode = cvData.mode ? Number(cvData.mode) : 1;
+    const cvTheme =
+      cvClass[`v${cvType as 1 | 2 | 3}`][`mode${cvMode as 1 | 2 | 3 | 4 | 5}`];
     const data = JSON.parse(cvData.metaData) as RawCV;
     const cvDate = new Date(data.birthday);
     const cvObject: {
@@ -127,11 +133,12 @@ export const getCV = async (req: Request, res: Response) => {
       res.status(200).json(cvObject);
       return;
     }
-    res.render(`components/cv1.ejs`, {
+    res.render(`components/cv${cvType}.ejs`, {
       ...cvObject,
       service: 'cvMaker',
       mode,
       uid: cvData.uid,
+      cvTheme,
     });
   } catch (err) {
     console.error(err);
