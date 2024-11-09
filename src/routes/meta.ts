@@ -2,24 +2,10 @@ import { Request, Response } from 'express';
 import { prismaClient } from '../config/db';
 import { Comment } from '@prisma/client';
 import { getTimeElapsed, orderReactions, Reactions } from '../utils';
-import {} from 'date-fns'
+import {} from 'date-fns';
 
 export const meta = async (req: Request, res: Response) => {
   const theme = req.session.Theme;
-
-  const urls = await prismaClient.url.findMany({
-    orderBy: {
-      visit: 'desc',
-    },
-    take: 10,
-  });
-  const promotions = await prismaClient.promotion.findMany({
-    select: { file: true, link: true },
-    orderBy: {
-      createdAt: 'asc',
-    },
-    take: 4,
-  });
 
   const mostPopularActues = await prismaClient.comment.findMany({
     where: {
@@ -33,17 +19,9 @@ export const meta = async (req: Request, res: Response) => {
     time: string;
   }[] &
     Comment[];
-  const actus: {
-    popular: FrontActues;
-    rest: FrontActues;
-  } = {
-    popular: [],
-    rest: [],
-  };
 
-  actus.popular = await Promise.all(
+  const actus = await Promise.all(
     mostPopularActues
-      .filter((actu) => actu.reactions.length > 100)
       .map(async (popular) => {
         const commentsLength = await prismaClient.comment.count({
           where: {
@@ -59,28 +37,9 @@ export const meta = async (req: Request, res: Response) => {
         };
       })
   );
-  actus.rest = await Promise.all([...mostPopularActues].map(async (actu) => {
-    const commentsLenght = await prismaClient.comment.count({
-      where: {
-        commentId: actu.id,
-      }
-    });
-    return {
-      ...actu,
-      reactionsEls: orderReactions(actu.reactions as Reactions[]),
-      reactionsLength: actu.reactions.length,
-      commentsLength: commentsLenght,
-      time: getTimeElapsed(actu.createdAt)
-    }
-  }));
-
   console.log(actus);
 
   res.render('marketPlace', {
-    popularActues: actus.popular,
-    restActues: actus.rest,
-    promotions,
-    urls,
     auth:
       typeof req.session.Auth !== 'undefined'
         ? req.session.Auth.authenticated

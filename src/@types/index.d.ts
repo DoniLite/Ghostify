@@ -186,11 +186,11 @@ export interface CrawlerInput {
 }
 
 export type BodyXData<T = undefined> = T extends undefined
-  ? Record<string, T>
+  ? Record<string, unknown>
   : T;
 
 export type QueryXData<T = undefined> = T extends undefined
-  ? Record<string, T>
+  ? Record<string, unknown>
   : T;
 
 export interface BodyData {

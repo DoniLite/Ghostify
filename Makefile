@@ -41,7 +41,7 @@ clean-venv: clean
 # Tests
 .PHONY: test
 test:
-	$(PYTHON) -m pytest $(TEST_DIR) -v --cov=$(SRC_DIR)
+	$(PYTHON) -m pytest 
 
 # Linting et formatage
 .PHONY: lint
