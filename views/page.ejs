@@ -1,13 +1,22 @@
 <%- include('components/rawHeader.ejs') %>
-<link rel="stylesheet" href="/static/md.css" />
-<div class="markdown-content"><%- content %></div>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/DoniLite/CSS@latest/md.css"
+/>
+<div class="markdown-content light-mode">
+  <div class="markdown-content" id="parsedContent"><%- content %></div>
+</div>
 <% if ( typeof requestView !== 'undefined' && requestView === true ) { %>
 <div class="max-w-[800px] p-3 bg-gray-950 mx-auto rounded-lg">
-    <%- include('components/comment.ejs', {pointerType: 'post', pointer: id, replies: comments }) %>
+  <%- include('components/comment.ejs', {pointerType: 'post', pointer: id,
+  replies: comments }) %>
 </div>
 <% } %>
 
-<script type="module" src="/static/script/md.js"></script>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/gh/DoniLite/CSS@latest/md.js"
+></script>
 <script type="module" src="/static/all.min.js"></script>
 <script nonce="<%= locals.cspNonce %>">
   const rawHeaderNav = document.querySelector('#rawHeaderNav');
@@ -24,5 +33,5 @@
     rawHeaderNav.classList.remove('translate-x-[200%]');
   });
 </script>
-<%- include('footer', { bg: 'bg-blue-800', text: 'text-white',
-title:'text-gray-300',}) %>
+<%- include('footer', {bg: 'bg-gray-950', text: 'text-white', title:
+'text-gray-400'}) %>
