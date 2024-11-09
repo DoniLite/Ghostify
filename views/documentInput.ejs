@@ -1,63 +1,73 @@
-<%- include('components/rawHeader.ejs') %>
-<div class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg">
-  <h2 class="text-xl font-semibold text-gray-800 text-center mb-4">
-    Uploader un Document
-  </h2>
+<div class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-xl font-semibold text-gray-800 text-center mb-4">Uploader un Document</h2>
+  
   <form id="uploadForm" class="space-y-4">
-    <!-- Zone de dépôt de fichiers -->
-    <label for="fileInput" class="block w-full cursor-pointer">
-      <div
-        class="flex items-center justify-center h-40 border-2 border-dashed rounded-lg hover:bg-gray-50 transition-colors duration-300"
-      >
-        <span class="text-gray-400"
-          >Glissez ou sélectionnez un fichier ici</span
-        >
-      </div>
-      <input
-        id="fileInput"
-        type="file"
-        class="hidden"
-        accept=".pdf,.doc,.docx,.jpg,.png"
-      />
-    </label>
-
+    <!-- Zone de dépôt de fichiers avec Drag-and-Drop -->
+    <div id="dropArea" class="flex items-center justify-center h-40 border-2 border-dashed rounded-lg bg-gray-50 text-gray-400 hover:bg-gray-100 transition-colors duration-300 cursor-pointer">
+      Glissez et déposez un fichier ou cliquez pour en sélectionner un
+    </div>
+    <input id="fileInput" type="file" class="hidden" accept=".pdf,.doc,.docx,.jpg,.png">
+    
     <!-- Informations sur le fichier sélectionné -->
-    <div
-      id="fileInfo"
-      class="hidden p-3 bg-gray-100 rounded-lg text-gray-700 space-y-2"
-    >
+    <div id="fileInfo" class="hidden p-3 bg-gray-100 rounded-lg text-gray-700 space-y-2">
       <p><strong>Nom :</strong> <span id="fileName"></span></p>
       <p><strong>Taille :</strong> <span id="fileSize"></span> KB</p>
       <p><strong>Type :</strong> <span id="fileType"></span></p>
     </div>
-
+    
     <!-- Bouton de soumission -->
-    <button
-      type="submit"
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none"
-    >
+    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none">
       Uploader
     </button>
   </form>
 </div>
 
 <script nonce="<%= locals.cspNonce %>">
-  // Fonction pour gérer le changement de fichier
+  const dropArea = document.getElementById("dropArea");
+  const fileInput = document.getElementById("fileInput");
+
+  // Activer l'effet de survol
+  function handleDragOver(event) {
+    event.preventDefault();
+    dropArea.classList.add("bg-blue-50", "border-blue-400");
+    dropArea.classList.remove("bg-gray-50", "border-dashed");
+  }
+
+  // Désactiver l'effet de survol
+  function handleDragLeave(event) {
+    event.preventDefault();
+    dropArea.classList.remove("bg-blue-50", "border-blue-400");
+    dropArea.classList.add("bg-gray-50", "border-dashed");
+  }
+
+  // Gestion du fichier déposé
+  function handleDrop(event) {
+    event.preventDefault();
+    dropArea.classList.remove("bg-blue-50", "border-blue-400");
+    const file = event.dataTransfer.files[0];
+    displayFileInfo(file);
+  }
+
+  // Gestion du changement de fichier (pour le clic)
   function handleFileChange(event) {
     const file = event.target.files[0];
     if (file) {
-      // Affiche les informations sur le fichier sélectionné
-      document.getElementById('fileName').textContent = file.name;
-      document.getElementById('fileSize').textContent = (
-        file.size / 1024
-      ).toFixed(2);
-      document.getElementById('fileType').textContent = file.type;
-      document.getElementById('fileInfo').classList.remove('hidden');
+      displayFileInfo(file);
     }
   }
 
-  document
-    .querySelector('#fileInput')
-    .addEventListener('change', handleFileChange);
+  // Afficher les informations du fichier
+  function displayFileInfo(file) {
+    document.getElementById("fileName").textContent = file.name;
+    document.getElementById("fileSize").textContent = (file.size / 1024).toFixed(2);
+    document.getElementById("fileType").textContent = file.type;
+    document.getElementById("fileInfo").classList.remove("hidden");
+  }
+
+  // Ouvrir le sélecteur de fichier au clic sur la zone de dépôt
+  dropArea.addEventListener("click", () => fileInput.click());
+  dropArea.addEventListener('dragover', handleDragOver);
+  dropArea.addEventListener('dragleave', handleDragLeave);
+  dropArea.addEventListener('drop', handleDrop);
+  fileInput.addEventListener('change', handleFileChange)
 </script>
-<%- include('components/rawFooter.ejs') %>

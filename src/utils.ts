@@ -19,6 +19,7 @@ import {
   // formatDuration,
   intervalToDuration,
 } from 'date-fns';
+import jwt from 'jsonwebtoken';
 
 export const hashSomething = async (
   data: string | Buffer,
@@ -994,3 +995,45 @@ export const cvClass = {
   },
 } as const;
 
+export const verifyJWT = (token: string) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+}
+
+// Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
+export const purgeFiles = async (files: string[]) => {
+  const STATIC_DIR = path.resolve(__dirname, '../static');
+  
+  // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
+  if (files.length === 0) return;
+
+  // Vérifie les tokens pour chaque fichier (vérifie que `verifyJWT` retourne une chaîne pour chaque fichier)
+  const processedFiles = files.map((file) => verifyJWT(file) as string);
+
+  // Obtient le chemin d'architecture de dossiers en utilisant le premier fichier comme référence
+  const filePath = processedFiles[0].split('/');
+  filePath.pop(); // Retire le nom du fichier, gardant ainsi le chemin du dossier
+  const scanDir = filePath.join('/');
+  const DIR = path.join(STATIC_DIR, scanDir);
+
+  try {
+    const keepingFiles = processedFiles.map((f) => {
+      const eachFilePath = f.split('/');
+      return eachFilePath.pop(); // Récupère uniquement le nom du fichier
+    });
+
+    // Récupère les fichiers actuels dans le dossier
+    const dirFiles = fs.readdirSync(DIR);
+
+    // Parcours et supprime les fichiers qui ne sont pas dans `keepingFiles`
+    dirFiles.forEach((file) => {
+      if (!keepingFiles.includes(file)) {
+        fs.rmSync(path.join(DIR, file));
+      }
+    });
+  } catch (error) {
+    console.error(
+      `Erreur lors de la purge des fichiers dans le dossier ${DIR}:`,
+      error
+    );
+  }
+};
