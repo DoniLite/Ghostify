@@ -713,8 +713,14 @@ Pour toute question ou suggestion, n'hésitez pas à nous contacter à l'adresse
 Merci de faire partie de notre aventure !
 `;
 
-export const cvDownloader = async (options: { url: string; id: number }) => {
+export const cvDownloader = async (options: {
+  url: string;
+  id: number;
+  updating?: boolean;
+  docId?: number;
+}) => {
   console.log('function running start');
+  let doc;
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
@@ -761,16 +767,27 @@ export const cvDownloader = async (options: { url: string; id: number }) => {
     },
   });
 
-  const newDoc = await prismaClient.document.create({
+  if(typeof options.updating === 'undefined' || !options.updating) {
+    doc = await prismaClient.document.create({
+      data: {
+        uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
+        type: 'pdf',
+        userId: cvUpdating.userId,
+        downloadLink: cvUpdating.pdf,
+      },
+    });
+  }
+  
+  doc = await prismaClient.document.update({
+    where: {
+      id: options.docId,
+    },
     data: {
-      uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
-      type: 'pdf',
-      userId: cvUpdating.userId,
       downloadLink: cvUpdating.pdf,
     },
   });
 
-  console.log('user doc created: ', newDoc);
+  console.log('user doc created: ', doc);
 
   await browser.close();
   console.log('function running end');
@@ -1002,7 +1019,7 @@ export const verifyJWT = (token: string) => {
 // Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
 export const purgeFiles = async (files: string[]) => {
   const STATIC_DIR = path.resolve(__dirname, '../static');
-  
+
   // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
   if (files.length === 0) return;
 

@@ -77,7 +77,7 @@ import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
 import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
-import Queue from 'bull'
+import Queue from 'bull';
 import { cvDownloader } from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
@@ -95,7 +95,7 @@ passport.use(
       state: true,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      const verifEmail = profile._json.email
+      const verifEmail = profile._json.email;
       const picture = profile._json.picture;
       const userId = profile.id;
       if (!verifEmail) {
@@ -114,7 +114,7 @@ passport.use(
           cb(error, null);
           return;
         }
-        if(checkExistedUser && checkExistedUser.providerId === userId) {
+        if (checkExistedUser && checkExistedUser.providerId === userId) {
           cb(null, checkExistedUser.id);
           return;
         }
@@ -136,13 +136,13 @@ passport.use(
 );
 
 passport.serializeUser((userId, done) => {
-  process.nextTick(function() {
+  process.nextTick(function () {
     done(null, userId);
-  })
+  });
 });
 
 passport.deserializeUser((userId, done) => {
-  process.nextTick(async function() {
+  process.nextTick(async function () {
     try {
       const user = await prismaClient.user.findUnique({
         where: { providerId: String(userId) },
@@ -151,7 +151,7 @@ passport.deserializeUser((userId, done) => {
     } catch (err) {
       done(err, null);
     }
-  })
+  });
 });
 
 i18n.configure({
@@ -259,7 +259,11 @@ server.use(
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
         connectSrc: [
-          "'self'", 'ws://localhost:3085', 'wss://0.0.0.0:3085', 'ws://ghostify.site', 'wss://ghostify.site',
+          "'self'",
+          'ws://localhost:3085',
+          'wss://0.0.0.0:3085',
+          'ws://ghostify.site',
+          'wss://ghostify.site',
         ],
         imgSrc: ["'self'", 'data:', 'https://lh3.googleusercontent.com'],
       },
@@ -337,7 +341,6 @@ server.on('reversion', (app) => {
   console.log('reversion', app);
 });
 
-
 // Websocket routes
 server.ws('/', (socket) => {
   console.log('New client connected');
@@ -349,9 +352,7 @@ server.ws('/', (socket) => {
   socket.on('close', () => {
     console.log('Client disconnected');
   });
-
-})
-
+});
 
 // routes...
 
@@ -369,7 +370,9 @@ server.get('/auth/token', async (req, res, next) => {
       return next();
     }
 
-    const userId = req.session.Auth.authenticated ? req.session.Auth.login : null;
+    const userId = req.session.Auth.authenticated
+      ? req.session.Auth.login
+      : null;
 
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
@@ -382,7 +385,7 @@ server.get('/auth/token', async (req, res, next) => {
       },
       select: {
         token: true,
-      }
+      },
     });
 
     if (user) {
@@ -439,7 +442,7 @@ server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
 server.get('/billing', billing);
-server.get('/poster/docs/', documentView );
+server.get('/poster/docs/', documentView);
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
@@ -474,12 +477,12 @@ server.post('/api/v1/parser', parserRoute);
 server.get('/api/v1/md.css', getMd);
 server.get('/api/v1/md.js', getMdScript);
 server.get('/login/federated/google');
-server.post('/user/profile/file', updateProfile)
+server.post('/user/profile/file', updateProfile);
 server.get('/user/exists/:username', checkIfUserExist);
 server.post('/user/update', updateUserName);
 server.get('/staticFile/:file', serveStatic);
 server.get('/downloader/:file', downloader);
-server.post('/cv/process', processCV)
+server.post('/cv/process', processCV);
 server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
 server.get('/cv/theme/:uid', getCVTheme);
@@ -538,21 +541,22 @@ server.on('downloader', (app) => {
   console.log('Download');
   console.log(app);
   console.log(server.request.session);
-})
+});
 
+// workers
 
-// workers 
-
-export const cvQueue = new Queue<{ url: string; id: number }>(
-  'cv-processor',
-  'redis://127.0.0.1:6379'
-);
+export const cvQueue = new Queue<{
+  url: string;
+  id: number;
+  updating?: boolean;
+  docId?: number;
+}>('cv-processor', 'redis://127.0.0.1:6379');
 
 cvQueue.process(async (job, done) => {
   try {
     const downLoaderData = await cvDownloader(job.data);
     done(null, downLoaderData);
-  } catch(e) {
+  } catch (e) {
     done(e);
   }
-})
+});
