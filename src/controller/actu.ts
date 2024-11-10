@@ -8,6 +8,7 @@ import { prismaClient } from '../config/db';
 import { Request, Response } from 'express';
 import { IncomingForm } from 'formidable';
 import { tokenGenerator } from '../server';
+import { verifyJWT } from '../utils';
 
 // const pump = util.promisify(pipeline);
 
@@ -83,6 +84,8 @@ export const uploadActu = async (req: Request, res: Response) => {
       file:
         typeof fName === 'undefined' ? null : fileXServicePath,
       isAnActu: true,
+      userId: req.session.Auth.id || null,
+      author: req.session.Auth.username || req.session.Auth.fullname,
     },
   });
   const resData = await prismaClient.comment.update({
@@ -90,7 +93,7 @@ export const uploadActu = async (req: Request, res: Response) => {
       id: newComment.id,
     },
     data: {
-      url: `/actu?ref=${newComment.id}`,
+      url: `/actu?ref=${tokenGenerator(String(newComment.id))}`,
     },
   });
 
@@ -104,10 +107,10 @@ export const comment = async (req: Request, res: Response) => {
     root: unknown;
   }>;
 
-  if (root) {
+  if (root && ref && typeof ref === 'string') {
     const actu = await prismaClient.comment.findUnique({
       where: {
-        id: Number(ref),
+        id: Number(verifyJWT(ref)),
       },
     });
     const connectedComments = await prismaClient.comment.findMany({
@@ -132,7 +135,7 @@ export const comment = async (req: Request, res: Response) => {
   if (ref && typeof ref === 'string') {
     const actu = await prismaClient.comment.findUnique({
       where: {
-        id: Number(ref),
+        id: Number(verifyJWT(ref)),
       },
     });
     const connectedComments = await prismaClient.comment.findMany({

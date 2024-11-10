@@ -1,3 +1,4 @@
+<%- include('components/rawHeader.ejs', {title: 'Ghostify | Poster-Document parser', desc: 'Poster is a toolkit for articles redaction and document conversion'}) %>
 <div class="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
   <h2 class="text-xl font-semibold text-gray-800 text-center mb-4">Uploader un Document</h2>
   
@@ -71,3 +72,4 @@
   dropArea.addEventListener('drop', handleDrop);
   fileInput.addEventListener('change', handleFileChange)
 </script>
+<%- include('components/rawFooter.ejs') %>

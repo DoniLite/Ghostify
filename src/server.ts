@@ -98,6 +98,7 @@ passport.use(
       const verifEmail = profile._json.email;
       const picture = profile._json.picture;
       const userId = profile.id;
+      const fullname = `${profile.name.givenName} ${profile.name.familyName}`;
       if (!verifEmail) {
         const error = new Error('User not authenticated');
         cb(error, null);
@@ -125,6 +126,7 @@ passport.use(
             permission: 'User',
             file: picture,
             providerId: userId,
+            fullname,
           },
         });
         cb(null, newUser.id);

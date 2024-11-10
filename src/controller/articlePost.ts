@@ -4,10 +4,17 @@ import { BodyXData } from '../@types';
 import { prismaClient } from '../config/db';
 
 export const articlePost = async (req: Request, res: Response) => {
-  const { title, slug, date, content, category, description, keys } =
-    req.body as BodyXData;
+  const { title, slug, content, category, description, keys } =
+    req.body as BodyXData<{
+      title: string;
+      slug: string;
+      content: string;
+      category: string;
+      description: string;
+      keys: string;
+    }>;
 
-  console.log(title, slug, date, content, category);
+  console.log(title, slug, content, category);
 
   const postCategory = await prismaClient.category.findUnique({
     where: {
@@ -27,12 +34,12 @@ export const articlePost = async (req: Request, res: Response) => {
         },
         safe: true,
         visites: 0,
-        visibility: 'Public'
+        visibility: 'Public',
       },
     });
     if (post) {
       console.log(post);
-       res.send(JSON.stringify({ success: true, post }));
+      res.send(JSON.stringify({ success: true, post }));
     }
   }
 
@@ -56,8 +63,8 @@ export const articlePost = async (req: Request, res: Response) => {
 
   if (post) {
     console.log(post);
-     res.send(JSON.stringify({ success: true, post }));
+    res.send(JSON.stringify({ success: true, post }));
   }
 
-   res.send(JSON.stringify({ success: false, post }));
+  res.send(JSON.stringify({ success: false, post }));
 };

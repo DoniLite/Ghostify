@@ -78,7 +78,8 @@ export interface Auth {
   login?: string;
   isSuperUser?: boolean;
   authenticated: boolean;
-  name?: string;
+  username?: string;
+  fullname?: string;
   file?: string;
 }
 

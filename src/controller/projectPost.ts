@@ -13,7 +13,18 @@ export const projectPost = async (req: Request, res: Response) => {
     license,
     collaboration,
     collaborationMessage,
-  } = req.body as BodyXData;
+  } = req.body as BodyXData<{
+    title: string;
+    description: string;
+    github: string;
+    gitlab: string;
+    bitbucket: string;
+    link: string;
+    license: string;
+    collaboration: 'Private' | 'Public';
+    collaborationMessage: string;
+    // participationType: 'Collaborator' | 'Viewer';
+  }>;
 
   const project = await prismaClient.project.create({
     data: {

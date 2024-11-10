@@ -1,8 +1,11 @@
-<%- include('rawHeader.ejs') %>
+<% if (typeof mode === 'string' && mode === 'view' ) { %>
+ <%- include('rawHeader.ejs', {desc: comment.content, title: comment.author, preview: comment.file ? comment.file : undefined}) %>
+<% } %>
 <div
   class="w-[98%] lg:w-[80%] p-3 bg-gray-950 my-4 rounded-lg mx-auto"
   id="feed"
-  data-index=""
+  data-index="<%= comment.id %>"
+  data-pointer="<%= comment.isAnActu ? 'actu' : 'comment' %>"
 >
   <div class="flex w-full gap-x-4 items-center p-3">
     <img
@@ -13,6 +16,9 @@
     <span class="text-white font-bold"><%= comment.author %></span>
     <span class="text-white"><%= comment.time %></span>
   </div>
+  <span class="font-bold w-full block">
+    <%= comment.content %>
+  </span>
   <a href="<%= comment.file %>" class="w-full">
     <img
       src="<%= coment.file %>"
@@ -48,10 +54,12 @@
       <%= comment.commentsLength %> comments</span
     >
   </div>
-  <%- include('comment', {pointerType: 'actu', replies: comment.replies, pointer: comment.id, userIcon: comment.userIcon }) %>
+  <%- include('comment', {pointerType: comment.isAnActu? 'actu' : 'comment', replies: comment.replies, pointer: comment.id, userIcon: comment.userIcon }) %>
 </div>
-<%- include('rawFooter.ejs') %>
-<script>
+<% if (typeof mode === 'string' && mode === 'view' ) { %>
+ <%- include('rawFooter.ejs') %>
+<% } %>
+<script nonce="<%= locals.cspNonce %>">
   document.querySelector('#reactions').addEventListener('mouseenter', (e) => {
     e.preventDefault();
     document

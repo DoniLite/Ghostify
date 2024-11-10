@@ -1,4 +1,4 @@
-<%- include('header') %>
+<%- include('header', {title: 'Ghostify | Meta hub', desc: 'Join the community now to publish articles, posts and actuality in a large hub of diversified subjects'}) %>
 <div
   id="container"
   class="dp w-full bg-gradient-to-tr from-gray-900 to-blue-500"
@@ -116,6 +116,12 @@
     </div>
     <p id="submitMessage" class="text-white text-center my-2 font-bold"></p>
   </form>
+
+  <div class=" w-full flex flex-col gap-y-2">
+    <% actues.forEach(actue => { %>
+      <%- include('components/feed.ejs', {comment: actue}) %>
+    <% }) %>
+  </div>
 
   
 <%- include('footer', {linear: 'bg-gradient-to-tr', from:
