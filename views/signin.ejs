@@ -1,6 +1,6 @@
-<%- include('components/rawHeader') %>
+<%- include('components/rawHeader', {title: 'Ghostify | Sign In', desc: 'Login to your account'}) %>
   <% if (typeof service !== 'undefined') { %>
-   <input type="hidden" name="serice" id="service" value="<%= service %>">
+   <input type="hidden" name="service" id="service" value="<%= service %>">
   <% } %>
     <div class="flex h-screen overflow-hidden">
       <div

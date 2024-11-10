@@ -13,6 +13,7 @@ export const terms = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
@@ -32,6 +33,7 @@ export const license = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
@@ -51,6 +53,7 @@ export const about = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
@@ -70,6 +73,7 @@ export const policy = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
@@ -89,6 +93,7 @@ export const conditions = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,
@@ -108,6 +113,7 @@ export const FAQ = async (req: Request, res: Response) => {
   res.render('page', {
     content: asset.content,
     title: asset.title,
+    description: asset.title,
     service: undefined,
     theme: req.session.Theme,
     auth: false,

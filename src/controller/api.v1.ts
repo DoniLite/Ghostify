@@ -94,7 +94,8 @@ export const authController = async (req: Request, res: Response) => {
       login: login,
       id: user.id,
       file: user.file,
-      name: user.username,
+      username: user.username,
+      fullname: user.fullname,
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -275,10 +276,11 @@ interface RegisterPost {
   email: string | undefined | null;
   password: string | undefined | null;
   defaultRoot: boolean | undefined | null;
+  fullname: string | undefined | null;
 }
 
 export const registrationController = async (req: Request, res: Response) => {
-  const { service, email, password, defaultRoot } =
+  const { service, email, password, defaultRoot, fullname } =
     req.body as BodyXData<RegisterPost>;
 
   if (process.env.NODE_ENV !== 'production')
@@ -342,6 +344,7 @@ export const registrationController = async (req: Request, res: Response) => {
           email: email,
           service: service,
           token: token,
+          fullname,
           password: cryptedPassword,
           registration: date,
           permission: 'User',
@@ -350,6 +353,8 @@ export const registrationController = async (req: Request, res: Response) => {
       if (user) {
         req.session.Auth = {
           authenticated: true,
+          fullname: user.fullname,
+          username: user.username,
           id: user.id,
           login: user.email,
           isSuperUser: false,
@@ -390,6 +395,7 @@ export const registrationController = async (req: Request, res: Response) => {
           email: email,
           service: service,
           token: token,
+          fullname,
           password: cryptedPassword,
           permission: 'User',
         },
@@ -400,6 +406,8 @@ export const registrationController = async (req: Request, res: Response) => {
           id: user.id,
           login: user.email,
           isSuperUser: false,
+          fullname: user.fullname,
+          username: user.username,
         };
         const cookieExpriration = new Date();
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -440,6 +448,7 @@ export const registrationController = async (req: Request, res: Response) => {
           password: cryptedPassword,
           registration: date,
           permission: 'User',
+          fullname,
         },
       });
       if (user) {
@@ -448,6 +457,8 @@ export const registrationController = async (req: Request, res: Response) => {
           id: user.id,
           login: user.email,
           isSuperUser: false,
+          fullname: user.fullname,
+          username: user.username,
         };
         const cookieExpriration = new Date();
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
@@ -570,7 +581,8 @@ export const googleAuth = async (req: Request, res: Response) => {
     authenticated: true,
     isSuperUser: false,
     id: authUser.id,
-    name: authUser.username,
+    username: authUser.username,
+    fullname: authUser.fullname,
     file: authUser.file,
     login: authUser.email,
   };

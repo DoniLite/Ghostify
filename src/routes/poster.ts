@@ -354,6 +354,7 @@ export const docView = async (req: Request, res: Response) => {
     id: article.id,
     content: article.parsedContent,
     title: article.title,
+    desc: article.description,
     service: Service.poster,
     theme: req.session.Theme,
     auth:

@@ -1,4 +1,4 @@
-<%- include('../header') %> 
+<%- include('../header', {title: user, desc: bio ? bio : undefined, preview: userFile ? userFile : undefined }) %> 
 <div
   id="container"
   class="w-full overflow-y-scroll bg-gray-950 text-white p-4"

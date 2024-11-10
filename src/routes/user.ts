@@ -107,7 +107,7 @@ export const updateUserName = async (req: Request, res: Response) => {
           link: link ? link : lastInfo.link,
         },
       });
-      req.session.Auth.name = updatedUser.username;
+      req.session.Auth.username = updatedUser.username;
       console.log(req.session.Auth);
       console.log('new user:', updatedUser);
       res.status(200).json({ success: true });

@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ghostify</title>
     <link rel="stylesheet" href="/static/all.min.css" />
     <link rel="icon" type="image/svg+xml" href="/static/SVG/gostify.svg" />
     <link rel="stylesheet" href="/static/output.css" />
     <%- include('../h.ejs') %>
   </head>
+
+  <% if (typeof service === 'undefined') { %>
+   const service = 'Ghostify';
+  <% } %>
 
   <body>
     <nav
