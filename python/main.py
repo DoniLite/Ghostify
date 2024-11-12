@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pypandoc import get_pandoc_path
 import redis
 from pydantic import BaseModel
-from utils.pandoc_downloader import download_pandoc_binary
+from .utils.pandoc_downloader import download_pandoc_binary
 import os
 
 STATIC_DIR = os.path.abspath('../static')
