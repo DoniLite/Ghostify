@@ -13,7 +13,7 @@ UVICORN = $(VENV)/bin/uvicorn
 setup: $(VENV)/bin/activate
 
 $(VENV)/bin/activate: requirements.txt
-	python3 -m venv $(VENV)
+	python3.12 -m venv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
