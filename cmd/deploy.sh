@@ -18,7 +18,7 @@ pnpm build
 
 echo "starting the new instace"
 
-pm2 start pnpm -- run start && pm2 list
+pm2 start pnpm -- run start && pm2 start make -- run start-prod && pm2 list
 
 echo "reloading nginx proxy server"
 

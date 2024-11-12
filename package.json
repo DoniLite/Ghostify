@@ -21,7 +21,7 @@
     "tailwindDev": "postcss  ./src/input.css -o ./src/public/output.css --watch",
     "setupAssets": "bash ./cmd/assets.sh ./src/public",
     "installSH": "bash ./cmd/install.sh",
-    "deploy": "bash ./cmd/deploy.sh",
+    "deployServer": "bash ./cmd/deploy.sh",
     "generate": "pnpx prisma generate",
     "migrate": "pnpx prisma migrate dev",
     "prisma": "pnpm dlx prisma",
