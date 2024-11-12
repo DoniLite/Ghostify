@@ -61,7 +61,7 @@ run:
 
 .PHONY: start-prod
 start-prod:
-	uvicorn $(MODULE) --host 0.0.0.0 --port 8000 --workers 4
+	$(UVICORN) $(MODULE) --host 0.0.0.0 --port 8000 --workers 4
 
 # Sécurité
 .PHONY: security
