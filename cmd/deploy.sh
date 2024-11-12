@@ -1,25 +1,37 @@
 #!/bin/bash
 
-echo "fetching data from remote service"
+# Fonction pour gérer les erreurs
+handle_error() {
+    echo "Erreur à l'étape : $1"
+    exit 1
+}
 
-git pull origin main
+echo "🔄 Fetching data from remote service..."
+git pull origin main || handle_error "git pull"
 
-echo "installing dependencies to update the project"
+echo "📦 Installing dependencies..."
+pnpm install || handle_error "pnpm install"
 
-pnpm install
+echo "🛑 Stopping all running instances..."
+pm2 list | grep -q "online" && pm2 stop all
 
-echo "stopping all running instances"
+echo "🏗️ Running the build script..."
+pnpm build || handle_error "pnpm build"
 
-pm2 stop all
+echo "🚀 Starting new instances..."
+pm2 delete all 2>/dev/null # Nettoyage des anciennes instances
 
-echo "running the build script"
+# Démarrage des applications avec gestion des erreurs
+pm2 start pnpm --name "app" -- run start || handle_error "starting app"
+pm2 start make --name "api" -- run start-prod || handle_error "starting api"
 
-pnpm build
+# Vérification du statut
+pm2 list
 
-echo "starting the new instace"
+echo "🔄 Reloading nginx proxy server..."
+sudo nginx -t && sudo nginx -s reload || handle_error "nginx reload"
 
-pm2 start pnpm -- run start && pm2 start make -- run start-prod && pm2 list
+echo "✅ Deployment completed successfully!"
 
-echo "reloading nginx proxy server"
-
-sudo nginx -s reload
+# Affichage des logs en cas d'erreur
+pm2 logs --lines 50 --nostream
