@@ -15,7 +15,7 @@ export const sessionStorageHook = async (req: Request, res: Response, next: Next
   const randomNumber = randomInt(1, allDirsFiles.length);
   const footerImg = `/static/img/${allDirsFiles[randomNumber]}`;
   req.session.Theme = {
-    time: graphicsUploader(),
+    background: graphicsUploader(),
     footer: footerImg,
     ...colors,
   };

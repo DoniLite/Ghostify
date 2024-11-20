@@ -15,7 +15,7 @@ declare module "express-session" {
       iv: Buffer;
     };
     Theme?: {
-      time: 'Morning' | 'Midday' | 'Evening' | 'Night';
+      background: string;
       sun_1: ' #FFD700';
       sun_2: ' #FFA500';
       sun_3: ' #FF8C00';
