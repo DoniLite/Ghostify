@@ -34,7 +34,7 @@ pm2 delete all 2>/dev/null
 
 # Démarrage des applications
 pm2 start pnpm --name "app" -- run start || handle_error "starting app"
-pm2 start make --name "api" -- run start-prod || handle_error "starting api"
+pm2 start "make start-prod" --name api || handle_error "starting api"
 
 # Vérification du statut
 pm2 list
