@@ -496,19 +496,7 @@ export function checkTextContent(text: string): DetectionResult[] {
 }
 
 export const graphicsUploader = () => {
-  const time = new Date();
-  if (time.getHours() > 5 && time.getHours() <= 10) {
-    return 'Morning' as const;
-  }
-  if (time.getHours() >= 11 && time.getHours() < 13) {
-    return 'Midday' as const;
-  }
-
-  if (time.getHours() >= 13 && time.getHours() < 20) {
-    return 'Evening' as const;
-  }
-
-  return 'Night' as const;
+  return `background/${randomInt(1, 8)}.ejs`;
 };
 
 export const termsMD = `

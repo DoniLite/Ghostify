@@ -26,6 +26,9 @@ pm2 list | grep -q "online" && pm2 stop all
 echo "🏗️ Construction du projet..."
 pnpm build || handle_error "pnpm build"
 
+echo "attribution de toutes les permissions nécessaires..."
+sudo chmod -R 755 ./
+
 echo "🚀 Démarrage des nouvelles instances..."
 pm2 delete all 2>/dev/null 
 
