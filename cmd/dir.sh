@@ -22,17 +22,18 @@ show_help() {
 
 # Dossiers par défaut
 DEFAULT_DIRS=(
-    "src"
-    "src/assets"
-    "src/assets/images"
-    "src/assets/styles"
-    "src/components"
-    "src/layouts"
-    "src/pages"
-    "src/utils"
-    "src/services"
-    "public"
-    "tests"
+    "sessions"
+    "static"
+    "static/actues"
+    "static/comments"
+    "static/cv"
+    "static/downloads"
+    "static/downloads/cv"
+    "static/downloads/doc"
+    "static/posts"
+    "static/test"
+    "static/uploads"
+    "static/users"
     "docs"
 )
 
