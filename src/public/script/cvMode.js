@@ -835,7 +835,7 @@ const processCVForAPI = async (event) => {
   const jsonData = JSON.stringify(data);
   form.append('jsonData', jsonData);
   console.log(form.get('userProfileFile'));
-  const fetcher = await fetch('/cv/process', {
+  const fetcher = await fetch(`/cv/process/?uid=${actionBtn.dataset.uid}`, {
     method: 'POST',
     headers: {
       contentType: 'multipart/form-data',
