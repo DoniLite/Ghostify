@@ -61,7 +61,7 @@ run:
 
 .PHONY: start-prod
 start-prod:
-	$(UVICORN) $(MODULE) --host 0.0.0.0 --port 80
+	$(UVICORN) $(MODULE) --host 0.0.0.0 --port 8080
 
 # Sécurité
 .PHONY: security

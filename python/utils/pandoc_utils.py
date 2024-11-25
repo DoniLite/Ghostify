@@ -2,71 +2,118 @@ from enum import Enum
 import pypandoc
 
 
-class PandocInputFormat(str, Enum):
-    COMMONMARK = "commonmark"
-    DOCBOOK = "docbook"
-    DOCX = "docx"
-    EPUB = "epub"
-    HTML = "html"
-    LATEX = "latex"
-    MARKDOWN = "markdown"
-    MARKDOWN_GITHUB = "markdown_github"
-    MARKDOWN_MUSE = "markdown_muse"
-    MARKDOWN_PHP = "markdown_php"
-    MARKDOWN_STRICT = "markdown_strict"
-    MEDIAWIKI = "mediawiki"
-    NATIVE = "native"
-    ODT = "odt"
-    OPML = "opml"
-    ORG = "org"
-    RST = "rst"
-    TEXTILE = "textile"
-    TWIKI = "twiki"
 
-class PandocOutputFormat(str, Enum):
-    ASCII = "ascii"
-    ASCIIDOC = "asciidoc"
-    BEAMER = "beamer"
+class InputFormats(Enum):
+    BIBLATEX = "biblatex"
+    BIBTEX = "bibtex"
     COMMONMARK = "commonmark"
-    CONTEXT = "context"
+    COMMONMARK_X = "commonmark_x"
+    CREOLE = "creole"
+    CSLJSON = "csljson"
+    CSV = "csv"
     DOCBOOK = "docbook"
     DOCX = "docx"
     DOKUWIKI = "dokuwiki"
+    ENDNOTEXML = "endnotexml"
     EPUB = "epub"
-    EPUB2 = "epub2"
-    EPUB3 = "epub3"
     FB2 = "fb2"
+    GFM = "gfm"
     HADDOCK = "haddock"
     HTML = "html"
-    HTML5 = "html5"
-    ICML = "icml"
+    IPYNB = "ipynb"
     JATS = "jats"
+    JIRA = "jira"
     JSON = "json"
     LATEX = "latex"
     MAN = "man"
     MARKDOWN = "markdown"
     MARKDOWN_GITHUB = "markdown_github"
-    MARKDOWN_MUSE = "markdown_muse"
-    MARKDOWN_PHP = "markdown_php"
+    MARKDOWN_MMD = "markdown_mmd"
+    MARKDOWN_PHP_EXTRA = "markdown_phpextra"
     MARKDOWN_STRICT = "markdown_strict"
     MEDIAWIKI = "mediawiki"
+    MUSE = "muse"
     NATIVE = "native"
     ODT = "odt"
     OPML = "opml"
+    ORG = "org"
+    RIS = "ris"
+    RST = "rst"
+    RTF = "rtf"
+    T2T = "t2t"
+    TEXTILE = "textile"
+    TIKIWIKI = "tikiwiki"
+    TSV = "tsv"
+    TWIKI = "twiki"
+    TYPST = "typst"
+    VIMWIKI = "vimwiki"
+
+
+class OutputFormats(Enum):
+    ASCIIDOC = "asciidoc"
+    ASCIIDOCTOR = "asciidoctor"
+    BEAMER = "beamer"
+    BIBLATEX = "biblatex"
+    BIBTEX = "bibtex"
+    CHUNKEDHTML = "chunkedhtml"
+    COMMONMARK = "commonmark"
+    COMMONMARK_X = "commonmark_x"
+    CONTEXT = "context"
+    CSLJSON = "csljson"
+    DOCBOOK = "docbook"
+    DOCBOOK4 = "docbook4"
+    DOCBOOK5 = "docbook5"
+    DOCX = "docx"
+    DOKUWIKI = "dokuwiki"
+    DZSLIDES = "dzslides"
+    EPUB = "epub"
+    EPUB2 = "epub2"
+    EPUB3 = "epub3"
+    FB2 = "fb2"
+    GFM = "gfm"
+    HADDOCK = "haddock"
+    HTML = "html"
+    HTML4 = "html4"
+    HTML5 = "html5"
+    ICML = "icml"
+    IPYNB = "ipynb"
+    JATS = "jats"
+    JATS_ARCHIVING = "jats_archiving"
+    JATS_ARTICLE_AUTHORING = "jats_articleauthoring"
+    JATS_PUBLISHING = "jats_publishing"
+    JIRA = "jira"
+    JSON = "json"
+    LATEX = "latex"
+    MAN = "man"
+    MARKDOWN = "markdown"
+    MARKDOWN_GITHUB = "markdown_github"
+    MARKDOWN_MMD = "markdown_mmd"
+    MARKDOWN_PHP_EXTRA = "markdown_phpextra"
+    MARKDOWN_STRICT = "markdown_strict"
+    MARKUA = "markua"
+    MEDIAWIKI = "mediawiki"
+    MS = "ms"
+    MUSE = "muse"
+    NATIVE = "native"
+    ODT = "odt"
     OPENDOCUMENT = "opendocument"
+    OPML = "opml"
     ORG = "org"
     PDF = "pdf"
     PLAIN = "plain"
     PPTX = "pptx"
+    REVEALJS = "revealjs"
     RST = "rst"
     RTF = "rtf"
-    TEXINFO = "texinfo"
-    TEXTILE = "textile"
+    S5 = "s5"
     SLIDEOUS = "slideous"
     SLIDY = "slidy"
-    DZSLIDES = "dzslides"
-    REVEALJS = "revealjs"
-    S5 = "s5"
+    TEI = "tei"
+    TEXINFO = "texinfo"
+    TEXTILE = "textile"
+    TYPST = "typst"
+    XWIKI = "xwiki"
+    ZIMWIKI = "zimwiki"
 
 
 def get_supported_formats():
@@ -84,8 +131,8 @@ def get_supported_formats():
         return [], []
     
 def convert_document(input_file: str, 
-                    from_format: PandocInputFormat, 
-                    to_format: PandocOutputFormat, 
+                    from_format: InputFormats, 
+                    to_format: OutputFormats, 
                     output_file: str) -> None:
     """
     Convertit un document d'un format à un autre en utilisant pypandoc.
@@ -111,16 +158,16 @@ def convert_document(input_file: str,
 if __name__ == "__main__":
     convert_document(
         "document.md",
-        PandocInputFormat.MARKDOWN,
-        PandocOutputFormat.PDF,
+        InputFormats.MARKDOWN,
+        OutputFormats.PDF,
         "output.pdf"
     )
 
     # Vérifier les formats disponibles
     print("\nFormats d'entrée disponibles:")
-    for format in PandocInputFormat:
+    for format in InputFormats:
         print(f"- {format.value}")
 
     print("\nFormats de sortie disponibles:")
-    for format in PandocOutputFormat:
+    for format in OutputFormats:
         print(f"- {format.value}")
