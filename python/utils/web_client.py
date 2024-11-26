@@ -14,7 +14,7 @@ class HttpMethods(str, Enum):
 
 
 # Fonction asynchrone pour effectuer des requêtes HTTP
-async def requester(method: HttpMethods, url: str, params: Mapping[str, Any] = None, data: Any = None) -> Response:
+async def requester(url: str, params: Mapping[str, Any] = None, data: Any = None ,method: HttpMethods = HttpMethods.GET) -> Response:
     async with AsyncClient() as client:
         if method == HttpMethods.GET:
             response = await client.get(url=url, params=params)
