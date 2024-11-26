@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 import pypandoc
 
 
@@ -153,6 +154,38 @@ def convert_document(input_file: str,
         print(f"Conversion réussie : {output_file}")
     except Exception as e:
         print(f"Erreur lors de la conversion : {str(e)}")
+        raise e
+    
+# Fonction pour retourner les extensions
+def get_file_extension(format_enum: Union[InputFormats, OutputFormats]):
+    format_to_extension = {
+        InputFormats.BIBLATEX: ".bib",
+        InputFormats.BIBTEX: ".bib",
+        InputFormats.CSV: ".csv",
+        InputFormats.DOCX: ".docx",
+        InputFormats.EPUB: ".epub",
+        InputFormats.FB2: ".fb2",
+        InputFormats.HTML: ".html",
+        InputFormats.IPYNB: ".ipynb",
+        InputFormats.JSON: ".json",
+        InputFormats.LATEX: ".tex",
+        InputFormats.MARKDOWN: ".md",
+        InputFormats.ODT: ".odt",
+        InputFormats.RIS: ".ris",
+        InputFormats.RTF: ".rtf",
+        InputFormats.TSV: ".tsv",
+        InputFormats.TEXTILE: ".textile",
+        InputFormats.VIMWIKI: ".wiki",
+        OutputFormats.PDF: ".pdf",
+        OutputFormats.PLAIN: ".txt",
+        OutputFormats.DOCX: ".docx",
+        OutputFormats.HTML: ".html",
+        OutputFormats.MARKDOWN: ".md",
+        OutputFormats.PPTX: ".pptx",
+    }
+    
+    # Cherche l'extension correspondante
+    return format_to_extension.get(format_enum, None)
 
 # Exemple d'utilisation
 if __name__ == "__main__":
