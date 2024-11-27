@@ -78,7 +78,7 @@ import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull';
-import { cvDownloader } from './utils';
+import { cvDownloader, verifySecurity } from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
 

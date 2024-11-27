@@ -3,7 +3,7 @@ import os
 
 def purge_files_after_transform(filename: str, dir: str):
     # Define the directory to be purged
-    STATIC_DIR = os.path.abspath('../../static')
+    STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../static'))
     directory_path = os.path.join(STATIC_DIR, dir)
 
     # Check if the directory exists

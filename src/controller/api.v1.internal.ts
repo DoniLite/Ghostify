@@ -7,8 +7,8 @@ import { prismaClient } from '../config/db';
 import {randomInt} from 'node:crypto'
 
 export const internDocCreator = async (req: Request, res: Response) => {
-  const { userId, filePath, docType } = req.query as QueryXData<{
-    userId: string;
+  const { userName, filePath, docType } = req.query as QueryXData<{
+    userName: string;
     filePath: string;
     docType: string;
   }>;
@@ -17,8 +17,15 @@ export const internDocCreator = async (req: Request, res: Response) => {
   const DOCUMENT_DIR = path.join(STATIC_DIR, 'downloads/doc');
 
   try {
-    const userNID = Number(userId);
     const date = new Date();
+    const user = await prismaClient.user.findUnique({
+      where: {
+        username: userName
+      }, 
+      select: {
+        id: true
+      }
+    })
     const doc =
       typeof docType === 'undefined'
         ? date.getTime().toString()
@@ -34,7 +41,7 @@ export const internDocCreator = async (req: Request, res: Response) => {
       data: {
         uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
         type: docType || 'doc',
-        userId: userNID,
+        userId: user.id,
         downloadLink: docServicePath,
       },
     });
@@ -45,3 +52,13 @@ export const internDocCreator = async (req: Request, res: Response) => {
     return;
   }
 };
+
+
+interface TokenClaimModel {
+  id: number;
+  token: string;
+  registration: string;
+  apiCredits: string;
+  cvCredits: string;
+  posterCredits: string;
+}

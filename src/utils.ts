@@ -1,4 +1,9 @@
-import { ImageAnalysisResult, month, StatsData } from './@types';
+import {
+  ImageAnalysisResult,
+  month,
+  SecurityHashPayload,
+  StatsData,
+} from './@types';
 import fs, { promises as fsP } from 'node:fs';
 import path from 'node:path';
 import crypto, { randomInt } from 'node:crypto';
@@ -755,7 +760,7 @@ export const cvDownloader = async (options: {
     },
   });
 
-  if(typeof options.updating === 'undefined' || !options.updating) {
+  if (typeof options.updating === 'undefined' || !options.updating) {
     doc = await prismaClient.document.create({
       data: {
         uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
@@ -765,7 +770,7 @@ export const cvDownloader = async (options: {
       },
     });
   }
-  
+
   doc = await prismaClient.document.update({
     where: {
       id: options.docId,
@@ -1002,7 +1007,7 @@ export const cvClass = {
 
 export const verifyJWT = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET);
-}
+};
 
 // Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
 export const purgeFiles = async (files: string[]) => {
@@ -1042,3 +1047,57 @@ export const purgeFiles = async (files: string[]) => {
     );
   }
 };
+
+export const setupSecurity = async () => {
+  try {
+    console.log('creating the new security.json')
+    const SECURITY_DIR = path.resolve(__filename, '../../security');
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    const hash = tokenGenerator(date.toString());
+    const security: SecurityHashPayload = {
+      hash,
+      env: process.env.NODE_ENV,
+      expire: date.toISOString(),
+    };
+    console.log('setup the security hash to expire in ' + date.toUTCString())
+    const filePath = path.join(SECURITY_DIR, 'security.json');
+    fs.writeFileSync(filePath, JSON.stringify(security, null, 2));
+    console.log('security.json successfully created')
+    return true
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+
+export const verifySecurity = async () => {
+  try {
+    const SECURITY_DIR = path.resolve(__dirname, '../../security');
+    const filePath = path.join(SECURITY_DIR, 'security.json');
+    if (fs.existsSync(filePath)) {
+      console.log('found security.json processing file examination')
+      const content = fs.readFileSync(filePath, 'utf8');
+      const security: SecurityHashPayload = JSON.parse(content);
+      const date = new Date(security.expire);
+      if(Date.now() > date.getTime()) {
+        console.log('security expired trying to create a new security.json')
+        const resV2 = await setupSecurity();
+        return resV2
+      }
+      if(process.env.NODE_ENV !== security.env) {
+        console.log('security env are not set correctly updating security.json')
+        const resV3 = await setupSecurity();
+        return resV3
+      }
+      return true;
+    }
+    console.log('No security file found creating a new security.json')
+    const res = await setupSecurity();
+    return res;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
