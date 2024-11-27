@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta, timezone
+import json
+import os
 from typing import Union
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -83,3 +85,55 @@ def decode_token(token: str) -> TokenModel:
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Could not validate credentials"
         )
+        
+        
+class InternalJWTBearer(HTTPBearer):
+    def __init__(self, auto_error: bool = True):
+        super().__init__(auto_error=auto_error)
+        
+    async def __call__(self, request: Request):
+        credentials: HTTPAuthorizationCredentials = await super().__call__(request)
+        
+        # Vérifier le schéma du token
+        if not credentials:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Invalid authorization code."
+            )
+        
+        # Vérifier le token
+        if not self.verify_jwt(credentials.credentials):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Invalid token or expired token."
+            )
+        
+        return credentials.credentials
+    
+    def verify_jwt(self, token: str) -> bool:
+        # Définir le chemin absolu du fichier de sécurité
+        security_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../security'))
+        security_file = os.path.join(security_dir, 'security.json')
+
+        # Vérification de l'existence du fichier de sécurité
+        if not os.path.exists(security_file):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="The security file does not exist"
+            )
+
+        # Chargement des données de sécurité
+        try:
+            with open(security_file, 'r') as f:
+                security_data = json.load(f)
+        except json.JSONDecodeError:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="The security file is invalid"
+            )
+
+        # Comparaison du hash dans les données et du token fourni
+        if security_data.get('hash') != token:
+            return False
+
+        return True

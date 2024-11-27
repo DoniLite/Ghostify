@@ -354,3 +354,10 @@ export interface RawCV {
     level: string;
   }[];
 }
+
+
+export type SecurityHashPayload = {
+  hash: string;
+  env: string;
+  expire: string;
+}
