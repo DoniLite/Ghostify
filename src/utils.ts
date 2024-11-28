@@ -1101,3 +1101,17 @@ export const verifySecurity = async () => {
     return false;
   }
 }
+
+
+export const loadSecurityBearer = async() => {
+  const SECURITY_DIR = path.resolve(__dirname, '../../security');
+  const filePath = path.join(SECURITY_DIR, 'security.json');
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const security: SecurityHashPayload = JSON.parse(fileContent);
+    return security;
+  } catch(e)  {
+    console.error(e)
+    return null;
+  }
+}
