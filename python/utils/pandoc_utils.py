@@ -3,7 +3,6 @@ from typing import Union
 import pypandoc
 
 
-
 class InputFormats(Enum):
     BIBLATEX = "biblatex"
     BIBTEX = "bibtex"
@@ -122,22 +121,25 @@ def get_supported_formats():
     try:
         input_formats = pypandoc.get_pandoc_formats()[0]
         output_formats = pypandoc.get_pandoc_formats()[1]
-        
+
         print("Formats d'entrée supportés:", input_formats)
         print("Formats de sortie supportés:", output_formats)
-        
+
         return input_formats, output_formats
     except Exception as e:
         print(f"Erreur lors de la récupération des formats : {str(e)}")
         return [], []
-    
-def convert_document(input_file: str, 
-                    from_format: InputFormats, 
-                    to_format: OutputFormats, 
-                    output_file: str) -> None:
+
+
+def convert_document(
+    input_file: str,
+    from_format: InputFormats,
+    to_format: OutputFormats,
+    output_file: str,
+) -> None:
     """
     Convertit un document d'un format à un autre en utilisant pypandoc.
-    
+
     Args:
         input_file (str): Chemin du fichier d'entrée
         from_format (PandocInputFormat): Format d'entrée
@@ -149,13 +151,14 @@ def convert_document(input_file: str,
             input_file,
             to_format.value,
             format=from_format.value,
-            outputfile=output_file
+            outputfile=output_file,
         )
         print(f"Conversion réussie : {output_file}")
     except Exception as e:
         print(f"Erreur lors de la conversion : {str(e)}")
         raise e
-    
+
+
 # Fonction pour retourner les extensions
 def get_file_extension(format_enum: Union[InputFormats, OutputFormats]):
     format_to_extension = {
@@ -183,17 +186,15 @@ def get_file_extension(format_enum: Union[InputFormats, OutputFormats]):
         OutputFormats.MARKDOWN: ".md",
         OutputFormats.PPTX: ".pptx",
     }
-    
+
     # Cherche l'extension correspondante
     return format_to_extension.get(format_enum, None)
+
 
 # Exemple d'utilisation
 if __name__ == "__main__":
     convert_document(
-        "document.md",
-        InputFormats.MARKDOWN,
-        OutputFormats.PDF,
-        "output.pdf"
+        "document.md", InputFormats.MARKDOWN, OutputFormats.PDF, "output.pdf"
     )
 
     # Vérifier les formats disponibles

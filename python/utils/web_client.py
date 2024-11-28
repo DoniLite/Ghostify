@@ -5,16 +5,21 @@ from httpx import AsyncClient, Response
 
 # Définition des méthodes HTTP
 class HttpMethods(str, Enum):
-    POST = 'POST'
-    GET = 'GET'
-    PUT = 'PUT'
-    DELETE = 'DELETE'
-    PATCH = 'PATCH'
-    HEAD = 'HEAD'
+    POST = "POST"
+    GET = "GET"
+    PUT = "PUT"
+    DELETE = "DELETE"
+    PATCH = "PATCH"
+    HEAD = "HEAD"
 
 
 # Fonction asynchrone pour effectuer des requêtes HTTP
-async def requester(url: str, params: Mapping[str, Any] = None, data: Any = None ,method: HttpMethods = HttpMethods.GET) -> Response:
+async def requester(
+    url: str,
+    params: Mapping[str, Any] = None,
+    data: Any = None,
+    method: HttpMethods = HttpMethods.GET,
+) -> Response:
     async with AsyncClient() as client:
         if method == HttpMethods.GET:
             response = await client.get(url=url, params=params)
