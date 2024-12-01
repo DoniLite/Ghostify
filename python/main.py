@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+import json
 from random import randint
 import shutil
 from typing import Annotated, Any, Dict, List, Union
@@ -217,9 +218,13 @@ async def parser(
                 "filePath": file_pathv2,
                 "docType": output_ext,
             }
+            header_params = {
+                "x-api-key": user.token,
+                "x-user-id": user.id,
+            }
             server_path = "http://localhost:3085/api/v1/internal/doc"
             response = await requester(
-                url=server_path, params=query_params, method=HttpMethods.GET
+                url=server_path, params=query_params, method=HttpMethods.GET, header_params=header_params
             )
             if response.status_code >= 400:
                 raise HTTPException(
@@ -257,7 +262,7 @@ async def create_upload_file(
 
     file_extension = file.filename.split(".")[-1].lower()
 
-    if file_extension not in InputFormats:
+    if file_extension not in [format.value for format in InputFormats]:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Invalid file extension this is not supported",
@@ -294,9 +299,13 @@ async def create_upload_file(
             "filePath": file_pathV2,
             "docType": ext,
         }
+        header_params = {
+                "x-api-key": user.token,
+                "x-user-id": user.id,
+        }
         server_path = "http://localhost:3085/api/v1/internal/doc"
         response = await requester(
-            url=server_path, params=query_params, method=HttpMethods.GET
+            url=server_path, params=query_params, method=HttpMethods.GET, header_params=header_params
         )
         if response.status_code >= 400:
             raise HTTPException(
@@ -357,7 +366,7 @@ async def doc_parser(
 async def save_document(
     credentials: Annotated[HTTPAuthorizationCredentials, Depends(token_bearer)],
     files: List[UploadFile] = File(...),
-    data: str = Form(...),  # JSON data as string
+    data: DocumentStorage = Form(...),  # JSON data as string
     json_field: bool = Form(...),  # Additional boolean field
 ) -> BlogResponseModel:
     """
@@ -397,11 +406,15 @@ async def save_document(
             ]
 
             # Add form fields
-            form_data["data"] = data
+            form_data["data"] = json.dumps(data)
             form_data["json"] = str(json_field).lower()
+            header_params = {
+                "x-api-key": user.token,
+                "x-user-id": user.id,
+            }
 
             # Send POST request to Express backend
-            response = await client.post(EXPRESS_URL, files=multi_files, data=form_data)
+            response = await client.post(EXPRESS_URL, files=multi_files, data=form_data, headers=header_params)
 
         # Check response
         if response.status_code != 200:

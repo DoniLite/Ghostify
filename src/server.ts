@@ -78,9 +78,10 @@ import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull';
-import { cvDownloader, verifySecurity } from './utils';
+import { cvDownloader, verifyJWT, verifySecurity } from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
+import { logger } from './logger';
 
 passport.use(
   new GoogleStrategy(
@@ -339,6 +340,61 @@ server.use(sessionStorageHook);
 // server.use(stats);
 server.use(verify);
 server.use(redirector);
+
+server.use((req, res, next) => {
+  const apiKey = req.headers['x-api-key'] as string;
+  const userId = req.headers['x-user-id'] as string;
+
+  // Si une clé API est fournie, vérifier sa validité
+  if (apiKey) {
+    try {
+      const tokenPayload = verifyJWT(apiKey);
+
+      logger.info(`ne connection with the ${tokenPayload}`);
+
+      // S'assurer que req.session et req.session.Auth existent
+
+      req.session.Auth.authenticated = true;
+      if (userId) {
+        req.session.Auth.id = Number(userId);
+      }
+
+      next(); // Appeler next() uniquement si le token est valide
+    } catch (err) {
+      // Si le token est invalide, bloquer la requête
+      console.error('JWT Verification Error:', err);
+      res.status(401).json({
+        message: 'Invalid or expired API key',
+      });
+    }
+  } else {
+    // Pas de token, continuer normalement
+    next();
+  }
+});
+
+// Middleware pour invalider les sessions API
+server.use((req, res, next) => {
+  res.on('finish', () => {
+    // Vérifier la présence de l'en-tête et d'une session
+    if (req.headers['x-api-key'] && req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error('Session destruction error:', err);
+        } else {
+          console.log('Session successfully destroyed for API request');
+        }
+      });
+    }
+  });
+  next();
+});
+
+server.use((req, res, next) => {
+  logger.info(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 server.on('reversion', (app) => {
   console.log('reversion', app);
 });
