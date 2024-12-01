@@ -35,6 +35,7 @@ DEFAULT_DIRS=(
     "static/uploads"
     "static/users"
     "docs"
+    "logs"
 )
 
 # Fichiers par défaut
