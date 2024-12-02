@@ -36,6 +36,9 @@ DEFAULT_DIRS=(
     "static/users"
     "docs"
     "logs"
+    "python/labs/models"
+    "python/labs/models/model"
+    "python/labs/models/model/hawks"
 )
 
 # Fichiers par défaut

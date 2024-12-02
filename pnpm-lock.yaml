@@ -182,6 +182,9 @@ importers:
       node-vibrant:
         specifier: 3.2.1-alpha.1
         version: 3.2.1-alpha.1
+      nodemailer:
+        specifier: ^6.9.16
+        version: 6.9.16
       nodemon:
         specifier: ^3.1.7
         version: 3.1.7
@@ -2558,6 +2561,10 @@ packages:
 
   node-vibrant@3.2.1-alpha.1:
     resolution: {integrity: sha512-EQergCp7fvbvUCE0VMCBnvaAV0lGWSP8SXLmuWQIBzQK5M5pIwcd9fIOXuzFkJx/8hUiiiLvAzzGDS/bIy2ikA==}
+
+  nodemailer@6.9.16:
+    resolution: {integrity: sha512-psAuZdTIRN08HKVd/E8ObdV6NO7NTBY3KsC30F7M4H1OnmLCUNaS56FpYxyb26zWLSyYF9Ozch9KYHhHegsiOQ==}
+    engines: {node: '>=6.0.0'}
 
   nodemon@3.1.7:
     resolution: {integrity: sha512-hLj7fuMow6f0lbB0cD14Lz2xNjwsyruH251Pk4t/yIitCFJbmY1myuLlHm/q06aST4jg6EgAh74PIBBrRqpVAQ==}
@@ -6342,6 +6349,8 @@ snapshots:
       url: 0.11.4
     transitivePeerDependencies:
       - debug
+
+  nodemailer@6.9.16: {}
 
   nodemon@3.1.7:
     dependencies:

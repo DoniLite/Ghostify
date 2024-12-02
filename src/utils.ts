@@ -80,28 +80,19 @@ export enum Can {
 }
 
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
-  const keys = [] as string[];
   if (typeof obj['title'] === 'string') {
-    obj['title']
-      .split(' ')
-      .forEach((key) => keys.push(key.toLocaleLowerCase()));
+    return obj['title'].toLowerCase().includes(k.toLocaleLowerCase());
   }
   if (typeof obj['description'] === 'string') {
-    obj['description']
-      .split(' ')
-      .forEach((key) => keys.push(key.toLocaleLowerCase()));
+    return obj['description'].toLowerCase().includes(k.toLocaleLowerCase());
   }
   if (typeof obj['desc'] === 'string') {
-    obj['desc'].split(' ').forEach((key) => keys.push(key.toLocaleLowerCase()));
+    return obj['desc'].toLowerCase().includes(k.toLocaleLowerCase());
   }
   if (typeof obj['content'] === 'string') {
-    obj['content']
-      .split(' ')
-      .forEach((key) => keys.push(key.toLocaleLowerCase()));
+    return obj['content'].toLowerCase().includes(k.toLocaleLowerCase());
   }
-  // console.log(keys, k);
-  // console.log(keys.includes(k));
-  return keys.includes(k.toLocaleLowerCase());
+  return false;
 };
 
 export async function analyzeImage(
@@ -1050,7 +1041,7 @@ export const purgeFiles = async (files: string[]) => {
 
 export const setupSecurity = async () => {
   try {
-    console.log('creating the new security.json')
+    console.log('creating the new security.json');
     const SECURITY_DIR = path.resolve(__filename, '../../security');
     const date = new Date();
     date.setDate(date.getDate() + 7);
@@ -1060,58 +1051,102 @@ export const setupSecurity = async () => {
       env: process.env.NODE_ENV,
       expire: date.toISOString(),
     };
-    console.log('setup the security hash to expire in ' + date.toUTCString())
+    console.log('setup the security hash to expire in ' + date.toUTCString());
     const filePath = path.join(SECURITY_DIR, 'security.json');
     fs.writeFileSync(filePath, JSON.stringify(security, null, 2));
-    console.log('security.json successfully created')
-    return true
+    console.log('security.json successfully created');
+    return true;
   } catch (err) {
     console.error(err);
     return false;
   }
 };
 
-
 export const verifySecurity = async () => {
   try {
     const SECURITY_DIR = path.resolve(__dirname, '../../security');
     const filePath = path.join(SECURITY_DIR, 'security.json');
     if (fs.existsSync(filePath)) {
-      console.log('found security.json processing file examination')
+      console.log('found security.json processing file examination');
       const content = fs.readFileSync(filePath, 'utf8');
       const security: SecurityHashPayload = JSON.parse(content);
       const date = new Date(security.expire);
-      if(Date.now() > date.getTime()) {
-        console.log('security expired trying to create a new security.json')
+      if (Date.now() > date.getTime()) {
+        console.log('security expired trying to create a new security.json');
         const resV2 = await setupSecurity();
-        return resV2
+        return resV2;
       }
-      if(process.env.NODE_ENV !== security.env) {
-        console.log('security env are not set correctly updating security.json')
+      if (process.env.NODE_ENV !== security.env) {
+        console.log(
+          'security env are not set correctly updating security.json'
+        );
         const resV3 = await setupSecurity();
-        return resV3
+        return resV3;
       }
       return true;
     }
-    console.log('No security file found creating a new security.json')
+    console.log('No security file found creating a new security.json');
     const res = await setupSecurity();
     return res;
   } catch (err) {
     console.error(err);
     return false;
   }
-}
+};
 
-
-export const loadSecurityBearer = async() => {
+export const loadSecurityBearer = async () => {
   const SECURITY_DIR = path.resolve(__dirname, '../../security');
   const filePath = path.join(SECURITY_DIR, 'security.json');
   try {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const security: SecurityHashPayload = JSON.parse(fileContent);
     return security;
-  } catch(e)  {
-    console.error(e)
+  } catch (e) {
+    console.error(e);
     return null;
   }
+};
+
+export enum DocumentMimeTypes {
+  // Documents texte
+  PLAIN_TEXT = 'text/plain',
+  HTML = 'text/html',
+  CSS = 'text/css',
+  CSV = 'text/csv',
+  XML = 'application/xml',
+  XHTML = 'application/xhtml+xml',
+
+  // Documents Microsoft Office
+  DOC = 'application/msword',
+  DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  XLS = 'application/vnd.ms-excel',
+  XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  PPT = 'application/vnd.ms-powerpoint',
+  PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+
+  // Documents OpenDocument
+  ODT = 'application/vnd.oasis.opendocument.text',
+  ODS = 'application/vnd.oasis.opendocument.spreadsheet',
+  ODP = 'application/vnd.oasis.opendocument.presentation',
+
+  // PDF
+  PDF = 'application/pdf',
+
+  // Formats texte enrichi
+  RTF = 'application/rtf',
+
+  // Ebooks
+  EPUB = 'application/epub+zip',
+}
+
+export enum ImageMimeType {
+  // Images (documents visuels)
+  JPEG = 'image/jpeg',
+  PNG = 'image/png',
+  GIF = 'image/gif',
+  BMP = 'image/bmp',
+  SVG = 'image/svg+xml',
+  WEBP = 'image/webp',
+  TIFF = 'image/tiff',
+  ICO = 'image/x-icon',
 }

@@ -6,7 +6,7 @@ import {
   QueryXData,
   Section,
 } from '../@types';
-import { decrypt, encrypt, Service, unify } from '../utils';
+import { decrypt, DocumentMimeTypes, encrypt, Service, unify } from '../utils';
 import { prismaClient } from '../config/db';
 // import util from 'util';
 import fs from 'fs';
@@ -410,3 +410,35 @@ export const loadPost = async (req: Request, res: Response) => {
     }
   });
 };
+
+
+export const conversionView = async (req: Request, res: Response) => {
+  res.render('documentInput', {service: 'poster'});
+}
+
+export const parserController = async (req: Request, res:Response) => {
+  if(!req.session.Auth.authenticated) {
+    if(req.headers['x-api-token']) {
+      res.status(401).json({message: 'authentication required'});
+      return;
+    }
+    res.status(401).redirect('/signin');
+    return;
+  }
+  const STATIC_DIR = path.resolve(path.join(__dirname, '../../static/test'));
+  const mimeTypesArray = Object.values(DocumentMimeTypes);
+  const form = new IncomingForm({
+    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    keepExtensions: true,
+    multiples: true, // Permet de gérer plusieurs fichiers
+    allowEmptyFiles: true,
+    minFileSize: 0,
+    filter: function ({ mimetype }) {
+      // keep only images
+      return mimetype && mimeTypesArray.includes(mimetype as DocumentMimeTypes);
+    },
+  });
+
+  const [_, files] = await form.parse(req);
+  const file = files?.file?.[0];
+}

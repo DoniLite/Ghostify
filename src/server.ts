@@ -33,8 +33,6 @@ import {
   authController,
   connexion,
   disconnection,
-  getMd,
-  getMdScript,
   googleAuth,
   parserRoute,
   registrationController,
@@ -43,6 +41,8 @@ import {
 } from './controller/api.v1';
 import { urlVisitor } from './controller/pushVisitor';
 import {
+  conversionView,
+  parserController,
   docSaver,
   docView,
   poster,
@@ -395,10 +395,6 @@ server.use((req, res, next) => {
   next();
 });
 
-server.on('reversion', (app) => {
-  console.log('reversion', app);
-});
-
 // Websocket routes
 server.ws('/', (socket) => {
   console.log('New client connected');
@@ -465,7 +461,7 @@ server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
   const { generator, email, url }: ReqParams = req.query;
   if (!generator) {
-    res.status(404).send('No generator found');
+    res.status(400).send('No generator found');
   }
   const tokenChecked = await prismaClient.generatorData.findUnique({
     where: {
@@ -501,6 +497,7 @@ server.get('/license', license);
 server.get('/about', about);
 server.get('/billing', billing);
 server.get('/poster/docs/', documentView);
+server.get('/poster/parser', conversionView);
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
@@ -532,9 +529,6 @@ server.get('/poster/view', docView);
 server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 server.post('/api/v1/parser', parserRoute);
-server.get('/api/v1/md.css', getMd);
-server.get('/api/v1/md.js', getMdScript);
-server.get('/login/federated/google');
 server.post('/user/profile/file', updateProfile);
 server.get('/user/exists/:username', checkIfUserExist);
 server.post('/user/update', updateUserName);
@@ -545,6 +539,7 @@ server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
 server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
+server.post('/api/v1/poster/parser', parserController)
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -563,14 +558,15 @@ server.get('/feed', (req, res) => {
   return res.render('src/views/components/feed.ejs', { service: undefined });
 });
 
+// 404 Not found route
 server.use((req, res) => {
-  res.status(404).render('404'); // Remplace par le chemin de ton fichier HTML 404
 
-  // Ou pour un message simple en texte
-  // res.send('404 - Page non trouvée');
+  if (req.headers['x-api-key']) {
+    res.status(404).json({ message: 'Route not found' });
+    return;
+  }
 
-  // Ou pour une réponse JSON
-  // res.json({ error: '404 - Page non trouvée' });
+  res.status(404).render('404');
 });
 
 const port = parseInt(process.env.PORT) || 3085;
@@ -599,6 +595,10 @@ server.on('downloader', (app) => {
   console.log('Download');
   console.log(app);
   console.log(server.request.session);
+});
+
+server.on('reversion', (app) => {
+  console.log('reversion', app);
 });
 
 // workers
