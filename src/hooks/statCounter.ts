@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from 'express';
 import {
   checkIfMonthIsNotOver,
   getMonthWithDate,
@@ -8,11 +7,8 @@ import {
 } from '../utils';
 
 export const stats = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+  url: string
 ) => {
-  const url = req.url;
   // const headers = req.raw.headers;
   const stats = await loadStatistics();
   console.log(stats);
@@ -37,7 +33,7 @@ export const stats = async (
     const index = stats.urls.findIndex((thisUrl) => thisUrl.url === url);
     stats.urls[index].visitor++;
     await saveStatistic(stats);
-    next();
+    return;
   }
   if (weekIndex !== thisWeekIndex) {
     stats.weekly.index = thisWeekIndex;
@@ -49,12 +45,11 @@ export const stats = async (
         url: url,
         visitor: 1,
       });
-      req.session.Stats = stats;
     }
     const index = stats.urls.findIndex((thisUrl) => thisUrl.url === url);
     stats.urls[index].visitor++;
     await saveStatistic(stats);
-    next();
+    return;
   }
   stats.monthly.visitor += 1;
   stats.total_visitor += 1;
@@ -64,10 +59,9 @@ export const stats = async (
       url: url,
       visitor: 1,
     });
-    req.session.Stats = stats;
   }
   const index = stats.urls.findIndex((thisUrl) => thisUrl.url === url);
   stats.urls[index].visitor++;
   await saveStatistic(stats);
-  next();
+  return;
 };

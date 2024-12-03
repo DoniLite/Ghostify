@@ -6,13 +6,23 @@ import {
   QueryXData,
   Section,
 } from '../@types';
-import { decrypt, DocumentMimeTypes, encrypt, Service, unify } from '../utils';
+import {
+  decrypt,
+  DocumentMimeTypes,
+  encrypt,
+  Service,
+  unify,
+  renaming,
+  purgeSingleFIle,
+  verifySecurity,
+  loadSecurityBearer,
+} from '../utils';
 import { prismaClient } from '../config/db';
 // import util from 'util';
 import fs from 'fs';
 import path from 'path';
 // import { pipeline } from 'stream';
-import { randomInt } from 'crypto';
+import { randomInt } from 'node:crypto';
 import { IncomingForm, File as FormidableFile } from 'formidable';
 import { Request, Response } from 'express';
 import { tokenGenerator } from '../server';
@@ -182,10 +192,7 @@ export const docSaver = async (req: Request, res: Response) => {
       const date = new Date();
       const r = randomInt(date.getTime()).toString();
       const fName = `${date.getTime().toString() + r}${ext}`;
-      const uploadPath = path.join(
-        path.resolve(__dirname, STATIC_DIR),
-        fName
-      );
+      const uploadPath = path.join(path.resolve(__dirname, STATIC_DIR), fName);
       // Déplacer le fichier téléchargé
       fs.rename(fileArray[i].filepath, uploadPath, async (renameErr) => {
         if (renameErr) {
@@ -411,18 +418,18 @@ export const loadPost = async (req: Request, res: Response) => {
   });
 };
 
-
 export const conversionView = async (req: Request, res: Response) => {
-  res.render('documentInput', {service: 'poster'});
-}
+  res.render('documentInput', { service: 'poster' });
+};
 
-export const parserController = async (req: Request, res:Response) => {
-  if(!req.session.Auth.authenticated) {
-    if(req.headers['x-api-token']) {
-      res.status(401).json({message: 'authentication required'});
+export const parserController = async (req: Request, res: Response) => {
+  if (!req.session.Auth.authenticated) {
+    if (req.headers['x-api-token']) {
+      res.status(401).json({ message: 'authentication required' });
       return;
     }
-    res.status(401).redirect('/signin');
+    req.session.RedirectUrl = '/poster/parser';
+    res.status(401).redirect('/signin/?service=poster');
     return;
   }
   const STATIC_DIR = path.resolve(path.join(__dirname, '../../static/test'));
@@ -439,6 +446,70 @@ export const parserController = async (req: Request, res:Response) => {
     },
   });
 
-  const [_, files] = await form.parse(req);
+  const [fields, files] = await form.parse(req);
+  let out: string;
+  for (const field in fields) {
+    if (field === 'outputFormat') {
+      out = fields[field].toString();
+    }
+    continue;
+  }
   const file = files?.file?.[0];
-}
+  const result = await renaming(file, STATIC_DIR);
+  if (!result) {
+    res.status(500).send('Something went wrong please try later');
+    purgeSingleFIle(file.filepath);
+    return;
+  }
+
+  const isSecure = await verifySecurity();
+
+  if (!isSecure) {
+    res.status(500).send('Something went wrong please try later');
+    return;
+  }
+
+  const security = await loadSecurityBearer();
+  const API_URL = '/api/v1/parser/';
+  const API_PORT = process.env.NODE_ENV === 'production' ? 8080 : 8000;
+  const apiRes = await fetch(
+    `http://localhost:${API_PORT}:${API_URL}${result}/?out=${out}`,
+    {
+      headers: {
+        Authorization: `Bearer ${security.hash}`,
+      },
+    }
+  );
+  if (!apiRes.ok) {
+    res.status(500).send('Something went wrong please try later');
+    return;
+  }
+
+  const json = (await apiRes.json()) as { success: boolean; path: string };
+  const date = new Date();
+  const fileName = (date.getTime() + randomInt(100000)).toString();
+  const fileExt = json.path.split('.').pop();
+  const fileXName = `${fileName}.${fileExt}`;
+  const SAVE_PATH = path.resolve(
+    path.join(__dirname, '../../static/downloads/doc')
+  );
+  const serviceXPath =
+    process.env.NODE_ENV !== 'production'
+      ? `https://ghostify.site/downloader/${tokenGenerator(
+          'downloads/doc' + fileXName
+        )}`
+      : `http://localhost:3085/downloader/${tokenGenerator(
+          'downloads/doc' + fileXName
+        )}`;
+  fs.renameSync(json.path, path.join(SAVE_PATH, fileXName));
+  const newDoc = await prismaClient.document.create({
+    data: {
+      title: 'Doc_converted_' + date.toDateString(),
+      uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
+      type: out,
+      userId: req.session.Auth.id,
+      downloadLink: serviceXPath,
+    },
+  });
+  res.status(200).redirect(newDoc.downloadLink);
+};
