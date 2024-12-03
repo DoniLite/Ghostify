@@ -1039,7 +1039,15 @@ export const purgeFiles = async (files: string[]) => {
   }
 };
 
-export const setupSecurity = async () => {
+export const purgeSingleFIle = (path: string) => {
+  try {
+    fs.rmSync(path);
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+const setupSecurity = async () => {
   try {
     console.log('creating the new security.json');
     const SECURITY_DIR = path.resolve(__filename, '../../security');

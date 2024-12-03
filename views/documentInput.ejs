@@ -5,6 +5,38 @@
   </h2>
 
   <form id="uploadForm" method="post" action="/api/v1/poster/parser" class="space-y-4 max-w-3xl rounded-lg mb-4">
+
+    <% 
+// Enumération des formats de sortie
+    const outputFormats = [
+      "asciidoc", "asciidoctor", "beamer", "biblatex", "bibtex", 
+      "chunkedhtml", "commonmark", "commonmark_x", "context", "csljson", 
+      "docbook", "docbook4", "docbook5", "docx", "dokuwiki", "dzslides", 
+      "epub", "epub2", "epub3", "fb2", "gfm", "haddock", "html", "html4", 
+      "html5", "icml", "ipynb", "jats", "jats_archiving", 
+      "jats_articleauthoring", "jats_publishing", "jira", "json", "latex", 
+      "man", "markdown", "markdown_github", "markdown_mmd", 
+      "markdown_phpextra", "markdown_strict", "markua", "mediawiki", "ms", 
+      "muse", "native", "odt", "opendocument", "opml", "org", "pdf", 
+      "plain", "pptx", "revealjs", "rst", "rtf", "s5", "slideous", "slidy", 
+      "tei", "texinfo", "textile", "typst", "xwiki", "zimwiki"
+    ];
+    %>
+
+    <div id="chooseFormat" class="flex-col space-y-4 w-full my-8 hidden">
+      <!-- Label -->
+      <label for="outputFormat" class="block text-sm text-orange-600 font-bold">
+        Choisissez un format de sortie :
+      </label>
+
+      <!-- Select Input -->
+      <select id="outputFormat" name="outputFormat" class="block w-full rounded-md p-3 text-orange-600 font-bold border-gray-300 shadow-sm focus:border-gray-950 focus:ring-gray-950 sm:text-sm">
+        <% outputFormats.forEach(format => { %>
+          <option value="<%= format %>"><%= format %></option>
+        <% }); %>
+      </select>
+    </div>
+
     <!-- Zone de dépôt de fichiers avec Drag-and-Drop -->
     <div
       id="dropArea"
@@ -81,6 +113,8 @@
     ).toFixed(2);
     document.getElementById('fileType').textContent = file.type;
     document.getElementById('fileInfo').classList.remove('hidden');
+    document.getElementById('chooseFormat').classList.remove('hidden');
+    document.getElementById('chooseFormat').classList.add('flex');
   }
 
   // Ouvrir le sélecteur de fichier au clic sur la zone de dépôt

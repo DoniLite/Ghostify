@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import session from 'express-session';
 import cookie from 'cookie-parser';
 import { prismaClient } from './config/db';
-import { ReqParams } from './@types';
+import { ReqParams, StatsData } from './@types';
 import cors from 'cors';
 import { home } from './routes/home';
 import { homeController } from './controller/home';
@@ -78,11 +78,12 @@ import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull';
-import { cvDownloader, verifyJWT, verifySecurity } from './utils';
+import { cvDownloader, verifyJWT, saveStatistic } from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
 import { logger } from './logger';
-import {onStat} from './hooks/events'
+import { onStat } from './hooks/events';
+import { stats } from './hooks/statCounter';
 
 passport.use(
   new GoogleStrategy(
@@ -541,7 +542,7 @@ server.get('/cv/processApi', cvProcessAPI);
 server.get('/cv/:cv', getCV);
 server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
-server.post('/api/v1/poster/parser', parserController)
+server.post('/api/v1/poster/parser', parserController);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -562,7 +563,6 @@ server.get('/feed', (req, res) => {
 
 // 404 Not found route
 server.use((req, res) => {
-
   if (req.headers['x-api-key']) {
     res.status(404).json({ message: 'Route not found' });
     return;
@@ -599,7 +599,6 @@ server.on('downloader', (app) => {
   console.log(server.request.session);
 });
 
-
 server.on('reversion', (app) => {
   console.log('reversion', app);
 });
@@ -613,6 +612,11 @@ export const cvQueue = new Queue<{
   docId?: number;
 }>('cv-processor', 'redis://127.0.0.1:6379');
 
+export const statsQueue = new Queue<string>(
+  'stats-saver',
+  'redis://127.0.0.1:6379'
+);
+
 cvQueue.process(async (job, done) => {
   try {
     const downLoaderData = await cvDownloader(job.data);
@@ -622,8 +626,16 @@ cvQueue.process(async (job, done) => {
   }
 });
 
+statsQueue.process(async (job, done) => {
+  try {
+    await stats(job.data);
+    done(null);
+  } catch(err) {
+    done(err);
+  }
+});
 
-// Events 
+// Events
 
 ee.on('data', (args) => {
   console.log(`event emited from 'data' with ${args}`);

@@ -27,7 +27,9 @@ const adapter = new PrismaPg(pool, {
 //     console.log(err);
 //   });
 
-// export const redisStoreClient = createClient();
+// export const redisStoreClient = createClient()
+//   .on('error', (err) => console.log('Redis Client Error', err))
+//   .connect();
 
 export const prismaClient = new PrismaClient({ adapter });
 
