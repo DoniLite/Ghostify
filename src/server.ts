@@ -82,6 +82,7 @@ import { cvDownloader, verifyJWT, verifySecurity } from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
 import { logger } from './logger';
+import {onStat} from './hooks/events'
 
 passport.use(
   new GoogleStrategy(
@@ -392,6 +393,7 @@ server.use((req, res, next) => {
 
 server.use((req, res, next) => {
   logger.info(`Incoming request: ${req.method} ${req.url}`);
+  ee.emit('stat', req.url);
   next();
 });
 
@@ -597,6 +599,7 @@ server.on('downloader', (app) => {
   console.log(server.request.session);
 });
 
+
 server.on('reversion', (app) => {
   console.log('reversion', app);
 });
@@ -618,3 +621,12 @@ cvQueue.process(async (job, done) => {
     done(e);
   }
 });
+
+
+// Events 
+
+ee.on('data', (args) => {
+  console.log(`event emited from 'data' with ${args}`);
+});
+
+ee.on('stat', onStat);

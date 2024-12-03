@@ -174,7 +174,7 @@ export enum ProjectParticipationType {
   subscription = 'subscription',
 }
 
-export const DATA_PATH = path.join(__dirname, 'data');
+export const DATA_PATH = path.resolve(path.join(__dirname, '../data'));
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export async function createDirIfNotExists(path: string) {
@@ -187,7 +187,7 @@ export function convertStatsInput(statsInput: string): StatsData {
 }
 
 export function stringifyStats(stats: StatsData): string {
-  return JSON.stringify(stats);
+  return JSON.stringify(stats, null, 4);
 }
 
 /**
