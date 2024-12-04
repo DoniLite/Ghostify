@@ -83,6 +83,29 @@ export const poster = async (req: Request, res: Response) => {
   }
 };
 
+export const updateDocView = async (req: Request, res: Response) => {
+  const { post } = req.params;
+  const postData = await prismaClient.post.findUnique({
+    where: {
+      uid: post,
+    },
+  });
+  if (!postData) {
+    res.status(404).redirect('/404');
+    return;
+  }
+
+  res.render('poster', {
+    id: 1,
+    service: 'poster',
+    auth: true,
+    writterMode: true,
+    data: req.session.Auth.isSuperUser
+      ? { ...req.session.SuperUser }
+      : { id: req.session.Auth.id },
+  });
+};
+
 export const requestComponent = (req: Request, res: Response) => {
   const { section, index } = req.query as QueryXData<{
     section: string;
@@ -129,7 +152,7 @@ export const docSaver = async (req: Request, res: Response) => {
     },
   });
   let json: boolean | undefined;
-  const uid = tokenGenerator((date.getTime() + randomInt(1000)).toString());
+  const uid = tokenGenerator((date.getTime() + randomInt(10000)).toString());
   // Crée un post vide au début
   const post = req.session.Auth.isSuperUser
     ? await prismaClient.post.create({

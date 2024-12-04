@@ -3,13 +3,19 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/DoniLite/CSS@latest/md.css"
 />
+<link 
+  rel="stylesheet" 
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+/>
+<script 
+  src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"
+></script>
 <div class="markdown-content light-mode">
   <div class="markdown-content" id="parsedContent"><%- content %></div>
 </div>
 <% if ( typeof requestView !== 'undefined' && requestView === true ) { %>
 <div class="max-w-[800px] p-3 bg-gray-950 mx-auto rounded-lg">
-  <%- include('components/comment.ejs', {pointerType: 'post', pointer: id,
-  replies: comments }) %>
+  <%- include('components/comment.ejs', {pointerType: 'post', pointer: id, replies: comments }) %>
 </div>
 <% } %>
 
@@ -33,5 +39,4 @@
     rawHeaderNav.classList.remove('translate-x-[200%]');
   });
 </script>
-<%- include('footer', {bg: 'bg-gray-950', text: 'text-white', title:
-'text-gray-400'}) %>
+<%- include('footer', {bg: 'bg-gray-950', text: 'text-white', title:'text-gray-400'}) %>

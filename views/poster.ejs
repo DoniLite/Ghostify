@@ -1,5 +1,6 @@
 <%- include('components/rawHeader.ejs', {title: 'Ghostify | Poster', desc: 'Poster is a toolkit for articles redaction and document conversion'}) %>
 <input type="hidden" name="index" value="<%= id %>" id="sessionIndex" />
+<input type="hidden" name="userId" value="<%= data.id %>" id="userIdInput">
 
 <div class="w-full mt-28" id="posterComponent">
   <form action="" id="posterForm">
@@ -30,6 +31,7 @@
           <i class="fa-solid fa-hashtag fa-lg"></i> Section
         </li>
         <li
+          id="saveDocument"
           class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400"
         >
           <button type="submit">
@@ -37,6 +39,7 @@
           </button>
         </li>
         <li
+          id="abortBtn"
           class="flex gap-x-3 font-bold cursor-pointer hover:text-xl transition-all hover:text-orange-400 items-center"
         >
           <i class="fa-solid fa-circle-xmark"></i> Abort
@@ -48,7 +51,7 @@
         class="fa-solid fa-link fa-2xl text-white font-bold rounded-full shadow-xl bg-orange-400 p-2 cursor-pointer fixed top-1/2 right-7"
       ></i>
     </div>
-    <a href="#getHead" id="up" class="transition-all delay-500">
+    <a href="#navHead" id="up" class="transition-all delay-500">
       <i
         class="fa-solid fa-angles-up fa-lg p-4 bg-orange-400 rounded-full text-white cursor-pointer fixed lg:left-7 lg:bottom-7 left-1 bottom-1"
       ></i>

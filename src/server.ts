@@ -48,6 +48,7 @@ import {
   poster,
   requestComponent,
   requestListComponent,
+  updateDocView,
 } from './routes/poster';
 import { find } from './controller/finder';
 import { uploadActu } from './controller/actu';
@@ -84,6 +85,8 @@ import { documentView } from './routes/doc';
 import { logger } from './logger';
 import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
+import { auth, targetAuthRoutes } from './hooks/auth';
+
 
 passport.use(
   new GoogleStrategy(
@@ -334,6 +337,8 @@ server.use(
   })
 );
 
+server.use(targetAuthRoutes, auth);
+
 server.use(passport.initialize());
 server.use(passport.authenticate('session'));
 server.use(passport.session());
@@ -499,12 +504,14 @@ server.get('/privacy', policy);
 server.get('/license', license);
 server.get('/about', about);
 server.get('/billing', billing);
-server.get('/poster/docs/', documentView);
+server.get('/poster/docs', documentView);
 server.get('/poster/parser', conversionView);
 server.get('/promotion', (req, res) => {
   res.render('components/promotion', { auth: undefined, service: 'promotion' });
 });
-
+server.get('/404', (req, res) => {
+  res.render('404');
+})
 // Admin conn
 server.post('/articlePost', articlePost);
 server.post('/projectPost', projectPost);
@@ -527,6 +534,7 @@ server.get(
 );
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
+server.get('/poster/update/:post', updateDocView);
 server.post('/poster/save', docSaver);
 server.get('/poster/view', docView);
 server.post('/actu/post', uploadActu);

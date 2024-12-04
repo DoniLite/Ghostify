@@ -6,6 +6,7 @@ import { SuperUser } from '../class/SuperUser';
 import { Can } from '../utils';
 import { Request, Response } from 'express';
 import path from 'node:path';
+import { logger } from '../logger';
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -19,7 +20,7 @@ interface PosterQuery {
 export const authController = async (req: Request, res: Response) => {
   const { login, password, permission, defaultRoot } =
     req.body as BodyXData<PosterQuery>;
-
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   console.log(req.body);
   req.session.Auth = {
     authenticated: false,
@@ -30,11 +31,17 @@ export const authController = async (req: Request, res: Response) => {
     return;
   }
 
-  const user = await prismaClient.user.findUnique({
-    where: {
-      email: login,
-    },
-  });
+  const user = emailRegex.test(login)
+    ? await prismaClient.user.findUnique({
+        where: {
+          email: login,
+        },
+      })
+    : await prismaClient.user.findUnique({
+        where: {
+          username: login,
+        },
+      });
 
   if (!user) {
     const spltPass = password.split(';');
@@ -66,10 +73,26 @@ export const authController = async (req: Request, res: Response) => {
         return;
       } catch (e) {
         console.error(e);
+        logger.warn(
+          'not authenticated login with: ' +
+            login +
+            ' and' +
+            password +
+            ' credentials',
+          e
+        );
         res.status(404).send('error during service connection');
         return;
       }
     }
+    logger.warn(
+      'not authenticated login with: ' +
+        login +
+        ' and' +
+        password +
+        ' credentials',
+      [login, password, permission, defaultRoot]
+    );
     res.status(404).send('error during service connection');
     return;
   }
@@ -109,16 +132,27 @@ export const authController = async (req: Request, res: Response) => {
       expires: cookieExpriration,
     });
     console.log('after cookie setting');
+    if (req.session.RedirectUrl) {
+      res.redirect(req.session.RedirectUrl);
+      return;
+    }
     if (defaultRoot) {
       console.log('redirecting to default root path');
       res.redirect('/home');
       return;
     }
-    console.log('rediecting to service view');
+    console.log('redirecting to service view');
     res.redirect(`/service?userId=${user.id}&service=${permission}`);
     return;
   }
-
+  logger.warn(
+    'not authenticated login with: ' +
+      login +
+      ' and' +
+      password +
+      ' credentials',
+    [login, password, permission, defaultRoot]
+  );
   res.status(403).send('Not Matching Issue');
   return;
 };
@@ -226,7 +260,7 @@ export const tempLinkGenerator = async (req: Request, res: Response) => {
     req.session.ServerKeys.iv
   );
   const linkPayload = `https//gostify.site/register?service=${service}&token=${token}`;
-  res.send(JSON.stringify(linkPayload));
+  res.send(linkPayload);
 };
 
 interface Register {
@@ -470,6 +504,10 @@ export const registrationController = async (req: Request, res: Response) => {
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
         });
+        if (req.session.RedirectUrl) {
+          res.redirect(req.session.RedirectUrl);
+          return;
+        }
         if (defaultRoot) {
           res.redirect('/home');
           return;
@@ -488,9 +526,9 @@ export const registrationController = async (req: Request, res: Response) => {
 };
 
 export const connexion = async (req: Request, res: Response) => {
-  const { service, defailtRoot } = req.query as QueryXData<{
+  const { service, defaultRoot } = req.query as QueryXData<{
     service: Service;
-    defailtRoot: string;
+    defaultRoot: string;
   }>;
   console.log(service);
   if (!service) {
@@ -498,10 +536,10 @@ export const connexion = async (req: Request, res: Response) => {
     return;
   }
 
-  if (defailtRoot) {
+  if (defaultRoot) {
     res.render('signin', {
       service: service,
-      defailtRoot: Boolean(defailtRoot),
+      defaultRoot: Boolean(defaultRoot),
     });
     return;
   }
