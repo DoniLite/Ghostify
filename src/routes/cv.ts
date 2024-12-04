@@ -227,6 +227,8 @@ export const getCVTheme = async (req: Request, res: Response) => {
       },
     });
     if (set && data && set === 'true') {
+      let docId: number;
+      let updating: boolean = false;
       const [type, mode] = data.split(';');
       const updatingTheme = await prismaClient.cV.update({
         where: {
@@ -237,10 +239,31 @@ export const getCVTheme = async (req: Request, res: Response) => {
           mode: mode,
         },
       });
-      console.log('theme updated successfully : ', updatingTheme.type, updatingTheme.mode);
-      res
-        .status(200)
-        .json({ success: true });
+      const doc = await prismaClient.document.findFirst({
+        where: {
+          downloadLink: updatingTheme.pdf,
+        },
+      });
+      if (doc) {
+        docId = doc.id;
+        updating = true;
+      }
+      const newCVJob = await cvQueue.add({
+        url: updatingTheme.url,
+        id: updatingTheme.id,
+        docId,
+        updating,
+      });
+      req.session.JobsIDs = {
+        ...req.session.JobsIDs,
+        cvJob: newCVJob.id,
+      };
+      console.log(
+        'theme updated successfully : ',
+        updatingTheme.type,
+        updatingTheme.mode
+      );
+      res.status(200).json({ success: true });
       return;
     }
     res.status(200).json({

@@ -526,9 +526,9 @@ export const registrationController = async (req: Request, res: Response) => {
 };
 
 export const connexion = async (req: Request, res: Response) => {
-  const { service, defailtRoot } = req.query as QueryXData<{
+  const { service, defaultRoot } = req.query as QueryXData<{
     service: Service;
-    defailtRoot: string;
+    defaultRoot: string;
   }>;
   console.log(service);
   if (!service) {
@@ -536,10 +536,10 @@ export const connexion = async (req: Request, res: Response) => {
     return;
   }
 
-  if (defailtRoot) {
+  if (defaultRoot) {
     res.render('signin', {
       service: service,
-      defailtRoot: Boolean(defailtRoot),
+      defaultRoot: Boolean(defaultRoot),
     });
     return;
   }

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
 const actionBtn = document.querySelector('#action');
+const abortBtn = document.querySelector('#abortBtn');
 const actionComponent = document.querySelector('#actionComponent');
 /**
  * @type {Element}
@@ -63,7 +64,7 @@ const requesterFunc = async (e) => {
   });
 
   const dataRes = await res.json();
-  console.log(dataRes)
+  console.log(dataRes);
   if (dataRes.success) {
     window.location.href = `/poster/view?post=${dataRes.article}`;
   }
@@ -396,6 +397,33 @@ const imgSelfRemove = (e) => {
   secondParent.remove();
 };
 
+const hydrateComponent = async () => {
+  const url = new URL(window.location.href);
+  const query = url.searchParams;
+  if (query.get('mode') === 'hydrate') {
+  }
+};
+
+/**
+ * 
+ * @param {{title: string; meta: string;}} data 
+ */
+const fillHead = (data) => {
+  const head = document.querySelector('#getHead');
+  head.querySelector("input[name='documentTitle']").value = data.title;
+  head.querySelector('textarea').value = data.meta;
+}
+
+/**
+ *
+ * @param {Event} e
+ */
+const abortEventHandler = (e) => {
+  e.preventDefault();
+  const userId = document.querySelector('#userIdInput').value;
+  window.location.href = `/service?userId=${userId}&service=poster`;
+};
+
 /**
  *
  * @param {Event} e
@@ -404,6 +432,7 @@ actionBtn.onclick = (e) => {
   e.preventDefault();
   actionComponent.classList.toggle('poster-hidden');
 };
+abortBtn.addEventListener('click', abortEventHandler);
 actionBtn.addEventListener('mouseenter', showComponent);
 actionBtn.addEventListener('mouseleave', hideComponent);
 actionComponent.addEventListener('mouseenter', showComponent);
@@ -412,3 +441,6 @@ requestSectionBtn.addEventListener('click', requestNewSection);
 requestListBtn.addEventListener('click', requestNewList);
 requestFileBtn.addEventListener('click', requestFile);
 viewIcon.addEventListener('click', requesterFunc);
+document
+  .querySelector('#saveDocument')
+  .addEventListener('click', requesterFunc);

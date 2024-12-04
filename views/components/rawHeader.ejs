@@ -9,9 +9,7 @@
     <%- include('../h.ejs') %>
   </head>
 
-  <% if (typeof service === 'undefined') { %>
-   const service = 'Ghostify';
-  <% } %>
+  <% if (typeof service === 'undefined') { const service = 'Ghostify';} %>
 
   <body>
     <nav
@@ -39,7 +37,7 @@
         <% } %>
         <a
           class="flex items-center font-bold text-red-950 cursor-pointer hover:text-red-950 transition-all"
-          href="<% if (typeof auth === 'undefined') { %>/home<% } else { %>/service?userId=<%= typeof data.id === 'undefined' ? data.userString : data.id  %>&service=<%= service %><% } %>"
+          href="<% if (typeof auth === 'undefined') { %>/<% } else { %>/service?userId=<%= typeof data.id === 'undefined' ? data.userString : data.id  %>&service=<%= service %><% } %>"
         >
           <i class="fa-solid fa-ghost mr-3"></i>
           <% if (service === 'poster') { %> <%= 'Poster->Ghost' %> <% } else if
@@ -48,35 +46,35 @@
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
-          href="/home?pagination=1"
+          href="/projects"
         >
           <i class="fa-solid fa-diagram-project mr-3"></i>
           Projects
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
-          href="/home?pagination=2"
+          href="/hub"
         >
           <i class="fa-solid fa-at mr-3"></i>
           Meta-Hub
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
-          href="/home?pagination=3"
+          href="/blog"
         >
           <i class="fa-solid fa-blog mr-3"></i>
           Blog
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
-          href="/home?pagination=4"
+          href="/api-gaming"
         >
           <i class="fa-solid fa-flask-vial mr-3"></i>
           Tester & GAMES
         </a>
         <a
           class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
-          href="/home?pagination=5"
+          href="/contact"
         >
           <i class="fa-solid fa-mug-saucer mr-3"></i>
           Contact
