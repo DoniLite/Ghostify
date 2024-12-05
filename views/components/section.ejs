@@ -18,6 +18,7 @@
       name="section"
       placeholder="Title"
       id="sectionTitle<%= id + 1  %>"
+      value="<%= typeof title === 'string' ? title : '' %>"
       class="text-gray-950 w-11/12 lg:w-3/4 max-sm:mx-auto lg:ml-8 p-2 placeholder:text-gray-950 rounded-sm"
     />
     <textarea
@@ -25,6 +26,6 @@
       id="sectionContent<%= id + 1  %>"
       placeholder="Apprenez quelque chose d'intéréssant à vos lecteurs"
       class="text-gray-950 lg:ml-6 w-11/12 lg:w-3/4 max-sm:mx-auto p-2 lg:h-24 h-20 placeholder:text-gray-950 rounded-sm"
-    ></textarea>
+    ><%= typeof content === 'string' ? content : '' %></textarea>
   </div>
 </div>

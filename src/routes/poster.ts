@@ -107,15 +107,19 @@ export const updateDocView = async (req: Request, res: Response) => {
 };
 
 export const requestComponent = (req: Request, res: Response) => {
-  const { section, index } = req.query as QueryXData<{
+  const { section, index, title, content } = req.query as QueryXData<{
     section: string;
     index: string;
+    title: string;
+    content: string;
   }>;
   try {
     res.render('components/section', {
       idIncr: Number(section) + 1,
       id: Number(section),
-      index: Number(index) + 1,
+      index: typeof index === 'string' ? Number(index) + 1 : null,
+      title,
+      content,
     });
   } catch (e) {
     console.log(e);
@@ -124,11 +128,18 @@ export const requestComponent = (req: Request, res: Response) => {
 };
 
 export const requestListComponent = async (req: Request, res: Response) => {
-  const { section, index } = req.query as QueryXData;
+  const { section, index, data } = req.query as QueryXData<{
+    section: string;
+    index: string;
+    data: string;
+  }>;
+  const decodedData = decodeURIComponent(data);
+  const rawData = JSON.parse(decodedData);
   try {
     res.render('components/list', {
       id: Number(section),
       index: Number(index) + 1,
+      data: rawData,
     });
   } catch (e) {
     console.error(e);
@@ -207,6 +218,7 @@ export const docSaver = async (req: Request, res: Response) => {
       // Vérifier les extensions dangereuses
       if (dangerousExtension.includes(ext)) {
         console.log('Inappropriate file detected');
+        purgeSingleFIle(fileArray[i].filepath);
         res.status(403).send('You want to send inappropriate content');
         return;
       }
@@ -376,6 +388,7 @@ export const docView = async (req: Request, res: Response) => {
       data: req.session.Auth.isSuperUser
         ? { ...req.session.SuperUser }
         : { id: req.session.Auth.id },
+      description: updatedContent.description,
     });
     return;
   }
@@ -408,37 +421,64 @@ export const storage = (req: Request, res: Response) => {
 };
 
 export const loadPost = async (req: Request, res: Response) => {
-  const { postId } = req.query as QueryXData<{ postId: string }>;
-  if (!postId) {
+  const { uid } = req.params;
+  if (!uid) {
     res.status(404).send('this is not a post');
+    return;
   }
   const post = await prismaClient.post.findUnique({
     where: {
-      id: Number(postId),
+      uid,
     },
   });
-  const allSections = (await prismaClient.postSection.findMany({
+  const allSections = await prismaClient.postSection.findMany({
     where: {
-      parent: post,
       postId: post.id,
     },
-  })) as Section[];
+    select: {
+      index: true,
+      title: true,
+      meta: true,
+      header: true,
+      content: true,
+    },
+  });
   const allFile = await prismaClient.postFile.findMany({
     where: {
       postId: post.id,
+    },
+    select: {
+      description: true,
+      postId: true,
+      index: true,
+      filePath: true,
+      sectionId: true,
     },
   });
   const data = {
     sections: allSections,
     files: allFile,
-    lists: [] as unknown[],
+    lists: {} as DocumentStorage['list'],
   };
   allSections.forEach((section) => {
-    const d = JSON.parse(section.meta);
+    const d = JSON.parse(section.meta) as [
+      {
+        index: number;
+        items: {
+          item: string;
+          description: string;
+          index: number;
+          section: number;
+        }[];
+      }
+    ];
     if (d) {
-      data.lists.push(d);
+      data.lists[section.index] = d;
     }
   });
+  data.sections.sort((a, b) => a.index - b.index);
+  data.files.sort((a, b) => a.index - b.index);
+  res.status(200).json(data);
 };
 
 export const conversionView = async (req: Request, res: Response) => {

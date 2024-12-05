@@ -40,6 +40,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^5.20.0",
     "@prisma/client": "5.20.0",
+    "@sendgrid/mail": "^8.1.4",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/line-clamp": "^0.4.4",

@@ -49,6 +49,7 @@ import {
   requestComponent,
   requestListComponent,
   updateDocView,
+  loadPost,
 } from './routes/poster';
 import { find } from './controller/finder';
 import { uploadActu } from './controller/actu';
@@ -337,13 +338,13 @@ server.use(
   })
 );
 
+server.use(sessionStorageHook);
 server.use(targetAuthRoutes, auth);
 
 server.use(passport.initialize());
 server.use(passport.authenticate('session'));
 server.use(passport.session());
 
-server.use(sessionStorageHook);
 // server.use(stats);
 server.use(verify);
 server.use(redirector);
@@ -537,6 +538,7 @@ server.get('/poster/new', poster);
 server.get('/poster/update/:post', updateDocView);
 server.post('/poster/save', docSaver);
 server.get('/poster/view', docView);
+server.get('/poster/load/:uid', loadPost);
 server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 server.post('/api/v1/parser', parserRoute);
