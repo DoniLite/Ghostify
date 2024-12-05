@@ -238,7 +238,7 @@ modifFormBtn.addEventListener('click', async (e) => {
       );
       return;
     }
-    /**
+  /**
    * @type {{
     img?: string;
     fullName?: string;

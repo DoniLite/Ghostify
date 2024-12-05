@@ -1,5 +1,5 @@
 import { BodyXData, QueryXData } from 'index';
-import { compareHash, encrypt, hashSomething, Service, unify } from '../utils';
+import { compareHash, encrypt, generateAndSaveKeys, hashSomething, loadKeys, Service, unify } from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 import { SuperUser } from '../class/SuperUser';
@@ -236,10 +236,19 @@ export const serviceHome = async (req: Request, res: Response) => {
       })
     : [];
 
+  const recentDocs = await prismaClient.post.findMany({
+    where: {
+      userId: req.session.Auth.id,
+    }, select: {
+      uid: true,
+      title: true,
+    }
+  })
+
   res.render('serviceHome', {
     service: service,
     auth: true,
-    data: { ...user, userDocs },
+    data: { ...user, userDocs, recentDocs },
   });
 };
 
@@ -598,6 +607,12 @@ export const parserRoute = async (req: Request, res: Response) => {
 };
 
 export const googleAuth = async (req: Request, res: Response) => {
+  const keys = await loadKeys();
+  if (!keys) {
+    await generateAndSaveKeys();
+    req.session.ServerKeys = await loadKeys();
+  }
+  req.session.ServerKeys = keys;
   const user = req.user as number;
   // console.log(user);
   const authUser = await prismaClient.user.findUnique({
@@ -614,6 +629,16 @@ export const googleAuth = async (req: Request, res: Response) => {
     file: authUser.file,
     login: authUser.email,
   };
+  const cookieExpriration = new Date();
+  cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
+  req.session.Token = encrypt(
+    cookieExpriration.getTime().toString(),
+    req.session.ServerKeys.secretKey,
+    req.session.ServerKeys.iv
+  );
+  res.cookie('connection_time', req.session.Token, {
+    expires: cookieExpriration,
+  });
   // req.session.Auth = {
   //   authenticated: true,
   //   id: user.id,

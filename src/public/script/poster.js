@@ -174,16 +174,25 @@ const showComponent = (e) => {
 
 /**
  *
- * @param {Event} e
+ * @param {Event | {
+        index: number;
+        title: string;
+        content: string;
+        header: boolean;
+        meta: string;
+    }} e
  */
 const requestNewSection = async (e) => {
-  e.preventDefault();
+  // On va essayer de niquer complètement le navigateur...
+  if (e instanceof Event) e.preventDefault();
   console.log(getList(), getSections(), getImg(), getTitleAndMeta());
-  const lastElIndex = posterForm.lastElementChild.dataset.index;
-  const index = Number(sessionIndex.value);
-  const result = await fetch(
-    `/components/poster?section=${index}&index=${lastElIndex}`
-  );
+  const lastElIndex =
+    e instanceof Event ? posterForm.lastElementChild.dataset.index : null;
+  const index = e instanceof Event ? Number(sessionIndex.value) : null;
+  const result =
+    e instanceof Event
+      ? await fetch(`/components/poster?section=${index}&index=${lastElIndex}`)
+      : fetch(`/components/poster?section=${e.index}&index=${null}&title=${e.title}&content=${e.content}`);
   if (!result.ok) {
     posterForm.appendChild(
       `<div class=" text-red-500 font-bold text-center">
@@ -206,10 +215,16 @@ const requestNewSection = async (e) => {
 
 /**
  *
- * @param {Event} e
+ * @param {Event | {
+        index: number;
+        description: string;
+        postId: number;
+        filePath: string;
+        sectionId: number;
+    }} e
  */
 const requestFile = async (e) => {
-  e.preventDefault();
+  if (e instanceof Event) e.preventDefault();
   const index = document.querySelectorAll('input[name="file"]').length;
   const sectionIndex = Number(sessionIndex.value);
   const inputFile = posterForm.querySelector(`#file_${index}`);
@@ -254,15 +269,64 @@ const requestFile = async (e) => {
       };
     }
   };
+  if(!e instanceof Event) {
+    const component = `
+                <div data-index="${e.postId}" id="imageView" class=" lg:w-5/6 w-11/12 mx-auto p-1 lg:max-h-48 max-h-32 justify-center items-center bg-gray-950 rounded-lg py-6 my-5">
+                    <div class=" w-full p-3 flex justify-between items-center">
+                        <input
+                          type="text"
+                          id="imgDesc"
+                          placeholder="Une description de l'image"
+                          class="lg:w-9/12 w-10/12 bg-transparent p-2 text-white font-bold"
+                        />
+                        <div id="imgRemoveBtn">
+                          <i
+                            class="fa-solid fa-square-xmark fa-xl font-bold text-white hover:cursor-pointer"
+                          ></i>
+                        </div>
+                    </div>
+                    <img src="${e.filePath}" alt="" id="${e.index}" class=" w-full object-contain">
+                </div>
+                `;
+    posterForm.insertAdjacentHTML('beforeend', component);
+    const newImput = `<input type="file" name="file" class="hidden" id="file_${
+      e.index
+    }" />`;
+    posterForm.insertAdjacentHTML('afterbegin', newImput);
+    posterForm.querySelectorAll('#imgRemoveBtn').forEach((el) => {
+      el.addEventListener('click', imgSelfRemove);
+    });
+    return;
+  }
   inputFile.click();
 };
 
 /**
  *
- * @param {Event} e
+ * @param {Event |  {
+    index: number;
+    items: {
+        item: string;
+        description: string;
+        index: number;
+        section: number;
+    }[];
+}} e
  */
 const requestNewList = async (e) => {
-  e.preventDefault();
+  if (e instanceof Event) e.preventDefault();
+  if(!e instanceof Event) {
+    const data = encodeURIComponent(JSON.stringify(e.items));
+    const res = await fetch(
+      `/components/list?section=${e.index}&index=${null}&data=${data}`
+    );
+    const component = await res.text();
+    posterForm.insertAdjacentHTML('beforeend', component);
+    posterForm.querySelectorAll('#listAdd').forEach((el) => {
+      el.addEventListener('click', addListItem);
+    });
+    return;
+  }
   const index = Number(sessionIndex.value);
   /**
    * @type {HTMLElement}
@@ -401,18 +465,64 @@ const hydrateComponent = async () => {
   const url = new URL(window.location.href);
   const query = url.searchParams;
   if (query.get('mode') === 'hydrate') {
+    const res = await fetch(`/poster/load/${query.get('uid')}`);
+    /**
+     * @type {{sections: {
+        index: number;
+        title: string;
+        content: string;
+        header: boolean;
+        meta: string;
+    }[];
+    files: {
+        index: number;
+        description: string;
+        postId: number;
+        filePath: string;
+        sectionId: number;
+    }[];
+    lists: Record<string, [{
+    index: number;
+    items: {
+        item: string;
+        description: string;
+        index: number;
+        section: number;
+    }[];
+}]>
+    }}
+     */
+    const data = await res.json();
+    for (const section of data.sections) {
+      if (section.header) {
+        fillHead({title: section.title, meta: section.meta});
+        continue;
+      }
+      const assets = [
+        ...data.files.filter((file) => file.sectionId === section.index),
+        ...data.lists[section.index],
+      ].sort((a, b) => a.index - b.index);
+      await requestNewSection(section);
+      for (const asset of assets) {
+        if (asset.items) {
+          await requestNewList(asset);
+        } else {
+          await requestFile(asset);
+        }
+      }
+    }
   }
 };
 
 /**
- * 
- * @param {{title: string; meta: string;}} data 
+ * Function to restore data into form
+ * @param {{title: string; meta: string;}} data
  */
 const fillHead = (data) => {
   const head = document.querySelector('#getHead');
   head.querySelector("input[name='documentTitle']").value = data.title;
   head.querySelector('textarea').value = data.meta;
-}
+};
 
 /**
  *
@@ -444,3 +554,4 @@ viewIcon.addEventListener('click', requesterFunc);
 document
   .querySelector('#saveDocument')
   .addEventListener('click', requesterFunc);
+window.onload = hydrateComponent;

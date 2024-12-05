@@ -20,6 +20,20 @@
       Convertisseur de document
     </a>
   </div>
+  <h1 class="font-bold mb-4 text-2xl">Articles récents</h1>
+  <div class="flex sm:gap-x-8 gap-y-4 gap-x-2 mx-auto w-[90%] lg:w-full flex-wrap">
+    <% data.recentDocs.forEach((doc, id) => { %>
+      <a
+        href="/poster/update/<%= doc.uid %>?mode=hydrate&uid=<%= doc.uid %>&service=<%= service %>"
+        class="p-3 rounded-md w-16 flex h-16 justify-center items-center cursor-pointer bg-gray-950"
+      >
+        <img src="/static/SVG/file.svg" alt="doc-icon" class="object-cover" />
+        <small class="font-bold text-gray-950 text-center w-full">
+          <%= typeof doc.title === 'string' ? doc.title : 'document_#' + id %></small
+        >
+      </a>
+    <% }) %>
+  </div>
   <h1 class="font-bold mb-4 text-2xl">Documents récents</h1>
   <div
     class="flex sm:gap-x-8 gap-y-4 gap-x-2 mx-auto w-[90%] lg:w-full flex-wrap"
@@ -56,7 +70,7 @@
         <% } %>
       </a>
       <small class="font-bold text-gray-950 text-center w-full">
-        <%= typeof doc.title === 'string' ? doc.title : id %></small
+        <%= typeof doc.title === 'string' ? doc.title : 'document_#' + id %></small
       >
     </div>
     <% }) %>

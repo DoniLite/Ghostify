@@ -37,6 +37,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
+    next();
   } catch (e) {
     console.log(e);
     res.redirect('/signin?service=blog');
@@ -51,4 +52,5 @@ export const targetAuthRoutes = [
   '/poster/new',
   '/service',
   '/poster/update/:post',
+  '/poster/load/:uid',
 ];
