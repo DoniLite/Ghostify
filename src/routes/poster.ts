@@ -31,42 +31,8 @@ import { tokenGenerator } from '../server';
 
 export const poster = async (req: Request, res: Response) => {
   const { service } = req.query as QueryXData<{ service: Service }>;
-  const cookie = req.cookies;
-  const lastTime = cookie['connection_time'];
 
   try {
-    if (
-      typeof lastTime === 'string' &&
-      Date.now() >
-        Number(
-          decrypt(
-            lastTime,
-            req.session.ServerKeys.secretKey,
-            req.session.ServerKeys.iv
-          )
-        )
-    ) {
-      req.session.Auth = {
-        authenticated: false,
-      };
-      res.redirect('/signin?service=blog');
-      return;
-    }
-    if (!req.session.Auth || req.session.Auth.authenticated === false) {
-      res.redirect('/signin?service=blog');
-      return;
-    }
-    const cookieExpriration = new Date();
-    cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
-    req.session.Token = encrypt(
-      cookieExpriration.getTime().toString(),
-      req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv
-    );
-    res.cookie('connection_time', req.session.Token, {
-      expires: cookieExpriration,
-    });
-
     res.render('poster', {
       id: 1,
       index: 0,
@@ -103,6 +69,7 @@ export const updateDocView = async (req: Request, res: Response) => {
     data: req.session.Auth.isSuperUser
       ? { ...req.session.SuperUser }
       : { id: req.session.Auth.id },
+    mode: 'hydrate',
   });
 };
 
@@ -113,17 +80,37 @@ export const requestComponent = (req: Request, res: Response) => {
     title: string;
     content: string;
   }>;
+  console.log(`last index ${index}`);
+
   try {
     res.render('components/section', {
       idIncr: Number(section) + 1,
       id: Number(section),
-      index: typeof index === 'string' ? Number(index) + 1 : null,
       title,
       content,
     });
   } catch (e) {
     console.log(e);
     res.status(400).send('error happened');
+  }
+};
+
+export const requestHeadComponent = async (req: Request, res: Response) => {
+  const { section, meta, title } = req.query as QueryXData<{
+    section: string;
+    meta: string;
+    title: string;
+  }>;
+
+  try {
+    res.render('components/posterHeader', {
+      id: Number(section),
+      meta,
+      title,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(400).send('something went wrong');
   }
 };
 
@@ -135,10 +122,12 @@ export const requestListComponent = async (req: Request, res: Response) => {
   }>;
   const decodedData = decodeURIComponent(data);
   const rawData = JSON.parse(decodedData);
+
+  console.log(`last index ${index}`);
   try {
     res.render('components/list', {
       id: Number(section),
-      index: Number(index) + 1,
+      index: Number(index),
       data: rawData,
     });
   } catch (e) {
@@ -148,6 +137,10 @@ export const requestListComponent = async (req: Request, res: Response) => {
 };
 
 export const docSaver = async (req: Request, res: Response) => {
+  const { mode, uidPost } = req.query as QueryXData<{
+    mode: string;
+    uidPost: string;
+  }>;
   console.log('Starting docSaver');
   const STATIC_DIR = '../../static/posts';
   const date = new Date();
@@ -165,26 +158,39 @@ export const docSaver = async (req: Request, res: Response) => {
   let json: boolean | undefined;
   const uid = tokenGenerator((date.getTime() + randomInt(10000)).toString());
   // Crée un post vide au début
-  const post = req.session.Auth.isSuperUser
-    ? await prismaClient.post.create({
-        data: {
-          title: '',
-          description: '',
-          uid,
-          visibility: 'Private',
-          safe: false,
-        },
-      })
-    : await prismaClient.post.create({
-        data: {
-          title: '',
-          uid,
-          description: '',
-          visibility: 'Private',
-          safe: false,
-          userId: req.session.Auth.id,
-        },
-      });
+  const post =
+    mode === 'hydrate' && typeof uidPost === 'string'
+      ? await prismaClient.post.findUnique({
+          where: {
+            uid: uidPost,
+          },
+        })
+      : await prismaClient.post.create({
+          data: {
+            title: '',
+            uid,
+            description: '',
+            visibility: 'Private',
+            safe: false,
+            userId: req.session.Auth.id,
+          },
+        });
+  if (!post) {
+    res.status(404).redirect('/404');
+    return;
+  }
+  if(mode === 'hydrate' && typeof uidPost === 'string') {
+    await prismaClient.postSection.deleteMany({
+      where: {
+        postId: post.id
+      }
+    });
+    await prismaClient.postFile.deleteMany({
+      where: {
+        postId: post.id
+      }
+    });
+  }
   const [fields, files] = await form.parse(req);
 
   console.log('Fields:', fields);
@@ -222,7 +228,9 @@ export const docSaver = async (req: Request, res: Response) => {
         res.status(403).send('You want to send inappropriate content');
         return;
       }
-      if (ext === '') continue;
+      if (ext === '') {
+        continue;
+      }
       // Générer un nom de fichier unique
       const date = new Date();
       const r = randomInt(date.getTime()).toString();
@@ -293,7 +301,10 @@ export const docSaver = async (req: Request, res: Response) => {
 
 export const docView = async (req: Request, res: Response) => {
   const { post, api } = req.query as QueryXData<{ post: string; api: string }>;
-  if (!post) res.status(404).send('no post specified');
+  if (!post) {
+    res.status(404).send('no post specified');
+    return;
+  }
 
   const article = await prismaClient.post.findUnique({
     where: {
@@ -456,6 +467,11 @@ export const loadPost = async (req: Request, res: Response) => {
     },
   });
   const data = {
+    head: {
+      index: 1,
+      title: post.title,
+      meta: post.description,
+    },
     sections: allSections,
     files: allFile,
     lists: {} as DocumentStorage['list'],

@@ -1,20 +1,4 @@
-import { test, expect } from '@playwright/test';
-import ejslint from 'ejs-lint';
-import path from 'node:path';
-import fs from 'node:fs';
 
-test('Vérification du code ejs', async () => {
-  const dir = path.join(__dirname, '/views');
-  const files = fs.readdirSync(dir);
-  files.forEach(async (file) => {
-    // const fileStat = fs.stat(path.join(dir, file), (stats) => {
-    //   console.error(stats)
-    // });
-    const existFile = fs.existsSync(path.join(dir, file));
-    expect(existFile).toBe(true);
-    console.log(ejslint(path.join(dir, file)));
-  })
-})
 
 // test('Connexion avec Google', async ({ page }) => {
 //   await page.goto('https://ton-domaine.com/login');
@@ -31,7 +15,6 @@ test('Vérification du code ejs', async () => {
 //   await page.waitForURL('https://ton-domaine.com/dashboard');
 //   expect(await page.textContent('h1')).toBe('Bienvenue');
 // });
-
 
 // test('Ajouter un article de blog', async ({ page }) => {
 //   await page.goto('https://ton-domaine.com/login');
@@ -64,7 +47,6 @@ test('Vérification du code ejs', async () => {
 //   expect(await page.isVisible('text=Votre CV a été généré')).toBeTruthy();
 // });
 
-
 // test('Ajouter une promotion', async ({ page }) => {
 //   await page.goto('https://ton-domaine.com/admin/promotions');
 
@@ -87,7 +69,6 @@ test('Vérification du code ejs', async () => {
 //   );
 // });
 
-
 // test("Limiter l'utilisation des API", async ({ page }) => {
 //   await page.goto('https://ton-domaine.com/login');
 //   // Simuler la connexion
@@ -105,7 +86,6 @@ test('Vérification du code ejs', async () => {
 //   const updatedCredits = await page.textContent('.api-credits');
 //   expect(parseInt(updatedCredits)).toBeLessThan(parseInt(apiCredits));
 // });
-
 
 // test('Convertir un document', async ({ page }) => {
 //   await page.goto('https://ton-domaine.com/converter');

@@ -21,18 +21,23 @@
           <i class="fa-solid fa-xmark fa-lg"></i>
         </div>
         <% if (typeof auth !== 'undefined' && auth === true) { %>
-        <div class="flex gap-x-4">
+        <div class="flex gap-x-4 items-center">
           <a
-            href="/user"
-            class="p-1 rounded-full border-2 w-8 h-8 flex justify-center items-center border-white"
+            href="/home"
+            class=""
           >
             <img
-              class="object-cover"
+              class="w-16 h-16 object-cover border-2 border-orange-500 rounded-full p-1 cursor-pointer"
+              alt=" user profile"
               src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
-              alt="icon"
             />
           </a>
-          user
+          <a
+            href="/home"
+            class=""
+          >
+            <%= typeof username === 'undefined' ? 'User' : username %>
+          </a>
         </div>
         <% } %>
         <a

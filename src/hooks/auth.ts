@@ -46,7 +46,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
 export const targetAuthRoutes = [
   '/poster/docs',
-  '/poster/parse',
+  '/poster/parser',
   '/poster/view',
   '/cvMaker',
   '/poster/new',
