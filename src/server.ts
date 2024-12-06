@@ -50,6 +50,7 @@ import {
   requestListComponent,
   updateDocView,
   loadPost,
+  requestHeadComponent,
 } from './routes/poster';
 import { find } from './controller/finder';
 import { uploadActu } from './controller/actu';
@@ -88,7 +89,6 @@ import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
 import { auth, targetAuthRoutes } from './hooks/auth';
 
-
 passport.use(
   new GoogleStrategy(
     {
@@ -103,7 +103,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, cb) => {
       const verifEmail = profile._json.email;
-      const picture = profile._json.picture;
+      const { picture } = profile._json;
       const userId = profile.id;
       const fullname = `${profile.name.givenName} ${profile.name.familyName}`;
       if (!verifEmail) {
@@ -195,7 +195,9 @@ server.set('views', viewsPath);
 // server.addHook('onResponse', stats);
 
 export const tokenGenerator = (payload: string, opt?: SignOptions) => {
-  if (opt) return jwt.sign(payload, process.env.JWT_SECRET, opt);
+  if (opt) {
+    return jwt.sign(payload, process.env.JWT_SECRET, opt);
+  }
   return jwt.sign(payload, process.env.JWT_SECRET);
 };
 
@@ -512,7 +514,7 @@ server.get('/promotion', (req, res) => {
 });
 server.get('/404', (req, res) => {
   res.render('404');
-})
+});
 // Admin conn
 server.post('/articlePost', articlePost);
 server.post('/projectPost', projectPost);
@@ -563,6 +565,7 @@ server.get('/disconnection', disconnection);
 // Components...
 server.get('/components/poster', requestComponent);
 server.get('/components/list', requestListComponent);
+server.get('/components/head', requestHeadComponent);
 
 // features and other thread specific
 server.get('/update/visitor', urlVisitor);
@@ -640,7 +643,7 @@ statsQueue.process(async (job, done) => {
   try {
     await stats(job.data);
     done(null);
-  } catch(err) {
+  } catch (err) {
     done(err);
   }
 });

@@ -1,5 +1,13 @@
 import { BodyXData, QueryXData } from 'index';
-import { compareHash, encrypt, generateAndSaveKeys, hashSomething, loadKeys, Service, unify } from '../utils';
+import {
+  compareHash,
+  encrypt,
+  generateAndSaveKeys,
+  hashSomething,
+  loadKeys,
+  Service,
+  unify,
+} from '../utils';
 import { tokenGenerator } from '../server';
 import { prismaClient } from '../config/db';
 import { SuperUser } from '../class/SuperUser';
@@ -233,22 +241,35 @@ export const serviceHome = async (req: Request, res: Response) => {
         where: {
           userId: req.session.Auth.id,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       })
     : [];
 
   const recentDocs = await prismaClient.post.findMany({
     where: {
       userId: req.session.Auth.id,
-    }, select: {
+    },
+    select: {
       uid: true,
       title: true,
-    }
-  })
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
 
   res.render('serviceHome', {
     service: service,
     auth: true,
-    data: { ...user, userDocs, recentDocs },
+    data: {
+      ...user,
+      userDocs: userDocs.slice(0, 10),
+      recentDocs: recentDocs.slice(0, 10),
+    },
+    userIcon: req.session.Auth.file,
+    username: req.session.Auth.username || req.session.Auth.fullname,
   });
 };
 

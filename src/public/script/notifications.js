@@ -15,6 +15,7 @@ export const notificationsComponent = {
     }
 }
 
+
 export const notificationPush = (notification) => {
   const notificationContainer = document.querySelector('#flash');
   notificationContainer.insertAdjacentHTML('beforeend', notification);
@@ -27,4 +28,3 @@ export const notificationPush = (notification) => {
     }
   }, 4000);
 }
-

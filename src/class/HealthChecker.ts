@@ -71,7 +71,7 @@ export class HealthChecker implements HealthCheckerInterface {
   async check(serviceParam: string, endpoint?: string): Promise<boolean> {
     if (endpoint) {
       const req = await fetch(endpoint);
-      const status = req.status;
+      const {status} = req;
       if (status >= 200 && status <= 300) {
         return true;
       }
@@ -83,7 +83,7 @@ export class HealthChecker implements HealthCheckerInterface {
     )[0].endpoint;
 
     const req = await fetch(serviceEndpoint);
-    const status = req.status;
+    const {status} = req;
     if (status >= 200 && status <= 300) {
       return true;
     }
@@ -141,7 +141,7 @@ export class HealthChecker implements HealthCheckerInterface {
               },
               body: JSON.stringify(service.testingData),
             });
-            const status = test.status;
+            const {status} = test;
             if (status >= 200 && status < 400) {
               platformQuota.APIs.push({
                 name: service.name,
@@ -156,7 +156,7 @@ export class HealthChecker implements HealthCheckerInterface {
             });
           } else {
             const req = await fetch(service.endpoint);
-            const status = req.status;
+            const {status} = req;
             if (status >= 200 && status < 400) {
               platformQuota.APIs.push({
                 name: service.name,

@@ -6,6 +6,7 @@
     "target": "es2021", // Cible une version plus récente de JavaScript
     "noImplicitAny": true,
     "moduleResolution": "node",
+    "allowJs": true,
     "sourceMap": true,
     "outDir": "./temp",
     "rootDir": "./src",
@@ -18,7 +19,6 @@
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
-    "src/**/*.d.ts" // Inclut les fichiers de définitions .d.ts dans la compilation
-  ],
+    "src/**/*.d.ts"   ],
   "exclude": ["build"]
 }
