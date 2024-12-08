@@ -6,11 +6,9 @@ import natural, {
   WordTokenizer,
 } from 'natural';
 
-
-
-type StringifyClassifier<
-  T extends unknown
-> =  T extends  string ? boolean : string;
+type StringifyClassifier<T extends unknown> = T extends string
+  ? boolean
+  : string;
 
 /**
  * `Classifier` is a classification class based on NLP rules
@@ -31,12 +29,12 @@ export class Classifier {
     this.#classifier.addDocument(row[0], row[1]);
   }
 
-  class(data: string | string[]): string {
-    return this.#classifier.classify(data);
+  class<T>(data: T): string {
+    return this.#classifier.classify(data as string | string[]);
   }
 
-  getClass(data: string | string[]): ApparatusClassification[] {
-    return this.#classifier.getClassifications(data);
+  getClass<T>(data: T): ApparatusClassification[] {
+    return this.#classifier.getClassifications(data as string | string[]);
   }
 
   stringify<T>(path?: T): StringifyClassifier<T> {
@@ -48,8 +46,11 @@ export class Classifier {
     }
     return JSON.stringify(this.#classifier) as StringifyClassifier<T>;
   }
-  tokenize(entry: string): string[] {
-    return this.#tokenizer.tokenize(entry)
+  tokenize<T extends string>(entry: T): Array<string> {
+    return this.#tokenizer.tokenize(entry);
   }
 }
 
+const classifierTest = new Classifier();
+const t = classifierTest.tokenize('doni is the best');
+t.includes('t');

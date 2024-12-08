@@ -87,7 +87,7 @@ import { documentView } from './routes/doc';
 import { logger } from './logger';
 import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
-import { auth, targetAuthRoutes } from './hooks/auth';
+import { auth, ROUTES } from './hooks/auth';
 
 passport.use(
   new GoogleStrategy(
@@ -341,7 +341,7 @@ server.use(
 );
 
 server.use(sessionStorageHook);
-server.use(targetAuthRoutes, auth);
+server.use(ROUTES, auth);
 
 server.use(passport.initialize());
 server.use(passport.authenticate('session'));

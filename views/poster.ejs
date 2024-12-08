@@ -4,7 +4,11 @@
 
 <div class="w-full mt-28" id="posterComponent">
   <form action="" id="posterForm">
-    <input type="file" name="file" class=" hidden" id="file_<%= id %>" />
+    <% if (typeof mode === 'string' && mode === 'hydrate') { %>
+     <input type="file" name="file" class=" hidden" id="file_<%= 1 %>" />
+    <% } else { %>
+      <input type="file" name="file" class=" hidden" id="file_<%= id %>" />
+    <% } %>
     <div
       class="poster-hidden transition-transform fixed top-2 right-0 h-1/2 w-40"
       id="actionComponent"

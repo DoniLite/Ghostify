@@ -62,7 +62,7 @@ export const updateDocView = async (req: Request, res: Response) => {
   }
 
   res.render('poster', {
-    id: 1,
+    id: 0,
     service: 'poster',
     auth: true,
     writterMode: true,
@@ -120,8 +120,12 @@ export const requestListComponent = async (req: Request, res: Response) => {
     index: string;
     data: string;
   }>;
-  const decodedData = decodeURIComponent(data);
-  const rawData = JSON.parse(decodedData);
+  let rawData: unknown;
+  if (data) {
+    const decodedData = decodeURIComponent(data);
+    rawData = JSON.parse(decodedData);
+    console.log(rawData);
+  }
 
   console.log(`last index ${index}`);
   try {
@@ -400,6 +404,7 @@ export const docView = async (req: Request, res: Response) => {
         ? { ...req.session.SuperUser }
         : { id: req.session.Auth.id },
       description: updatedContent.description,
+      mode: "reading",
     });
     return;
   }

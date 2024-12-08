@@ -50,22 +50,17 @@ export interface Secrets {
 
 export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
 
-export type Inf<T extends Can[]> = T extends (
-  | Can.CRUD
-  | Can.CreateUser
-  | Can.MakeComment
-  | Can.MakeSecureAction
-)[]
-  ? T[number] extends Can.CRUD
+export type Inf<T extends Can[]> = T extends (infer U)[]
+  ? U extends Can.CRUD
     ? { data: typeof prismaClient }
-    : T[number] extends Can.CreateUser
+    : U extends Can.CreateUser
     ? { data: typeof prismaClient.user }
-    : T[number] extends Can.MakeComment
+    : U extends Can.MakeComment
     ? { data: typeof prismaClient.comment }
-    : T[number] extends Can.MakeSecureAction
+    : U extends Can.MakeSecureAction
     ? { data: typeof prismaClient }
-    : unknown
-  : unknown;
+    : never
+  : never;
 
 export interface Certificates {
   pass: string;

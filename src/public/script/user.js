@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 
+import { socket } from './network.js';
 import { notificationPush, notificationsComponent } from './notifications.js';
 
 const userIMG = document.querySelector('#userProfileImg');
@@ -175,4 +176,8 @@ notificationShower.addEventListener('click', (e) => {
   e.preventDefault();
   notificationPanel.classList.remove('transNotificationHide');
   notificationPanel.classList.add('transNotificationShow');
+})
+
+socket.addEventListener('message', function(e) {
+  console.log(e);
 })

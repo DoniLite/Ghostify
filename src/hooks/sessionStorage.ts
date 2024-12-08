@@ -25,7 +25,6 @@ export const sessionStorageHook = async (req: Request, res: Response, next: Next
     req.session.ServerKeys = await loadKeys();
   }
   req.session.ServerKeys = keys;
-  console.log(req.session.ServerKeys);
 
   if (!req.session.Auth ) {
     req.session.Auth = {
