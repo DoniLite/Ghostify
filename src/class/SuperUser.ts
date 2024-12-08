@@ -13,7 +13,7 @@ export class SuperUser implements UserActor {
   userString;
   #passPhrase;
   #health: string;
-  permissions = [Can.CreateUser] ;
+  permissions = [Can.CreateUser];
   #secretFilePath;
   #certificatePath;
   actions;
@@ -150,22 +150,24 @@ export class SuperUser implements UserActor {
     };
   }
 
-  #updateActorWithPermissions(permissions: Can[]): Inf<typeof permissions> {
+  #updateActorWithPermissions<T extends Can[]>(permissions: T) {
     if (permissions.includes(Can.CRUD))
       return {
         data: prismaClient,
-      } as Inf<typeof permissions>;
+      } as Inf<Can.CRUD[]>;
     if (permissions.includes(Can.CreateUser))
       return {
         data: prismaClient.user,
-      } as Inf<typeof permissions>;
+      } as Inf<Can.CreateUser[]>;
     if (permissions.includes(Can.MakeComment))
       return {
         data: prismaClient.comment,
-      } as Inf<typeof permissions>;
+      } as Inf<Can.MakeComment[]>;
     if (permissions.includes(Can.MakeSecureAction))
-      return { data: prismaClient } as Inf<typeof permissions>;
-    return;
+      return {
+        data: prismaClient,
+      } as Inf<Can.MakeSecureAction[]>;
+    throw new Error('Invalid permissions');
   }
 
   #loadCertificate(cert: string, pass: string) {

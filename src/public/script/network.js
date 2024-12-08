@@ -1,9 +1,10 @@
 /* eslint-disable no-undef */
-const socket = new WebSocket('ws://localhost:3085/');
+export const socket = new WebSocket('ws://localhost:3085/');
 
 socket.addEventListener('open', () => {
   console.log('Connecté au serveur WebSocket');
   socket.send(JSON.stringify({ hello: 'world' }));
+  window.dispatchEvent(new Event('SocketConnected'));
 });
 
 socket.addEventListener('message', (event) => {

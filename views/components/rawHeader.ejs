@@ -102,6 +102,9 @@
           ></i>
         </div>
         <% } %>
+        <% if (typeof mode !== 'undefined' && mode === 'reading') { %>
+         <div id="BGMode" class=" w-8 h-8 cursor-pointer"></div>
+        <% } %>
         <div id="rawHeadIcon" class="w-8">
           <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
           <div class="w-full h-1 rounded-xl bg-white mb-1"></div>

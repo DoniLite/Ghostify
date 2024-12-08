@@ -52,13 +52,14 @@ const requesterFunc = async (e) => {
   data.desc_or_meta = getTitleAndMeta().meta;
   data.section = getSections();
   data.list = getList();
-  data.image = getImg();
+  data.image = await getImg();
 
   const form = new FormData(posterForm);
+
   form.delete('file');
 
-  data.image.forEach((img) => {
-    form.append('file', img.img);
+  data.image.forEach((img, index) => {
+    form.append(`file`, img.img, `image_${img.section}_${img.index}`);
   });
 
   form.append('json', true);
@@ -104,6 +105,19 @@ rawHeadIcon.addEventListener('click', (e) => {
 });
 
 const getList = () => {
+  const uri = new URL(window.location.href);
+  /**
+   * Function to verify if a section is equal to a list
+   * @param {Number} list The list index
+   * @param {Number} section The section index
+   * @returns {boolean}
+   */
+  const verifySectionWithList = (list, section) => {
+    if (uri.searchParams.get('mode') === 'hydrate') {
+      return list === section;
+    }
+    return list + 1 === section;
+  };
   let listObjParent = {};
   getSections().forEach((section, id) => {
     listObjParent[`${id + 1}`] = [];
@@ -173,39 +187,43 @@ const getIMGBlobFromServer = async (url) => {
  * This function will take all the images that has been uploaded and convert them
  * into a list of objects containing the image blob, the section index and the image index.
  *
- * @example
- * const imgList = getImg();
- * console.log(imgList);
- * // [
- * //   {
- * //     img: Blob,
- * //     index: Number,
- * //     section: Number
- * //   }
- * // ]
- *
  * @returns {Promise<Array<{img: Blob, index: Number, section: Number}>>}
  */
-const getImg = () => {
+const getImg = async () => {
   const imgs = document.querySelectorAll('#imageView');
-  const form = new FormData(posterForm);
-  const imgFiles = form.getAll('file');
-  let imgList = [];
-  imgs.forEach(async (img, id) => {
+
+  const imgPromises = Array.from(imgs).map(async (img, id) => {
     const sectionId = Number(img.querySelector('img').getAttribute('id'));
-    if (typeof img.querySelector('img').dataset.url === 'string') {
-      const blob = await getIMGBlobFromServer(
-        img.querySelector('img').dataset.url
-      );
-      imgFiles[id] = blob;
+    let imgFile;
+
+    // Récupérer le fichier depuis l'input file ou depuis l'URL
+    const fileInput = document.querySelector(`input[id="file_${id + 1}"]`);
+    console.log('inputs all ', fileInput);
+    const imgElement = img.querySelector('img');
+    console.log(img.dataset.url);
+    console.log(fileInput.files[0]);
+
+    if (img.dataset.url) {
+      // Si un fichier a été sélectionné via l'input
+      imgFile = await getIMGBlobFromServer(img.dataset.url);
+    } else if (fileInput && fileInput.files.length > 0) {
+      // Si une URL est présente, télécharger l'image
+      imgFile = fileInput.files[0];
+    } else {
+      // Aucune image trouvée
+      return null;
     }
-    imgList.push({
-      img: imgFiles[id],
+
+    return {
+      img: imgFile,
       index: parseInt(img.dataset.index),
       section: sectionId,
-    });
+    };
   });
-  return imgList;
+
+  // Filtrer les entrées nulles
+  const results = await Promise.all(imgPromises);
+  return results.filter((item) => item !== null);
 };
 
 /**
@@ -244,6 +262,12 @@ export const requestNewSection = async (e) => {
   // On essaie de niquer complètement le navigateur...
   if (e instanceof Event) {
     e.preventDefault();
+  }
+  console.log(getList(), await getImg(), getSections());
+  const form = new FormData(posterForm);
+
+  for (let [key, value] of form.entries()) {
+    console.log(key, value);
   }
   // On récupère l'index de la dernière section
   const lastElIndex =
@@ -299,6 +323,7 @@ const requestFile = async (e) => {
     e.preventDefault();
   }
   const index = document.querySelectorAll('input[name="file"]').length;
+  console.log(index);
   const sectionIndex = Number(sessionIndex.value);
   const inputFile = posterForm.querySelector(`#file_${index}`);
   /**
@@ -314,7 +339,7 @@ const requestFile = async (e) => {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         const component = `
-                <div data-index="${lastElementIndex}" id="imageView" class=" lg:w-5/6 w-11/12 mx-auto p-1 lg:max-h-48 max-h-32 justify-center items-center bg-gray-950 rounded-lg py-6 my-5">
+                <div data-index="${lastElementIndex}" id="imageView" class=" lg:w-5/6 w-11/12 mx-auto p-1 h-auto justify-center items-center bg-gray-950 rounded-lg py-6 my-5">
                     <div class=" w-full p-3 flex justify-between items-center">
                         <input
                           type="text"
@@ -328,7 +353,7 @@ const requestFile = async (e) => {
                           ></i>
                         </div>
                     </div>
-                    <img src="${reader.result}" alt="" id="${sectionIndex}" class=" w-full object-contain">
+                    <img src="${reader.result}" alt="" id="${sectionIndex}" class=" w-full object-cover h-full">
                 </div>
                 `;
         posterForm.insertAdjacentHTML('beforeend', component);
@@ -342,9 +367,12 @@ const requestFile = async (e) => {
       };
     }
   };
-  if (!e instanceof Event) {
+
+  if (e instanceof Event) {
+    inputFile.click();
+  } else {
     const component = `
-                <div data-index="${e.postId}" id="imageView" class=" lg:w-5/6 w-11/12 mx-auto p-1 lg:max-h-48 max-h-32 justify-center items-center bg-gray-950 rounded-lg py-6 my-5">
+                <div data-index="${e.postId}" data-url="${e.filePath}" id="imageView" class=" lg:w-5/6 w-11/12 mx-auto p-1 h-auto justify-center items-center bg-gray-950 rounded-lg py-6 my-5">
                     <div class=" w-full p-3 flex justify-between items-center">
                         <input
                           type="text"
@@ -358,18 +386,16 @@ const requestFile = async (e) => {
                           ></i>
                         </div>
                     </div>
-                    <img src="${e.filePath}" alt="" id="${e.index}" class=" w-full object-contain">
+                    <img src="${e.filePath}" alt="" id="${e.index}" class=" w-full object-cover h-full">
                 </div>
                 `;
     posterForm.insertAdjacentHTML('beforeend', component);
-    const newImput = `<input type="file" name="file" class="hidden" id="file_${e.index}" />`;
+    const newImput = `<input type="file" name="file" class="hidden" id="file_${e.index + 1}" />`;
     posterForm.insertAdjacentHTML('afterbegin', newImput);
     posterForm.querySelectorAll('#imgRemoveBtn').forEach((el) => {
       el.addEventListener('click', imgSelfRemove);
     });
-    return;
   }
-  inputFile.click();
 };
 
 /**
@@ -387,28 +413,30 @@ const requestFile = async (e) => {
 const requestNewList = async (e) => {
   if (e instanceof Event) {
     e.preventDefault();
-  }
-  if (!e instanceof Event) {
+    const index = Number(sessionIndex.value);
+    /**
+     * @type {HTMLElement}
+     */
+    const lastChild = posterForm.lastElementChild;
+    const lastId = lastChild.dataset.index;
+    if (lastChild.getAttribute('id') !== 'list') {
+      const res = await fetch(
+        `/components/list?section=${index}&index=${lastId}`
+      );
+      const component = await res.text();
+      posterForm.insertAdjacentHTML('beforeend', component);
+      posterForm.querySelectorAll('#listAdd').forEach((el) => {
+        el.addEventListener('click', addListItem);
+      });
+      return;
+    }
+    window.alert(
+      `vous ne pouvez pas ajouter une nouvelle list à la suite d'une autre`
+    );
+  } else {
     const data = encodeURIComponent(JSON.stringify(e.items));
     const res = await fetch(
-      `/components/list?section=${e.index}&index=${e.index}&data=${data}`
-    );
-    const component = await res.text();
-    posterForm.insertAdjacentHTML('beforeend', component);
-    posterForm.querySelectorAll('#listAdd').forEach((el) => {
-      el.addEventListener('click', addListItem);
-    });
-    return;
-  }
-  const index = Number(sessionIndex.value);
-  /**
-   * @type {HTMLElement}
-   */
-  const lastChild = posterForm.lastElementChild;
-  const lastId = lastChild.dataset.index;
-  if (lastChild.getAttribute('id') !== 'list') {
-    const res = await fetch(
-      `/components/list?section=${index}&index=${lastId}`
+      `/components/list?section=${e.items.section}&index=${e.index}&data=${data}`
     );
     const component = await res.text();
     posterForm.insertAdjacentHTML('beforeend', component);
@@ -418,9 +446,6 @@ const requestNewList = async (e) => {
     return;
   }
   //  const component = `<div class=" text-red-600 font-bold"></div>`
-  window.alert(
-    `vous ne pouvez pas ajouter une nouvelle list à la suite d'une autre`
-  );
 };
 
 /**
