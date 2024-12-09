@@ -668,5 +668,10 @@ export const googleAuth = async (req: Request, res: Response) => {
   //   name: user.username,
   //   file: user.file,
   // };
+  console.log(req.session.RedirectUrl);
+  if(req.session.RedirectUrl) {
+    console.log(req.session.RedirectUrl);
+    res.redirect(req.session.RedirectUrl);
+  }
   res.redirect('/home');
 };

@@ -59,34 +59,38 @@ const requesterFunc = async (e) => {
   form.delete('file');
 
   data.image.forEach((img, index) => {
-    form.append(`file`, img.img, `image_${img.section}_${img.index}`);
+    form.append('file', img.img, `image_${img.section}_${img.index}`);
   });
 
   form.append('json', true);
   form.append('data', JSON.stringify(data));
 
   // Log de chaque champ pour vérifier son contenu
-  for (let pair of form.entries()) {
-    console.log(pair[0] + ', ' + pair[1]);
+  for (let [key, value] of form.entries()) {
+    if (value instanceof Blob) {
+      console.log(`${key}: Blob, size=${value.size}, type=${value.type}`);
+    } else {
+      console.log(`${key}: ${value}`);
+    }
   }
 
-  const res =
-    typeof uri.searchParams.get('mode') === 'string' &&
-    uri.searchParams.get('mode') === 'hydrate'
-      ? await fetch(`/poster/save?mode=hydrate&uid=${uid}`, {
-          method: 'POST',
-          body: form,
-        })
-      : await fetch('/poster/save', {
-          method: 'POST',
-          body: form,
-        });
+  // const res =
+  //   typeof uri.searchParams.get('mode') === 'string' &&
+  //   uri.searchParams.get('mode') === 'hydrate'
+  //     ? await fetch(`/poster/save?mode=hydrate&uidPost=${uid}`, {
+  //         method: 'POST',
+  //         body: form,
+  //       })
+  //     : await fetch('/poster/save', {
+  //         method: 'POST',
+  //         body: form,
+  //       });
 
-  const dataRes = await res.json();
-  console.log(dataRes);
-  if (dataRes.success) {
-    window.location.href = `/poster/view?post=${dataRes.article}`;
-  }
+  // const dataRes = await res.json();
+  // console.log(dataRes);
+  // if (dataRes.success) {
+  //   window.location.href = `/poster/view?post=${dataRes.article}`;
+  // }
 };
 
 // const allSections = [
