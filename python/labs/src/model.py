@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -20,6 +21,17 @@ class HybridBERTGPT2Model(nn.Module):
         gpt2_tokenizer="../models/tokenizer/gpt2",
         embedding_dim=768,
     ):
+        # Vérifier l'existence des chemins
+        
+        
+        if not os.path.exists(bert_tokenizer):
+            print(f"Chemin du tokenizer BERT invalide : {bert_tokenizer}")
+            bert_tokenizer = "bert-base-uncased"
+        
+        if not os.path.exists(gpt2_tokenizer):
+            print(f"Chemin du tokenizer GPT-2 invalide : {gpt2_tokenizer}")
+            gpt2_tokenizer = "gpt2"
+        
         super(HybridBERTGPT2Model, self).__init__()
 
         # Chargement des modèles pré-entraînés
@@ -44,6 +56,15 @@ class HybridBERTGPT2Model(nn.Module):
         # Couche de projection pour la recherche d'information
         self.info_projector = nn.Linear(embedding_dim, embedding_dim)
 
+        # Nouveau: Liste de contextes textuels pour la recherche
+        self.context_texts = [
+            "Le machine learning utilise des algorithmes pour apprendre à partir de données.",
+            "L'intelligence artificielle cherche à créer des systèmes capables d'imiter l'intelligence humaine.",
+            "Les réseaux de neurones sont inspirés du fonctionnement du cerveau humain.",
+            "L'apprentissage profond permet aux modèles de comprendre des structures complexes.",
+            "Les données sont essentielles pour entraîner des modèles d'intelligence artificielle."
+        ]
+
     def encode_input(self, text, return_tensor=True):
         """Encodage de l'entrée avec BERT"""
         # Gérer les cas où l'entrée est None ou vide
@@ -66,10 +87,63 @@ class HybridBERTGPT2Model(nn.Module):
         with torch.no_grad():
             outputs = self.bert_encoder(**inputs)
 
-        # Utiliser le token [CLS] comme représentation globale
-        cls_embedding = outputs.last_hidden_state[:, 0, :]
 
-        return cls_embedding
+        return outputs.last_hidden_state[:, 0, :]
+
+    def retrieve_information(self, query, context_embedding=None, k=3):
+        """
+        Recherche d'informations similaires basée sur la similarité cosinus
+
+        Args:
+        - query (str): Requête de recherche
+        - context_embedding (torch.Tensor, optional): Contexte encodé (embeddings)
+        - k (int): Nombre de passages à récupérer
+
+        Returns:
+        - str: Passages textuels les plus pertinents
+        """
+        # Si pas de requête, retourner un texte par défaut
+        if not query:
+            return "Aucune requête spécifiée. Impossible de récupérer des informations."
+
+        # Encoder la requête
+        query_embedding = self.encode_input(query)
+
+        # Encoder tous les contextes textuels
+        context_embeddings = torch.stack([
+            self.encode_input(text) for text in self.context_texts
+        ])
+
+        # Projection optionnelle
+        context_projected = self.info_projector(context_embeddings)
+        query_projected = self.info_projector(query_embedding)
+
+        # Calcul de similarité cosinus
+        similarities = F.cosine_similarity(
+            query_projected, context_projected, dim=-1
+        )
+
+        # Normalisation des similarités
+        similarities_softmax = F.softmax(similarities, dim=0)
+
+        # Gérer les cas où k est plus grand que la taille des similarités
+        top_k = min(k, len(self.context_texts))
+
+        try:
+            # Sélection des passages les plus pertinents
+            if top_k > 1:
+                top_indices = torch.topk(similarities_softmax, top_k).indices.tolist()
+                retrieved_texts = [self.context_texts[idx] for idx in top_indices]
+            else:
+                # Si un seul élément, utiliser l'indice du max
+                top_index = torch.argmax(similarities_softmax)
+                retrieved_texts = [self.context_texts[top_index]]
+
+            # Combiner les passages récupérés
+            return " ".join(retrieved_texts)
+        except Exception as e:
+            print(f"Erreur de récupération d'informations : {e}")
+            return "Impossible de récupérer des informations pertinentes."
 
     def generate_text(self, prompt, max_length=100):
         """Génération de texte avec GPT-2"""
@@ -107,63 +181,6 @@ class HybridBERTGPT2Model(nn.Module):
         except Exception as e:
             print(f"Erreur de génération de texte : {e}")
             return "Génération de texte impossible"
-
-    def retrieve_information(self, query, context, k=3):
-        """
-        Recherche d'informations similaires basée sur la similarité cosinus
-
-        Args:
-        - query (str): Requête de recherche
-        - context (torch.Tensor): Contexte encodé (embeddings)
-        - k (int): Nombre de passages à récupérer
-
-        Returns:
-        - torch.Tensor: Passages les plus pertinents
-        """
-        # Si pas de requête, retourner le contexte original
-        if not query:
-            return context
-
-        # Encoder la requête
-        query_embedding = self.encode_input(query)
-
-        # Adapter les dimensions si nécessaire
-        if context.dim() == 1:
-            context = context.unsqueeze(0)
-
-        # Projection optionnelle
-        context_projected = self.info_projector(context)
-        query_projected = self.info_projector(query_embedding)
-
-        # Calcul de similarité cosinus
-        similarities = F.cosine_similarity(
-            query_projected.unsqueeze(1), context_projected.unsqueeze(0), dim=-1
-        )
-
-        # Gérer les cas particuliers de dimension
-        if similarities.dim() == 0:
-            similarities = similarities.unsqueeze(0)
-
-        # Normalisation et sélection des top-k
-        similarities = F.softmax(similarities, dim=0)
-
-        # Gérer les cas où k est plus grand que la taille des similarités
-        top_k = min(k, similarities.numel())
-
-        try:
-            # Sélection des passages les plus pertinents
-            if top_k > 1:
-                top_indices = torch.topk(similarities, top_k).indices
-                retrieved_passages = context[top_indices]
-            else:
-                # Si un seul élément, utiliser l'indice du max
-                top_index = torch.argmax(similarities)
-                retrieved_passages = context[top_index].unsqueeze(0)
-
-            return self.bert_tokenizer.decode(retrieved_passages[0])
-        except Exception as e:
-            print(f"Erreur de récupération d'informations : {e}")
-            return context
 
     def forward(self, input_text, query=None):
         """Passage complet à travers le réseau"""
@@ -209,7 +226,7 @@ def main():
     results = model(input_text, query)
 
     print("Texte généré:", results["generated_text"])
-    print("Informations récupérées:", results["retrieved_info"].shape)
+    print("Informations récupérées:", results["retrieved_info"])
 
 
 if __name__ == "__main__":

@@ -44,12 +44,15 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       )
     ) {
       req.session.Auth = { authenticated: false };
+      req.session.RedirectUrl = req.baseUrl;
+      console.log(req.session.RedirectUrl);
       return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
     }
 
     // Vérification de l'authentification
     if (!req.session.Auth || req.session.Auth.authenticated === false) {
-      return isOpenRoute(req.url) ? next() : redirectToSignIn();
+      req.session.RedirectUrl = req.baseUrl;
+      return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
     }
 
     // Renouvellement du token
@@ -69,6 +72,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     next();
   } catch (error) {
     console.error('Authentication middleware error:', error);
-    return isOpenRoute(req.url) ? next() : redirectToSignIn();
+    req.session.RedirectUrl = req.baseUrl;
+    console.log(req.session.RedirectUrl);
+    return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
   }
 };
