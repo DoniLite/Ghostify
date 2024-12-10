@@ -12,6 +12,20 @@ device = (
 )
 
 
+class InformationContexts:
+    def __init__(self, contexts=None):
+        self.contexts = contexts or [
+            "Le machine learning utilise des algorithmes pour apprendre à partir de données.",
+            "L'intelligence artificielle cherche à créer des systèmes capables d'imiter l'intelligence humaine.",
+            "Les réseaux de neurones sont inspirés du fonctionnement du cerveau humain.",
+            "L'apprentissage profond permet aux modèles de comprendre des structures complexes.",
+            "Les données sont essentielles pour entraîner des modèles d'intelligence artificielle."
+        ]
+
+    def get_contexts(self):
+        return self.contexts
+
+
 class HybridBERTGPT2Model(nn.Module):
     def __init__(
         self,
@@ -20,6 +34,7 @@ class HybridBERTGPT2Model(nn.Module):
         bert_tokenizer="../models/tokenizer/bertz",
         gpt2_tokenizer="../models/tokenizer/gpt2",
         embedding_dim=768,
+        context_manager=None,
     ):
         # Vérifier l'existence des chemins
         
@@ -33,6 +48,8 @@ class HybridBERTGPT2Model(nn.Module):
             gpt2_tokenizer = "gpt2"
         
         super(HybridBERTGPT2Model, self).__init__()
+        
+        self.context_manager = context_manager or InformationContexts()
 
         # Chargement des modèles pré-entraînés
         self.bert_encoder = BertModel.from_pretrained(bert_model_name)
@@ -55,15 +72,12 @@ class HybridBERTGPT2Model(nn.Module):
 
         # Couche de projection pour la recherche d'information
         self.info_projector = nn.Linear(embedding_dim, embedding_dim)
-
-        # Nouveau: Liste de contextes textuels pour la recherche
-        self.context_texts = [
-            "Le machine learning utilise des algorithmes pour apprendre à partir de données.",
-            "L'intelligence artificielle cherche à créer des systèmes capables d'imiter l'intelligence humaine.",
-            "Les réseaux de neurones sont inspirés du fonctionnement du cerveau humain.",
-            "L'apprentissage profond permet aux modèles de comprendre des structures complexes.",
-            "Les données sont essentielles pour entraîner des modèles d'intelligence artificielle."
-        ]
+        
+        # Pre-compute context embeddings
+        context_embeddings = torch.stack([
+            self.encode_input(text) for text in self.context_texts
+        ])
+        self.cached_context_projected = self.info_projector(context_embeddings)
 
     def encode_input(self, text, return_tensor=True):
         """Encodage de l'entrée avec BERT"""
@@ -90,7 +104,7 @@ class HybridBERTGPT2Model(nn.Module):
 
         return outputs.last_hidden_state[:, 0, :]
 
-    def retrieve_information(self, query, context_embedding=None, k=3):
+    def retrieve_information(self, query, k=3):
         """
         Recherche d'informations similaires basée sur la similarité cosinus
 
@@ -104,46 +118,23 @@ class HybridBERTGPT2Model(nn.Module):
         """
         # Si pas de requête, retourner un texte par défaut
         if not query:
-            return "Aucune requête spécifiée. Impossible de récupérer des informations."
+            return "Aucune requête spécifiée."
 
-        # Encoder la requête
         query_embedding = self.encode_input(query)
-
-        # Encoder tous les contextes textuels
         context_embeddings = torch.stack([
-            self.encode_input(text) for text in self.context_texts
+            self.encode_input(text) for text in self.context_manager.get_contexts()
         ])
 
-        # Projection optionnelle
-        context_projected = self.info_projector(context_embeddings)
-        query_projected = self.info_projector(query_embedding)
-
-        # Calcul de similarité cosinus
         similarities = F.cosine_similarity(
-            query_projected, context_projected, dim=-1
+            self.info_projector(query_embedding),
+            self.info_projector(context_embeddings),
+            dim=-1
         )
 
-        # Normalisation des similarités
-        similarities_softmax = F.softmax(similarities, dim=0)
+        top_k = min(k, len(self.context_manager.get_contexts()))
+        top_indices = torch.topk(F.softmax(similarities, dim=0), top_k).indices
 
-        # Gérer les cas où k est plus grand que la taille des similarités
-        top_k = min(k, len(self.context_texts))
-
-        try:
-            # Sélection des passages les plus pertinents
-            if top_k > 1:
-                top_indices = torch.topk(similarities_softmax, top_k).indices.tolist()
-                retrieved_texts = [self.context_texts[idx] for idx in top_indices]
-            else:
-                # Si un seul élément, utiliser l'indice du max
-                top_index = torch.argmax(similarities_softmax)
-                retrieved_texts = [self.context_texts[top_index]]
-
-            # Combiner les passages récupérés
-            return " ".join(retrieved_texts)
-        except Exception as e:
-            print(f"Erreur de récupération d'informations : {e}")
-            return "Impossible de récupérer des informations pertinentes."
+        return " ".join([self.context_manager.get_contexts()[i] for i in top_indices])
 
     def generate_text(self, prompt, max_length=100):
         """Génération de texte avec GPT-2"""
