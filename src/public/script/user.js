@@ -24,20 +24,19 @@ const userDataset = document.querySelector('#userIdDataSet');
  */
 const submissionBtn = document.querySelector('#userUpdateSubmitionBtn');
 
-
 modificationSubmitForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = new FormData(e.currentTarget);
   const username = form.get('username');
   const bio = form.get('bio');
   const link = form.get('link');
-  const id = userDataset.dataset.id;
+  const { id } = userDataset.dataset;
   const fetchBody = {
     username,
     bio,
     link,
     id,
-  }
+  };
   const req = await fetch('/user/update', {
     method: 'POST',
     headers: {
@@ -46,11 +45,11 @@ modificationSubmitForm.addEventListener('submit', async (e) => {
     body: JSON.stringify(fetchBody),
   });
   const res = await req.json();
-  if(res.success) {
+  if (res.success) {
     window.location.reload();
   }
   notificationPush(notificationsComponent.info('something went wrong'));
-})
+});
 
 profileEditor.addEventListener('click', (e) => {
   e.preventDefault();
@@ -62,7 +61,7 @@ closeUserUpdatePanel.addEventListener('click', (e) => {
   e.preventDefault();
   userUpdatePanel.classList.remove('transNotificationShow');
   userUpdatePanel.classList.add('transUpdatePanelHide');
-})
+});
 
 // document.onclick = async (e) => {
 //   e.preventDefault();
@@ -98,16 +97,20 @@ userName.addEventListener('keyup', async (e) => {
   submissionBtn.disabled = false;
   userName.classList.remove('wrong-data');
   const errorComponent = document.querySelector('#componentErrorForm');
-  if(errorComponent) errorComponent.remove();
+  if (errorComponent) {
+    errorComponent.remove();
+  }
   const regex = /[A-Z\s]/;
-  if(e.currentTarget.value.length <= 0) return;
-  if(regex.test(e.currentTarget.value)) {
+  if (e.currentTarget.value.length <= 0) {
+    return;
+  }
+  if (regex.test(e.currentTarget.value)) {
     submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
     const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${e.currentTarget.value}" have majuscule or space</span>`;
     userName.insertAdjacentHTML('afterend', errorMessage);
     return;
-  };
+  }
   const req = await fetch(`/user/exists/${e.currentTarget.value}`);
   const res = await req.json();
   console.log(e.currentTarget);
@@ -176,8 +179,8 @@ notificationShower.addEventListener('click', (e) => {
   e.preventDefault();
   notificationPanel.classList.remove('transNotificationHide');
   notificationPanel.classList.add('transNotificationShow');
-})
+});
 
-socket.addEventListener('message', function(e) {
+socket.addEventListener('message', function (e) {
   console.log(e);
-})
+});

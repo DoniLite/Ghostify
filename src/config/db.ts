@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-// import { createClient } from 'redis';
+import { createClient } from 'redis';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
@@ -27,9 +27,16 @@ const adapter = new PrismaPg(pool, {
 //     console.log(err);
 //   });
 
-// export const redisStoreClient = createClient()
-//   .on('error', (err) => console.log('Redis Client Error', err))
-//   .connect();
+export const redisStoreClient = createClient();
+
+redisStoreClient
+  .connect()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 export const prismaClient = new PrismaClient({ adapter });
 

@@ -9,11 +9,21 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    versioning-strategy: auto
+    allow:
+      - dependency-type: "all"
+    update-type: ["patch", "minor"]
   - package-ecosystem: "github-actions" 
     directory: "/" 
     schedule:
       interval: "weekly"
+    allow:
+      - dependency-type: "all"
+    update-type: ["patch", "minor"]
   - package-ecosystem: "pip" 
     directory: "/" 
     schedule:
       interval: "weekly"
+    allow:
+      - dependency-type: "all"
+    update-type: ["patch", "minor"]
