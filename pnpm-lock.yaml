@@ -138,8 +138,8 @@ importers:
         specifier: ^3.1.10
         version: 3.1.10
       ejs-lint:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       eslint-plugin-tailwindcss:
         specifier: ^3.17.4
         version: 3.17.4(tailwindcss@3.4.13(ts-node@10.9.2(@types/node@22.7.4)(typescript@5.6.2)))
@@ -1227,6 +1227,7 @@ packages:
 
   boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -1633,17 +1634,12 @@ packages:
   ejs-include-regex@1.0.0:
     resolution: {integrity: sha512-OTkvS8Dm8XhaE/+EKIjYjInRkNahQwkUUacAZXvA8Gqr5KEZrOsgFk8AkKYSnoTcdvKV0wnoG7YHWb4gkZFu8Q==}
 
-  ejs-lint@2.0.0:
-    resolution: {integrity: sha512-zt3E6MWLBYpWuUEOFRRqzB74gxCOZJAzoKmJR810U2mIrLnP1v6Xyk8tc6tl4pbT63cFoEqELPx9K8URjmpyZg==}
+  ejs-lint@2.0.1:
+    resolution: {integrity: sha512-GrH+UuYaOlhS/cnCJEY5EANnFvWe6zyf0h6uOAKG2/EiG2Ch9S8vnX3CwAMP9Q1xlCagPNzwRDJG8MVCV4IJLg==}
     hasBin: true
 
   ejs@3.1.10:
     resolution: {integrity: sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-
-  ejs@3.1.8:
-    resolution: {integrity: sha512-/sXZeMlhS0ArkfX2Aw780gJzXSMPnKjtspYZv+f3NiKLlubezAHDU5+9xz6gd3/NhG3txQCo6xlglmTS+oTGEQ==}
     engines: {node: '>=0.10.0'}
     hasBin: true
 
@@ -5484,10 +5480,10 @@ snapshots:
 
   ejs-include-regex@1.0.0: {}
 
-  ejs-lint@2.0.0:
+  ejs-lint@2.0.1:
     dependencies:
       chalk: 5.3.0
-      ejs: 3.1.8
+      ejs: 3.1.10
       ejs-include-regex: 1.0.0
       globby: 13.2.2
       read-input: 0.3.1
@@ -5496,10 +5492,6 @@ snapshots:
       yargs: 17.7.2
 
   ejs@3.1.10:
-    dependencies:
-      jake: 10.9.2
-
-  ejs@3.1.8:
     dependencies:
       jake: 10.9.2
 
