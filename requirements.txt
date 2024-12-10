@@ -18,7 +18,7 @@ dill==0.3.8
 dnspython==2.7.0
 dparse==0.6.4
 email_validator==2.2.0
-fastapi==0.115.5
+fastapi==0.115.6
 fastapi-cli==0.0.5
 filelock==3.12.4
 fire==0.7.0
