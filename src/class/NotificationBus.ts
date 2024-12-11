@@ -1,8 +1,8 @@
-import { ee } from '../server';
-import { prismaClient, redisStoreClient } from '../config/db';
+import { ee, NotificationQueue } from '../server';
+import { prismaClient } from '../config/db';
 import { EventEmitter } from 'stream';
 import { Notifications, NotificationType } from '@prisma/client/default';
-import { DoneCallback, Job, ProcessCallbackFunction } from 'bull';
+import { DoneCallback, Job } from 'bull';
 import { logger } from '../logger';
 
 export class NotificationBus {
@@ -19,19 +19,49 @@ export class NotificationBus {
   eventType: typeof NotificationType;
   #crud: typeof prismaClient.notifications;
   #callBack: (job: Job) => Promise<unknown>;
-  #store: typeof redisStoreClient;
+  #queue: typeof NotificationQueue;
 
   /**
-   * Construct a new NotificationBus instance
+   * Construct a new NotificationBus instance:
+   * 
+   * ```ts
+   *    const notification = new NotificationBus();
+   * ```
    *
-   * This is used to set up the event bus, the prisma crud, the type of notifications
-   * and the redis store
+   * This is used to set up all needed features to `crud` under notifications on the platform system
+   * 
+   * For listening on the event from this class submit to the default `ee` (evenEmitter) on the `sever.ts` file
+   * 
+   * ```ts
+   *    ee.on('event', function (e) {
+   *      console.log(e)
+   *    })
+   * ```
+   * 
+   * This class can create notification for a specific ser with his `userId`
+   * The notification can be add to a task queue using the `addCallBack` function
+   * You must use a custom function that returns a data promise like this:
+   * ```ts
+   *   Promise<{
+   *    evenType: NotificationType;
+        payload: Record<string | number | symbol, unknown>;
+        userId: number;
+   *   }>
+   * ```
+   * 
+   * Then you can add a callBack that will fire a new notifications after it successfully complete:
+   * ```ts
+   *    notification.addCallBack<{
+   *      yourJobType: string
+   *    }>(yourCallBack);
+   * ```
+   * 
    */
   constructor() {
     this.eventBus = ee;
     this.#crud = prismaClient.notifications;
     this.eventType = NotificationType;
-    this.#store = redisStoreClient;
+    this.#queue = NotificationQueue;
   }
 
   /**
@@ -59,9 +89,27 @@ export class NotificationBus {
         const d = v as {
           evenType: NotificationType;
           payload: Record<string | number | symbol, unknown>;
+          userId: number;
         };
-        this.eventBus.emit(d.evenType, d.payload);
-        done(null, v);
+        this.#crud
+          .create({
+            data: {
+              content: JSON.stringify(d.payload),
+              type: d.evenType,
+              userId: d.userId,
+            },
+          })
+          .then((dt) => {
+            this.eventBus.emit(dt.type, dt.content);
+            done(null, dt);
+          })
+          .catch((e) => {
+            logger.error(
+              `error during the task ${job.id} with data: ${job.data}`,
+              e
+            );
+            done(e, null);
+          });
       })
       .catch((e) => {
         logger.error(
@@ -72,13 +120,42 @@ export class NotificationBus {
       });
   }
 
-  addCallBack<T>(func: Function): { call: ProcessCallbackFunction<T> } {
+  async #callBackQueue() {
+    await this.#queue.process(this.#doSomethingWithAndFire);
+  }
+
+  /**
+   * Set the callback function for the notification bus
+   *
+   * The callback function will be called with a Job object as argument
+   * and will be passed the notification payload and the notification type
+   * as argument.
+   *
+   * The callback function should return a Promise that resolve with the
+   * notification payload and the notification type.
+   *
+   * @param func - the callback function
+   * @returns an object with a call method that can be used to add a new job in the queue
+   */
+  async addCallBack<T>(
+    func: Function
+  ): Promise<{ call: typeof NotificationQueue.add }> {
     this.#callBack = func as (job: Job) => Promise<unknown>;
+    await this.#callBackQueue();
     return {
-      call: this.#doSomethingWithAndFire,
+      call: this.#queue.add,
     };
   }
 
+  /**
+   * @description
+   * Add a new notification for the given user
+   *
+   * @param type - the type of the notification
+   * @param payload - the payload of the notification
+   * @param userId - the user id
+   * @returns The newly created notification
+   */
   addNotification(
     type: NotificationType,
     payload: Record<string | number | symbol, unknown>,
@@ -93,18 +170,17 @@ export class NotificationBus {
     });
   }
 
-  async scheduleNotification(
-    type: NotificationType,
-    payload: Record<string | number | symbol, unknown>,
-    userId: number,
-    date: Date
-  ) {
-    await this.#store.set(
-      `${userId}_${type}`,
-      JSON.stringify({ type, payload }),
-      {
-        EX: Math.floor(date.getTime() / 1000) - Math.floor(Date.now() / 1000),
-      }
-    );
+
+  async updateNotificationView(...notificationsId: number[]) {
+    return Promise.all(notificationsId.map(async (id) => {
+      return await this.#crud.update({
+        where: {
+          id,
+        },
+        data: {
+          seen: true,
+        },
+      });
+    }));
   }
 }

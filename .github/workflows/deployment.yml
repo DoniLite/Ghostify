@@ -1,0 +1,92 @@
+name: Ghostify Deploy CI/CD
+
+on:
+  push:
+    branches: [ "main", "releases/**" ]
+  pull_request:
+    branches: [ "main", "releases/**" ]
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    
+    - name: Install dependencies
+      run: |
+        make setup
+    
+    - name: Run linters
+      run: |
+        pip install black isort flake8
+        black --check .
+        isort --check-only .
+        flake8 .
+    
+    - name: Run tests
+      run: |
+        pip install pytest
+        pytest tests/
+
+  test-typescript:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+    
+    - name: Install dependencies
+      run: |
+        pnpm install
+    
+    - name: Lint TypeScript
+      run: |
+        pnpm run lint
+    
+    - name: Run TypeScript tests
+      run: |
+        pnpm run test
+
+  deploy:
+    needs: [test-python, test-typescript]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+    
+    - name: Deploy to Production
+      env:
+        PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER_IP }}
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@$PRODUCTION_SERVER << 'EOF'
+      
+          cd /home/ubuntu/Ghostify/
+
+          pnpm run deployServer
+        EOF

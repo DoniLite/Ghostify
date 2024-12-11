@@ -88,6 +88,8 @@ import { logger } from './logger';
 import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
 import { auth, ROUTES } from './hooks/auth';
+import { NotificationType } from '@prisma/client/default';
+import { NotificationBus } from './class/NotificationBus';
 
 passport.use(
   new GoogleStrategy(
@@ -406,13 +408,29 @@ server.use((req, res, next) => {
   next();
 });
 
+
+export enum SocketEventType {
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+  MESSAGE = 'message',
+  NOTIFICATION = 'notification',
+}
 // Websocket routes
 server.ws('/', (socket) => {
+
+  const notifications = new NotificationBus();
+  const eeType = notifications.eventType;
+
+  ee.on(eeType.Alert, (data) => {
+    
+  });
   console.log('New client connected');
   socket.on('message', (msg) => {
     console.log('Received:', msg);
     socket.send('Hello from server');
   });
+
+
 
   socket.on('close', () => {
     console.log('Client disconnected');
@@ -627,6 +645,15 @@ export const cvQueue = new Queue<{
 
 export const statsQueue = new Queue<string>(
   'stats-saver',
+  'redis://127.0.0.1:6379'
+);
+
+export const NotificationQueue = new Queue<{
+  userId: number;
+  type: NotificationType;
+  payload: Record<string | number | symbol, unknown>;
+}>(
+  'notifications',
   'redis://127.0.0.1:6379'
 );
 
