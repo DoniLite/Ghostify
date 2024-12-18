@@ -88,6 +88,8 @@ import { logger } from './logger';
 import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
 import { auth, ROUTES } from './hooks/auth';
+import { NotificationType } from '@prisma/client/default';
+import { NotificationBus } from './class/NotificationBus';
 
 passport.use(
   new GoogleStrategy(
@@ -406,12 +408,174 @@ server.use((req, res, next) => {
   next();
 });
 
+export enum SocketEventType {
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+  MESSAGE = 'message',
+  NOTIFICATION = 'notification',
+}
 // Websocket routes
 server.ws('/', (socket) => {
+  const notifications = new NotificationBus();
+  const eeType = notifications.eventType;
+
+  ee.on(eeType.Alert, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.MESSAGE,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Info, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Message, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.MESSAGE,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Post, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Reply, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.like, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
   console.log('New client connected');
-  socket.on('message', (msg) => {
-    console.log('Received:', msg);
-    socket.send('Hello from server');
+  socket.on('message', async (msg) => {
+    try {
+      const evData = JSON.parse(msg as unknown as string) as {
+        type: SocketEventType;
+        data: Record<string, unknown>;
+        action?: 'read' | 'update' | 'delete' | 'deleteAll' | 'add' | 'readAll';
+      };
+
+      const { data } = evData;
+
+      if (evData.type === 'notification') {
+        switch (evData.action) {
+          case 'read': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.update({
+                where: {
+                  id: Number(data.id),
+                },
+                data: {
+                  seen: true,
+                },
+              });
+            }
+            break;
+          }
+          case 'update': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.update({
+                where: {
+                  id: Number(data.id),
+                },
+                data: {
+                  seen: false,
+                },
+              });
+            }
+            break;
+          }
+          case 'delete': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.delete({
+                where: {
+                  id: Number(data.id),
+                },
+              });
+            }
+            break;
+          }
+          case 'deleteAll': {
+            await prismaClient.notifications.deleteMany({
+              where: {
+                userId: Number(data.user),
+              },
+            });
+            break;
+          }
+          case 'add': {
+            if (typeof data === 'object' && data.userId) {
+              const notification = await prismaClient.notifications.create({
+                data: {
+                  userId: Number(data.userId),
+                  content: data.content as string,
+                  title: data.title as string,
+                  type: data.type as NotificationType,
+                },
+              });
+              ee.emit(
+                notification.type,
+                JSON.stringify({
+                  title: notification.title,
+                  content: notification.content,
+                })
+              );
+            }
+            break;
+          }
+          case 'readAll': {
+            await prismaClient.notifications.updateMany({
+              where: {
+                seen: false,
+                userId: Number(data.user),
+              },
+              data: {
+                seen: true,
+              },
+            });
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      if (typeof msg !== 'object') {
+        logger.error(`invalid message received from socket server: ${msg}`);
+      }
+    }
   });
 
   socket.on('close', () => {
@@ -629,6 +793,12 @@ export const statsQueue = new Queue<string>(
   'stats-saver',
   'redis://127.0.0.1:6379'
 );
+
+export const NotificationQueue = new Queue<{
+  userId: number;
+  type: NotificationType;
+  payload: Record<string | number | symbol, unknown>;
+}>('notifications', 'redis://127.0.0.1:6379');
 
 cvQueue.process(async (job, done) => {
   try {

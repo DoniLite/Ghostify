@@ -10,11 +10,38 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   ...tailwind.configs['flat/recommended'],
   {
+    ignores: [
+      // Ignorer completement le dossier .venv
+      '.venv/',
+      '.venv/**',
+      '**/.venv/',
+      '**/.venv/**',
+      'python/',
+      'python/**',
+
+      // Autres fichiers à ignorer
+      '**/*.d.ts',
+      '**/*.config.ts',
+      '**/*.config.js',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/python/**',
+    ],
+    rules: {
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+        },
+      ],
+    },
     settings: {
       tailwindcss: {
-        // These are the default values but feel free to customize
-        callees: ['classnames', 'clsx', 'ctl', "class"],
-        config: 'tailwind.config.js', // returned from `loadConfig()` utility if not provided
+        callees: ['classnames', 'clsx', 'ctl', 'class'],
+        config: 'tailwind.config.js',
         cssFiles: [
           '**/*.css',
           '**/*.ejs',

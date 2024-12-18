@@ -267,8 +267,8 @@ export const getCVTheme = async (req: Request, res: Response) => {
       return;
     }
     res.status(200).json({
-      type: theme.type ? theme.type : 1,
-      mode: theme.mode ? theme.mode : 1,
+      type: theme.type || 1,
+      mode: theme.mode || 1,
     });
   } catch (e) {
     console.error(e);
