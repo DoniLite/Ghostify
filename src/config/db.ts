@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { createClient } from 'redis';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import litejsondb from 'litejsondb';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 
@@ -39,5 +40,6 @@ redisStoreClient
   });
 
 export const prismaClient = new PrismaClient({ adapter });
+export const JsonDB = new litejsondb();
 
 // redisStoreClient.connect().catch(console.error);

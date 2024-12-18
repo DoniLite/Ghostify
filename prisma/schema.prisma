@@ -310,6 +310,7 @@ model Promotion {
 
 model Notifications {
   id        Int              @id @default(autoincrement())
+  title     String?
   type      NotificationType
   content   String
   createdAt DateTime         @default(now())

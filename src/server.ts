@@ -480,22 +480,102 @@ server.ws('/', (socket) => {
   });
 
   console.log('New client connected');
-  socket.on('message', (msg) => {
-    const data = JSON.parse(msg as unknown as string) as {
-      type: SocketEventType;
-      data: unknown;
-      action?: 'read' | 'update' | 'delete' | 'deleteAll' | 'add';
-    };
+  socket.on('message', async (msg) => {
+    try {
+      const evData = JSON.parse(msg as unknown as string) as {
+        type: SocketEventType;
+        data: Record<string, unknown>;
+        action?: 'read' | 'update' | 'delete' | 'deleteAll' | 'add' | 'readAll';
+      };
 
-    if(data.type === 'notification') {
-      switch (data.action) {
-        case 'read': {
+      const { data } = evData;
 
+      if (evData.type === 'notification') {
+        switch (evData.action) {
+          case 'read': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.update({
+                where: {
+                  id: Number(data.id),
+                },
+                data: {
+                  seen: true,
+                },
+              });
+            }
+            break;
+          }
+          case 'update': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.update({
+                where: {
+                  id: Number(data.id),
+                },
+                data: {
+                  seen: false,
+                },
+              });
+            }
+            break;
+          }
+          case 'delete': {
+            if (typeof data === 'object' && data.id) {
+              await prismaClient.notifications.delete({
+                where: {
+                  id: Number(data.id),
+                },
+              });
+            }
+            break;
+          }
+          case 'deleteAll': {
+            await prismaClient.notifications.deleteMany({
+              where: {
+                userId: Number(data.user),
+              },
+            });
+            break;
+          }
+          case 'add': {
+            if (typeof data === 'object' && data.userId) {
+              const notification = await prismaClient.notifications.create({
+                data: {
+                  userId: Number(data.userId),
+                  content: data.content as string,
+                  title: data.title as string,
+                  type: data.type as NotificationType,
+                },
+              });
+              ee.emit(
+                notification.type,
+                JSON.stringify({
+                  title: notification.title,
+                  content: notification.content,
+                })
+              );
+            }
+            break;
+          }
+          case 'readAll': {
+            await prismaClient.notifications.updateMany({
+              where: {
+                seen: false,
+                userId: Number(data.user),
+              },
+              data: {
+                seen: true,
+              },
+            });
+            break;
+          }
         }
       }
+    } catch (e) {
+      console.error(e);
+      if (typeof msg !== 'object') {
+        logger.error(`invalid message received from socket server: ${msg}`);
+      }
     }
-    console.log('Received:', msg);
-    socket.send('Hello from server');
   });
 
   socket.on('close', () => {

@@ -114,6 +114,11 @@ const deleteAllNotifications = (e) => {
   e.preventDefault();
   socket.send(JSON.stringify({ type: 'notification', action: 'deleteAll' }));
 };
+
+const markAllNotificationAsR4ead = (e) => {
+  e.preventDefault();
+  socket.send(JSON.stringify({ type: 'notification', action: 'readAll' }));
+};
 /**
  *
  * @param {string} title
