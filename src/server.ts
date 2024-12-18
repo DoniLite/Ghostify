@@ -408,7 +408,6 @@ server.use((req, res, next) => {
   next();
 });
 
-
 export enum SocketEventType {
   CONNECT = 'connect',
   DISCONNECT = 'disconnect',
@@ -417,20 +416,87 @@ export enum SocketEventType {
 }
 // Websocket routes
 server.ws('/', (socket) => {
-
   const notifications = new NotificationBus();
   const eeType = notifications.eventType;
 
   ee.on(eeType.Alert, (data) => {
-    
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.MESSAGE,
+        data,
+      })
+    );
   });
+
+  ee.on(eeType.Info, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Message, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.MESSAGE,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Post, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.Reply, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
+  ee.on(eeType.like, (data) => {
+    socket.send(
+      JSON.stringify({
+        flash: true,
+        type: SocketEventType.NOTIFICATION,
+        data,
+      })
+    );
+  });
+
   console.log('New client connected');
   socket.on('message', (msg) => {
+    const data = JSON.parse(msg as unknown as string) as {
+      type: SocketEventType;
+      data: unknown;
+      action?: 'read' | 'update' | 'delete' | 'deleteAll' | 'add';
+    };
+
+    if(data.type === 'notification') {
+      switch (data.action) {
+        case 'read': {
+
+        }
+      }
+    }
     console.log('Received:', msg);
     socket.send('Hello from server');
   });
-
-
 
   socket.on('close', () => {
     console.log('Client disconnected');
@@ -652,10 +718,7 @@ export const NotificationQueue = new Queue<{
   userId: number;
   type: NotificationType;
   payload: Record<string | number | symbol, unknown>;
-}>(
-  'notifications',
-  'redis://127.0.0.1:6379'
-);
+}>('notifications', 'redis://127.0.0.1:6379');
 
 cvQueue.process(async (job, done) => {
   try {

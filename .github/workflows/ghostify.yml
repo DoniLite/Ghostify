@@ -1,4 +1,4 @@
-name: Ghostify Deploy CI/CD
+name: Ghostify fullstack CI/CD
 
 on:
   push:
@@ -61,32 +61,3 @@ jobs:
     - name: Run TypeScript tests
       run: |
         pnpm run test
-
-  deploy:
-    needs: [test-python, test-typescript]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-    
-    - name: Install pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: latest
-    
-    - name: Deploy to Production
-      env:
-        PRODUCTION_SERVER: ${{ secrets.PRODUCTION_SERVER_IP }}
-      run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@$PRODUCTION_SERVER << 'EOF'
-      
-          cd /home/ubuntu/Ghostify/
-
-          pnpm run deployServer
-        EOF

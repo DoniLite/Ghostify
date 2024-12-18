@@ -357,7 +357,6 @@ socket.addEventListener('message', function (e) {
     }
 
     if (evData.action && evData.action === 'update') {
-      notificationContainer.innerHTML = '';
       notificationContainer.insertAdjacentHTML(
         'afterbegin',
         notification(evData.title, evData.content, evData.time, evData.id)
