@@ -81,14 +81,19 @@ import { downloader, serveStatic } from './routes/serveStatic';
 import { cv, processCV } from './controller/processCv';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
 import Queue from 'bull';
-import { cvDownloader, verifyJWT, saveStatistic } from './utils';
+import {
+  cvDownloader,
+  verifyJWT,
+  saveStatistic,
+  getTimeElapsed,
+} from './utils';
 import { billing } from './routes/billing';
 import { documentView } from './routes/doc';
 import { logger } from './logger';
 import { onStat } from './hooks/events';
 import { stats } from './hooks/statCounter';
 import { auth, ROUTES } from './hooks/auth';
-import { NotificationType } from '@prisma/client/default';
+import { Notifications, NotificationType } from '@prisma/client/default';
 import { NotificationBus } from './class/NotificationBus';
 
 passport.use(
@@ -415,7 +420,7 @@ export enum SocketEventType {
   NOTIFICATION = 'notification',
 }
 // Websocket routes
-server.ws('/', (socket) => {
+server.ws('/', async (socket) => {
   const notifications = new NotificationBus();
   const eeType = notifications.eventType;
 
@@ -484,8 +489,15 @@ server.ws('/', (socket) => {
     try {
       const evData = JSON.parse(msg as unknown as string) as {
         type: SocketEventType;
-        data: Record<string, unknown>;
-        action?: 'read' | 'update' | 'delete' | 'deleteAll' | 'add' | 'readAll';
+        data: Record<string, unknown> & { payload?: Notifications };
+        action?:
+          | 'read'
+          | 'update'
+          | 'delete'
+          | 'deleteAll'
+          | 'add'
+          | 'readAll'
+          | 'loadAll';
       };
 
       const { data } = evData;
@@ -506,13 +518,13 @@ server.ws('/', (socket) => {
             break;
           }
           case 'update': {
-            if (typeof data === 'object' && data.id) {
+            if (typeof data === 'object' && data.id && data.payload) {
               await prismaClient.notifications.update({
                 where: {
                   id: Number(data.id),
                 },
                 data: {
-                  seen: false,
+                  ...data.payload,
                 },
               });
             }
@@ -566,6 +578,30 @@ server.ws('/', (socket) => {
                 seen: true,
               },
             });
+            break;
+          }
+
+          case 'loadAll': {
+            const notifications = await prismaClient.notifications.findMany({
+              where: {
+                userId: Number(data.user),
+              },
+              orderBy: {
+                createdAt: 'desc',
+              },
+            });
+            const notificationsUpdates = notifications.map((notification) => ({
+              ...notification,
+              time: getTimeElapsed(notification.createdAt),
+            }));
+            socket.send(
+              JSON.stringify({
+                type: SocketEventType.NOTIFICATION,
+                data: {
+                  notifications: notificationsUpdates,
+                },
+              })
+            );
             break;
           }
         }

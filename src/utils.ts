@@ -63,11 +63,10 @@ export enum DocOutputFormat {
 }
 
 export const unify = async (str: string) => {
-  const window = new JSDOM('').window;
+  const {window} = new JSDOM('');
   const purify = DOMPurify(window);
   const result = await marked(str);
-  const clean = purify.sanitize(result);
-  return clean;
+  return purify.sanitize(result);
 };
 
 export enum Can {
@@ -117,7 +116,9 @@ export async function analyzeImage(
   // Création de l'empreinte de l'image (hash)
   const imageHashResult = await new Promise<string>((resolve, reject) => {
     imageHash.hash(imagePath, 16, 'hex', (error, hash) => {
-      if (error) reject(error);
+      if (error) {
+        reject(error);
+      }
       resolve(hash);
     });
   });
@@ -178,7 +179,9 @@ export const DATA_PATH = path.resolve(path.join(__dirname, '../data'));
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export async function createDirIfNotExists(path: string) {
-  if (!fs.existsSync(path)) await fsP.mkdir(path);
+  if (!fs.existsSync(path)) {
+    await fsP.mkdir(path);
+  }
   return;
 }
 
@@ -202,8 +205,7 @@ export function checkIfMonthIsNotOver(monthParam: month): boolean {
 
 export function getWeekIndex(): number {
   const date = new Date();
-  const weekIndex = Math.round(date.getDate() / 7);
-  return weekIndex;
+  return Math.round(date.getDate() / 7);
 }
 
 export const months = [
@@ -250,8 +252,7 @@ export async function loadStatistics(): Promise<StatsData> {
     return createFirstStatistic();
   }
   const jsonStrng = await fsP.readFile(DATA_FILE, 'utf8');
-  const stats = convertStatsInput(jsonStrng);
-  return stats;
+  return convertStatsInput(jsonStrng);
 }
 
 export async function saveStatistic(stat: StatsData) {
@@ -296,11 +297,12 @@ export async function generateAndSaveKeys(): Promise<{
     },
   });
 
-  if (verifyIfKeyExist)
+  if (verifyIfKeyExist) {
     return {
       secretKey: Buffer.from(verifyIfKeyExist.key, 'hex'),
       iv: Buffer.from(verifyIfKeyExist.iv, 'hex'),
     };
+  }
 
   const newKey = await prismaClient.key.create({
     data: {
@@ -864,6 +866,7 @@ export function ensureDirectoryAccess(directory: string) {
 export function getTimeElapsed(date: Date) {
   const duration = intervalToDuration({ start: date, end: new Date() });
 
+  // sourcery skip: use-braces
   if (duration.weeks >= 1) return `${duration.weeks}w`;
   if (duration.days >= 1) return `${duration.days}d`;
   if (duration.hours >= 1) return `${duration.hours}h`;
@@ -1005,7 +1008,9 @@ export const purgeFiles = async (files: string[]) => {
   const STATIC_DIR = path.resolve(__dirname, '../static');
 
   // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
-  if (files.length === 0) return;
+  if (files.length === 0) {
+    return;
+  }
 
   // Vérifie les tokens pour chaque fichier (vérifie que `verifyJWT` retourne une chaîne pour chaque fichier)
   const processedFiles = files.map((file) => verifyJWT(file) as string);
@@ -1042,10 +1047,10 @@ export const purgeFiles = async (files: string[]) => {
 export const purgeSingleFIle = (path: string) => {
   try {
     fs.rmSync(path);
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
-}
+};
 
 const setupSecurity = async () => {
   try {
@@ -1081,21 +1086,18 @@ export const verifySecurity = async () => {
       const date = new Date(security.expire);
       if (Date.now() > date.getTime()) {
         console.log('security expired trying to create a new security.json');
-        const resV2 = await setupSecurity();
-        return resV2;
+        return await setupSecurity();
       }
       if (process.env.NODE_ENV !== security.env) {
         console.log(
           'security env are not set correctly updating security.json'
         );
-        const resV3 = await setupSecurity();
-        return resV3;
+        return await setupSecurity();
       }
       return true;
     }
     console.log('No security file found creating a new security.json');
-    const res = await setupSecurity();
-    return res;
+    return await setupSecurity();
   } catch (err) {
     console.error(err);
     return false;

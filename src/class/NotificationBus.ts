@@ -1,7 +1,7 @@
 import { ee, NotificationQueue } from '../server';
 import { prismaClient } from '../config/db';
 import { EventEmitter } from 'stream';
-import { Notifications, NotificationType } from '@prisma/client/default';
+import type { Notifications, NotificationType } from '@prisma/client/default';
 import { DoneCallback, Job } from 'bull';
 import { logger } from '../logger';
 
@@ -60,7 +60,14 @@ export class NotificationBus {
   constructor() {
     this.eventBus = ee;
     this.#crud = prismaClient.notifications;
-    this.eventType = NotificationType;
+    this.eventType = {
+      Alert: 'Alert',
+      Reply: 'Reply',
+      like: 'like',
+      Post: 'Post',
+      Info: 'Info',
+      Message: 'Message',
+    };
     this.#queue = NotificationQueue;
   }
 
@@ -170,17 +177,18 @@ export class NotificationBus {
     });
   }
 
-
   async updateNotificationView(...notificationsId: number[]) {
-    return Promise.all(notificationsId.map(async (id) => {
-      return await this.#crud.update({
-        where: {
-          id,
-        },
-        data: {
-          seen: true,
-        },
-      });
-    }));
+    return Promise.all(
+      notificationsId.map(async (id) => {
+        return await this.#crud.update({
+          where: {
+            id,
+          },
+          data: {
+            seen: true,
+          },
+        });
+      })
+    );
   }
 }

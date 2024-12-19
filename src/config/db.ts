@@ -28,16 +28,16 @@ const adapter = new PrismaPg(pool, {
 //     console.log(err);
 //   });
 
-export const redisStoreClient = createClient();
+// export const redisStoreClient = createClient();
 
-redisStoreClient
-  .connect()
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// redisStoreClient
+//   .connect()
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 export const prismaClient = new PrismaClient({ adapter });
 export const JsonDB = new litejsondb();

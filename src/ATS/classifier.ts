@@ -25,7 +25,7 @@ export class Classifier {
     this.#tokenizer = new WordTokenizer();
   }
 
-  add(row: [string, string]): void {
+  add(row: [string | string[], string]): void {
     this.#classifier.addDocument(row[0], row[1]);
   }
 
@@ -41,6 +41,12 @@ export class Classifier {
     if (path && typeof path === 'string') {
       this.#classifier.save(path, (err, classifier) => {
         // the classifier is saved to the classifier.json file!
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(classifier);
+        console.log('successfully saved');
       });
       return true as StringifyClassifier<T>;
     }

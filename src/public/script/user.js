@@ -24,12 +24,12 @@ const userDataset = document.querySelector('#userIdDataSet');
  */
 const submissionBtn = document.querySelector('#userUpdateSubmitionBtn');
 
-const actionSup = document.querySelector('#notificationOptionSup');
-const actionMark = document.querySelector('#notificationOptionMark');
-const actionSupAll = document.querySelector('#notificationOptionSupAll');
-const actionContainerActivity = document.querySelector(
-  '#notificationActivityOptions'
-);
+// const actionSup = document.querySelector('#notificationOptionSup');
+// const actionMark = document.querySelector('#notificationOptionMark');
+// const actionSupAll = document.querySelector('#notificationOptionSupAll');
+// const actionContainerActivity = document.querySelector(
+//   '#notificationActivityOptions'
+// );
 const notificationContainer = document.querySelector(
   '#notificationElementsContainer'
 );
@@ -112,13 +112,47 @@ const markNotificationAsRead = (e) => {
  */
 const deleteAllNotifications = (e) => {
   e.preventDefault();
-  socket.send(JSON.stringify({ type: 'notification', action: 'deleteAll' }));
+  const user = Number(
+    notificationContainer.querySelector('#userIdInput').value
+  );
+  socket.send(
+    JSON.stringify({
+      type: 'notification',
+      action: 'deleteAll',
+      data: { user },
+    })
+  );
 };
 
-const markAllNotificationAsR4ead = (e) => {
+/**
+ * Prevents the default action of the event and sends a request
+ * to mark all notifications as read via the websocket connection.
+ *
+ * @param {Event} e - The event object associated with the function call.
+ */
+const markAllNotificationAsRead = (e) => {
   e.preventDefault();
-  socket.send(JSON.stringify({ type: 'notification', action: 'readAll' }));
+  const user = Number(
+    notificationContainer.querySelector('#userIdInput').value
+  );
+  socket.send(
+    JSON.stringify({ type: 'notification', action: 'readAll', data: { user } })
+  );
 };
+
+/**
+ *
+ * @param {Event} e
+ */
+const loadAllNotifications = () => {
+  const user = Number(
+    notificationContainer.querySelector('#userIdInput').value
+  );
+  socket.send(
+    JSON.stringify({ type: 'notification', action: 'loadAll', data: { user } })
+  );
+};
+
 /**
  *
  * @param {string} title
@@ -311,12 +345,22 @@ closeNotificationPanel.addEventListener('click', (e) => {
 
 notificationShower.addEventListener('click', (e) => {
   e.preventDefault();
+  if (notificationContainer.childNodes.length > 0) {
+    notificationShower.dispatchEvent(new Event('updateNotifications'));
+  }
   notificationPanel.classList.remove('transNotificationHide');
   notificationPanel.classList.add('transNotificationShow');
 });
 
+notificationShower.addEventListener(
+  'updateNotifications',
+  markAllNotificationAsRead
+);
+
+document.addEventListener('DOMContentLoaded', loadAllNotifications);
+
 socket.addEventListener('message', function (e) {
-  const { data } = e;
+  const data = JSON.parse(e.data);
   /**
    * @type {"connect" | "disconnect" | "message" | "notification"}
    */
