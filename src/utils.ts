@@ -25,6 +25,7 @@ import {
   intervalToDuration,
 } from 'date-fns';
 import jwt from 'jsonwebtoken';
+import { translate, Translate } from 'free-translate';
 
 export const hashSomething = async (
   data: string | Buffer,
@@ -63,7 +64,7 @@ export enum DocOutputFormat {
 }
 
 export const unify = async (str: string) => {
-  const {window} = new JSDOM('');
+  const { window } = new JSDOM('');
   const purify = DOMPurify(window);
   const result = await marked(str);
   return purify.sanitize(result);
@@ -1160,3 +1161,10 @@ export enum ImageMimeType {
   TIFF = 'image/tiff',
   ICO = 'image/x-icon',
 }
+
+export const useTranslator = async (
+  text: string,
+  options: Translate = { to: 'en' }
+) => {
+  return await translate(text, options);
+};

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { socket } from './network.js';
+import { audio, socket } from './network.js';
 import { notificationPush, notificationsComponent } from './notifications.js';
 
 const userIMG = document.querySelector('#userProfileImg');
@@ -371,6 +371,7 @@ socket.addEventListener('message', function (e) {
   const evData = data['data'];
 
   if (type && type === 'notification') {
+    audio.play();
     if (evData.notifications && Array.isArray(evData.notifications)) {
       const els = evData.notifications;
       els.forEach((el) => {

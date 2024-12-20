@@ -91,6 +91,7 @@
     "express-session": "^1.18.0",
     "express-ws": "^5.0.2",
     "formidable": "^3.5.1",
+    "free-translate": "^0.6.1",
     "helmet": "^8.0.0",
     "i18n": "^0.15.1",
     "image-hash": "^5.3.2",
@@ -118,7 +119,8 @@
     "tailwind-scrollbar-hide": "^1.1.7",
     "tesseract.js": "^5.1.1",
     "vhost": "^3.0.2",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "wordnet-db": "^3.1.14"
   },
   "engines": {
     "node": ">=10",

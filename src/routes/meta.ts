@@ -75,6 +75,8 @@ export const meta = async (req: Request, res: Response) => {
         ? req.session.Auth.authenticated
         : undefined,
     theme: theme,
+    userId: req.session.Auth.id,
+    userIcon: req.session.Auth.file,
     actues
   });
 };
