@@ -10,7 +10,6 @@ import cors from 'cors';
 import { home } from './routes/home';
 import { homeController } from './controller/home';
 import dotEnv from 'dotenv';
-import { siteUrls } from './controller/siteUrls';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { store } from './controller/store';
 import { notifications } from './controller/notifications';
@@ -39,7 +38,6 @@ import {
   registrationView,
   serviceHome,
 } from './controller/api.v1';
-import { urlVisitor } from './controller/pushVisitor';
 import {
   conversionView,
   parserController,
@@ -53,7 +51,6 @@ import {
   requestHeadComponent,
 } from './routes/poster';
 import { find } from './controller/finder';
-import { uploadActu } from './controller/actu';
 import { assetPoster } from './controller/assetsPost';
 // import fastifyRedis from '@fastify/redis';
 // import RedisStore from 'connect-redis';
@@ -95,6 +92,8 @@ import { stats } from './hooks/statCounter';
 import { auth, ROUTES } from './hooks/auth';
 import { Notifications, NotificationType } from '@prisma/client/default';
 import { NotificationBus } from './class/NotificationBus';
+import { feed, reactions } from './routes/feed';
+import { comment } from './controller/comments';
 
 passport.use(
   new GoogleStrategy(
@@ -668,7 +667,6 @@ server.get('/auth/token', async (req, res, next) => {
 });
 server.post('/home', homeController);
 server.get('/home', home);
-server.post('/sitesUpload', siteUrls);
 server.get('/api/token', async (req, res) => {
   const { generator, email, url }: ReqParams = req.query;
   if (!generator) {
@@ -710,7 +708,7 @@ server.get('/billing', billing);
 server.get('/poster/docs', documentView);
 server.get('/poster/parser', conversionView);
 server.get('/promotion', (req, res) => {
-  res.render('components/promotion', { auth: undefined, service: 'promotion' });
+  res.render('/components/promotion', { auth: undefined, service: 'promotion' });
 });
 server.get('/404', (req, res) => {
   res.render('404');
@@ -741,7 +739,6 @@ server.get('/poster/update/:post', updateDocView);
 server.post('/poster/save', docSaver);
 server.get('/poster/view', docView);
 server.get('/poster/load/:uid', loadPost);
-server.post('/actu/post', uploadActu);
 server.get('/cvMaker', cv);
 server.post('/api/v1/parser', parserRoute);
 server.post('/user/profile/file', updateProfile);
@@ -755,6 +752,10 @@ server.get('/cv/:cv', getCV);
 server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
 server.post('/api/v1/poster/parser', parserController);
+server.post('/comment/post', comment)
+server.get('/find', find);
+server.get('/feed/:id', feed);
+server.post('/feed/reaction', reactions);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -767,12 +768,6 @@ server.get('/components/poster', requestComponent);
 server.get('/components/list', requestListComponent);
 server.get('/components/head', requestHeadComponent);
 
-// features and other thread specific
-server.get('/update/visitor', urlVisitor);
-server.get('/find', find);
-server.get('/feed', (req, res) => {
-  return res.render('src/views/components/feed.ejs', { service: undefined });
-});
 
 // 404 Not found route
 server.use((req, res) => {

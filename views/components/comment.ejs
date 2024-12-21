@@ -50,7 +50,7 @@
   </form>
 
   <% if (typeof replies !== 'undefined' && Array.isArray(replies)) { %>
-   <%- include('replies.ejs', {replies}) %>
+   <%- include('replies.ejs', {replies: replies.slice(0, 3)}) %>
   <% } %>
 
 </div>

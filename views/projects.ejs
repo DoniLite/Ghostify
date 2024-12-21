@@ -32,15 +32,21 @@
             </div>
           </div>
           <div class=" flex gap-x-4 text-green-300">
+            <% if (project.github) { %>
             <a href="<%= project.github %>">
               <i class="fa-brands fa-github"></i>
             </a>
-            <a href="<%= project.gitLab %>">
+            <% } %>
+            <% if (project.gitlab) { %>
+            <a href="<%= project.gitlab %>">
               <i class="fa-brands fa-gitlab"></i>
             </a>
+            <% } %>
+            <% if (project.bitbucket) { %>
             <a href="<%= project.bitbucket %>">
               <i class="fa-brands fa-bitbucket"></i>
             </a>
+            <% } %>
           </div>
         </div>
         <div class="text-white font-bold text-sm">
@@ -56,11 +62,11 @@
       <b class="text-white">Check it Now</b>
       <div class="w-full flex items-center mt-4 text-white">
         <div class="flex">
-          <% if (project.participationType === 'colaboration') { %>
+          <% if (project.participationType === 'Collaboration') { %>
             <i class="fa-solid fa-folder-tree"></i>
-          <% } else if (project.participationType === 'free') { %>
+          <% } else if (project.participationType === 'Free') { %>
             <i class="fa-regular fa-heart"></i>
-          <% } else if (project.participationType === 'subscription') { %>
+          <% } else if (project.participationType === 'Subscription') { %>
             <i class="fa-solid fa-tag"></i>
           <% } else { %>
             <i class="fa-solid fa-question"></i>

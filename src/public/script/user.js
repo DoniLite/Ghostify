@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-import { audio, socket } from './network.js';
-import { notificationPush, notificationsComponent } from './notifications.js';
+import { socket } from './network.js';
+import { notificationPush, notificationsComponent, notificationPopup } from './notifications.js';
 
 const userIMG = document.querySelector('#userProfileImg');
 const inputFile = document.querySelector('#profileUpdateInput');
@@ -359,7 +359,7 @@ notificationShower.addEventListener(
 
 document.addEventListener('DOMContentLoaded', loadAllNotifications);
 
-socket.addEventListener('message', function (e) {
+socket.addEventListener('message', async (e) => {
   const data = JSON.parse(e.data);
   /**
    * @type {"connect" | "disconnect" | "message" | "notification"}
@@ -371,7 +371,7 @@ socket.addEventListener('message', function (e) {
   const evData = data['data'];
 
   if (type && type === 'notification') {
-    audio.play();
+    await notificationPopup.play();
     if (evData.notifications && Array.isArray(evData.notifications)) {
       const els = evData.notifications;
       els.forEach((el) => {

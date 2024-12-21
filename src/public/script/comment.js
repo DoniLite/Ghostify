@@ -1,3 +1,5 @@
+import { notificationPush, notificationsComponent } from './notifications.js';
+
 /**
  * Initialise les événements pour un composant spécifique.
  * @param {HTMLElement} componentElement - L'élément DOM racine du composant.
@@ -6,6 +8,27 @@ const initializeComponent = (componentElement) => {
   const fileControl = componentElement.querySelector('.commentFileControl');
   const fileInput = componentElement.querySelector('.commentFileInput');
   const formElement = componentElement.querySelector('.commentFormElement');
+
+  /**
+   * Gestionnaire d'evenement pour le formulaire de commentaire
+   * @param {Event} e
+   */
+  const commentAction = async (e) => {
+    const form = new FormData(e.currentTarget);
+    const response = await fetch('/comment/post', {
+      method: 'POST',
+      body: form,
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.status === 200) {
+      notificationPush(
+        notificationsComponent.success(
+          'your comment has been posted successfully'
+        )
+      );
+    }
+  };
 
   if (fileControl && fileInput) {
     fileControl.addEventListener('click', (e) => {
@@ -52,10 +75,7 @@ const initializeComponent = (componentElement) => {
   }
 
   if (formElement) {
-    formElement.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      await commentAction(e);
-    });
+    formElement.addEventListener('submit', commentAction);
   }
 };
 

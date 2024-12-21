@@ -1,6 +1,9 @@
 /* eslint-disable no-undef */
 
 
+export const notificationPopup = new Audio('/static/media/notify.mp3');
+export const reactionPopup = new Audio('/static/media/popup.mp3');
+
 
 export const notificationsComponent = {
   info: (message) => {
@@ -27,3 +30,12 @@ export const notificationPush = (notification) => {
     }
   }, 4000);
 };
+
+
+//externals...
+App.notification = App.notification || {};
+App.notification.push = notificationPush;
+App.notification.info = notificationsComponent.info;
+App.notification.success = notificationsComponent.success;
+App.notification.notificationPopup = notificationPopup;
+App.notification.reactionPopup = reactionPopup;

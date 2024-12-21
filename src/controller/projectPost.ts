@@ -21,7 +21,7 @@ export const projectPost = async (req: Request, res: Response) => {
     bitbucket: string;
     link: string;
     license: string;
-    collaboration: 'Private' | 'Public';
+    collaboration: 'Collaboration' | 'Free' | 'Subscription';
     collaborationMessage: string;
     // participationType: 'Collaborator' | 'Viewer';
   }>;
@@ -30,9 +30,9 @@ export const projectPost = async (req: Request, res: Response) => {
     data: {
       title: title,
       description: description,
-      github: github,
-      gitLab: gitlab,
-      bitbucket: bitbucket,
+      github: github || null,
+      gitlab: gitlab || null,
+      bitbucket: bitbucket || null,
       license: license,
       link: link,
       participation: collaborationMessage,
@@ -43,6 +43,7 @@ export const projectPost = async (req: Request, res: Response) => {
   if (project) {
     console.log(project);
     res.send(JSON.stringify({ success: true, project }));
+    return;
   }
 
   res.send(JSON.stringify({ success: false, project }));
