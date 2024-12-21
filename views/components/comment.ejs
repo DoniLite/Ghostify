@@ -1,4 +1,4 @@
-<div class="w-full">
+<div class="commentComponent w-full">
   <form class="relative w-full" id="commentFormElement">
     <input
       type="hidden"
@@ -40,6 +40,7 @@
           placeholder="ajouter un commentaire"
         ></textarea>
         <button
+          type="submit"
           class="p-2 w-8 h-8 rounded-full lg:mt-0 mt-4 flex justify-center lg:top-6 top-1 z-50 right-[6%] items-center absolute mx-auto lg:mx-0 text-white bg-orange-500"
         >
           <i class="fa-solid fa-arrow-up fa-xl"></i>
@@ -48,6 +49,9 @@
     </div>
   </form>
 
-  <%- include('replies.ejs', {replies}) %>
+  <% if (typeof replies !== 'undefined' && Array.isArray(replies)) { %>
+   <%- include('replies.ejs', {replies}) %>
+  <% } %>
+
 </div>
 <script type="module" src="/static/script/comment.js"></script>

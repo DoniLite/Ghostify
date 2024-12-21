@@ -1,44 +1,65 @@
-/* eslint-disable no-undef */
+/**
+ * Initialise les événements pour un composant spécifique.
+ * @param {HTMLElement} componentElement - L'élément DOM racine du composant.
+ */
+const initializeComponent = (componentElement) => {
+  const fileControl = componentElement.querySelector('.commentFileControl');
+  const fileInput = componentElement.querySelector('.commentFileInput');
+  const formElement = componentElement.querySelector('.commentFormElement');
 
-document.querySelector('#commentFileControl').addEventListener('click', (e) => {
-  e.preventDefault();
-  document.querySelector('#commentFileInput').click();
-});
+  if (fileControl && fileInput) {
+    fileControl.addEventListener('click', (e) => {
+      e.preventDefault();
+      fileInput.click();
+    });
 
-document.querySelector('#commentFileInput').addEventListener('change', (e) => {
-  e.preventDefault();
-  const file = e.currentTarget.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      const component = `
-        <div class="w-full relative mt-1">
-          <div
-              class="absolute top-2 right-2 p-1 cursor-pointer flex justify-center items-center bg-orange-500 rounded-full"
-              id="removeFile"
-          >
-              <i class="fa-solid fa-circle-xmark fa-xl text-white"></i>
-          </div>
-          <img
-              src="${reader.result}"
-              alt=""
-              class="w-full h-auto rounded-lg"
-          />
-        </div>
-      `;
-      document
-        .querySelector('#commentFormElement')
-        .insertAdjacentHTML('beforeend', component);
-      document
-        .querySelector('#commentFormElement')
-        .querySelectorAll('#removeFile')
-        .forEach((el) => {
-          el.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.currentTarget.parentElement.remove();
+    fileInput.addEventListener('change', (e) => {
+      e.preventDefault();
+      const file = e.currentTarget.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          const component = `
+            <div class="w-full relative mt-1">
+              <div
+                class="absolute top-2 right-2 p-1 cursor-pointer flex justify-center items-center bg-orange-500 rounded-full"
+                id="removeFile"
+              >
+                <i class="fa-solid fa-circle-xmark fa-xl text-white"></i>
+              </div>
+              <img
+                src="${reader.result}"
+                alt=""
+                class="w-full h-auto rounded-lg"
+              />
+            </div>
+          `;
+          formElement.insertAdjacentHTML('beforeend', component);
+
+          // Gestion de suppression locale
+          formElement.querySelectorAll('#removeFile').forEach((el) => {
+            el.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.currentTarget.parentElement.remove();
+              fileInput.files = null;
+              fileInput.value = null;
+            });
           });
-        });
-    };
+        };
+      }
+    });
   }
+
+  if (formElement) {
+    formElement.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await commentAction(e);
+    });
+  }
+};
+
+// Initialisation globale
+document.querySelectorAll('.commentComponent').forEach((componentElement) => {
+  initializeComponent(componentElement);
 });

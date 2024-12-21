@@ -44,8 +44,8 @@ DEFAULT_DIRS=(
 # Fichiers par défaut
 DEFAULT_FILES=(
     "src/assets/styles/main.css:./* { margin: 0; padding: 0; box-sizing: border-box; }"
-    ".gitignore:node_modules/\ndist/\n.env\n.DS_Store"
-    "README.md:# Project Name\n\nDescription of your project goes here."
+    "logs/combined.log"
+    "logs/error.log"
 )
 
 # Fonction pour créer un dossier

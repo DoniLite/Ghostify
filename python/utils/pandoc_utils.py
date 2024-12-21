@@ -188,7 +188,7 @@ def get_file_extension(format_enum: Union[InputFormats, OutputFormats]):
     }
 
     # Cherche l'extension correspondante
-    return format_to_extension.get(format_enum, None)
+    return format_to_extension.get(format_enum)
 
 
 # Exemple d'utilisation
