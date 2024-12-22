@@ -94,6 +94,7 @@ import { Notifications, NotificationType } from '@prisma/client/default';
 import { NotificationBus } from './class/NotificationBus';
 import { feed, reactions } from './routes/feed';
 import { comment } from './controller/comments';
+import { webfont } from './routes/fonts';
 
 passport.use(
   new GoogleStrategy(
@@ -270,6 +271,13 @@ server.use(
       directives: {
         scriptSrc: [
           "'self'",
+          'https://eu-assets.i.posthog.com',
+          (req: express.Request, res: express.Response) =>
+            `'nonce-${res.locals.cspNonce}'`,
+        ],
+        scriptSrcElem: [
+          "'self'",
+          'https://eu-assets.i.posthog.com/static/array.js',
           (req: express.Request, res: express.Response) =>
             `'nonce-${res.locals.cspNonce}'`,
         ],
@@ -281,6 +289,8 @@ server.use(
           'wss://0.0.0.0:3085',
           'ws://ghostify.site',
           'wss://ghostify.site',
+          'https://eu.posthog.com',
+          'https://eu-assets.i.posthog.com',
         ],
         imgSrc: ["'self'", 'data:', 'https://lh3.googleusercontent.com'],
       },
@@ -708,7 +718,10 @@ server.get('/billing', billing);
 server.get('/poster/docs', documentView);
 server.get('/poster/parser', conversionView);
 server.get('/promotion', (req, res) => {
-  res.render('/components/promotion', { auth: undefined, service: 'promotion' });
+  res.render('/components/promotion', {
+    auth: undefined,
+    service: 'promotion',
+  });
 });
 server.get('/404', (req, res) => {
   res.render('404');
@@ -752,10 +765,11 @@ server.get('/cv/:cv', getCV);
 server.get('/cv/theme/:uid', getCVTheme);
 server.get('/cv/job/status', checkCVStatus);
 server.post('/api/v1/poster/parser', parserController);
-server.post('/comment/post', comment)
+server.post('/comment/post', comment);
 server.get('/find', find);
 server.get('/feed/:id', feed);
 server.post('/feed/reaction', reactions);
+server.get('/webfonts/:file', webfont);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);
@@ -767,7 +781,6 @@ server.get('/disconnection', disconnection);
 server.get('/components/poster', requestComponent);
 server.get('/components/list', requestListComponent);
 server.get('/components/head', requestHeadComponent);
-
 
 // 404 Not found route
 server.use((req, res) => {

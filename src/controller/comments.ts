@@ -71,6 +71,7 @@ export const comment = async (req: Request, res: Response) => {
               file: (result as string) || null,
               isAnActu: true,
               isForumPost: true,
+              author: req.session.Auth.username || req.session.Auth.fullname,
             },
           },
         },
@@ -90,6 +91,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
+              author: req.session.Auth.username || req.session.Auth.fullname,
+              userId: req.session.Auth.id,
             },
           },
         },
@@ -109,6 +112,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
+              author: req.session.Auth.username || req.session.Auth.fullname,
+              userId: req.session.Auth.id,
             },
           },
         },
@@ -128,6 +133,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
+              author: req.session.Auth.username || req.session.Auth.fullname,
+              userId: req.session.Auth.id,
             },
           },
         },
@@ -147,6 +154,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
+              author: req.session.Auth.username || req.session.Auth.fullname,
+              userId: req.session.Auth.id,
             },
           },
         },

@@ -1,4 +1,4 @@
-import { notificationPush, notificationsComponent } from './notifications';
+import { notificationPush, notificationsComponent } from './notifications.js';
 
 /* eslint-disable no-undef */
 export const socket = new WebSocket('ws://localhost:3085/');

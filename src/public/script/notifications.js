@@ -16,6 +16,16 @@ export const notificationsComponent = {
         <span>${message}</span>
       </div>`;
   },
+  error: (message) => {
+    return `<div class="alert alert-error">
+        <span>${message}</span>
+      </div>`;
+  },
+  warning: (message) => {
+    return `<div class="alert alert-warning">
+        <span>${message}</span>
+      </div>`;
+  },
 };
 
 export const notificationPush = (notification) => {
@@ -33,9 +43,12 @@ export const notificationPush = (notification) => {
 
 
 //externals...
+window.App = window.App || {};
 App.notification = App.notification || {};
 App.notification.push = notificationPush;
 App.notification.info = notificationsComponent.info;
 App.notification.success = notificationsComponent.success;
+App.notification.error = notificationsComponent.error;
+App.notification.warning = notificationsComponent.warning;
 App.notification.notificationPopup = notificationPopup;
 App.notification.reactionPopup = reactionPopup;

@@ -19,6 +19,15 @@
   <span class="font-bold w-full block">
     <%= comment.content %>
   </span>
+  <% if (comment.file) { %>
+  <a href="<%= comment.file %>" class="w-full">
+    <img
+      src="<%= coment.file %>"
+      alt=""
+      class="w-full object-cover h-auto mt-3 rounded-lg"
+    />
+  </a>
+  <% } %>
   <a href="<%= comment.file %>" class="w-full">
     <img
       src="<%= coment.file %>"
@@ -66,7 +75,7 @@
       <%= comment.commentsLength %> comments</span
     >
   </div>
-  <%- include('comment', {pointerType: comment.isAnActu? 'post' : 'comment', replies: comment.replies, pointer: comment.id, userIcon: comment.userIcon }) %>
+  <%- include('comment', {pointerType: comment.isAnActu? 'post' : 'comment', replies: comment.replies, pointer: comment.id, userIcon: userIcon || undefined, auth: auth || undefined }) %>
 </div>
 <% if (typeof mode === 'string' && mode === 'view' ) { %>
  <%- include('rawFooter.ejs') %>
@@ -111,6 +120,7 @@
         await App.notification.reactionPopup.play();
         return;
       }
+      App.notification.push(App.notification.error('An error occurred'));
     }
     element.querySelectorAll('#reactionEl').forEach(el => {
       el.addEventListener('click', addReaction);

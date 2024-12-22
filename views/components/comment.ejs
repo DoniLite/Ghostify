@@ -1,4 +1,5 @@
 <div class="commentComponent w-full">
+  <% if (typeof auth !== 'undefined' && auth === true) { %>
   <form class="relative w-full" id="commentFormElement">
     <input
       type="hidden"
@@ -48,6 +49,8 @@
       </div>
     </div>
   </form>
+  <% } %>
+ 
 
   <% if (typeof replies !== 'undefined' && Array.isArray(replies)) { %>
    <%- include('replies.ejs', {replies: replies.slice(0, 3)}) %>
