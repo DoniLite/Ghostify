@@ -95,6 +95,7 @@ import { NotificationBus } from './class/NotificationBus';
 import { feed, reactions } from './routes/feed';
 import { comment } from './controller/comments';
 import { webfont } from './routes/fonts';
+import { translator } from './routes/translate';
 
 passport.use(
   new GoogleStrategy(
@@ -174,6 +175,11 @@ i18n.configure({
   locales: ['en', 'fr', 'es'], // Liste des langues supportées
   directory: path.resolve(__dirname, '../locales'), // Répertoire où se trouvent les fichiers de traduction
   defaultLocale: 'fr', // Langue par défaut
+  queryParameter: 'lang',
+  cookie: 'lang',
+  autoReload: true,
+  updateFiles: false,
+  objectNotation: true,
 });
 
 // export const Store = new RedisStore({
@@ -376,7 +382,7 @@ server.use((req, res, next) => {
     try {
       const tokenPayload = verifyJWT(apiKey);
 
-      logger.info(`ne connection with the ${tokenPayload}`);
+      logger.info(`new connection with the payload: ${tokenPayload}`);
 
       // S'assurer que req.session et req.session.Auth existent
 
@@ -770,6 +776,7 @@ server.get('/find', find);
 server.get('/feed/:id', feed);
 server.post('/feed/reaction', reactions);
 server.get('/webfonts/:file', webfont);
+server.get('/translate', translator);
 
 // Plateform bin
 server.get('/api/webhooks', webhooks);

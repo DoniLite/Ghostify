@@ -123,5 +123,12 @@
   dropArea.addEventListener('dragleave', handleDragLeave);
   dropArea.addEventListener('drop', handleDrop);
   fileInput.addEventListener('change', handleFileChange);
+  window.onload = () => {
+    const url = new URL(window.location.href);
+    const notification = decodeURI(url.searchParams.get('notification'));
+    if (notification) {
+      window.App.notification.push(window.App.notification.success(notification));
+    }
+  }
 </script>
 <%- include('components/rawFooter.ejs') %>

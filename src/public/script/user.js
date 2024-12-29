@@ -1,7 +1,11 @@
 /* eslint-disable no-undef */
 
 import { socket } from './network.js';
-import { notificationPush, notificationsComponent, notificationPopup } from './notifications.js';
+import {
+  notificationPush,
+  notificationsComponent,
+  notificationPopup,
+} from './notifications.js';
 
 const userIMG = document.querySelector('#userProfileImg');
 const inputFile = document.querySelector('#profileUpdateInput');
@@ -15,6 +19,11 @@ const profileEditor = document.querySelector('#editProfileBtn');
 const modificationSubmitForm = document.querySelector(
   '#submitUserProfileModifications'
 );
+/**
+ * @type {HTMLElement}
+ */
+const notificationBadge =
+  notificationShower.querySelector('#notificationBadge');
 /**
  * @type {HTMLElement}
  */
@@ -216,7 +225,7 @@ modificationSubmitForm.addEventListener('submit', async (e) => {
   if (res.success) {
     window.location.reload();
   }
-  notificationPush(notificationsComponent.info('something went wrong'));
+  notificationPush(notificationsComponent.error('something went wrong'));
 });
 
 profileEditor.addEventListener('click', (e) => {
@@ -331,7 +340,7 @@ inputFile.addEventListener('change', async (e) => {
     }
 
     notificationPush(
-      notificationsComponent.info('something went wrong please try again')
+      notificationsComponent.error('something went wrong please try again')
     );
     return;
   }
@@ -373,7 +382,35 @@ socket.addEventListener('message', async (e) => {
   if (type && type === 'notification') {
     await notificationPopup.play();
     if (evData.notifications && Array.isArray(evData.notifications)) {
+      /**
+       * @type {{
+            id: number;
+            time: string;
+            type: 'Alert' | 'Reply' | 'like' | 'Post' | 'Info' | 'Message';
+            createdAt: Date;
+            userId: number | null;
+            title: string | null;
+            content: string;
+            seen: boolean;
+        }[]}
+       */
       const els = evData.notifications;
+      const updatesNumber = els.filter((up) => up.seen === false).length;
+      if (updatesNumber > 0) {
+        notificationPush(
+          notificationsComponent.info('you have new notifications')
+        );
+        if (notificationBadge.classList.contains('hide')) {
+          notificationBadge.classList.remove('hide');
+          const notificationsNumber = notificationBadge.innerText.split('+')[0];
+          notificationBadge.innerHTML =
+            Number(notificationsNumber) + updatesNumber < 99
+              ? `${Number(notificationsNumber) + updatesNumber}`
+              : '99+';
+        }
+        notificationBadge.innerHTML =
+          updatesNumber < 99 ? updatesNumber.toString() : '99+';
+      }
       els.forEach((el) => {
         notificationContainer.insertAdjacentHTML(
           'beforeend',
@@ -407,6 +444,17 @@ socket.addEventListener('message', async (e) => {
     }
 
     if (evData.action && evData.action === 'update') {
+      const updatesNumber = Number(notificationBadge.innerText.split('+')[0]) + 1;
+      notificationPush(
+        notificationsComponent.info('you have new notification')
+      );
+      if (notificationBadge.classList.contains('hide')) {
+        notificationBadge.classList.remove('hide');
+        notificationBadge.innerHTML =
+          updatesNumber < 99 ? updatesNumber.toString() : '99+';
+      }
+      notificationBadge.innerHTML =
+        updatesNumber < 99 ? updatesNumber.toString() : '99+';
       notificationContainer.insertAdjacentHTML(
         'afterbegin',
         notification(evData.title, evData.content, evData.time, evData.id)

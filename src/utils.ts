@@ -18,7 +18,7 @@ import puppeteer from 'puppeteer';
 import { prismaClient } from './config/db';
 import bcrypt from 'bcrypt';
 import formidable from 'formidable';
-import { tokenGenerator } from './server';
+import { ee, tokenGenerator } from './server';
 import {
   // formatDistanceToNow,
   // formatDuration,
@@ -778,6 +778,21 @@ export const cvDownloader = async (options: {
 
   await browser.close();
   console.log('function running end');
+
+  await prismaClient.notifications.create({
+    data: {
+      title: `Votre CV a été créé`,
+      content: `Vous pouvez télécharger votre CV ici ${cvUpdating.pdf}`,
+      userId: cvUpdating.userId,
+      type: 'Info',
+    },
+  });
+
+  ee.emit('Info', {
+    title: `Votre CV a été créé`,
+    content: `Vous pouvez telecharger votre CV ici ${cvUpdating.pdf}`,
+    action: 'update',
+  });
 
   return {
     screenshot: cvUpdating.screenshot,
