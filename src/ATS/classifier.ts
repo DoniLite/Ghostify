@@ -5,6 +5,10 @@ import natural, {
   PorterStemmer,
   WordTokenizer,
 } from 'natural';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const MODELS_PATH = path.resolve(__dirname, '../../src/ATS/datasets');
 
 type StringifyClassifier<T extends unknown> = T extends string
   ? boolean
@@ -37,26 +41,36 @@ export class Classifier {
     return this.#classifier.getClassifications(data as string | string[]);
   }
 
-  stringify<T>(path?: T): StringifyClassifier<T> {
-    if (path && typeof path === 'string') {
-      this.#classifier.save(path, (err, classifier) => {
-        // the classifier is saved to the classifier.json file!
-        if (err) {
-          console.error(err);
-          return;
+  stringify<T, K extends string>(name?: T, customPath?: K): StringifyClassifier<T> {
+    if (name && typeof name === 'string') {
+      this.#classifier.save(
+        path.join(customPath || MODELS_PATH, `${name}.json`),
+        (err, classifier) => {
+          // the classifier is saved to the classifier.json file!
+          if (err) {
+            console.error(err);
+            return;
+          }
+          console.log(classifier);
+          console.log('successfully saved');
         }
-        console.log(classifier);
-        console.log('successfully saved');
-      });
+      );
       return true as StringifyClassifier<T>;
     }
-    return JSON.stringify(this.#classifier) as StringifyClassifier<T>;
+    return JSON.stringify(this.#classifier, null, 2) as StringifyClassifier<T>;
+  }
+
+  loadModel(name: string, customPath?: string): void {
+    try {
+      const data = JSON.parse(
+        fs.readFileSync(path.join(customPath || MODELS_PATH, `${name}.json`), 'utf8')
+      ) as Record<string, unknown>;
+      this.#classifier = natural.BayesClassifier.restore(data);
+    } catch (e) {
+      console.error(e);
+    }
   }
   tokenize<T extends string>(entry: T): Array<string> {
     return this.#tokenizer.tokenize(entry);
   }
 }
-
-const classifierTest = new Classifier();
-const t = classifierTest.tokenize('doni is the best');
-t.includes('t');
