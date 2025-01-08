@@ -13,7 +13,7 @@ interface DatasetMetadata {
   size: number;
 }
 
-type metaDataKeys = keyof DatasetMetadata;
+type SliceType = { start: number; end: number };
 
 interface Dataset {
   metadata: DatasetMetadata;
@@ -87,10 +87,14 @@ export class TrainingDataManager {
     return datasets;
   }
 
-  getDataFromDataset(id: string, size?: number): TrainingExample[] {
+  getDataFromDataset(id: string, size?: number | SliceType): TrainingExample[] {
     const dataset = this.datasets.get(id);
     if (!dataset) throw new Error(`Dataset ${id} not found`);
-    return size ? dataset.data.slice(0, size) : dataset.data;
+    return size && typeof size === 'number'
+      ? dataset.data.slice(0, size)
+      : size && typeof size !== 'number'
+      ? dataset.data.slice(size.start, size.end)
+      : dataset.data;
   }
 
   // Générer des données pour un dataset spécifique
@@ -122,7 +126,10 @@ export class TrainingDataManager {
     }
 
     const jsonData = JSON.stringify(dataset, null, 2);
-    fs.writeFileSync(path.join(customPath || DATASETS_PATH, `${name}.json`), jsonData);
+    fs.writeFileSync(
+      path.join(customPath || DATASETS_PATH, `${name}.json`),
+      jsonData
+    );
     console.log(
       `Dataset ${id} saved to ${path.join(DATASETS_PATH, `${name}.json`)}`
     );

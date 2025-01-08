@@ -1,3 +1,5 @@
+import { getWordRelations } from './wordnet';
+
 // Types de base
 interface TrainingExample {
   text: string;
@@ -12,6 +14,7 @@ interface CategoryData {
 
 export class TrainingDataGenerator {
   private categories: Map<string, CategoryData>;
+  private variations: string[] = [];
 
   constructor() {
     this.categories = new Map();
@@ -42,48 +45,28 @@ export class TrainingDataGenerator {
     // Seulement si le mot fait plus de 4 caractères
     if (word.length > 4) {
       // Génération de fautes d'orthographe plausibles
-      const commonTypos = this.generateCommonTypos(word);
-      commonTypos.forEach((typo) => variations.add(typo));
+      this.generateCommonWord(word);
+      this.variations.forEach((typo) => variations.add(typo));
     }
 
     return Array.from(variations);
   }
 
   // Générer uniquement des fautes d'orthographe plausibles
-  private generateCommonTypos(word: string): string[] {
-    const typos: Set<string> = new Set();
-    const wordLower = word.toLowerCase();
-
-    // Règles de substitution communes
-    const commonSubstitutions: { [key: string]: string[] } = {
-      a: ['e'],
-      e: ['a', 'i'],
-      i: ['e', 'y'],
-      o: ['u'],
-      u: ['o'],
-      c: ['k', 's'],
-      k: ['c'],
-      s: ['c'],
-      y: ['i'],
-      ph: ['f'],
-      f: ['ph'],
-    };
-
-    // Application des substitutions
-    for (let i = 0; i < wordLower.length; i++) {
-      const char = wordLower[i];
-      const substitutions = commonSubstitutions[char];
-      if (substitutions) {
-        substitutions.forEach((sub) => {
-          const typo = wordLower.slice(0, i) + sub + wordLower.slice(i + 1);
-          if (this.isPlausibleTypo(typo, word)) {
-            typos.add(typo);
-          }
-        });
-      }
-    }
-
-    return Array.from(typos);
+  private generateCommonWord(word: string): void {
+    // return Array.from(typos);
+    getWordRelations(word)
+      .then((relations) => {
+        this.variations.push(
+          ...relations.synonyms,
+          ...relations.hypernyms,
+          ...relations.hyponyms
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        throw new Error('error during the relations word creation');
+      });
   }
 
   // Vérifier si une faute est plausible
@@ -172,4 +155,3 @@ export class TrainingDataGenerator {
     return JSON.stringify(this.generateTrainingData(), null, 2);
   }
 }
-

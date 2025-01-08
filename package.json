@@ -39,7 +39,7 @@
     "dockerBuild": "docker build -t test:latest .",
     "dockerStart": "docker run -p 3081:3081 test:latest",
     "report": "pnpm exec playwright show-report",
-    "learn": "tsc ./src/ATS/labs.ts --skipLibCheck --esModuleInterop --module commonjs --downlevelIteration --target es2021 --moduleResolution node --outDir learn && node ./learn/labs.js --process=train --saveModel=CAPIYERS --dataset=blog_data --epochs=1000"
+    "learn": "tsc ./src/ATS/labs.ts --skipLibCheck --esModuleInterop --module commonjs --downlevelIteration --target es2021 --moduleResolution node --outDir learn && node ./learn/labs.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^5.20.0",

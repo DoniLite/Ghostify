@@ -17,11 +17,11 @@ import { hideBin } from 'yargs/helpers';
 import path from 'node:path';
 
 type Args = {
-  process: 'train' | 'init';
+  process: 'train' | 'init' | 'test';
   model?: MODELS_NAMES;
   epochs: string;
   dataset: DATASETS_NAMES;
-  saveModel?: MODELS_NAMES; 
+  saveModel?: MODELS_NAMES;
 };
 
 const args = yargs(hideBin(process.argv)).argv as unknown as Args;
@@ -89,17 +89,32 @@ export const initDatasets = async (customPath?: string) => {
   manager.saveDataset(DATASETS_NAMES.BLOG, DATASETS_NAMES.BLOG, customPath);
 };
 
-export const trainingLoop = () => {
+const actionFn = (toDo: 'train' | 'test') => {
   const model = args.model;
-  const epochs = Number(args.epochs);
+  const epochs =
+    args.epochs && !args.epochs.includes(',') ? Number(args.epochs) : null;
+  const epochsSlice =
+    args.epochs && args.epochs.split(',').length > 1
+      ? {
+          start: Number(args.epochs.split(',')[0]),
+          end: Number(args.epochs.split(',')[1]),
+        }
+      : null;
   const dataset = args.dataset;
   const saveModelName = args.saveModel;
+
   switch (model) {
     case MODELS_NAMES.CV_CLASSIFIER:
-      classifier.loadModel(MODELS_NAMES.CV_CLASSIFIER);
+      classifier.loadModel(
+        MODELS_NAMES.CV_CLASSIFIER,
+        path.resolve(__dirname, '../src/ATS/models')
+      );
       break;
     case MODELS_NAMES.BLOG_CLASSIFIER:
-      classifier.loadModel(MODELS_NAMES.BLOG_CLASSIFIER);
+      classifier.loadModel(
+        MODELS_NAMES.BLOG_CLASSIFIER,
+        path.resolve(__dirname, '../src/ATS/models')
+      );
       break;
     default:
       console.log('no model selected running the default mode...');
@@ -134,39 +149,68 @@ export const trainingLoop = () => {
       'The provided dataset is not valid with the provided model'
     );
   }
-  const trainData = manager.getDataFromDataset(dataset, epochs || undefined);
-  for (let i = 0; i < trainData.length; i++) {
-    classifier.add([trainData[i].text, trainData[i].category]);
-    console.log(`classification number ${i} for the data ${trainData[i]}`);
-  }
-  if(typeof model !== 'string') {
-    switch (saveModelName) {
-      case MODELS_NAMES.CV_CLASSIFIER:
-        console.log(`no model provided but saved model detected ${saveModelName}`);
-        break;
-      case MODELS_NAMES.BLOG_CLASSIFIER:
+
+  const action = {
+    test: () => {
+      const testData = manager
+        .getDataFromDataset(dataset, epochs || epochsSlice || undefined)
+        .map((d) => d.text);
+      for (let i = 0; i < testData.length; i++) {
+        const result = classifier.class(testData[i]);
         console.log(
-          `no model provided but saved model detected ${saveModelName}`
+          `test classification result ${result} for the entry ${testData[i]}`
         );
-        break;
-      default:
-        throw new Error('no valid model parameter provided');
-    }
-  }
-  const savedModel = classifier.stringify(model || saveModelName, path.resolve(__dirname, "../src/ATS/models"))
-  if (savedModel) {
-    console.log(`model: ${model || saveModelName} saved successfully`);
-    return;
-  }
-  console.log('the operation not completed')
+      }
+    },
+    train: () => {
+      const trainData = manager.getDataFromDataset(
+        dataset,
+        epochs || epochsSlice || undefined
+      );
+      for (let i = 0; i < trainData.length; i++) {
+        classifier.add([trainData[i].text, trainData[i].category]);
+        console.log(`classification number ${i} for the data ${trainData[i]}`);
+      }
+      if (typeof model !== 'string') {
+        switch (saveModelName) {
+          case MODELS_NAMES.CV_CLASSIFIER:
+            console.log(
+              `no model provided but saved model detected ${saveModelName}`
+            );
+            break;
+          case MODELS_NAMES.BLOG_CLASSIFIER:
+            console.log(
+              `no model provided but saved model detected ${saveModelName}`
+            );
+            break;
+          default:
+            throw new Error('no valid model parameter provided');
+        }
+      }
+      classifier.train();
+      const savedModel = classifier.stringify(
+        model || saveModelName,
+        path.resolve(__dirname, '../src/ATS/models')
+      );
+      if (savedModel) {
+        console.log(`model: ${model || saveModelName} saved successfully`);
+        return;
+      }
+      console.log('the operation not completed');
+    },
+  };
+  return action[toDo];
 };
 
 switch (args.process) {
   case 'train':
-    trainingLoop();
+    actionFn(args.process)();
+    break;
+  case 'test':
+    actionFn(args.process)();
     break;
   case 'init':
-    const custom = path.resolve(__dirname, "../src/ATS/datasets");
+    const custom = path.resolve(__dirname, '../src/ATS/datasets');
     initDatasets(custom)
       .then(() => {
         console.log('Datasets initialized');

@@ -190,8 +190,6 @@ const getIMGBlobFromServer = async (url) => {
  * @description
  * This function will take all the images that has been uploaded and convert them
  * into a list of objects containing the image blob, the section index and the image index.
- *
- * @returns {Promise<Array<{img: Blob, index: Number, section: Number}>>}
  */
 const getImg = async () => {
   const imgs = document.querySelectorAll('#imageView');

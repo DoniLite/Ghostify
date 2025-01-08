@@ -37,6 +37,10 @@ export class Classifier {
     return this.#classifier.classify(data as string | string[]);
   }
 
+  train(): void {
+    this.#classifier.train();
+  }
+
   getClass<T>(data: T): ApparatusClassification[] {
     return this.#classifier.getClassifications(data as string | string[]);
   }
