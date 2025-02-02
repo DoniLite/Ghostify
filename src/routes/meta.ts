@@ -39,10 +39,11 @@ export const meta = async (req: Request, res: Response) => {
           return {
             ...eachComment,
             userIcon: thisCommentAuthor.file,
-            author: thisCommentAuthor.username || thisCommentAuthor.fullname,
+            time: getTimeElapsed(eachComment.createdAt),
             reactionsEls: orderReactions(eachComment.reactions as Reactions[]),
             reactionsLength: eachComment.reactions.length,
-            commentsLength: thisCommentRelativeEls
+            commentsLength: thisCommentRelativeEls,
+            author: thisCommentAuthor.username || thisCommentAuthor.fullname,
           }
         }))
         const authorInfo = await prismaClient.user.findUnique({
@@ -61,9 +62,9 @@ export const meta = async (req: Request, res: Response) => {
           reactionsLength: popular.reactions.length,
           commentsLength: relativeComments.length,
           time: getTimeElapsed(popular.createdAt),
-          author: authorInfo.username || authorInfo.fullname,
           userIcon: authorInfo.file,
           replies,
+          author: authorInfo.username || authorInfo.fullname,
         };
       })
   );

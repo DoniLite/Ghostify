@@ -1,3 +1,5 @@
+import { getWordRelations } from './wordnet';
+
 // Types de base
 interface TrainingExample {
   text: string;
@@ -12,6 +14,7 @@ interface CategoryData {
 
 export class TrainingDataGenerator {
   private categories: Map<string, CategoryData>;
+  private variations: string[] = [];
 
   constructor() {
     this.categories = new Map();
@@ -42,48 +45,28 @@ export class TrainingDataGenerator {
     // Seulement si le mot fait plus de 4 caractères
     if (word.length > 4) {
       // Génération de fautes d'orthographe plausibles
-      const commonTypos = this.generateCommonTypos(word);
-      commonTypos.forEach((typo) => variations.add(typo));
+      this.generateCommonWord(word);
+      this.variations.forEach((typo) => variations.add(typo));
     }
 
     return Array.from(variations);
   }
 
   // Générer uniquement des fautes d'orthographe plausibles
-  private generateCommonTypos(word: string): string[] {
-    const typos: Set<string> = new Set();
-    const wordLower = word.toLowerCase();
-
-    // Règles de substitution communes
-    const commonSubstitutions: { [key: string]: string[] } = {
-      a: ['e'],
-      e: ['a', 'i'],
-      i: ['e', 'y'],
-      o: ['u'],
-      u: ['o'],
-      c: ['k', 's'],
-      k: ['c'],
-      s: ['c'],
-      y: ['i'],
-      ph: ['f'],
-      f: ['ph'],
-    };
-
-    // Application des substitutions
-    for (let i = 0; i < wordLower.length; i++) {
-      const char = wordLower[i];
-      const substitutions = commonSubstitutions[char];
-      if (substitutions) {
-        substitutions.forEach((sub) => {
-          const typo = wordLower.slice(0, i) + sub + wordLower.slice(i + 1);
-          if (this.isPlausibleTypo(typo, word)) {
-            typos.add(typo);
-          }
-        });
-      }
-    }
-
-    return Array.from(typos);
+  private generateCommonWord(word: string): void {
+    // return Array.from(typos);
+    getWordRelations(word)
+      .then((relations) => {
+        this.variations.push(
+          ...relations.synonyms,
+          ...relations.hypernyms,
+          ...relations.hyponyms
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        throw new Error('error during the relations word creation');
+      });
   }
 
   // Vérifier si une faute est plausible
@@ -172,106 +155,3 @@ export class TrainingDataGenerator {
     return JSON.stringify(this.generateTrainingData(), null, 2);
   }
 }
-
-// Exemple d'utilisation avec des templates sophistiqués
-const generator = new TrainingDataGenerator();
-
-// CV - Compétences techniques
-generator.addCategory(
-  'technical_skills',
-  [
-    'JavaScript',
-    'Python',
-    'React',
-    'Node.js',
-    'AWS',
-    'Docker',
-    'Kubernetes',
-    'MongoDB',
-    'PostgreSQL',
-  ],
-  [
-    'Expertise in ${word} development and architecture',
-    'Advanced ${word} skills with production experience',
-    'Built and maintained ${word} applications',
-    'Implemented complex solutions using ${word}',
-    '${word} certification and hands-on experience',
-    'Led team of ${word} developers',
-    'Optimized ${word} performance and scalability',
-  ]
-);
-
-// CV - Soft skills
-generator.addCategory(
-  'soft_skills',
-  [
-    'leadership',
-    'communication',
-    'teamwork',
-    'problem-solving',
-    'adaptability',
-    'creativity',
-  ],
-  [
-    'Demonstrated ${word} abilities in cross-functional teams',
-    'Strong ${word} skills developed through project management',
-    'Excellence in ${word} and collaboration',
-    'Proven ${word} in fast-paced environments',
-    'Outstanding ${word} and interpersonal abilities',
-  ]
-);
-
-// CV - Éducation
-generator.addCategory(
-  'education',
-  ['Bachelor', 'Master', 'PhD', 'degree', 'certification'],
-  [
-    '${word} in Computer Science from top university',
-    'Currently pursuing ${word} in Software Engineering',
-    'Completed ${word} with honors',
-    'Advanced ${word} in Data Science',
-    'Professional ${word} in Cloud Architecture',
-  ]
-);
-
-// Blog - Tech Articles
-generator.addCategory(
-  'tech_blog',
-  [
-    'AI',
-    'Machine Learning',
-    'Web Development',
-    'Cloud Computing',
-    'DevOps',
-    'Cybersecurity',
-  ],
-  [
-    'Introduction to ${word}: A Comprehensive Guide',
-    'How ${word} is Transforming Modern Business',
-    'Best Practices for ${word} Implementation',
-    'The Future of ${word}: Trends and Predictions',
-    'Understanding ${word} Architecture and Design',
-    'Advanced ${word} Techniques for Professionals',
-  ]
-);
-
-// Blog - Tutorial
-generator.addCategory(
-  'tutorial_blog',
-  ['guide', 'tutorial', 'walkthrough', 'introduction', 'overview'],
-  [
-    'Step-by-step ${word} to modern development',
-    'Complete ${word} for beginners',
-    'Advanced ${word} for experienced developers',
-    'Practical ${word} with real-world examples',
-    'In-depth ${word} with code samples',
-  ]
-);
-
-// Utilisation
-const trainingData = generator.generateTrainingData();
-console.log("Nombre d'exemples générés:", trainingData.length);
-
-// Export
-const jsonData = generator.exportToJSON();
-// console.log(jsonData);

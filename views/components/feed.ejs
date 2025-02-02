@@ -2,10 +2,10 @@
  <%- include('rawHeader.ejs', {desc: comment.content, title: comment.author, preview: comment.file ? comment.file : undefined}) %>
 <% } %>
 <div
-  class="w-[98%] lg:w-[80%] p-3 bg-gray-950 my-4 rounded-lg mx-auto"
+  class="feedContainer w-[98%] lg:w-[80%] p-3 bg-gray-950 my-4 rounded-lg mx-auto"
   id="feed"
   data-index="<%= comment.id %>"
-  data-pointer="<%= comment.isAnActu ? 'actu' : 'comment' %>"
+  data-pointer="<%= comment.isAnActu ? 'post' : 'comment' %>"
 >
   <div class="flex w-full gap-x-4 items-center p-3">
     <img
@@ -19,6 +19,15 @@
   <span class="font-bold w-full block">
     <%= comment.content %>
   </span>
+  <% if (comment.file) { %>
+  <a href="<%= comment.file %>" class="w-full">
+    <img
+      src="<%= coment.file %>"
+      alt=""
+      class="w-full object-cover h-auto mt-3 rounded-lg"
+    />
+  </a>
+  <% } %>
   <a href="<%= comment.file %>" class="w-full">
     <img
       src="<%= coment.file %>"
@@ -32,16 +41,28 @@
         id="reactionControl"
         class="absolute flex gap-x-6 bg-transparent shadow-xl lg:left-0 lg:bottom-4 bottom-12 -left-4 z-50 hide-reactions p-3"
       >
-        <div class="hover:cursor-pointer hover:scale-100 transition-all">
+        <div 
+          data-type="Love"
+          class="reactionEl hover:cursor-pointer hover:scale-100 transition-all"
+        >
           <i class="fa-solid fa-heart fa-xl text-red-600"></i>
         </div>
-        <div class="hover:cursor-pointer hover:scale-100 transition-all">
+        <div 
+          data-type="Hurted"
+          class="reactionEl hover:cursor-pointer hover:scale-100 transition-all"
+        >
           <i class="fa-regular fa-thumbs-down fa-xl text-white"></i>
         </div>
-        <div class="hover:cursor-pointer hover:scale-100 transition-all">
+        <div 
+          data-type="Laugh"
+          class="reactionEl hover:cursor-pointer hover:scale-100 transition-all"
+        >
           <i class="fa-solid fa-xl fa-face-laugh-squint text-orange-400"></i>
         </div>
-        <div class="hover:cursor-pointer hover:scale-[1] transition-all">
+        <div
+          data-type="Good" 
+          class="reactionEl hover:cursor-pointer hover:scale-100 transition-all"
+        >
           <i class="fa-regular fa-thumbs-up fa-xl text-white"></i>
         </div>
       </div>
@@ -54,24 +75,70 @@
       <%= comment.commentsLength %> comments</span
     >
   </div>
-  <%- include('comment', {pointerType: comment.isAnActu? 'actu' : 'comment', replies: comment.replies, pointer: comment.id, userIcon: comment.userIcon }) %>
+  <%- include('comment', {pointerType: comment.isAnActu? 'post' : 'comment', replies: comment.replies, pointer: comment.id, userIcon: userIcon || undefined, auth: auth || undefined }) %>
 </div>
 <% if (typeof mode === 'string' && mode === 'view' ) { %>
  <%- include('rawFooter.ejs') %>
 <% } %>
 <script nonce="<%= locals.cspNonce %>">
-  document.querySelector('#reactions').addEventListener('mouseenter', (e) => {
-    e.preventDefault();
-    document
-      .querySelector('#reactionControl')
-      .classList.remove('hide-reactions');
-    document.querySelector('#reactionControl').classList.add('show-reactions');
+  document.querySelectorAll('.feedContainer').forEach(component => {
+    initInteraction(component);
   });
-  document.querySelector('#reactions').addEventListener('mouseleave', (e) => {
-    e.preventDefault();
-    document
-      .querySelector('#reactionControl')
-      .classList.remove('show-reactions');
-    document.querySelector('#reactionControl').classList.add('hide-reactions');
-  });
+
+  /**
+  * Initialize the interaction with the component
+  * @param {HTMLElement} element The component
+  */
+  function initInteraction(element) {
+    /**
+     * Add a reaction
+     * @param {Event} e The event
+     */
+    const addReaction = async (e) => {
+      e.preventDefault();
+      const reaction = e.target;
+      const pointer = element.dataset.pointer;
+      const pointerId = element.dataset.index;
+      const reactionType = reaction.dataset.type;
+      const data = {
+        pointer,
+        pointerId,
+        reactionType,
+      };
+      console.log(data);
+      const res = await fetch('/feed/reaction', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const result = await res.json();
+      console.log(result);
+      if(res.status === 200) {
+        App.notification.push(App.notification.success('Reaction added'));
+        await App.notification.reactionPopup.play();
+        return;
+      }
+      App.notification.push(App.notification.error('An error occurred'));
+    }
+    element.querySelectorAll('#reactionEl').forEach(el => {
+      el.addEventListener('click', addReaction);
+    })
+    element.querySelector('#reactions').addEventListener('mouseenter', (e) => {
+      e.preventDefault();
+      element
+        .querySelector('#reactionControl')
+        .classList.remove('hide-reactions');
+        element.querySelector('#reactionControl').classList.add('show-reactions');
+    });
+    element.querySelector('#reactions').addEventListener('mouseleave', (e) => {
+      e.preventDefault();
+      element
+        .querySelector('#reactionControl')
+        .classList.remove('show-reactions');
+        element.querySelector('#reactionControl').classList.add('hide-reactions');
+    });
+  }
+  
 </script>

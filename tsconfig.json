@@ -6,6 +6,8 @@
     "target": "es2021", // Cible une version plus récente de JavaScript
     "noImplicitAny": true,
     "moduleResolution": "node",
+    // "strict": true,
+    "downlevelIteration": true,
     "allowJs": true,
     "sourceMap": true,
     "outDir": "./temp",

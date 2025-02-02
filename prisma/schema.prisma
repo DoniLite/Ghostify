@@ -67,6 +67,7 @@ model PostSection {
 model Comment {
   id          Int         @id @default(autoincrement())
   file        String?
+  token       String?     @unique
   reactions   Reactions[]
   postId      Int?
   content     String?
@@ -93,6 +94,8 @@ model Comment {
   post        Post?       @relation(fields: [postId], references: [id])
   Topic       Topic?      @relation(fields: [topicId], references: [id])
   user        User?       @relation(fields: [userId], references: [id])
+  Project     Project?    @relation(fields: [projectId], references: [id])
+  projectId   Int?
 
   @@index([id, userId, topicId, postId, commentId, indexerId])
 }
@@ -194,19 +197,26 @@ model ApiModule {
 }
 
 model Project {
-  id                Int      @id @default(autoincrement())
+  id                Int                      @id @default(autoincrement())
   title             String
   description       String
-  github            String
-  gitLab            String
-  bitbucket         String
-  indexed           Boolean  @default(false)
+  github            String?
+  gitlab            String?
+  bitbucket         String?
+  indexed           Boolean                  @default(false)
   license           String
   link              String
   participation     String
-  participationType String
+  participationType ProjectParticipationType
   indexerId         Int?
-  indexer           Indexer? @relation(fields: [indexerId], references: [id])
+  indexer           Indexer?                 @relation(fields: [indexerId], references: [id])
+  comments          Comment[]
+}
+
+enum ProjectParticipationType {
+  Collaboration
+  Free
+  Subscription
 }
 
 model GeneratorData {

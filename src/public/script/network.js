@@ -1,9 +1,7 @@
-import { notificationPush, notificationsComponent } from './notifications';
+import { notificationPush, notificationsComponent } from './notifications.js';
 
 /* eslint-disable no-undef */
 export const socket = new WebSocket('ws://localhost:3085/');
-
-export const audio = new Audio('/static/media/notify.mp3');
 
 socket.addEventListener('open', () => {
   console.log('Connecté au serveur WebSocket');

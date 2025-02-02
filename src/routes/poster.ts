@@ -25,7 +25,7 @@ import path from 'path';
 import { randomInt } from 'node:crypto';
 import { IncomingForm, File as FormidableFile } from 'formidable';
 import { Request, Response } from 'express';
-import { tokenGenerator } from '../server';
+import { ee, tokenGenerator } from '../server';
 
 // const pump = util.promisify(pipeline);
 
@@ -183,16 +183,16 @@ export const docSaver = async (req: Request, res: Response) => {
     res.status(404).redirect('/404');
     return;
   }
-  if(mode === 'hydrate' && typeof uidPost === 'string') {
+  if (mode === 'hydrate' && typeof uidPost === 'string') {
     await prismaClient.postSection.deleteMany({
       where: {
-        postId: post.id
-      }
+        postId: post.id,
+      },
     });
     await prismaClient.postFile.deleteMany({
       where: {
-        postId: post.id
-      }
+        postId: post.id,
+      },
     });
   }
   const [fields, files] = await form.parse(req);
@@ -404,7 +404,7 @@ export const docView = async (req: Request, res: Response) => {
         ? { ...req.session.SuperUser }
         : { id: req.session.Auth.id },
       description: updatedContent.description,
-      mode: "reading",
+      mode: 'reading',
     });
     return;
   }
@@ -595,5 +595,21 @@ export const parserController = async (req: Request, res: Response) => {
       downloadLink: serviceXPath,
     },
   });
-  res.status(200).redirect(newDoc.downloadLink);
+  await prismaClient.notifications.create({
+    data: {
+      title: 'Document ' + newDoc.title + ' converted successfully',
+      content: `Your document is ready to be downloaded at ${serviceXPath}`,
+      type: 'Info',
+      userId: req.session.Auth.id,
+    },
+  });
+  ee.emit('Info', {
+    title: 'Document ' + newDoc.title + ' converted successfully',
+    content: `Your document is ready to be downloaded at ${serviceXPath}`,
+    action: 'update',
+  });
+  const notif = encodeURI(
+    `Document ${newDoc.title} converted successfully a notification will be sent to your account`
+  );
+  res.status(200).redirect(req.baseUrl + '?notification=' + notif);
 };

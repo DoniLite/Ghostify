@@ -3,7 +3,7 @@
     <a
       class="flex w-full lg:gap-x-4 justify-between"
       data-index="<%= reply.id %>"
-      href="<%= reply.url %>"
+      href="<%= reply.url ? reply.url : `/feed/${reply.id}` %>"
     >
       <img
         src="<% if (typeof reply.userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= reply.userIcon %> <% } %>"
@@ -23,11 +23,11 @@
           <div id="reactions" class="flex gap-x-4">
             <i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>
             <span class="text-white"
-              ><%= reply.reactionsNumber %> reactions</span
+              ><%= reply.reactionsLength %> reactions</span
             >
           </div>
           <span class="text-white font-bold"
-            ><%= reply.commentsNumber %> comments</span
+            ><%= reply.commentsLength %> comments</span
           >
         </div>
       </div>

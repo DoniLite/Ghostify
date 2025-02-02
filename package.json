@@ -38,7 +38,8 @@
     "lint": "pnpm eslint",
     "dockerBuild": "docker build -t test:latest .",
     "dockerStart": "docker run -p 3081:3081 test:latest",
-    "report": "pnpm exec playwright show-report"
+    "report": "pnpm exec playwright show-report",
+    "learn": "tsc ./src/ATS/labs.ts --skipLibCheck --esModuleInterop --module commonjs --downlevelIteration --target es2021 --moduleResolution node --outDir learn && node ./learn/labs.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^5.20.0",
@@ -69,6 +70,7 @@
     "@types/showdown": "^2.0.6",
     "@types/vhost": "^3.0.9",
     "@types/ws": "^8.5.12",
+    "@types/yargs": "^17.0.33",
     "apify-client": "^2.9.6",
     "autoprefixer": "^10.4.20",
     "bcrypt": "^5.1.1",
@@ -120,7 +122,8 @@
     "tesseract.js": "^5.1.1",
     "vhost": "^3.0.2",
     "winston": "^3.17.0",
-    "wordnet-db": "^3.1.14"
+    "wordnet-db": "^3.1.14",
+    "yargs": "^17.7.2"
   },
   "engines": {
     "node": ">=10",
