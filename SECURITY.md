@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-The following table lists the versions of our project that are currently receiving security updates. 
+The following table lists the versions of our project that are currently receiving security updates.
 
 | Version | Status              |
 | ------- | ------------------  |
@@ -17,14 +17,14 @@ The following table lists the versions of our project that are currently receivi
 
 To report a vulnerability, please follow these steps:
 
-1. **Contact us**: Send an email to **security@ghostify.site** with details of the vulnerability, including:
+1. **Contact us**: Send an email to **[security@ghostify.site](mailto:security@ghostify.site)** with details of the vulnerability, including:
    - A detailed description of the issue.
    - Steps to reproduce the vulnerability.
    - Any potential impact or examples if available.
 
 2. **Acknowledgment**: You will receive an acknowledgment within **48 hours** confirming receipt of your report.
 
-3. **Assessment and Updates**: 
+3. **Assessment and Updates**:
    - The issue will be assessed by our security team.
    - You can expect updates on the progress within **7 business days**.
    - If the vulnerability is valid, we will work to resolve it promptly.

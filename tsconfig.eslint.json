@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*",
+    "vite.config.mts",
+    "*.config.*" // Inclut tous les fichiers de config
+  ]
+}
