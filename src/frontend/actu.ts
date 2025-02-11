@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const action = document.querySelector('#actuAction');
 
 // const fileNameLabel = document.querySelector('#fileName');
-
 
 document.addEventListener('windowScrollStart', () => {
   console.log('scroll');
@@ -14,5 +13,3 @@ document.addEventListener('windowScrollEnd', () => {
   console.log('scrollend');
   action.classList.remove('translate-x-[140%]');
 });
-
-

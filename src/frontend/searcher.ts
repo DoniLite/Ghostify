@@ -1,9 +1,9 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 /**
  * @type {HTMLInputElement}
  */
-const searchInput = document.querySelector('#PrimarySearch');
+const searchInput: HTMLInputElement = document.querySelector('#PrimarySearch');
 const containerParser = document.querySelector('#containerPaser');
 const loader = document.querySelector('#searchLoader');
 
@@ -15,8 +15,12 @@ const postAndCommentsIcon = `<svg fill="#f1f1f1" xmlns="http://www.w3.org/2000/s
  *
  * @param {Record<string, unknown>} data
  */
-const componentConstructor = (data) => {
-  if (typeof data['url'] === 'string' && typeof data['title'] !== 'string' && typeof data['visit'] === 'number') {
+const componentConstructor = (data: Record<string, unknown>) => {
+  if (
+    typeof data['url'] === 'string' &&
+    typeof data['title'] !== 'string' &&
+    typeof data['visit'] === 'number'
+  ) {
     return `<div class="w-full flex gap-x-2 items-center">
           ${urlIcon}
           <a href="${data.url}" class="text-sm w-full"
@@ -24,7 +28,7 @@ const componentConstructor = (data) => {
           >
         </div>`;
   }
-  if(typeof data['title'] === 'string') {
+  if (typeof data['title'] === 'string') {
     return `<div class="w-full flex gap-x-2 items-center">
           ${postAndCommentsIcon}
           <a href="${
@@ -38,12 +42,12 @@ const componentConstructor = (data) => {
           >
         </div>`;
   }
-  if(typeof data['content'] === 'string') {
+  if (typeof data['content'] === 'string') {
     return `<div class="w-full flex gap-x-2 items-center">
           ${postAndCommentsIcon}
           <a href="${
-            typeof data.url!== 'string'
-              ? typeof data.uid!== 'string'
+            typeof data.url !== 'string'
+              ? typeof data.uid !== 'string'
                 ? data.link
                 : `page/${data.uid}`
               : data.url
@@ -52,7 +56,7 @@ const componentConstructor = (data) => {
           >
         </div>`;
   }
-  return ``
+  return ``;
 };
 // console.log(searchInput);
 
@@ -60,9 +64,11 @@ const componentConstructor = (data) => {
  *
  * @param {Event} e
  */
-const sendKeysToServer = async (e) => {
+const sendKeysToServer = async (e: Event) => {
   e.preventDefault();
-  containerParser.childNodes.forEach(node => node.textContent !== loader.textContent ? node.remove() : 0);
+  containerParser.childNodes.forEach((node) =>
+    node.textContent !== loader.textContent ? node.remove() : 0
+  );
   containerParser.classList.remove('hidden');
   containerParser.classList.add('flex');
   console.log('click on search');
@@ -74,7 +80,7 @@ const sendKeysToServer = async (e) => {
   /**
    * @type {HTMLInputElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLInputElement;
   const value = el.value;
   console.log(value);
   const res = await fetch(`/find?q=${value}`);
@@ -88,7 +94,7 @@ const sendKeysToServer = async (e) => {
   /**
    * @type {{data: Record<string, unknown>[]}}
    */
-  const result = await res.json();
+  const result: { data: Record<string, unknown>[]; } = await res.json();
   console.log(result);
   loader.classList.remove('flex');
   loader.classList.add('hidden');

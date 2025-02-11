@@ -16,30 +16,68 @@ import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import path from 'node:path';
 
-type Args = {
+/**
+ * The Script command line args to define for the script execution
+ *  - process Is used to define the action that will be proceed ;
+ *    * train for training a model
+ *    * test for testing a model
+ *    * init for the initialization
+ *  - model set the defined model that will be used for the `process` (optional)
+ *  - epochs Defines the size of the training loop can be a slice of starting and ending number separated by commas
+ *  - dataset The dataset that will be used for the process
+ *  - saveModel The name that will be used to save the model after the process
+ *
+ * ```bash
+ * $ node script.js --model=OCTOGONE --dataset=cv_data --process=test --epochs=500
+ * ```
+ */
+interface Args {
   process: 'train' | 'init' | 'test';
   model?: MODELS_NAMES;
   epochs: string;
   dataset: DATASETS_NAMES;
   saveModel?: MODELS_NAMES;
-};
+}
 
 const args = yargs(hideBin(process.argv)).argv as unknown as Args;
 
 const manager = new TrainingDataManager();
 const classifier = new Classifier();
 
+/**
+ * The names of the available datasets
+ *
+ * Each dataset is defined to use a specific model
+ *  - cv_data is defined for the `OCTOGONE` model
+ *  - blog_data is defined for the ``CAPIYERS` model
+ */
 export enum DATASETS_NAMES {
   CV = 'cv_data',
   BLOG = 'blog_data',
 }
 
+/**
+ * The models names that are used for all the process like `test` or `train`
+ *
+ *  These names are used in the `model` and `saveModel` argument of the script
+ */
 export enum MODELS_NAMES {
   CV_CLASSIFIER = 'OCTOGONE',
   BLOG_CLASSIFIER = 'CAPIYERS',
 }
 
-const extendTrainingDataConfig = async (configs: CategoryConfig[]) => {
+/**
+ * Used to extend the category configuration of the dataset
+ *
+ * This function is useful for creating an extended dataset model based on the provided data.
+ *
+ * This maintain the context of the data and enlarge its size properly
+ * @param configs the data category config that will be extended
+ * @returns {Promise<CategoryConfig[]>}
+ */
+const extendTrainingDataConfig = async (
+  configs: CategoryConfig[]
+): Promise<CategoryConfig[]> => {
   const newConfigs: CategoryConfig[] = [];
   for (const config of configs) {
     config.baseWords.forEach(async (word) => {
@@ -54,6 +92,21 @@ const extendTrainingDataConfig = async (configs: CategoryConfig[]) => {
   }
   return newConfigs;
 };
+
+/**
+ * Initializes and extends the training datasets by generating additional
+ * contextual data for specified configurations and merging them into the
+ * main datasets.
+ *
+ * This function utilizes the `extendTrainingDataConfig` to enhance the
+ * base words with their synonyms for various category configurations,
+ * then generates dataset content, creates new datasets, merges them into
+ * comprehensive ones, and saves them to the specified path.
+ *
+ * @param customPath - An optional parameter that allows specifying a custom
+ * path to save the initialized datasets. If not provided, a default path
+ * is used.
+ */
 
 export const initDatasets = async (customPath?: string) => {
   const cvEducationConfig_v2 = await extendTrainingDataConfig(
@@ -88,6 +141,17 @@ export const initDatasets = async (customPath?: string) => {
   manager.saveDataset(DATASETS_NAMES.CV, DATASETS_NAMES.CV, customPath);
   manager.saveDataset(DATASETS_NAMES.BLOG, DATASETS_NAMES.BLOG, customPath);
 };
+
+/**
+ * Executes a specified action ('train' or 'test') on a given machine learning model,
+ * using the provided dataset, model name, and epochs. The function initializes and
+ * validates the model and dataset, and performs the requested operation (training or
+ * testing) using the classifier and data manager. If the 'train' operation is selected,
+ * the model is trained and potentially saved with a specified name. Throws errors if
+ * dataset and model compatibility checks fail, or if invalid parameters are provided.
+ *
+ * @param toDo - A string indicating the action to perform ('train' or 'test').
+ */
 
 const actionFn = (toDo: 'train' | 'test') => {
   const model = args.model;
@@ -155,10 +219,10 @@ const actionFn = (toDo: 'train' | 'test') => {
       const testData = manager
         .getDataFromDataset(dataset, epochs || epochsSlice || undefined)
         .map((d) => d.text);
-      for (let i = 0; i < testData.length; i++) {
-        const result = classifier.class(testData[i]);
+      for (const data of testData) {
+        const result = classifier.class(data);
         console.log(
-          `test classification result ${result} for the entry ${testData[i]}`
+          `test classification result ${result} for the entry ${data}`
         );
       }
     },
@@ -209,7 +273,7 @@ switch (args.process) {
   case 'test':
     actionFn(args.process)();
     break;
-  case 'init':
+  case 'init': {
     const custom = path.resolve(__dirname, '../src/ATS/datasets');
     initDatasets(custom)
       .then(() => {
@@ -219,6 +283,7 @@ switch (args.process) {
         console.error(err);
       });
     break;
+  }
   default:
     console.log("Please enter 'train' or 'init'");
     break;

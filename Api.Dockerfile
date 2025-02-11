@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG PYTHON_VERSION=3.12
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:${PYTHON_VERSION}-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -35,9 +35,9 @@ RUN chown -R appuser:appgroup /app
 
 # Install dependencies with proper permissions
 RUN --mount=type=cache,target=/root/.cache/pip \
-    --mount=type=bind,source=requirements.txt,target=requirements.txt \
+    --mount=type=bind,source=requirements.prod.txt,target=requirements.prod.txt \
     --mount=type=bind,source=Makefile,target=Makefile \
-    make setup
+    make setup-prod
 
 # Switch to appuser but with enhanced permissions
 USER appuser
@@ -47,8 +47,9 @@ RUN sudo mkdir -p /app/logs /app/data /app/uploads && \
     sudo chown -R appuser:appgroup /app/*
 
 # Copy the source code
-COPY --chown=appuser:appgroup ./python/ .
+COPY --chown=appuser:appgroup ./python .
+COPY --chown=appuser:appgroup Makefile .
 
 EXPOSE 8080
 
-CMD make start-prod
+CMD ["make", "start-prod"]

@@ -1,3 +1,4 @@
+import 'vite/modulepreload-polyfill';
 import { displayResults } from "./ATS.resultsDisplay";
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -25,11 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
     handleFiles(files);
   });
 
-  fileInput.addEventListener('change', (e) => {
-    handleFiles(e.target.files);
+  fileInput.addEventListener('change', (e : InputEvent) => {
+    const el = e.target as HTMLInputElement;
+    handleFiles(el.files);
   });
 
-  function handleFiles(files) {
+  function handleFiles(files: FileList) {
     // Afficher le loader
     loader.classList.remove('hidden');
     results.classList.add('hidden');

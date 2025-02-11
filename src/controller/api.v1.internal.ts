@@ -1,4 +1,4 @@
-import { Request, response, Response } from 'express';
+import { Request, Response } from 'express';
 import { QueryXData } from 'index';
 import { tokenGenerator } from '../server';
 import path from 'node:path';
@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { prismaClient } from '../config/db';
 import { randomInt } from 'node:crypto';
 import { loadSecurityBearer, verifySecurity } from '../utils';
+import { logger } from '../logger';
 
 const API_PORT = process.env.NODE_ENV === 'production' ? 8080 : 8000;
 
@@ -52,6 +53,10 @@ export const internDocCreator = async (req: Request, res: Response) => {
     return;
   } catch (e) {
     res.status(400).send('Invalid user ID');
+    logger.error(
+      `error during the creation of the document for the user ${userId}`,
+      e
+    );
     return;
   }
 };
@@ -65,10 +70,10 @@ interface TokenClaimModel {
   posterCredits: number;
 }
 
-type ApiToken = {
+interface ApiToken {
   access_token: string;
   token_type: string;
-};
+}
 
 export const internalTokenGenerator = async (req: Request, res: Response) => {
   const { Auth } = req.session;
@@ -178,9 +183,9 @@ export const internalSubscriptionVerify = async (
     user.cvCredits > 0 &&
     user.posterCredits > 0
   ) {
-    res.status(200).json({message: "subscription not expired"});
+    res.status(200).json({ message: 'subscription not expired' });
     return;
   }
-  res.status(400).json({message: "subscription expired"});
+  res.status(400).json({ message: 'subscription expired' });
   return;
 };

@@ -1,6 +1,6 @@
-import { notificationPush, notificationsComponent } from './notifications.js';
+import 'vite/modulepreload-polyfill';
+import { notificationPush, notificationsComponent } from './notifications';
 
-/* eslint-disable no-undef */
 export const socket = new WebSocket('ws://localhost:3085/');
 
 socket.addEventListener('open', () => {
@@ -18,13 +18,17 @@ socket.addEventListener('message', (event) => {
    *  flash?: boolean
    * }}
    */
-  const rawData = JSON.parse(data);
+  const rawData: {
+    type: "connect" | "disconnect" | "message" | "notification";
+    data: Record<string, unknown>;
+    flash?: boolean;
+  } = JSON.parse(data);
 
   if (rawData.flash && rawData.flash === true) {
     if (
       typeof rawData === 'object' &&
-      rawData.data.hasOwnProperty('title') &&
-      rawData.data.hasOwnProperty('content')
+      rawData.data.title &&
+      rawData.data.content
     ) {
       notificationPush(
         notificationsComponent.success(

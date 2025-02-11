@@ -1,34 +1,32 @@
-/* eslint-disable no-undef */
-
+import 'vite/modulepreload-polyfill';
 
 export const notificationPopup = new Audio('/static/media/notify.mp3');
 export const reactionPopup = new Audio('/static/media/popup.mp3');
 
-
 export const notificationsComponent = {
-  info: (message) => {
+  info: (message: unknown) => {
     return `<div class="alert alert-info">
         <span>${message}</span>
       </div>`;
   },
-  success: (message) => {
+  success: (message: unknown) => {
     return `<div class="alert alert-success">
         <span>${message}</span>
       </div>`;
   },
-  error: (message) => {
+  error: (message: unknown) => {
     return `<div class="alert alert-error">
         <span>${message}</span>
       </div>`;
   },
-  warning: (message) => {
+  warning: (message: unknown) => {
     return `<div class="alert alert-warning">
         <span>${message}</span>
       </div>`;
   },
 };
 
-export const notificationPush = (notification) => {
+export const notificationPush = (notification: string) => {
   const notificationContainer = document.querySelector('#flash');
   notificationContainer.insertAdjacentHTML('beforeend', notification);
   const interval = setInterval(() => {
@@ -41,14 +39,16 @@ export const notificationPush = (notification) => {
   }, 4000);
 };
 
-
 //externals...
+
 window.App = window.App || {};
 App.notification = App.notification || {};
-App.notification.push = notificationPush;
-App.notification.info = notificationsComponent.info;
-App.notification.success = notificationsComponent.success;
-App.notification.error = notificationsComponent.error;
-App.notification.warning = notificationsComponent.warning;
-App.notification.notificationPopup = notificationPopup;
-App.notification.reactionPopup = reactionPopup;
+App.notification = {
+  push: notificationPush,
+  info: notificationsComponent.info,
+  success: notificationsComponent.success,
+  error: notificationsComponent.error,
+  warning: notificationsComponent.warning,
+  notificationPopup,
+  reactionPopup
+}

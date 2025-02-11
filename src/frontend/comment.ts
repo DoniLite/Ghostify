@@ -1,20 +1,26 @@
+import 'vite/modulepreload-polyfill';
 import { notificationPush, notificationsComponent } from './notifications.js';
 
 /**
  * Initialise les événements pour un composant spécifique.
  * @param {HTMLElement} componentElement - L'élément DOM racine du composant.
  */
-const initializeComponent = (componentElement) => {
-  const fileControl = componentElement.querySelector('.commentFileControl');
-  const fileInput = componentElement.querySelector('.commentFileInput');
-  const formElement = componentElement.querySelector('.commentFormElement');
+const initializeComponent = (componentElement: HTMLElement) => {
+  const fileControl = componentElement.querySelector<HTMLElement>(
+    '.commentFileControl'
+  );
+  const fileInput =
+    componentElement.querySelector<HTMLInputElement>('.commentFileInput');
+  const formElement = componentElement.querySelector<HTMLFormElement>(
+    '.commentFormElement'
+  );
 
   /**
    * Gestionnaire d'evenement pour le formulaire de commentaire
    * @param {Event} e
    */
-  const commentAction = async (e) => {
-    const form = new FormData(e.currentTarget);
+  const commentAction = async (e: Event) => {
+    const form = new FormData(e.currentTarget as HTMLFormElement);
     const response = await fetch('/comment/post', {
       method: 'POST',
       body: form,
@@ -38,7 +44,8 @@ const initializeComponent = (componentElement) => {
 
     fileInput.addEventListener('change', (e) => {
       e.preventDefault();
-      const file = e.currentTarget.files[0];
+      const tFile = e.currentTarget as HTMLInputElement;
+      const file = tFile.files[0];
       if (file) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -64,7 +71,8 @@ const initializeComponent = (componentElement) => {
           formElement.querySelectorAll('#removeFile').forEach((el) => {
             el.addEventListener('click', (e) => {
               e.preventDefault();
-              e.currentTarget.parentElement.remove();
+              const tEl = e.currentTarget as HTMLElement;
+              tEl.parentElement.remove();
               fileInput.files = null;
               fileInput.value = null;
             });
@@ -80,6 +88,8 @@ const initializeComponent = (componentElement) => {
 };
 
 // Initialisation globale
-document.querySelectorAll('.commentComponent').forEach((componentElement) => {
-  initializeComponent(componentElement);
-});
+document
+  .querySelectorAll('.commentComponent')
+  .forEach((componentElement: HTMLElement) => {
+    initializeComponent(componentElement);
+  });

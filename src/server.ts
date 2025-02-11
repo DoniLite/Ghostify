@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import session from 'express-session';
 import cookie from 'cookie-parser';
 import { prismaClient } from './config/db';
-import { ReqParams, StatsData } from './@types';
+import { ReqParams } from './@types';
 import cors from 'cors';
 import { home } from './routes/home';
 import { homeController } from './controller/home';
@@ -81,7 +81,6 @@ import Queue from 'bull';
 import {
   cvDownloader,
   verifyJWT,
-  saveStatistic,
   getTimeElapsed,
 } from './utils';
 import { billing } from './routes/billing';
