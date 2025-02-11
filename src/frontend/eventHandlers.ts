@@ -1,11 +1,11 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 /**
  *
  * @param {Event} e
  */
-export const removeItemList = (e) => {
+export const removeItemList = (e: Event) => {
   e.preventDefault();
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   /**
    * @type {Element}
    */
@@ -23,12 +23,12 @@ export const removeItemList = (e) => {
  *
  * @param {Event} e
  */
-export const addListItem = (e) => {
+export const addListItem = (e: Event) => {
   e.preventDefault();
   /**
    * @type {EventTarget}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   /**
    * @type {HTMLElement}
@@ -72,9 +72,9 @@ export const addListItem = (e) => {
  *
  * @param {Event} e
  */
-export const removeFormation = (e) => {
+export const removeFormation = (e: Event) => {
   e.preventDefault();
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   /**
    * @type {Element}
    */
@@ -92,12 +92,12 @@ export const removeFormation = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const addFormation = (e) => {
+export const addFormation = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {EventTarget}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   /**
    * @type {HTMLElement}
@@ -164,12 +164,12 @@ export const addFormation = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const addTask = (e) => {
+export const addTask = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {EventTarget}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   /**
    * @type {HTMLElement}
@@ -177,15 +177,16 @@ export const addTask = (e) => {
   const lastParent = firstParent.parentElement;
   const inputNumber = lastParent.querySelectorAll('#taskInput').length;
   const mainInputValue =
-    lastParent.parentElement.querySelector('#experienceInput').value;
+    lastParent.parentElement.querySelector<HTMLInputElement>('#experienceInput').value;
   lastParent.parentElement
     .querySelector('#experienceInput')
     .setAttribute(
       'data-group',
       `${
         Number(
-          lastParent.parentElement.querySelector('#experienceInput').dataset
-            .group
+          lastParent.parentElement.querySelector<HTMLInputElement>(
+            '#experienceInput'
+          ).dataset.group
         ) + 1
       }`
     );
@@ -238,12 +239,12 @@ export const addTask = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const removeTask = (e) => {
+export const removeTask = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   const secondParent = firstParent.parentElement;
   if (secondParent.querySelectorAll('.vl-parent').length <= 1) {
@@ -256,14 +257,14 @@ export const removeTask = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const addExperience = (e) => {
+export const addExperience = (e: MouseEvent) => {
   e.preventDefault();
 
   e.preventDefault();
   /**
    * @type {EventTarget}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   const secondParent = firstParent.parentElement;
   /**
@@ -351,18 +352,18 @@ export const addExperience = (e) => {
  *
  * @param {InputEvent} e
  */
-export const experienceTrigger = (e) => {
+export const experienceTrigger = (e: InputEvent) => {
   e.preventDefault();
-  console.log(e.currentTarget.value);
+  const el = e.currentTarget as HTMLInputElement;
   /**
    * @type {HTMLElement}
    */
-  const parent = e.currentTarget.parentElement.parentElement;
+  const parent = el.parentElement.parentElement;
   parent.querySelectorAll('#taskInput').forEach((input, id) => {
-    input.setAttribute('name', `task-${e.currentTarget.value}-${id + 1}`);
+    input.setAttribute('name', `task-${el.value}-${id + 1}`);
   });
   parent.querySelectorAll('#taskDateInput').forEach((input, id) => {
-    input.setAttribute('name', `taskDate-${e.currentTarget.value}-${id + 1}`);
+    input.setAttribute('name', `taskDate-${el.value}-${id + 1}`);
   });
 };
 
@@ -370,12 +371,12 @@ export const experienceTrigger = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const removeExperience = (e) => {
+export const removeExperience = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const firstParent = el.parentElement;
   const secondParent = firstParent.parentElement;
   secondParent.remove();
@@ -385,23 +386,25 @@ export const removeExperience = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const removeLanguage = (e) => {
+export const removeLanguage = (e: MouseEvent) => {
   e.preventDefault();
+  const el = e.currentTarget as HTMLElement;
   if (
-    e.currentTarget.parentElement.parentElement.querySelectorAll('.vl-parent')
+    el.parentElement.parentElement.querySelectorAll('.vl-parent')
       .length <= 1
   )
     return;
-  e.currentTarget.parentElement.remove();
+  el.parentElement.remove();
 };
 
 /**
  *
  * @param {MouseEvent} e
  */
-export const addLanguage = (e) => {
+export const addLanguage = (e: MouseEvent) => {
   e.preventDefault();
-  const parent = e.currentTarget.parentElement;
+  const el = e.currentTarget as HTMLElement;
+  const parent = el.parentElement;
   /**
    * @type {HTMLElement}
    */
@@ -452,26 +455,28 @@ export const addLanguage = (e) => {
  *
  * @param {MouseEvent} e
  */
-export const removeInterest = (e) => {
+export const removeInterest = (e: MouseEvent) => {
   e.preventDefault();
+  const el = e.currentTarget as HTMLElement;
   if (
-    e.currentTarget.parentElement.parentElement.querySelectorAll('.vl-parent')
+    el.parentElement.parentElement.querySelectorAll('.vl-parent')
       .length <= 1
   )
     return;
-  e.currentTarget.parentElement.remove();
+  el.parentElement.remove();
 };
 
 /**
  *
  * @param {MouseEvent} e
  */
-export const addInterest = (e) => {
+export const addInterest = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const parent = e.currentTarget.parentElement.parentElement;
+  const el = e.currentTarget as HTMLElement;
+  const parent = el.parentElement.parentElement;
   parent.querySelector('.lst-component').insertAdjacentHTML(
     'beforeend',
     `
@@ -504,17 +509,18 @@ export const addInterest = (e) => {
  *
  * @param {InputEvent} e
  */
-export const formationTrigger = (e) => {
+export const formationTrigger = (e: InputEvent) => {
   e.preventDefault();
+  const el = e.currentTarget as HTMLInputElement;
   /**
    * @type {string}
    */
-  const content = e.currentTarget.value;
+  const content = el.value;
   content.trim();
   /**
    * @type {HTMLElement}
    */
-  const parent = e.currentTarget.parentElement;
+  const parent = el.parentElement;
   /**
    * @type {HTMLInputElement}
    */
@@ -531,9 +537,10 @@ export const formationTrigger = (e) => {
  *
  * @param {InputEvent} e
  */
-export const languageTrigger = (e) => {
+export const languageTrigger = (e: InputEvent) => {
   e.preventDefault();
-  e.currentTarget.parentElement
+  const el = e.currentTarget as HTMLInputElement;
+  el.parentElement
     .querySelector('#languageOption')
-    .setAttribute('name', `languageLevel-${e.currentTarget.value}`);
+    .setAttribute('name', `languageLevel-${el.value}`);
 };

@@ -1,16 +1,16 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const loader = document.querySelector('#loaderHead');
 
 const getLoaderInfo = async () => {
   const storageData = localStorage.getItem('session');
-  if(typeof storageData === 'string') {
+  if (typeof storageData === 'string') {
     const result = await fetch('/home', {
       method: 'POST',
       body: storageData,
     });
-    if(!result.ok) {
-      loader.innerHTML = 'Une erreur s\'est produite';
+    if (!result.ok) {
+      loader.innerHTML = "Une erreur s'est produite";
       return;
     }
     const data = await result.json();
@@ -22,13 +22,13 @@ const getLoaderInfo = async () => {
   }
   const result = await fetch('/home', {
     method: 'POST',
-    body: JSON.stringify({requestInit: true}),
+    body: JSON.stringify({ requestInit: true }),
   });
   if (!result.ok) {
     throw new Error('error happened');
   }
   const data = await result.json();
-  if(data.req === true) {
+  if (data.req === true) {
     window.location.href = '/home?noApiData=true';
     return;
   }
@@ -38,6 +38,6 @@ const getLoaderInfo = async () => {
 try {
   await getLoaderInfo();
 } catch (e) {
-  console.error(e)
+  console.error(e);
   window.location.href = '/home?noApiData=true';
 }

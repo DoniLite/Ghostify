@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const actionBtn = document.querySelector('#posterNewAction');
 const closerBtn = document.querySelector('#actionCloser');
@@ -8,7 +8,7 @@ const rawHeadIcon = document.querySelector('#rawHeadIcon');
 /**
  * @type {HTMLElement}
  */
-const docRequester = document.querySelector('#newDocumentRequester');
+const docRequester: HTMLElement = document.querySelector('#newDocumentRequester');
 
 actionBtn.addEventListener('click', (e) => {
   e.preventDefault();
@@ -20,11 +20,11 @@ closerBtn.addEventListener('click', (e) => {
 });
 
 NavCloserBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    rawHeaderNav.classList.add('translate-x-[200%]');
-})
+  e.preventDefault();
+  rawHeaderNav.classList.add('translate-x-[200%]');
+});
 
 rawHeadIcon.addEventListener('click', (e) => {
-    e.preventDefault();
-    rawHeaderNav.classList.remove('translate-x-[200%]');
+  e.preventDefault();
+  rawHeaderNav.classList.remove('translate-x-[200%]');
 });

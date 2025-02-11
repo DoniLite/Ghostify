@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-
+import 'vite/modulepreload-polyfill';
 import {
   addExperience,
   addFormation,
@@ -10,19 +9,21 @@ import {
   experienceTrigger,
   formationTrigger,
   languageTrigger,
-} from './eventHandlers.js';
+} from './eventHandlers';
 
-const cvActionModal = document.querySelector('#cvActionModal');
-const actionBtn = document.querySelector('#action');
-const closeCvActionModal = document.querySelector('#closeCvActionModal');
-const firstTarget = document.querySelector('#translatorFirst');
-const secondTarget = document.querySelector('#translatorSecond');
+const cvActionModal = document.querySelector<HTMLElement>('#cvActionModal');
+const actionBtn = document.querySelector<HTMLElement>('#action');
+const closeCvActionModal = document.querySelector<HTMLElement>(
+  '#closeCvActionModal'
+);
+const firstTarget = document.querySelector<HTMLElement>('#translatorFirst');
+const secondTarget = document.querySelector<HTMLElement>('#translatorSecond');
 const zappingBtns = document.querySelectorAll('.zapping-btn');
-const translatorParent = document.querySelector('#translatorParent');
+const translatorParent = document.querySelector<HTMLElement>('#translatorParent');
 // const ressourceLoader = document.querySelector('#ressourceLoader');
-const assetEl = document.querySelector('#assetEl');
-const changeThemeBtn = document.querySelector('#changeTheme');
-const modifFormBtn = document.querySelector('#formModifierBtn');
+const assetEl = document.querySelector<HTMLElement>('#assetEl');
+const changeThemeBtn = document.querySelector<HTMLElement>('#changeTheme');
+const modifFormBtn = document.querySelector<HTMLElement>('#formModifierBtn');
 const resourceLoaderComponent = `<div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
           Chargement en cours veuillez patienter
           <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
@@ -34,9 +35,9 @@ changeThemeBtn.addEventListener('click', async (e) => {
   const req = await fetch(`/cv/theme/${uid}`);
   /**
    *
-   * @param {typeof res} data
+   * @param {typeof res} data The data that will be used to update the theming
    */
-  const updatingFrontWithTheme = (data) => {
+  const updatingFrontWithTheme = (data: typeof res) => {
     const cvType = `${data.type};${data.mode}`;
     assetEl
       .querySelector('#changingThemeFormParent')
@@ -58,7 +59,10 @@ changeThemeBtn.addEventListener('click', async (e) => {
   /**
    * @type {{type: string | number; mode: string | number;}}
    */
-  const res = await req.json();
+  const res = (await req.json()) as {
+    type: string | number;
+    mode: string | number;
+  };
   const themeComponent = `<div id="changingThemeFormParent"
             class="lg:grid w-full lg:gap-4 lg:grid-cols-2 flex flex-col gap-y-4"
           >
@@ -205,10 +209,11 @@ changeThemeBtn.addEventListener('click', async (e) => {
           .forEach((input) =>
             input.classList.remove('border-4', 'border-orange-500')
           );
-        e.currentTarget.classList.toggle('border-4');
-        e.currentTarget.classList.toggle('border-orange-500');
+        const tEl = e.currentTarget as HTMLInputElement;
+        tEl.classList.toggle('border-4');
+        tEl.classList.toggle('border-orange-500');
         const req2 = await fetch(
-          `/cv/theme/${uid}?set=true&data=${e.currentTarget.value}`
+          `/cv/theme/${uid}?set=true&data=${tEl.value}`
         );
         const res2 = await req2.json();
         if (res2.success) {
@@ -238,7 +243,7 @@ modifFormBtn.addEventListener('click', async (e) => {
       );
       return;
     }
-  /**
+    /**
    * @type {{
     img?: string;
     fullName?: string;
@@ -269,7 +274,35 @@ modifFormBtn.addEventListener('click', async (e) => {
     css?: unknown;
   }}
    */
-    const res = await req.json();
+    const res = (await req.json()) as {
+      img?: string;
+      fullName?: string;
+      email?: string;
+      phoneNumber?: string;
+      location?: string;
+      birthday?: string;
+      profile?: string;
+      skills?: string[];
+      formations?: {
+        title: string;
+        description: string;
+        date: string;
+      }[];
+      experience?: {
+        title: string;
+        contents: {
+          description: string;
+          duration: string;
+        }[];
+      }[];
+      interest?: string[];
+      languages?: {
+        title: string;
+        css: 'w-[30%]' | 'w-[60%]' | 'w-full';
+        level: string;
+      }[];
+      css?: unknown;
+    };
     console.log(res);
     const formComponent = `<form id="formUpdateElementParent" class=" w-full flex-col gap-y-3">
         <div
@@ -651,24 +684,27 @@ modifFormBtn.addEventListener('click', async (e) => {
 
     assetEl.querySelector('#userSrcImg').addEventListener('click', (e) => {
       e.preventDefault();
-      document.querySelector('#fileInput').click();
+      document.querySelector<HTMLInputElement>('#fileInput').click();
     });
 
-    assetEl.querySelector('#fileInput').addEventListener('change', (e) => {
-      e.preventDefault();
-      const file = e.currentTarget.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-          /**
-           * @type {HTMLImageElement}
-           */
-          const img = document.querySelector('#userSrcImg');
-          img.src = reader.result;
-        };
-      }
-    });
+    assetEl
+      .querySelector<HTMLInputElement>('#fileInput')
+      .addEventListener('change', (e) => {
+        e.preventDefault();
+        const finput = e.currentTarget as HTMLInputElement;
+        const file = finput.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = () => {
+            /**
+             * @type {HTMLImageElement}
+             */
+            const img = document.querySelector<HTMLImageElement>('#userSrcImg');
+            img.src = reader.result as string;
+          };
+        }
+      });
   } catch (e) {
     console.error(e);
     assetEl.childNodes.forEach((node) => node.remove());
@@ -740,7 +776,7 @@ zappingBtns.forEach((btn) => {
     /**
      * @type {HTMLElement}
      */
-    const el = e.currentTarget;
+    const el = e.currentTarget as HTMLElement;
     if (el.dataset.index === '1') {
       translatorParent.style.transform = `translateX(-${firstTarget.dataset.translate}%)`;
     } else {
@@ -748,7 +784,7 @@ zappingBtns.forEach((btn) => {
     }
     el.classList.remove('bg-white');
     el.classList.add('bg-orange-500');
-    zappingBtns.forEach((thisBtn) => {
+    zappingBtns.forEach((thisBtn: HTMLElement) => {
       if (thisBtn.dataset.index !== el.dataset.index) {
         thisBtn.classList.remove('bg-orange-500');
         thisBtn.classList.add('bg-white');
@@ -762,9 +798,9 @@ zappingBtns.forEach((btn) => {
  *
  * @param {FormDataEvent} event
  */
-const processCVForAPI = async (event) => {
+const processCVForAPI = async (event: FormDataEvent) => {
   event.preventDefault();
-  const form = new FormData(event.currentTarget);
+  const form = new FormData(event.currentTarget as HTMLFormElement);
   const name = form.get('name');
   const email = form.get('email');
   const phone = form.get('phone');
@@ -773,47 +809,47 @@ const processCVForAPI = async (event) => {
   const profile = form.get('profile');
   const skills = form.getAll('skill');
   const interest = form.getAll('interest');
-  const formationGroup = assetEl.querySelector('#formationGroupEl');
-  const experienceGroup = assetEl.querySelector('#experienceGroup');
+  const formationGroup = assetEl.querySelector<HTMLElement>('#formationGroupEl');
+  const experienceGroup = assetEl.querySelector<HTMLElement>('#experienceGroup');
   console.log(formationGroup);
-  const languageGroup = assetEl.querySelector('#languageGroup');
+  const languageGroup = assetEl.querySelector<HTMLElement>('#languageGroup');
   /**
    * @type {{formation: string; certificate: string; certificationDate: string}[]}
    */
-  const formations = [];
+  const formations: {
+    formation: string;
+    certificate: string;
+    certificationDate: string;
+  }[] = [];
   /**
    * @type {{experience: string; details: {task: string; taskDate: string}[]}[]}
    */
-  const experiences = [];
-  /**
-   * @type {{lang: string; level: string}[]}
-   */
-  const languages = [];
-  formationGroup.querySelectorAll('.lst-component').forEach((el) => {
-    const formation = el.querySelector('input[name="formation"]').value;
-    const certificate = el.querySelector('input[id="certificateInput"]').value;
-    const certificationDate = el.querySelector(
-      'input[id="certificationDateInput"]'
-    ).value;
-    formations.push({
-      formation,
-      certificate,
-      certificationDate,
-    });
-  });
+  const experiences: {experience: string; details: {task: string; taskDate: string}[]}[] = [];
+  
+  const languages: {lang: string; level: string}[] = [];
+
+  
   experienceGroup.querySelectorAll('.experienceGroupEl').forEach((el) => {
-    const details = [];
-    const exp = el.querySelector('input[name="experience"]').value;
+    const details = [] as {
+      task: string;
+      taskDate: string;
+    }[];
+    const exp = el.querySelector<HTMLInputElement>('input[name="experience"]').value;
     el.querySelectorAll('.lst-component').forEach((el) => {
-      const task = el.querySelector('input[id="taskInput"]').value;
-      const taskDate = el.querySelector('input[id="taskDateInput"]').value;
+      const task = el.querySelector<HTMLInputElement>(
+        'input[id="taskInput"]'
+      ).value;
+      const taskDate = el.querySelector<HTMLInputElement>(
+        'input[id="taskDateInput"]'
+      ).value;
       details.push({ task, taskDate });
     });
     experiences.push({ experience: exp, details });
   });
   languageGroup.querySelectorAll('.lst-component').forEach((el) => {
-    const lang = el.querySelector('#languageInput').value;
-    const languageOption = el.querySelector('#languageOption');
+    const lang = el.querySelector<HTMLInputElement>('#languageInput').value;
+    const languageOption =
+      el.querySelector<HTMLInputElement>('#languageOption');
     const level =
       languageOption?.value ?? languageOption?.getAttribute('name') ?? '';
     languages.push({ lang, level });

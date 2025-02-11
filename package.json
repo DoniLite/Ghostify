@@ -99,7 +99,6 @@
     "jsdom": "^26.0.0",
     "jsonwebtoken": "^9.0.2",
     "libreoffice-convert": "^1.6.0",
-    "litejsondb": "^1.0.5",
     "marked": "^15.0.6",
     "natural": "^8.0.1",
     "node-cron": "^3.0.3",

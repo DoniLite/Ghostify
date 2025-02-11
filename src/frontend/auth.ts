@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const mobileAuth = document.querySelector('#ghostifyPowerMob');
 const ghostifyPower = document.querySelector('#ghostifyPower');
@@ -7,12 +7,12 @@ const ghostifyPower = document.querySelector('#ghostifyPower');
  *
  * @param {Event} e
  */
-const disconnection = async (e) => {
+const disconnection = async (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const req = await fetch('/disconnection');
   if (!req.ok) {
     alert('something went wrong');

@@ -1,14 +1,14 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 import { socket } from './network.js';
 import {
   notificationPush,
   notificationsComponent,
   notificationPopup,
-} from './notifications.js';
+} from './notifications';
 
-const userIMG = document.querySelector('#userProfileImg');
-const inputFile = document.querySelector('#profileUpdateInput');
+const userIMG = document.querySelector<HTMLImageElement>('#userProfileImg');
+const inputFile = document.querySelector<HTMLInputElement>('#profileUpdateInput');
 const userName = document.querySelector('#userNamePrint');
 const closeNotificationPanel = document.querySelector('#closeNotificationPane');
 const notificationPanel = document.querySelector('#notificationPanel');
@@ -22,16 +22,16 @@ const modificationSubmitForm = document.querySelector(
 /**
  * @type {HTMLElement}
  */
-const notificationBadge =
+const notificationBadge: HTMLElement =
   notificationShower.querySelector('#notificationBadge');
 /**
  * @type {HTMLElement}
  */
-const userDataset = document.querySelector('#userIdDataSet');
+const userDataset: HTMLElement = document.querySelector('#userIdDataSet');
 /**
  * @type {HTMLButtonElement}
  */
-const submissionBtn = document.querySelector('#userUpdateSubmitionBtn');
+const submissionBtn: HTMLButtonElement = document.querySelector('#userUpdateSubmitionBtn');
 
 // const actionSup = document.querySelector('#notificationOptionSup');
 // const actionMark = document.querySelector('#notificationOptionMark');
@@ -47,12 +47,12 @@ const notificationContainer = document.querySelector(
  *
  * @param {MouseEvent} e
  */
-const notificationShowOptions = (e) => {
+const notificationShowOptions = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   el.querySelector('#notificationActivityOptions').classList.remove(
     'hide-reactions'
   );
@@ -65,12 +65,12 @@ const notificationShowOptions = (e) => {
  *
  * @param {MouseEvent} e
  */
-const notificationHideOptions = (e) => {
+const notificationHideOptions = (e: MouseEvent) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   el.querySelector('#notificationActivityOptions').classList.remove(
     'show-reactions'
   );
@@ -83,13 +83,14 @@ const notificationHideOptions = (e) => {
  *
  * @param {Event} e
  */
-const deleteNotification = (e) => {
+const deleteNotification = (e: Event) => {
   e.preventDefault();
+  const tEl = e.currentTarget as HTMLElement;
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget.parentElement.parentElement.parentElement;
-  const id = el.querySelector('input[name="notificationElId"]').value;
+  const el = tEl.parentElement.parentElement.parentElement;
+  const id = el.querySelector<HTMLInputElement>('input[name="notificationElId"]').value;
   el.remove();
   socket.send(
     JSON.stringify({ type: 'notification', data: { id }, action: 'delete' })
@@ -100,13 +101,14 @@ const deleteNotification = (e) => {
  *
  * @param {Event} e
  */
-const markNotificationAsRead = (e) => {
+const markNotificationAsRead = (e: Event) => {
   e.preventDefault();
+  const tEl = e.currentTarget as HTMLElement;
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget.parentElement.parentElement.parentElement;
-  const id = el.querySelector('input[name="notificationElId"]').value;
+  const el = tEl.parentElement.parentElement.parentElement;
+  const id = el.querySelector<HTMLInputElement>('input[name="notificationElId"]').value;
   el.remove();
   socket.send(
     JSON.stringify({ type: 'notification', data: { id }, action: 'read' })
@@ -119,10 +121,10 @@ const markNotificationAsRead = (e) => {
  *
  * @param {Event} e - The event object associated with the function call.
  */
-const deleteAllNotifications = (e) => {
+const deleteAllNotifications = (e: Event) => {
   e.preventDefault();
   const user = Number(
-    notificationContainer.querySelector('#userIdInput').value
+    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
   );
   socket.send(
     JSON.stringify({
@@ -139,23 +141,20 @@ const deleteAllNotifications = (e) => {
  *
  * @param {Event} e - The event object associated with the function call.
  */
-const markAllNotificationAsRead = (e) => {
+const markAllNotificationAsRead = (e: Event) => {
   e.preventDefault();
   const user = Number(
-    notificationContainer.querySelector('#userIdInput').value
+    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
   );
   socket.send(
     JSON.stringify({ type: 'notification', action: 'readAll', data: { user } })
   );
 };
 
-/**
- *
- * @param {Event} e
- */
+
 const loadAllNotifications = () => {
   const user = Number(
-    notificationContainer.querySelector('#userIdInput').value
+    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
   );
   socket.send(
     JSON.stringify({ type: 'notification', action: 'loadAll', data: { user } })
@@ -170,7 +169,7 @@ const loadAllNotifications = () => {
  * @param {string} id
  * @returns {string}
  */
-const notification = (title, content, time, id) => `
+const notification = (title: string, content: string, time: string, id: string): string => `
       <div id="notificationElement" class=" flex w-full justify-between p-2 rounded-md bg-gray-950 text-white">
         <input type="hidden" name="notificationId" value="${id}" id="notificationElId">
         <div class="flex flex-col gap-y-2">
@@ -194,16 +193,16 @@ const notification = (title, content, time, id) => `
       </div>
 `;
 
-const notificationElement = {
-  title: '#notificationTitle',
-  content: '#notificationContent',
-  time: '#notificationTime',
-  id: '#notificationElId',
-};
+// const notificationElement = {
+//   title: '#notificationTitle',
+//   content: '#notificationContent',
+//   time: '#notificationTime',
+//   id: '#notificationElId',
+// };
 
 modificationSubmitForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const form = new FormData(e.currentTarget);
+  const form = new FormData(e.currentTarget as HTMLFormElement);
   const username = form.get('username');
   const bio = form.get('bio');
   const link = form.get('link');
@@ -270,7 +269,7 @@ closeUserUpdatePanel.addEventListener('click', (e) => {
 // };
 
 userName.addEventListener('keyup', async (e) => {
-  console.log(e.currentTarget.value);
+  const tEl = e.currentTarget as HTMLInputElement;
   submissionBtn.disabled = false;
   userName.classList.remove('wrong-data');
   const errorComponent = document.querySelector('#componentErrorForm');
@@ -278,17 +277,17 @@ userName.addEventListener('keyup', async (e) => {
     errorComponent.remove();
   }
   const regex = /[A-Z\s]/;
-  if (e.currentTarget.value.length <= 0) {
+  if (tEl.value.length <= 0) {
     return;
   }
-  if (regex.test(e.currentTarget.value)) {
+  if (regex.test(tEl.value)) {
     submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
-    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${e.currentTarget.value}" have majuscule or space</span>`;
+    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${tEl.value}" have majuscule or space</span>`;
     userName.insertAdjacentHTML('afterend', errorMessage);
     return;
   }
-  const req = await fetch(`/user/exists/${e.currentTarget.value}`);
+  const req = await fetch(`/user/exists/${tEl.value}`);
   const res = await req.json();
   console.log(e.currentTarget);
   if (res.exist) {
@@ -308,7 +307,8 @@ userName.addEventListener('keyup', async (e) => {
 userName.addEventListener('click', (e) => {
   e.preventDefault();
   console.log('user name clicked');
-  e.currentTarget.removeAttribute('readonly');
+  const tEl = e.currentTarget as HTMLInputElement;
+  tEl.removeAttribute('readonly');
 });
 
 userIMG.addEventListener('click', (e) => {
@@ -318,7 +318,8 @@ userIMG.addEventListener('click', (e) => {
 
 inputFile.addEventListener('change', async (e) => {
   e.preventDefault();
-  const file = e.currentTarget.files[0];
+  const tEl = e.currentTarget as HTMLInputElement;
+  const file = tEl.files[0];
   if (file) {
     const form = new FormData();
     form.append('file', file);
@@ -394,7 +395,16 @@ socket.addEventListener('message', async (e) => {
             seen: boolean;
         }[]}
        */
-      const els = evData.notifications;
+      const els: {
+        id: number;
+        time: string;
+        type: 'Alert' | 'Reply' | 'like' | 'Post' | 'Info' | 'Message';
+        createdAt: Date;
+        userId: number | null;
+        title: string | null;
+        content: string;
+        seen: boolean;
+      }[] = evData.notifications;
       const updatesNumber = els.filter((up) => up.seen === false).length;
       if (updatesNumber > 0) {
         notificationPush(
@@ -414,7 +424,7 @@ socket.addEventListener('message', async (e) => {
       els.forEach((el) => {
         notificationContainer.insertAdjacentHTML(
           'beforeend',
-          notification(el.title, el.content, el.time, el.id)
+          notification(el.title, el.content, el.time, el.id.toString())
         );
       });
       notificationContainer
@@ -444,7 +454,8 @@ socket.addEventListener('message', async (e) => {
     }
 
     if (evData.action && evData.action === 'update') {
-      const updatesNumber = Number(notificationBadge.innerText.split('+')[0]) + 1;
+      const updatesNumber =
+        Number(notificationBadge.innerText.split('+')[0]) + 1;
       notificationPush(
         notificationsComponent.info('you have new notification')
       );

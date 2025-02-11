@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const actionBtn = document.querySelector('#action');
 const abortBtn = document.querySelector('#abortBtn');
@@ -392,7 +392,9 @@ const requestFile = async (e) => {
                 </div>
                 `;
     posterForm.insertAdjacentHTML('beforeend', component);
-    const newImput = `<input type="file" name="file" class="hidden" id="file_${e.index + 1}" />`;
+    const newImput = `<input type="file" name="file" class="hidden" id="file_${
+      e.index + 1
+    }" />`;
     posterForm.insertAdjacentHTML('afterbegin', newImput);
     posterForm.querySelectorAll('#imgRemoveBtn').forEach((el) => {
       el.addEventListener('click', imgSelfRemove);

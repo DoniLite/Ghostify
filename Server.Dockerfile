@@ -11,7 +11,7 @@ RUN apk add --no-cache sudo shadow
 
 # Create a user with sudo rights
 RUN addgroup -S appgroup && \
-    adduser -S -G appgroup -s /bin/sh node && \
+    usermod -a -G appgroup node && \
     echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node
 
 WORKDIR /usr/src/app
@@ -26,10 +26,13 @@ RUN --mount=type=cache,target=/root/.npm \
 ################################################################################
 FROM base as deps
 
+COPY --chown=node:appgroup ./prisma ./prisma
+
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
     --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --prod --frozen-lockfile
+    pnpm install --prod && pnpm run generate
+
 
 ################################################################################
 FROM deps as build
@@ -55,8 +58,7 @@ COPY --chown=node:appgroup package.json .
 COPY --chown=node:appgroup ./src ./src
 COPY --chown=node:appgroup --from=deps /usr/src/app/node_modules ./node_modules
 COPY --chown=node:appgroup --from=build /usr/src/app/build ./build
-COPY --chown=node:appgroup --from=build /usr/src/app/prisma ./prisma
 
 EXPOSE 3081
 
-CMD pnpm start
+CMD ["pnpm", "start"]

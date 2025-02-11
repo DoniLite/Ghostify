@@ -1,15 +1,15 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const navContainer = document.querySelector('.default-nav');
 const searchInput = document.querySelector('#searcher');
 const mobileIcon = document.querySelector('#mobileSiteIcon');
 const navLinks = document.querySelectorAll('.default-nav ul li');
-const linkGroup = document.querySelector('nav ul');
+const linkGroup = document.querySelector<HTMLUListElement>('nav ul');
 const scrollParent = document.querySelectorAll('.swiper-slide');
 const mobileNav = document.querySelector('.mobile-nav');
 const mobileNavBtn = document.querySelector('.mobile-nav-icon');
 const closerBtn = document.querySelector('.close-btn');
-const ghostifyPowerMob = document.querySelector('#ghostifyPowerMob');;
+const ghostifyPowerMob = document.querySelector('#ghostifyPowerMob');
 window.onscroll = (e) => {
   e.preventDefault();
   console.log('scrolling');
@@ -32,9 +32,9 @@ window.onscrollend = (e) => {
 
 window.onload = (e) => {
   e.preventDefault();
-  navLinks.forEach(link => {
+  navLinks.forEach((link) => {
     link.classList.remove('text-red-950');
-  }); 
+  });
 };
 
 // window.onscroll = (e) => {
@@ -47,7 +47,6 @@ scrollParent.forEach((el) => {
     linkGroup.style.display = 'none';
   });
 });
-
 
 mobileNavBtn.addEventListener('click', (e) => {
   e.preventDefault();

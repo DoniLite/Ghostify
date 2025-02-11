@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+import 'vite/modulepreload-polyfill';
 
 const allArticlesInthePah = document.querySelectorAll('#articleToFetch');
 const allCategories = document.querySelectorAll('#categoryLoader');
@@ -8,12 +8,12 @@ const defaultContainer = document.querySelector('#defaultArticContainer');
  *
  * @param {Event} e
  */
-const uriReplacer = async (e) => {
+const uriReplacer = async (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const url = el.dataset.url;
   const id = el.dataset.id;
   if (typeof url === 'undefined') {
@@ -34,18 +34,21 @@ const uriReplacer = async (e) => {
   window.location.href = url;
 };
 
-const returnErrorComponent = (err) => {
-    if(typeof err !== 'string') {
-        return;
-    }
-    return `<p class=" mt-4 w-full text-center text-white font-bold">${err}</p>`;
-}
+const returnErrorComponent = (err: string) => {
+  if (typeof err !== 'string') {
+    return;
+  }
+  return `<p class=" mt-4 w-full text-center text-white font-bold">${err}</p>`;
+};
 
 /**
  *
  * @param {Event} e
  */
-const categoryUpdater = async (e) => {
+const categoryUpdater = async (e: {
+  preventDefault: () => void;
+  currentTarget: unknown;
+}) => {
   e.preventDefault();
   const loader = `
     <div id="postLoader" class="justify-center w-full h-full items-center">
@@ -66,7 +69,7 @@ const categoryUpdater = async (e) => {
   /**
    * @type {HTMLElement}
    */
-  const el = e.currentTarget;
+  const el = e.currentTarget as HTMLElement;
   const category = el.dataset.category;
   const childs = defaultContainer.childNodes;
   childs.forEach((child) => {
@@ -79,26 +82,26 @@ const categoryUpdater = async (e) => {
     loaderEl.remove();
     defaultContainer.insertAdjacentHTML(
       'beforeend',
-      returnErrorComponent(`Une erreur est survenue...🥲 <br> ${res.statusText}`)
-    );
-    return;
-  }
-  /**
-   * @type {{id: number, url: string, date: string, title: string, slug: string[]}[]}
-   */
-  const data = res.json();
-  if(data.error) {
-    loaderEl.remove();
-    defaultContainer.insertAdjacentHTML(
-      'beforeend',
       returnErrorComponent(
-        `Une erreur est survenue...🥲 <br> ${data.message}`
+        `Une erreur est survenue...🥲 <br> ${res.statusText}`
       )
     );
     return;
   }
+  type DataRes =
+    | { id: number; url: string; date: string; title: string; slug: string[] }[]
+    | { error: boolean; message: string };
+  const data = (await res.json()) as DataRes;
+  if (!Array.isArray(data)) {
+    loaderEl.remove();
+    defaultContainer.insertAdjacentHTML(
+      'beforeend',
+      returnErrorComponent(`Une erreur est survenue...🥲 <br> ${data.message}`)
+    );
+    return;
+  }
   loaderEl.remove();
-  data.forEach(el => {
+  data.forEach((el) => {
     const component = `
         <article
             id="articleToFetch"
@@ -125,15 +128,15 @@ const categoryUpdater = async (e) => {
               </a>
 
               <div class="mt-4 flex flex-wrap gap-1">
-                ${el.slug.forEach(slugEl => {
-                    return `
+                ${el.slug.map((slugEl) => {
+                  return `
                     <span
                         class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
                     >
                         ${slugEl}
                     </span>
                     `;
-                })}
+                }).join('')}
               </div>
             </div>
         </article>

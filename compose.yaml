@@ -85,7 +85,7 @@ volumes:
 
 secrets:
   db-password:
-    file: db/password.txt
+    file: ./db/password.txt
 
 networks:
   ghostify_network:

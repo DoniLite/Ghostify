@@ -1,5 +1,5 @@
+import 'vite/modulepreload-polyfill';
 import { notificationPush, notificationsComponent } from './notifications';
-
 
 /**
  * Translate text
@@ -7,7 +7,7 @@ import { notificationPush, notificationsComponent } from './notifications';
  * @param {string} text
  * @returns {string}
  */
-export const translate = (text) => {
+export const translate = (text: string): string => {
   const url = new URL(window.location.href);
   const lang = url.searchParams.get('lang');
   if (typeof lang === 'string') {
@@ -25,18 +25,20 @@ export const translate = (text) => {
       }
     } catch (e) {
       notificationPush(notificationsComponent.error('Translation failed'));
+      console.error(e);
     }
   }
   return text;
 };
 
-
 window.App.translator = App.translator || {};
 
-App.translator.translate = translate;
-
-App.translator.components = {
-  fr: {},
-  en: {},
-  es: {},
+App.translator = {
+  translate,
+  components: {
+    fr: {},
+    en: {},
+    es: {},
+  },
 };
+

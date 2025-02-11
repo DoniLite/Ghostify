@@ -319,6 +319,12 @@ declare global {
   interface WebSocket extends WebSocketS {
     on: WebSocketS['on'];
   }
+
+  interface Window {
+    App: Record<string, unknown>;
+  }
+
+  const App: Record<string, unknown>;
 }
 
 export interface RawCV {
@@ -351,7 +357,7 @@ export interface RawCV {
 }
 
 
-export type SecurityHashPayload = {
+export interface SecurityHashPayload {
   hash: string;
   env: string;
   expire: string;
