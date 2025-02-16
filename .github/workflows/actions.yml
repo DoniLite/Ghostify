@@ -1,4 +1,4 @@
-name: Build NodeJS CD/CI
+name: Build Deno CD/CI
 run-name: ${{ github.actor }}'s GitHub Actions
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -22,35 +22,46 @@ on:
     - cron: '30 5 * * 2,4'
 
 jobs:
-  check-bats-version:
+  check-deno-version:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20]
+        deno-version: [1.41.0, 1.40.0]  # Ajustez selon vos besoins
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Cache pnpm store
+          deno-version: ${{ matrix.deno-version }}
+          
+      - name: Cache Deno Dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          path: |
+            ~/.deno
+            ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-
-      - run: npm install -g bats
-      - run: bats -v
+            ${{ runner.os }}-deno-
+            
       - name: Install Dependencies
-        run: npm install -g pnpm && pnpm install
+        run: deno install --allow-all
+        
       - name: Lint Code
-        run: pnpm lint
+        run: deno lint
+        
+      - name: Check Types
+        run: deno check .src/server.ts
+        
       - name: Run Tests
-        run: pnpm test
+        run: deno test
+        
       - name: Build Project
-        run: pnpm exec tsc --outDir build
+        run: deno task build  # Assurez-vous d'avoir défini cette tâche dans deno.json
+        
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: build/
+          path: dist/  # Ajustez selon votre dossier de build

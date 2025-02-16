@@ -20,19 +20,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          make setup
+          make setup-prod
 
       - name: Run linters
         run: |
-          pip install black isort flake8
-          black --check .
-          isort --check-only .
-          flake8 .
+          make test
+          make lint
 
       - name: Run tests
         run: |
           pip install pytest
-          pytest tests/
+          make test
 
   test-typescript:
     runs-on: ubuntu-latest
@@ -46,18 +44,18 @@ jobs:
           node-version: '20.x'
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: denoland/setup-deno@v1
         with:
           version: latest
 
       - name: Install dependencies
         run: |
-          pnpm install
+          deno install
 
       - name: Lint TypeScript
         run: |
-          pnpm run lint
+          deno lint
 
       - name: Run TypeScript tests
         run: |
-          pnpm run test
+          deno test
