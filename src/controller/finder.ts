@@ -1,10 +1,11 @@
-import { Indexer, QueryXData } from 'index';
-import { prismaClient } from '../config/db';
-import { filterIncludesType } from '../utils';
+import { Indexer, QueryXData } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
+import { filterIncludesType } from '../utils.ts';
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
 
 export const find = async (req: Request, res: Response) => {
-  const { q } = req.query as QueryXData<{q: string}>;
+  const { q } = req.query as QueryXData<{ q: string }>;
   const allIndexer = (await prismaClient.indexer.findMany()) as Indexer[];
   let allResources = [] as unknown[];
   const result = allIndexer.filter((index) => {
@@ -101,22 +102,22 @@ export const updateKeys = async (req: Request, res: Response) => {
           .send(
             JSON.stringify({
               message: 'Error during your current running operation',
-            })
+            }),
           );
-          return;
+        return;
       }
       res.status(200).send(
         JSON.stringify({
           message: 'The new indexer have been created successfully',
           data: newKey,
-        })
+        }),
       );
       return;
     }
     const keys = k.split(',');
     keys.forEach(async (key) => {
       if (!serverKey.keys.split(',').includes(key)) {
-         updatedKey = await prismaClient.indexer.update({
+        updatedKey = await prismaClient.indexer.update({
           where: {
             type: keyType,
           },
@@ -130,7 +131,7 @@ export const updateKeys = async (req: Request, res: Response) => {
       JSON.stringify({
         message: 'The new indexer have been created successfully',
         data: updatedKey,
-      })
+      }),
     );
   } catch (err) {
     console.log(err);

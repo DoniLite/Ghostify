@@ -18,30 +18,29 @@ export const ROUTES = [
   ...AUTH_ROUTES,
 ];
 
-const isOpenRoute = (url: string) => 
-  OPEN_ROUTES.some(route => url.includes(route));
+const isOpenRoute = (url: string) =>
+  OPEN_ROUTES.some((route) => url.includes(route));
 
-const isAuthRoute = (url: string) => 
-  AUTH_ROUTES.some(route => url.includes(route));
+const isAuthRoute = (url: string) =>
+  AUTH_ROUTES.some((route) => url.includes(route));
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const { cookies } = req;
   const lastTime = cookies['connection_time'];
 
-  const redirectToSignIn = () => 
-    res.redirect('/signin?service=poster');
+  const redirectToSignIn = () => res.redirect('/signin?service=poster');
 
   try {
     // Vérification du temps de connexion
     if (
       typeof lastTime === 'string' &&
       Date.now() > Number(
-        decrypt(
-          lastTime,
-          req.session.ServerKeys.secretKey,
-          req.session.ServerKeys.iv
+          decrypt(
+            lastTime,
+            req.session.ServerKeys.secretKey,
+            req.session.ServerKeys.iv,
+          ),
         )
-      )
     ) {
       req.session.Auth = { authenticated: false };
       req.session.RedirectUrl = req.baseUrl;
@@ -62,7 +61,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.session.Token = encrypt(
       cookieExpiration.getTime().toString(),
       req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv
+      req.session.ServerKeys.iv,
     );
 
     res.cookie('connection_time', req.session.Token, {

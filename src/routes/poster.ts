@@ -10,12 +10,12 @@ import {
   decrypt,
   DocumentMimeTypes,
   encrypt,
+  loadSecurityBearer,
+  purgeSingleFIle,
+  renaming,
   Service,
   unify,
-  renaming,
-  purgeSingleFIle,
   verifySecurity,
-  loadSecurityBearer,
 } from '../utils';
 import { prismaClient } from '../config/db';
 // import util from 'util';
@@ -23,7 +23,7 @@ import fs from 'fs';
 import path from 'path';
 // import { pipeline } from 'stream';
 import { randomInt } from 'node:crypto';
-import { IncomingForm, File as FormidableFile } from 'formidable';
+import { File as FormidableFile, IncomingForm } from 'formidable';
 import { Request, Response } from 'express';
 import { ee, tokenGenerator } from '../server';
 
@@ -162,23 +162,22 @@ export const docSaver = async (req: Request, res: Response) => {
   let json: boolean | undefined;
   const uid = tokenGenerator((date.getTime() + randomInt(10000)).toString());
   // Crée un post vide au début
-  const post =
-    mode === 'hydrate' && typeof uidPost === 'string'
-      ? await prismaClient.post.findUnique({
-          where: {
-            uid: uidPost,
-          },
-        })
-      : await prismaClient.post.create({
-          data: {
-            title: '',
-            uid,
-            description: '',
-            visibility: 'Private',
-            safe: false,
-            userId: req.session.Auth.id,
-          },
-        });
+  const post = mode === 'hydrate' && typeof uidPost === 'string'
+    ? await prismaClient.post.findUnique({
+      where: {
+        uid: uidPost,
+      },
+    })
+    : await prismaClient.post.create({
+      data: {
+        title: '',
+        uid,
+        description: '',
+        visibility: 'Private',
+        safe: false,
+        userId: req.session.Auth.id,
+      },
+    });
   if (!post) {
     res.status(404).redirect('/404');
     return;
@@ -248,12 +247,11 @@ export const docSaver = async (req: Request, res: Response) => {
           return;
         }
         console.log('File uploaded:', fName);
-        const fileXPathService =
-          process.env.NODE_ENV === 'production'
-            ? `https://ghostify.site/staticFile/` +
-              tokenGenerator(`posts/${fName}`)
-            : `http://localhost:3085/staticFile/` +
-              tokenGenerator(`posts/${fName}`);
+        const fileXPathService = process.env.NODE_ENV === 'production'
+          ? `https://ghostify.site/staticFile/` +
+            tokenGenerator(`posts/${fName}`)
+          : `http://localhost:3085/staticFile/` +
+            tokenGenerator(`posts/${fName}`);
         // Sauvegarder le fichier dans la base de données
         const nFile = await prismaClient.postFile.create({
           data: {
@@ -288,10 +286,9 @@ export const docSaver = async (req: Request, res: Response) => {
     data: {
       title: req.session.Storage.title,
       description: req.session.Storage.desc_or_meta,
-      userId:
-        req.session.Auth.id && typeof req.session.Auth.id === 'number'
-          ? req.session.Auth.id
-          : null,
+      userId: req.session.Auth.id && typeof req.session.Auth.id === 'number'
+        ? req.session.Auth.id
+        : null,
     },
   });
   console.log('updated content final:', up);
@@ -342,7 +339,7 @@ export const docView = async (req: Request, res: Response) => {
             index: number;
             section: number;
           }[];
-        }
+        },
       ] = typeof section.meta === 'string' ? JSON.parse(section.meta) : [];
       const docAssetsData = [
         ...list,
@@ -386,7 +383,7 @@ export const docView = async (req: Request, res: Response) => {
         JSON.stringify({
           ...updatedContent,
           visites: updatedContent.visites.toString(),
-        })
+        }),
       );
     }
     res.render('page', {
@@ -395,11 +392,10 @@ export const docView = async (req: Request, res: Response) => {
       title: updatedContent.title,
       service: Service.poster,
       theme: req.session.Theme,
-      auth:
-        typeof req.session.Auth !== 'undefined' &&
-        req.session.Auth.authenticated
-          ? req.session.Auth.authenticated
-          : false,
+      auth: typeof req.session.Auth !== 'undefined' &&
+          req.session.Auth.authenticated
+        ? req.session.Auth.authenticated
+        : false,
       data: req.session.Auth.isSuperUser
         ? { ...req.session.SuperUser }
         : { id: req.session.Auth.id },
@@ -491,7 +487,7 @@ export const loadPost = async (req: Request, res: Response) => {
           index: number;
           section: number;
         }[];
-      }
+      },
     ];
     if (d) {
       data.lists[section.index] = d;
@@ -562,7 +558,7 @@ export const parserController = async (req: Request, res: Response) => {
       headers: {
         Authorization: `Bearer ${security.hash}`,
       },
-    }
+    },
   );
   if (!apiRes.ok) {
     res.status(500).send('Something went wrong please try later');
@@ -575,16 +571,19 @@ export const parserController = async (req: Request, res: Response) => {
   const fileExt = json.path.split('.').pop();
   const fileXName = `${fileName}.${fileExt}`;
   const SAVE_PATH = path.resolve(
-    path.join(__dirname, '../../static/downloads/doc')
+    path.join(__dirname, '../../static/downloads/doc'),
   );
-  const serviceXPath =
-    process.env.NODE_ENV !== 'production'
-      ? `https://ghostify.site/downloader/${tokenGenerator(
-          'downloads/doc' + fileXName
-        )}`
-      : `http://localhost:3085/downloader/${tokenGenerator(
-          'downloads/doc' + fileXName
-        )}`;
+  const serviceXPath = process.env.NODE_ENV !== 'production'
+    ? `https://ghostify.site/downloader/${
+      tokenGenerator(
+        'downloads/doc' + fileXName,
+      )
+    }`
+    : `http://localhost:3085/downloader/${
+      tokenGenerator(
+        'downloads/doc' + fileXName,
+      )
+    }`;
   fs.renameSync(json.path, path.join(SAVE_PATH, fileXName));
   const newDoc = await prismaClient.document.create({
     data: {
@@ -609,7 +608,7 @@ export const parserController = async (req: Request, res: Response) => {
     action: 'update',
   });
   const notif = encodeURI(
-    `Document ${newDoc.title} converted successfully a notification will be sent to your account`
+    `Document ${newDoc.title} converted successfully a notification will be sent to your account`,
   );
   res.status(200).redirect(req.baseUrl + '?notification=' + notif);
 };

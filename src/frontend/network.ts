@@ -1,11 +1,10 @@
-import 'vite/modulepreload-polyfill';
-import { notificationPush, notificationsComponent } from './notifications';
+import { notificationPush, notificationsComponent } from './notifications.ts';
 
 export const socket = new WebSocket('ws://localhost:3085/');
 
 socket.addEventListener('open', () => {
   console.log('Connecté au serveur WebSocket');
-  window.dispatchEvent(new Event('SocketConnected'));
+  globalThis.dispatchEvent(new Event('SocketConnected'));
 });
 
 socket.addEventListener('message', (event) => {
@@ -19,7 +18,7 @@ socket.addEventListener('message', (event) => {
    * }}
    */
   const rawData: {
-    type: "connect" | "disconnect" | "message" | "notification";
+    type: 'connect' | 'disconnect' | 'message' | 'notification';
     data: Record<string, unknown>;
     flash?: boolean;
   } = JSON.parse(data);
@@ -32,8 +31,8 @@ socket.addEventListener('message', (event) => {
     ) {
       notificationPush(
         notificationsComponent.success(
-          rawData.data.title + ' <br/> ' + rawData.data.content
-        )
+          rawData.data.title + ' <br/> ' + rawData.data.content,
+        ),
       );
       return;
     }

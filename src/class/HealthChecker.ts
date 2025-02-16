@@ -5,8 +5,9 @@ import { Service as PlatformServices } from '@prisma/client';
 
 export class HealthChecker implements HealthCheckerInterface {
   #browser: Browser;
-  #services: Service['APIs'] &
-    { type: PlatformServices; testingData?: string }[];
+  #services:
+    & Service['APIs']
+    & { type: PlatformServices; testingData?: string }[];
 
   /**
    * Health check class for the specified service and the platform services
@@ -20,7 +21,7 @@ export class HealthChecker implements HealthCheckerInterface {
    *  await healthCheck.check('Poster', 'https://example.com');
    * ```
    * - If you provide a non-valid endpoint it will be ignored
-   * 
+   *
    * the `check` method returns a promise that will be resolved to boolean
    *
    * If successful the result will be `true` and `false` if not
@@ -71,7 +72,7 @@ export class HealthChecker implements HealthCheckerInterface {
   async check(serviceParam: string, endpoint?: string): Promise<boolean> {
     if (endpoint) {
       const req = await fetch(endpoint);
-      const {status} = req;
+      const { status } = req;
       if (status >= 200 && status <= 300) {
         return true;
       }
@@ -79,11 +80,11 @@ export class HealthChecker implements HealthCheckerInterface {
     }
 
     const serviceEndpoint = (await prismaClient.services.findMany()).filter(
-      (service) => service.name === serviceParam
+      (service) => service.name === serviceParam,
     )[0].endpoint;
 
     const req = await fetch(serviceEndpoint);
-    const {status} = req;
+    const { status } = req;
     if (status >= 200 && status <= 300) {
       return true;
     }
@@ -107,7 +108,7 @@ export class HealthChecker implements HealthCheckerInterface {
         } else {
           checker.pass = true;
         }
-      })
+      }),
     );
     return checker;
   }
@@ -141,7 +142,7 @@ export class HealthChecker implements HealthCheckerInterface {
               },
               body: JSON.stringify(service.testingData),
             });
-            const {status} = test;
+            const { status } = test;
             if (status >= 200 && status < 400) {
               platformQuota.APIs.push({
                 name: service.name,
@@ -156,7 +157,7 @@ export class HealthChecker implements HealthCheckerInterface {
             });
           } else {
             const req = await fetch(service.endpoint);
-            const {status} = req;
+            const { status } = req;
             if (status >= 200 && status < 400) {
               platformQuota.APIs.push({
                 name: service.name,
@@ -184,7 +185,7 @@ export class HealthChecker implements HealthCheckerInterface {
               .fill(
                 process.env.SUPER_USER_DEFAULT +
                   ';' +
-                  process.env.SUPER_USER_PASS_CODE
+                  process.env.SUPER_USER_PASS_CODE,
               );
             await page.keyboard.press('Enter');
             const pageRes = await page.waitForNavigation();
@@ -203,12 +204,11 @@ export class HealthChecker implements HealthCheckerInterface {
             }
           }
         }
-      }
+      },
     );
     return {
       internals: platformQuota.CVMaker.pass && platformQuota.Poster.pass,
-      API:
-        platformQuota.APIs.filter((el) => el.pass).length >
+      API: platformQuota.APIs.filter((el) => el.pass).length >
         platformQuota.APIs.length / 2,
     };
   }

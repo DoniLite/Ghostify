@@ -1,13 +1,15 @@
+// @ts-types="@types/formidable"
 import { IncomingForm } from 'formidable';
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
 import path from 'node:path';
-import { renaming } from '../utils';
-import { QueryXData, RawCV } from 'index';
-import { prismaClient } from '../config/db';
-import { cvQueue, tokenGenerator } from '../server';
+import { renaming } from '../utils.ts';
+import { QueryXData, RawCV } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
+import { cvQueue, tokenGenerator } from '../server.ts';
 import { randomInt } from 'node:crypto';
 
-export const cv = async (req: Request, res: Response) => {
+export const cv = (req: Request, res: Response) => {
   res.render('components/cvForm', { service: undefined });
 };
 
@@ -48,10 +50,9 @@ export const processCV = async (req: Request, res: Response) => {
   console.log('file : ' + file);
   console.log(result);
   const cvType = fields.selectedCVType ? fields.selectedCVType[0] : undefined;
-  const fileXPath =
-    process.env.NODE_ENV === 'production'
-      ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
-      : `http://localhost:3085/staticFile/` + tokenGenerator(`cv/${result}`);
+  const fileXPath = process.env.NODE_ENV === 'production'
+    ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
+    : `http://localhost:3085/staticFile/` + tokenGenerator(`cv/${result}`);
   const data = JSON.parse(fields.jsonData[0]) as RawCV;
   req.session.CVData = {
     ...data,
@@ -85,7 +86,7 @@ export const processCV = async (req: Request, res: Response) => {
         { url: cvUpdating.url, id: cvUpdating.id, docId, updating },
         {
           attempts: 5,
-        }
+        },
       );
       req.session.JobsIDs = {
         ...req.session.JobsIDs,
@@ -113,10 +114,9 @@ export const processCV = async (req: Request, res: Response) => {
     if (checkIfUserHavePoints.cvCredits < 100) {
       res.status(403).json({
         message: 'Not enough credits for CV creation',
-        redirect:
-          process.env.NODE_ENV === 'production'
-            ? 'https://ghostify.site/billing/'
-            : 'http://localhost:3085/billing/',
+        redirect: process.env.NODE_ENV === 'production'
+          ? 'https://ghostify.site/billing/'
+          : 'http://localhost:3085/billing/',
       });
       return;
     }
@@ -127,10 +127,9 @@ export const processCV = async (req: Request, res: Response) => {
         userId: req.session.Auth.id,
         img: file ? fileXPath : null,
         uid: uid,
-        url:
-          process.env.NODE_ENV === 'production'
-            ? `https://ghostify.site/cv/${uid}`
-            : `http://localhost:3085/cv/${uid}`,
+        url: process.env.NODE_ENV === 'production'
+          ? `https://ghostify.site/cv/${uid}`
+          : `http://localhost:3085/cv/${uid}`,
       },
     });
     if (newCV) {
@@ -150,7 +149,7 @@ export const processCV = async (req: Request, res: Response) => {
       { url: newCV.url, id: newCV.id },
       {
         attempts: 5,
-      }
+      },
     );
     req.session.JobsIDs = {
       ...req.session.JobsIDs,
@@ -162,9 +161,8 @@ export const processCV = async (req: Request, res: Response) => {
   req.session.RedirectUrl = '/cv/processApi';
   res.json({
     success: false,
-    redirect:
-      process.env.NODE_ENV === 'production'
-        ? 'https://ghostify.site/signin?service=poster'
-        : 'http://localhost:3085/signin?service=poster',
+    redirect: process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/signin?service=poster'
+      : 'http://localhost:3085/signin?service=poster',
   });
 };

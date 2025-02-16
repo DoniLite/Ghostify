@@ -1,37 +1,34 @@
-import 'vite/modulepreload-polyfill';
-
-import { socket } from './network.js';
+import { socket } from './network.ts';
 import {
+  notificationPopup,
   notificationPush,
   notificationsComponent,
-  notificationPopup,
-} from './notifications';
+} from './notifications.ts';
 
-const userIMG = document.querySelector<HTMLImageElement>('#userProfileImg');
-const inputFile = document.querySelector<HTMLInputElement>('#profileUpdateInput');
-const userName = document.querySelector('#userNamePrint');
-const closeNotificationPanel = document.querySelector('#closeNotificationPane');
-const notificationPanel = document.querySelector('#notificationPanel');
-const notificationShower = document.querySelector('#notificationShower');
-const userUpdatePanel = document.querySelector('#userUpdatePanel');
-const closeUserUpdatePanel = document.querySelector('#closeUserUpdatePanel');
-const profileEditor = document.querySelector('#editProfileBtn');
+const userIMG = document.querySelector<HTMLImageElement>('#userProfileImg')!;
+const inputFile = document.querySelector<HTMLInputElement>(
+  '#profileUpdateInput',
+)!;
+const userName = document.querySelector('#userNamePrint')!;
+const closeNotificationPanel = document.querySelector('#closeNotificationPane')!;
+const notificationPanel = document.querySelector('#notificationPanel')!;
+const notificationShower = document.querySelector('#notificationShower')!;
+const userUpdatePanel = document.querySelector('#userUpdatePanel')!;
+const closeUserUpdatePanel = document.querySelector('#closeUserUpdatePanel')!;
+const profileEditor = document.querySelector('#editProfileBtn')!;
 const modificationSubmitForm = document.querySelector(
-  '#submitUserProfileModifications'
-);
-/**
- * @type {HTMLElement}
- */
-const notificationBadge: HTMLElement =
-  notificationShower.querySelector('#notificationBadge');
-/**
- * @type {HTMLElement}
- */
-const userDataset: HTMLElement = document.querySelector('#userIdDataSet');
-/**
- * @type {HTMLButtonElement}
- */
-const submissionBtn: HTMLButtonElement = document.querySelector('#userUpdateSubmitionBtn');
+  '#submitUserProfileModifications',
+)!;
+
+const notificationBadge: HTMLElement = notificationShower.querySelector(
+  '#notificationBadge',
+)!;
+
+const userDataset: HTMLElement = document.querySelector('#userIdDataSet')!;
+
+const submissionBtn: HTMLButtonElement = document.querySelector(
+  '#userUpdateSubmitionBtn',
+)!;
 
 // const actionSup = document.querySelector('#notificationOptionSup');
 // const actionMark = document.querySelector('#notificationOptionMark');
@@ -40,47 +37,44 @@ const submissionBtn: HTMLButtonElement = document.querySelector('#userUpdateSubm
 //   '#notificationActivityOptions'
 // );
 const notificationContainer = document.querySelector(
-  '#notificationElementsContainer'
+  '#notificationElementsContainer',
 );
 
 /**
- *
  * @param {MouseEvent} e
  */
-const notificationShowOptions = (e: MouseEvent) => {
+const notificationShowOptions = (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
   const el = e.currentTarget as HTMLElement;
-  el.querySelector('#notificationActivityOptions').classList.remove(
-    'hide-reactions'
+  el.querySelector('#notificationActivityOptions')!.classList.remove(
+    'hide-reactions',
   );
-  el.querySelector('#notificationActivityOptions').classList.add(
-    'show-reactions'
+  el.querySelector('#notificationActivityOptions')!.classList.add(
+    'show-reactions',
   );
 };
 
 /**
- *
  * @param {MouseEvent} e
  */
-const notificationHideOptions = (e: MouseEvent) => {
+const notificationHideOptions = (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
   const el = e.currentTarget as HTMLElement;
-  el.querySelector('#notificationActivityOptions').classList.remove(
-    'show-reactions'
+  el.querySelector('#notificationActivityOptions')!.classList.remove(
+    'show-reactions',
   );
-  el.querySelector('#notificationActivityOptions').classList.add(
-    'hide-reactions'
+  el.querySelector('#notificationActivityOptions')!.classList.add(
+    'hide-reactions',
   );
 };
 
 /**
- *
  * @param {Event} e
  */
 const deleteNotification = (e: Event) => {
@@ -89,16 +83,16 @@ const deleteNotification = (e: Event) => {
   /**
    * @type {HTMLElement}
    */
-  const el = tEl.parentElement.parentElement.parentElement;
-  const id = el.querySelector<HTMLInputElement>('input[name="notificationElId"]').value;
+  const el = tEl.parentElement!.parentElement!.parentElement!;
+  const id =
+    el.querySelector<HTMLInputElement>('input[name="notificationElId"]')!.value;
   el.remove();
   socket.send(
-    JSON.stringify({ type: 'notification', data: { id }, action: 'delete' })
+    JSON.stringify({ type: 'notification', data: { id }, action: 'delete' }),
   );
 };
 
 /**
- *
  * @param {Event} e
  */
 const markNotificationAsRead = (e: Event) => {
@@ -107,11 +101,12 @@ const markNotificationAsRead = (e: Event) => {
   /**
    * @type {HTMLElement}
    */
-  const el = tEl.parentElement.parentElement.parentElement;
-  const id = el.querySelector<HTMLInputElement>('input[name="notificationElId"]').value;
+  const el = tEl.parentElement!.parentElement!.parentElement!;
+  const id =
+    el.querySelector<HTMLInputElement>('input[name="notificationElId"]')!.value;
   el.remove();
   socket.send(
-    JSON.stringify({ type: 'notification', data: { id }, action: 'read' })
+    JSON.stringify({ type: 'notification', data: { id }, action: 'read' }),
   );
 };
 
@@ -124,14 +119,14 @@ const markNotificationAsRead = (e: Event) => {
 const deleteAllNotifications = (e: Event) => {
   e.preventDefault();
   const user = Number(
-    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
+    notificationContainer!.querySelector<HTMLInputElement>('#userIdInput')!.value,
   );
   socket.send(
     JSON.stringify({
       type: 'notification',
       action: 'deleteAll',
       data: { user },
-    })
+    }),
   );
 };
 
@@ -144,32 +139,35 @@ const deleteAllNotifications = (e: Event) => {
 const markAllNotificationAsRead = (e: Event) => {
   e.preventDefault();
   const user = Number(
-    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
+    notificationContainer!.querySelector<HTMLInputElement>('#userIdInput')!.value,
   );
   socket.send(
-    JSON.stringify({ type: 'notification', action: 'readAll', data: { user } })
+    JSON.stringify({ type: 'notification', action: 'readAll', data: { user } }),
   );
 };
 
-
 const loadAllNotifications = () => {
   const user = Number(
-    notificationContainer.querySelector<HTMLInputElement>('#userIdInput').value
+    notificationContainer!.querySelector<HTMLInputElement>('#userIdInput')!.value,
   );
   socket.send(
-    JSON.stringify({ type: 'notification', action: 'loadAll', data: { user } })
+    JSON.stringify({ type: 'notification', action: 'loadAll', data: { user } }),
   );
 };
 
 /**
- *
  * @param {string} title
  * @param {string} content
  * @param {string} time
  * @param {string} id
  * @returns {string}
  */
-const notification = (title: string, content: string, time: string, id: string): string => `
+const notification = (
+  title: string,
+  content: string,
+  time: string,
+  id: string,
+): string => `
       <div id="notificationElement" class=" flex w-full justify-between p-2 rounded-md bg-gray-950 text-white">
         <input type="hidden" name="notificationId" value="${id}" id="notificationElId">
         <div class="flex flex-col gap-y-2">
@@ -222,7 +220,7 @@ modificationSubmitForm.addEventListener('submit', async (e) => {
   });
   const res = await req.json();
   if (res.success) {
-    window.location.reload();
+    globalThis.location.reload();
   }
   notificationPush(notificationsComponent.error('something went wrong'));
 });
@@ -283,7 +281,8 @@ userName.addEventListener('keyup', async (e) => {
   if (regex.test(tEl.value)) {
     submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
-    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${tEl.value}" have majuscule or space</span>`;
+    const errorMessage =
+      `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">"${tEl.value}" have majuscule or space</span>`;
     userName.insertAdjacentHTML('afterend', errorMessage);
     return;
   }
@@ -295,7 +294,8 @@ userName.addEventListener('keyup', async (e) => {
     console.log('user exist');
     submissionBtn.disabled = true;
     userName.classList.add('wrong-data');
-    const errorMessage = `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">username is not valid</span>`;
+    const errorMessage =
+      `<span class=" mt-1 text-red-500 font-bold" id="componentErrorForm">username is not valid</span>`;
     userName.insertAdjacentHTML('afterend', errorMessage);
     return;
   }
@@ -319,7 +319,7 @@ userIMG.addEventListener('click', (e) => {
 inputFile.addEventListener('change', async (e) => {
   e.preventDefault();
   const tEl = e.currentTarget as HTMLInputElement;
-  const file = tEl.files[0];
+  const file = tEl.files![0];
   if (file) {
     const form = new FormData();
     form.append('file', file);
@@ -334,14 +334,14 @@ inputFile.addEventListener('change', async (e) => {
       console.log(data);
       userIMG.src = data.file;
       notificationPush(
-        notificationsComponent.success('your profile has been updated!')
+        notificationsComponent.success('your profile has been updated!'),
       );
       inputFile.value = '';
       return;
     }
 
     notificationPush(
-      notificationsComponent.error('something went wrong please try again')
+      notificationsComponent.error('something went wrong please try again'),
     );
     return;
   }
@@ -355,7 +355,7 @@ closeNotificationPanel.addEventListener('click', (e) => {
 
 notificationShower.addEventListener('click', (e) => {
   e.preventDefault();
-  if (notificationContainer.childNodes.length > 0) {
+  if (notificationContainer!.childNodes.length > 0) {
     notificationShower.dispatchEvent(new Event('updateNotifications'));
   }
   notificationPanel.classList.remove('transNotificationHide');
@@ -364,7 +364,7 @@ notificationShower.addEventListener('click', (e) => {
 
 notificationShower.addEventListener(
   'updateNotifications',
-  markAllNotificationAsRead
+  markAllNotificationAsRead,
 );
 
 document.addEventListener('DOMContentLoaded', loadAllNotifications);
@@ -408,7 +408,7 @@ socket.addEventListener('message', async (e) => {
       const updatesNumber = els.filter((up) => up.seen === false).length;
       if (updatesNumber > 0) {
         notificationPush(
-          notificationsComponent.info('you have new notifications')
+          notificationsComponent.info('you have new notifications'),
         );
         if (notificationBadge.classList.contains('hide')) {
           notificationBadge.classList.remove('hide');
@@ -418,78 +418,81 @@ socket.addEventListener('message', async (e) => {
               ? `${Number(notificationsNumber) + updatesNumber}`
               : '99+';
         }
-        notificationBadge.innerHTML =
-          updatesNumber < 99 ? updatesNumber.toString() : '99+';
+        notificationBadge.innerHTML = updatesNumber < 99
+          ? updatesNumber.toString()
+          : '99+';
       }
       els.forEach((el) => {
-        notificationContainer.insertAdjacentHTML(
+        notificationContainer!.insertAdjacentHTML(
           'beforeend',
-          notification(el.title, el.content, el.time, el.id.toString())
+          notification(el.title!, el.content, el.time, el.id.toString()),
         );
       });
-      notificationContainer
-        .querySelectorAll('#notificationElement')
+      notificationContainer!
+        .querySelectorAll('#notificationElement')!
         .forEach((el) => {
-          el.querySelector('#notificationActivityOptions').addEventListener(
+          el.querySelector('#notificationActivityOptions')!.addEventListener(
             'mouseenter',
-            notificationShowOptions
+            notificationShowOptions,
           );
-          el.querySelector('#notificationActivityOptions').addEventListener(
+          el.querySelector('#notificationActivityOptions')!.addEventListener(
             'mouseleave',
-            notificationHideOptions
+            notificationHideOptions,
           );
-          el.querySelector('#notificationOptionSup').addEventListener(
+          el.querySelector('#notificationOptionSup')!.addEventListener(
             'click',
-            deleteNotification
+            deleteNotification,
           );
-          el.querySelector('#notificationOptionMark').addEventListener(
+          el.querySelector('#notificationOptionMark')!.addEventListener(
             'click',
-            markNotificationAsRead
+            markNotificationAsRead,
           );
-          el.querySelector('#notificationOptionSupAll').addEventListener(
+          el.querySelector('#notificationOptionSupAll')!.addEventListener(
             'click',
-            deleteAllNotifications
+            deleteAllNotifications,
           );
         });
     }
 
     if (evData.action && evData.action === 'update') {
-      const updatesNumber =
-        Number(notificationBadge.innerText.split('+')[0]) + 1;
+      const updatesNumber = Number(notificationBadge.innerText.split('+')[0]) +
+        1;
       notificationPush(
-        notificationsComponent.info('you have new notification')
+        notificationsComponent.info('you have new notification'),
       );
       if (notificationBadge.classList.contains('hide')) {
         notificationBadge.classList.remove('hide');
-        notificationBadge.innerHTML =
-          updatesNumber < 99 ? updatesNumber.toString() : '99+';
+        notificationBadge.innerHTML = updatesNumber < 99
+          ? updatesNumber.toString()
+          : '99+';
       }
-      notificationBadge.innerHTML =
-        updatesNumber < 99 ? updatesNumber.toString() : '99+';
-      notificationContainer.insertAdjacentHTML(
+      notificationBadge.innerHTML = updatesNumber < 99
+        ? updatesNumber.toString()
+        : '99+';
+      notificationContainer!.insertAdjacentHTML(
         'afterbegin',
-        notification(evData.title, evData.content, evData.time, evData.id)
+        notification(evData.title, evData.content, evData.time, evData.id),
       );
-      notificationContainer
-        .querySelector('#notificationElement')
-        .querySelector('#notificationActivityOptions')
+      notificationContainer!
+        .querySelector('#notificationElement')!
+        .querySelector('#notificationActivityOptions')!
         .addEventListener('mouseenter', notificationShowOptions);
-      notificationContainer
-        .querySelector('#notificationElement')
-        .querySelector('#notificationActivityOptions')
+      notificationContainer!
+        .querySelector('#notificationElement')!
+        .querySelector('#notificationActivityOptions')!
         .addEventListener('mouseleave', notificationHideOptions);
-      notificationContainer
-        .querySelector('#notificationElement')
-        .querySelector('#notificationOptionSup')
+      notificationContainer!
+        .querySelector('#notificationElement')!
+        .querySelector('#notificationOptionSup')!
         .addEventListener('click', deleteNotification);
-      notificationContainer
-        .querySelector('#notificationElement')
-        .querySelector('#notificationOptionMark')
+      notificationContainer!
+        .querySelector('#notificationElement')!
+        .querySelector('#notificationOptionMark')!
         .addEventListener('click', markNotificationAsRead);
       notificationPush(
         notificationsComponent.success(
-          `${evData.title} <br/> ${evData.content}`
-        )
+          `${evData.title} <br/> ${evData.content}`,
+        ),
       );
     }
     notificationPush(notificationsComponent.info(evData.data));

@@ -2,7 +2,7 @@
 <link
   nonce="<%= locals.cspNonce %>"
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/DoniLite/CSS@latest/md.css"
+  href="https://cdn.jsdelivr.net/gh/DoniLite/TrickCSS@latest/md.css"
 />
 <link
   nonce="<%= locals.cspNonce %>"
@@ -23,7 +23,7 @@
 <script
   nonce="<%= locals.cspNonce %>"
   type="module"
-  src="https://cdn.jsdelivr.net/gh/DoniLite/CSS@latest/md.js"
+  src="https://cdn.jsdelivr.net/gh/DoniLite/TrickCSS@latest/md.js"
 ></script>
 <script type="module" src="/static/all.min.js" nonce="<%= locals.cspNonce %>"></script>
 <script nonce="<%= locals.cspNonce %>">
@@ -83,5 +83,4 @@
     rawHeaderNav.classList.remove('translate-x-[200%]');
   });
 </script>
-<%- include('footer', {bg: 'bg-gray-950', text: 'text-white',
-title:'text-gray-400'}) %>
+<%- include('footer', {bg: 'bg-gray-950', text: 'text-white',title:'text-gray-400'}) %>

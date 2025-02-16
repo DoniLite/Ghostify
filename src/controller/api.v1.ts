@@ -1,4 +1,4 @@
-import { BodyXData, QueryXData } from 'index';
+import { type BodyXData, type QueryXData } from '../@types/index.d.ts';
 import {
   compareHash,
   encrypt,
@@ -7,14 +7,16 @@ import {
   loadKeys,
   Service,
   unify,
-} from '../utils';
-import { tokenGenerator } from '../server';
-import { prismaClient } from '../config/db';
-import { SuperUser } from '../class/SuperUser';
-import { Can } from '../utils';
-import { Request, Response } from 'express';
-import path from 'node:path';
-import { logger } from '../logger';
+  Can,
+} from '../utils.ts';
+import { tokenGenerator } from '../server.ts';
+import { prismaClient } from '../config/db.ts';
+import { SuperUser } from '../class/SuperUser.ts';
+// @deno-types="@types/express"
+import { type Request, type Response } from 'express';
+// import path from 'node:path';
+import { logger } from '../logger.ts';
+import process from "node:process";
 
 const SUPER_USER_PASS_CODE = process.env.SUPER_USER_PASS_CODE;
 
@@ -26,8 +28,9 @@ interface PosterQuery {
 }
 
 export const authController = async (req: Request, res: Response) => {
-  const { login, password, permission, defaultRoot } =
-    req.body as BodyXData<PosterQuery>;
+  const { login, password, permission, defaultRoot } = req.body as BodyXData<
+    PosterQuery
+  >;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   console.log(req.body);
   req.session.Auth = {
@@ -41,15 +44,15 @@ export const authController = async (req: Request, res: Response) => {
 
   const user = emailRegex.test(login)
     ? await prismaClient.user.findUnique({
-        where: {
-          email: login,
-        },
-      })
+      where: {
+        email: login,
+      },
+    })
     : await prismaClient.user.findUnique({
-        where: {
-          username: login,
-        },
-      });
+      where: {
+        username: login,
+      },
+    });
 
   if (!user) {
     const spltPass = password.split(';');
@@ -71,8 +74,8 @@ export const authController = async (req: Request, res: Response) => {
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
         req.session.Token = encrypt(
           cookieExpriration.getTime().toString(),
-          req.session.ServerKeys.secretKey,
-          req.session.ServerKeys.iv
+          req.session!.ServerKeys!.secretKey,
+          req.session!.ServerKeys!.iv,
         );
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
@@ -87,7 +90,7 @@ export const authController = async (req: Request, res: Response) => {
             ' and' +
             password +
             ' credentials',
-          e
+          e,
         );
         res.status(404).send('error during service connection');
         return;
@@ -99,13 +102,13 @@ export const authController = async (req: Request, res: Response) => {
         ' and' +
         password +
         ' credentials',
-      [login, password, permission, defaultRoot]
+      [login, password, permission, defaultRoot],
     );
     res.status(404).send('error during service connection');
     return;
   }
 
-  const verifiedPassword = await compareHash(password, user.password);
+  const verifiedPassword = await compareHash(password, user.password!);
 
   // const truePassword = decrypt(
   //   user.password,
@@ -124,16 +127,16 @@ export const authController = async (req: Request, res: Response) => {
       isSuperUser: false,
       login: login,
       id: user.id,
-      file: user.file,
-      username: user.username,
-      fullname: user.fullname,
+      file: user.file!,
+      username: user.username!,
+      fullname: user.fullname!,
     };
     const cookieExpriration = new Date();
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
       cookieExpriration.getTime().toString(),
-      req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv
+      req.session!.ServerKeys!.secretKey,
+      req.session!.ServerKeys!.iv,
     );
     console.log('before cookie setting');
     res.cookie('connection_time', req.session.Token, {
@@ -159,7 +162,7 @@ export const authController = async (req: Request, res: Response) => {
       ' and' +
       password +
       ' credentials',
-    [login, password, permission, defaultRoot]
+    [login, password, permission, defaultRoot],
   );
   res.status(403).send('Not Matching Issue');
   return;
@@ -175,14 +178,14 @@ export const serviceHome = async (req: Request, res: Response) => {
   cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
   req.session.Token = encrypt(
     cookieExpriration.getTime().toString(),
-    req.session.ServerKeys.secretKey,
-    req.session.ServerKeys.iv
+    req.session!.ServerKeys!.secretKey,
+    req.session!.ServerKeys!.iv,
   );
   res.cookie('connection_time', req.session.Token, {
     expires: cookieExpriration,
   });
 
-  if (!req.session.Auth.authenticated || !req.session.Auth) {
+  if (!req.session!.Auth!.authenticated || !req.session.Auth) {
     res.status(403).send('you cannot access to this service');
     return;
   }
@@ -238,13 +241,13 @@ export const serviceHome = async (req: Request, res: Response) => {
 
   const userDocs = req.session.Auth.id
     ? await prismaClient.document.findMany({
-        where: {
-          userId: req.session.Auth.id,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      })
+      where: {
+        userId: req.session.Auth.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
     : [];
 
   const recentDocs = await prismaClient.post.findMany({
@@ -278,18 +281,20 @@ interface TempLinkQuery {
   forTemp: number;
 }
 
-export const tempLinkGenerator = async (req: Request, res: Response) => {
-  const { service, forTemp } =
-    req.query as unknown as QueryXData<TempLinkQuery>;
+export const tempLinkGenerator = (req: Request, res: Response) => {
+  const { service, forTemp } = req.query as unknown as QueryXData<
+    TempLinkQuery
+  >;
   const date = new Date();
   date.setHours(date.getHours() + Number(forTemp));
   const expiration = date.getTime();
   const token = encrypt(
     expiration.toString(),
-    req.session.ServerKeys.secretKey,
-    req.session.ServerKeys.iv
+    req.session!.ServerKeys!.secretKey,
+    req.session!.ServerKeys!.iv,
   );
-  const linkPayload = `https//gostify.site/register?service=${service}&token=${token}`;
+  const linkPayload =
+    `https//gostify.site/register?service=${service}&token=${token}`;
   res.send(linkPayload);
 };
 
@@ -299,7 +304,7 @@ interface Register {
   defailtRoot: string;
 }
 
-export const registrationView = async (req: Request, res: Response) => {
+export const registrationView = (req: Request, res: Response) => {
   const { service, defailtRoot } = req.query as unknown as QueryXData<Register>;
 
   console.log(service);
@@ -344,11 +349,12 @@ interface RegisterPost {
 }
 
 export const registrationController = async (req: Request, res: Response) => {
-  const { service, email, password, defaultRoot, fullname } =
-    req.body as BodyXData<RegisterPost>;
+  const { service, email, password, defaultRoot, fullname } = req
+    .body as BodyXData<RegisterPost>;
 
-  if (process.env.NODE_ENV !== 'production')
+  if (process.env.NODE_ENV !== 'production') {
     console.log(email, password, service);
+  }
 
   if (!service || !email || !password) throw new Error('Invalid credentials');
 
@@ -375,8 +381,8 @@ export const registrationController = async (req: Request, res: Response) => {
       cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
       req.session.Token = encrypt(
         cookieExpriration.getTime().toString(),
-        req.session.ServerKeys.secretKey,
-        req.session.ServerKeys.iv
+        req.session!.ServerKeys!.secretKey,
+        req.session!.ServerKeys!.iv,
       );
       res.cookie('connection_time', req.session.Token, {
         expires: cookieExpriration,
@@ -386,7 +392,7 @@ export const registrationController = async (req: Request, res: Response) => {
         return;
       }
       res.redirect(
-        `/service?userId=${req.session.Auth.login}&service=${service}`
+        `/service?userId=${req.session.Auth.login}&service=${service}`,
       );
       return;
     } catch (e) {
@@ -417,8 +423,8 @@ export const registrationController = async (req: Request, res: Response) => {
       if (user) {
         req.session.Auth = {
           authenticated: true,
-          fullname: user.fullname,
-          username: user.username,
+          fullname: user.fullname!,
+          username: user.username!,
           id: user.id,
           login: user.email,
           isSuperUser: false,
@@ -427,8 +433,8 @@ export const registrationController = async (req: Request, res: Response) => {
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
         req.session.Token = encrypt(
           cookieExpriration.getTime().toString(),
-          req.session.ServerKeys.secretKey,
-          req.session.ServerKeys.iv
+          req.session!.ServerKeys!.secretKey,
+          req.session!.ServerKeys!.iv,
         );
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
@@ -438,7 +444,7 @@ export const registrationController = async (req: Request, res: Response) => {
           return;
         }
         res.redirect(
-          `/service?userId=${req.session.Auth.id}&service=${service}`
+          `/service?userId=${req.session!.Auth.id}&service=${service}`,
         );
         return;
       }
@@ -470,15 +476,15 @@ export const registrationController = async (req: Request, res: Response) => {
           id: user.id,
           login: user.email,
           isSuperUser: false,
-          fullname: user.fullname,
-          username: user.username,
+          fullname: user.fullname!,
+          username: user.username!,
         };
         const cookieExpriration = new Date();
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
         req.session.Token = encrypt(
           cookieExpriration.getTime().toString(),
-          req.session.ServerKeys.secretKey,
-          req.session.ServerKeys.iv
+          req.session!.ServerKeys!.secretKey,
+          req.session!.ServerKeys!.iv,
         );
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
@@ -488,7 +494,7 @@ export const registrationController = async (req: Request, res: Response) => {
           return;
         }
         res.redirect(
-          `/service?userId=${req.session.Auth.id}&service=${service}`
+          `/service?userId=${req.session!.Auth.id}&service=${service}`,
         );
         return;
       }
@@ -521,15 +527,15 @@ export const registrationController = async (req: Request, res: Response) => {
           id: user.id,
           login: user.email,
           isSuperUser: false,
-          fullname: user.fullname,
-          username: user.username,
+          fullname: user.fullname!,
+          username: user.username!,
         };
         const cookieExpriration = new Date();
         cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
         req.session.Token = encrypt(
           cookieExpriration.getTime().toString(),
-          req.session.ServerKeys.secretKey,
-          req.session.ServerKeys.iv
+          req.session!.ServerKeys!.secretKey,
+          req.session!.ServerKeys!.iv,
         );
         res.cookie('connection_time', req.session.Token, {
           expires: cookieExpriration,
@@ -543,7 +549,7 @@ export const registrationController = async (req: Request, res: Response) => {
           return;
         }
         res.redirect(
-          `/service?userId=${req.session.Auth.id}&service=${service}`
+          `/service?userId=${req.session!.Auth.id}&service=${service}`,
         );
         return;
       }
@@ -555,7 +561,7 @@ export const registrationController = async (req: Request, res: Response) => {
   throw new Error('Something went wrong');
 };
 
-export const connexion = async (req: Request, res: Response) => {
+export const connexion =  (req: Request, res: Response) => {
   const { service, defaultRoot } = req.query as QueryXData<{
     service: Service;
     defaultRoot: string;
@@ -576,7 +582,7 @@ export const connexion = async (req: Request, res: Response) => {
   res.render('signin', { service: service });
 };
 
-export const disconnection = async (req: Request, res: Response) => {
+export const disconnection =  (req: Request, res: Response) => {
   req.session.Auth = {
     authenticated: false,
   };
@@ -605,7 +611,7 @@ export const parserRoute = async (req: Request, res: Response) => {
     res
       .status(400)
       .send(
-        JSON.stringify({ message: 'Missing required fields', success: false })
+        JSON.stringify({ message: 'Missing required fields', success: false }),
       );
     return;
   }
@@ -644,18 +650,18 @@ export const googleAuth = async (req: Request, res: Response) => {
   req.session.Auth = {
     authenticated: true,
     isSuperUser: false,
-    id: authUser.id,
-    username: authUser.username,
-    fullname: authUser.fullname,
-    file: authUser.file,
-    login: authUser.email,
+    id: authUser?.id!,
+    username: authUser?.username!,
+    fullname: authUser?.fullname!,
+    file: authUser?.file!,
+    login: authUser?.email!,
   };
   const cookieExpriration = new Date();
   cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
   req.session.Token = encrypt(
     cookieExpriration.getTime().toString(),
     req.session.ServerKeys.secretKey,
-    req.session.ServerKeys.iv
+    req.session.ServerKeys.iv,
   );
   res.cookie('connection_time', req.session.Token, {
     expires: cookieExpriration,
@@ -669,7 +675,7 @@ export const googleAuth = async (req: Request, res: Response) => {
   //   file: user.file,
   // };
   console.log(req.session.RedirectUrl);
-  if(req.session.RedirectUrl) {
+  if (req.session.RedirectUrl) {
     console.log(req.session.RedirectUrl);
     res.redirect(req.session.RedirectUrl);
   }

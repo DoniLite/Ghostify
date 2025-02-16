@@ -76,7 +76,7 @@ export enum MODELS_NAMES {
  * @returns {Promise<CategoryConfig[]>}
  */
 const extendTrainingDataConfig = async (
-  configs: CategoryConfig[]
+  configs: CategoryConfig[],
 ): Promise<CategoryConfig[]> => {
   const newConfigs: CategoryConfig[] = [];
   for (const config of configs) {
@@ -110,17 +110,17 @@ const extendTrainingDataConfig = async (
 
 export const initDatasets = async (customPath?: string) => {
   const cvEducationConfig_v2 = await extendTrainingDataConfig(
-    cvEducationConfig
+    cvEducationConfig,
   );
   const cvSoftSkillsConfig_v2 = await extendTrainingDataConfig(
-    cvSoftSkillsConfig
+    cvSoftSkillsConfig,
   );
   const cvTechnicalConfig_v2 = await extendTrainingDataConfig(
-    cvTechnicalConfig
+    cvTechnicalConfig,
   );
   const techBlogConfig_v2 = await extendTrainingDataConfig(techBlogConfig);
   const tutorialBlogConfig_v2 = await extendTrainingDataConfig(
-    tutorialBlogConfig
+    tutorialBlogConfig,
   );
   manager.generateDatasetContent('cv-education', cvEducationConfig_v2);
   manager.generateDatasetContent('cv-soft', cvSoftSkillsConfig_v2);
@@ -130,7 +130,7 @@ export const initDatasets = async (customPath?: string) => {
   manager.createDataset(DATASETS_NAMES.CV, 'CV dataset for the training model');
   manager.createDataset(
     DATASETS_NAMES.BLOG,
-    'Blog dataset for the training model'
+    'Blog dataset for the training model',
   );
   manager.mergeDatasets(DATASETS_NAMES.CV, [
     'cv-technical',
@@ -155,15 +155,15 @@ export const initDatasets = async (customPath?: string) => {
 
 const actionFn = (toDo: 'train' | 'test') => {
   const model = args.model;
-  const epochs =
-    args.epochs && !args.epochs.includes(',') ? Number(args.epochs) : null;
-  const epochsSlice =
-    args.epochs && args.epochs.split(',').length > 1
-      ? {
-          start: Number(args.epochs.split(',')[0]),
-          end: Number(args.epochs.split(',')[1]),
-        }
-      : null;
+  const epochs = args.epochs && !args.epochs.includes(',')
+    ? Number(args.epochs)
+    : null;
+  const epochsSlice = args.epochs && args.epochs.split(',').length > 1
+    ? {
+      start: Number(args.epochs.split(',')[0]),
+      end: Number(args.epochs.split(',')[1]),
+    }
+    : null;
   const dataset = args.dataset;
   const saveModelName = args.saveModel;
 
@@ -171,13 +171,13 @@ const actionFn = (toDo: 'train' | 'test') => {
     case MODELS_NAMES.CV_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.CV_CLASSIFIER,
-        path.resolve(__dirname, '../src/ATS/models')
+        path.resolve(__dirname, '../src/ATS/models'),
       );
       break;
     case MODELS_NAMES.BLOG_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.BLOG_CLASSIFIER,
-        path.resolve(__dirname, '../src/ATS/models')
+        path.resolve(__dirname, '../src/ATS/models'),
       );
       break;
     default:
@@ -189,14 +189,14 @@ const actionFn = (toDo: 'train' | 'test') => {
       manager.loadDataset(
         DATASETS_NAMES.CV,
         DATASETS_NAMES.CV,
-        path.resolve(__dirname, '../src/ATS/datasets')
+        path.resolve(__dirname, '../src/ATS/datasets'),
       );
       break;
     case DATASETS_NAMES.BLOG:
       manager.loadDataset(
         DATASETS_NAMES.BLOG,
         DATASETS_NAMES.BLOG,
-        path.resolve(__dirname, '../src/ATS/datasets')
+        path.resolve(__dirname, '../src/ATS/datasets'),
       );
       break;
 
@@ -210,7 +210,7 @@ const actionFn = (toDo: 'train' | 'test') => {
     (model === MODELS_NAMES.CV_CLASSIFIER && dataset !== DATASETS_NAMES.CV)
   ) {
     throw new Error(
-      'The provided dataset is not valid with the provided model'
+      'The provided dataset is not valid with the provided model',
     );
   }
 
@@ -222,14 +222,14 @@ const actionFn = (toDo: 'train' | 'test') => {
       for (const data of testData) {
         const result = classifier.class(data);
         console.log(
-          `test classification result ${result} for the entry ${data}`
+          `test classification result ${result} for the entry ${data}`,
         );
       }
     },
     train: () => {
       const trainData = manager.getDataFromDataset(
         dataset,
-        epochs || epochsSlice || undefined
+        epochs || epochsSlice || undefined,
       );
       for (let i = 0; i < trainData.length; i++) {
         classifier.add([trainData[i].text, trainData[i].category]);
@@ -239,12 +239,12 @@ const actionFn = (toDo: 'train' | 'test') => {
         switch (saveModelName) {
           case MODELS_NAMES.CV_CLASSIFIER:
             console.log(
-              `no model provided but saved model detected ${saveModelName}`
+              `no model provided but saved model detected ${saveModelName}`,
             );
             break;
           case MODELS_NAMES.BLOG_CLASSIFIER:
             console.log(
-              `no model provided but saved model detected ${saveModelName}`
+              `no model provided but saved model detected ${saveModelName}`,
             );
             break;
           default:
@@ -254,7 +254,7 @@ const actionFn = (toDo: 'train' | 'test') => {
       classifier.train();
       const savedModel = classifier.stringify(
         model || saveModelName,
-        path.resolve(__dirname, '../src/ATS/models')
+        path.resolve(__dirname, '../src/ATS/models'),
       );
       if (savedModel) {
         console.log(`model: ${model || saveModelName} saved successfully`);

@@ -15,9 +15,8 @@ export const translator = async (req: Request, res: Response) => {
     return;
   }
 
-  const data =
-    typeof from !== 'undefined'
-      ? await useTranslator(text, { to, from })
-      : await useTranslator(text, { to });
+  const data = typeof from !== 'undefined'
+    ? await useTranslator(text, { to, from })
+    : await useTranslator(text, { to });
   res.status(200).json({ data });
 };

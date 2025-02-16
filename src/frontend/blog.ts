@@ -1,11 +1,8 @@
-import 'vite/modulepreload-polyfill';
-
 const allArticlesInthePah = document.querySelectorAll('#articleToFetch');
 const allCategories = document.querySelectorAll('#categoryLoader');
 const defaultContainer = document.querySelector('#defaultArticContainer');
 
 /**
- *
  * @param {Event} e
  */
 const uriReplacer = async (e: Event) => {
@@ -20,7 +17,7 @@ const uriReplacer = async (e: Event) => {
     const res = await fetch(`/article/get?id=${id}&api=${true}&data=url`);
     if (!res.ok) {
       const rmFetcher = await fetch(
-        `/article/update?updateType=remove&id=${id}`
+        `/article/update?updateType=remove&id=${id}`,
       );
       const rmData = await rmFetcher.json();
       console.log(rmData);
@@ -28,10 +25,10 @@ const uriReplacer = async (e: Event) => {
     }
     const data = await res.json();
     const newUrl = data.url;
-    window.location.href = newUrl;
+    globalThis.location.href = newUrl;
     return;
   }
-  window.location.href = url;
+  globalThis.location.href = url;
 };
 
 const returnErrorComponent = (err: string) => {
@@ -42,7 +39,6 @@ const returnErrorComponent = (err: string) => {
 };
 
 /**
- *
  * @param {Event} e
  */
 const categoryUpdater = async (e: {
@@ -71,20 +67,20 @@ const categoryUpdater = async (e: {
    */
   const el = e.currentTarget as HTMLElement;
   const category = el.dataset.category;
-  const childs = defaultContainer.childNodes;
+  const childs = defaultContainer!.childNodes;
   childs.forEach((child) => {
     child.remove();
   });
-  defaultContainer.insertAdjacentHTML('beforeend', loader);
-  const loaderEl = defaultContainer.querySelector('#postLoader');
+  defaultContainer?.insertAdjacentHTML('beforeend', loader);
+  const loaderEl = defaultContainer!.querySelector('#postLoader');
   const res = await fetch(`/articles/by_category?category=${category}`);
   if (!res.ok) {
-    loaderEl.remove();
-    defaultContainer.insertAdjacentHTML(
+    loaderEl?.remove();
+    defaultContainer!.insertAdjacentHTML(
       'beforeend',
       returnErrorComponent(
         `Une erreur est survenue...🥲 <br> ${res.statusText}`
-      )
+      ) as string,
     );
     return;
   }
@@ -93,14 +89,16 @@ const categoryUpdater = async (e: {
     | { error: boolean; message: string };
   const data = (await res.json()) as DataRes;
   if (!Array.isArray(data)) {
-    loaderEl.remove();
-    defaultContainer.insertAdjacentHTML(
+    loaderEl?.remove();
+    defaultContainer!.insertAdjacentHTML(
       'beforeend',
-      returnErrorComponent(`Une erreur est survenue...🥲 <br> ${data.message}`)
+      returnErrorComponent(
+        `Une erreur est survenue...🥲 <br> ${data.message}`
+      ) as string
     );
     return;
   }
-  loaderEl.remove();
+  loaderEl?.remove();
   data.forEach((el) => {
     const component = `
         <article
@@ -128,20 +126,22 @@ const categoryUpdater = async (e: {
               </a>
 
               <div class="mt-4 flex flex-wrap gap-1">
-                ${el.slug.map((slugEl) => {
-                  return `
+                ${
+      el.slug.map((slugEl) => {
+        return `
                     <span
                         class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-xs text-purple-600 dark:bg-purple-600 dark:text-purple-100"
                     >
                         ${slugEl}
                     </span>
                     `;
-                }).join('')}
+      }).join('')
+    }
               </div>
             </div>
         </article>
     `;
-    defaultContainer.insertAdjacentHTML('beforeend', component);
+    defaultContainer!.insertAdjacentHTML('beforeend', component);
   });
 };
 

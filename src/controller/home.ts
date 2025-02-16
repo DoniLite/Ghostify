@@ -1,6 +1,7 @@
 // import { client } from "../config/db";
+// @ts-types="@types/express"
 import { RequestHandler } from 'express';
-import { BodyXData, FetchFn } from 'index';
+import { BodyXData, FetchFn } from '../@types/index.d.ts';
 
 export const homeController: RequestHandler = async (req, res) => {
   const { storageData } = req.body as BodyXData;
@@ -13,8 +14,8 @@ export const homeController: RequestHandler = async (req, res) => {
   }
 
   if (typeof storageData === 'string') {
-    req.session.Services.Platform.API = true;
-    req.session.Services.Platform.externals = true;
+    req.session!.Services!.Platform!.API = true;
+    req.session!.Services!.Platform!.externals = true;
     res.send(JSON.stringify({ persisted: true }));
     return;
   }

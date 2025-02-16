@@ -1,9 +1,11 @@
+// @ts-types="@types/formidable"
 import { IncomingForm } from 'formidable';
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { BodyXData } from 'index';
+// import { BodyXData } from '../@types/index.d.ts';
 import path from 'node:path';
-import { renaming } from '../utils';
-import { prismaClient } from '../config/db';
+import { renaming } from '../utils.ts';
+import { prismaClient } from '../config/db.ts';
 
 export const comment = async (req: Request, res: Response) => {
   const STATIC_DIR = `../../static/comments`;
@@ -18,10 +20,11 @@ export const comment = async (req: Request, res: Response) => {
       return mimetype && mimetype.includes('image');
     },
   });
-  let pointerId: number;
-  let comment: string;
-  let pointerType: 'user' | 'post' | 'comment' | 'article' | 'project';
-  let result: string | false;
+  let pointerId: number | null = null;
+  let comment: string | null = null;
+  let pointerType: 'user' | 'post' | 'comment' | 'article' | 'project' | null =
+    null;
+  let result: string | false = false;
   const [fields, files] = await form.parse(req);
   const file = files?.commentFile?.[0];
   for (const field in fields) {
@@ -59,7 +62,7 @@ export const comment = async (req: Request, res: Response) => {
   }
 
   switch (pointerType) {
-    case 'user':
+    case 'user': {
       const user = await prismaClient.user.update({
         where: {
           id: pointerId,
@@ -71,7 +74,8 @@ export const comment = async (req: Request, res: Response) => {
               file: (result as string) || null,
               isAnActu: true,
               isForumPost: true,
-              author: req.session.Auth.username || req.session.Auth.fullname,
+              author:
+                req.session!.Auth!.username || req.session!.Auth!.fullname,
             },
           },
         },
@@ -80,8 +84,10 @@ export const comment = async (req: Request, res: Response) => {
         },
       });
       res.status(200).json({ success: true, user });
-      return;
-    case 'post':
+      break;
+    }
+
+    case 'post': {
       const post = await prismaClient.post.update({
         where: {
           id: pointerId,
@@ -91,8 +97,9 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
-              author: req.session.Auth.username || req.session.Auth.fullname,
-              userId: req.session.Auth.id,
+              author:
+                req.session!.Auth!.username || req.session!.Auth!.fullname,
+              userId: req.session!.Auth!.id,
             },
           },
         },
@@ -101,8 +108,9 @@ export const comment = async (req: Request, res: Response) => {
         },
       });
       res.status(200).json({ success: true, post });
-      return;
-    case 'comment':
+      break;
+    }
+    case 'comment': {
       const reply = await prismaClient.comment.update({
         where: {
           id: pointerId,
@@ -112,8 +120,9 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
-              author: req.session.Auth.username || req.session.Auth.fullname,
-              userId: req.session.Auth.id,
+              author:
+                req.session!.Auth!.username || req.session!.Auth!.fullname,
+              userId: req.session!.Auth!.id,
             },
           },
         },
@@ -122,8 +131,9 @@ export const comment = async (req: Request, res: Response) => {
         },
       });
       res.status(200).json({ success: true, reply });
-      return;
-    case 'article':
+      break;
+    }
+    case 'article': {
       const article = await prismaClient.post.update({
         where: {
           id: pointerId,
@@ -133,8 +143,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
-              author: req.session.Auth.username || req.session.Auth.fullname,
-              userId: req.session.Auth.id,
+              author: req.session!.Auth!.username || req.session!.Auth!.fullname,
+              userId: req.session!.Auth!.id,
             },
           },
         },
@@ -143,8 +153,9 @@ export const comment = async (req: Request, res: Response) => {
         },
       });
       res.status(200).json({ success: true, article });
-      return;
-    case 'project':
+      break;
+    }
+    case 'project': {
       const project = await prismaClient.project.update({
         where: {
           id: pointerId,
@@ -154,8 +165,8 @@ export const comment = async (req: Request, res: Response) => {
             create: {
               content: comment,
               file: (result as string) || null,
-              author: req.session.Auth.username || req.session.Auth.fullname,
-              userId: req.session.Auth.id,
+              author: req.session!.Auth!.username || req.session!.Auth!.fullname,
+              userId: req.session!.Auth!.id,
             },
           },
         },
@@ -164,7 +175,8 @@ export const comment = async (req: Request, res: Response) => {
         },
       });
       res.status(200).json({ success: true, project });
-      return;
+      break;
+    }
     default:
       res.status(400).json({ message: 'Invalid pointer type' });
       return;

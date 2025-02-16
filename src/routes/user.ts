@@ -26,7 +26,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     try {
       const result = await renaming(
         file,
-        path.resolve(__dirname, STATIC_DIR)
+        path.resolve(__dirname, STATIC_DIR),
       );
       if (result === false) {
         res
@@ -34,12 +34,11 @@ export const updateProfile = async (req: Request, res: Response) => {
           .json({ message: 'Error while renaming profile picture' });
         return;
       }
-      const fileXPathService =
-        process.env.NODE_ENV === 'production'
-          ? 'https://ghostify.site/staticFile/' +
-            tokenGenerator(`users/${result}`)
-          : 'http://localhost:3085/staticFile/' +
-            tokenGenerator(`users/${result}`);
+      const fileXPathService = process.env.NODE_ENV === 'production'
+        ? 'https://ghostify.site/staticFile/' +
+          tokenGenerator(`users/${result}`)
+        : 'http://localhost:3085/staticFile/' +
+          tokenGenerator(`users/${result}`);
       const updatedUser = await prismaClient.user.update({
         where: {
           id: Number(req.session.Auth.id),

@@ -1,14 +1,17 @@
-import { Request, Response } from 'express';
-import { QueryXData } from 'index';
-import { tokenGenerator } from '../server';
+// @ts-types="@types/express"
+import { type Request, type Response } from 'express';
+import { type QueryXData } from '../@types/index.d.ts';
+import { tokenGenerator } from '../server.ts';
 import path from 'node:path';
 import fs from 'node:fs';
-import { prismaClient } from '../config/db';
+import { prismaClient } from '../config/db.ts';
 import { randomInt } from 'node:crypto';
-import { loadSecurityBearer, verifySecurity } from '../utils';
-import { logger } from '../logger';
+import { loadSecurityBearer, verifySecurity } from '../utils.ts';
+import { logger } from '../logger.ts';
+import process from "node:process";
 
 const API_PORT = process.env.NODE_ENV === 'production' ? 8080 : 8000;
+
 
 export const internDocCreator = async (req: Request, res: Response) => {
   const { userId, filePath, docType } = req.query as QueryXData<{
@@ -30,22 +33,20 @@ export const internDocCreator = async (req: Request, res: Response) => {
         id: true,
       },
     });
-    const doc =
-      typeof docType === 'undefined'
-        ? date.getTime().toString()
-        : date.getTime().toString() + docType;
-    const docServicePath =
-      process.env.NODE_ENV === 'production'
-        ? 'https://ghostify.site/downloader/' +
-          tokenGenerator(`downloads/doc/${doc}`)
-        : 'http://localhost:3085/downloader/' +
-          tokenGenerator(`downloads/doc/${doc}`);
+    const doc = typeof docType === 'undefined'
+      ? date.getTime().toString()
+      : date.getTime().toString() + docType;
+    const docServicePath = process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/downloader/' +
+        tokenGenerator(`downloads/doc/${doc}`)
+      : 'http://localhost:3085/downloader/' +
+        tokenGenerator(`downloads/doc/${doc}`);
     fs.renameSync(filePath, path.join(DOCUMENT_DIR, doc));
     const newDoc = await prismaClient.document.create({
       data: {
         uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
         type: docType || 'doc',
-        userId: user.id,
+        userId: user?.id,
         downloadLink: docServicePath,
       },
     });
@@ -55,7 +56,7 @@ export const internDocCreator = async (req: Request, res: Response) => {
     res.status(400).send('Invalid user ID');
     logger.error(
       `error during the creation of the document for the user ${userId}`,
-      e
+      e,
     );
     return;
   }
@@ -78,15 +79,15 @@ interface ApiToken {
 export const internalTokenGenerator = async (req: Request, res: Response) => {
   const { Auth } = req.session;
 
-  if (!Auth.authenticated) {
+  if (!Auth!.authenticated) {
     res.status(403).json({ message: 'not authenticated' });
     return;
   }
 
   try {
-    const user: TokenClaimModel = await prismaClient.user.findUnique({
+    const user = (await prismaClient.user.findUnique({
       where: {
-        id: Auth.id,
+        id: Auth!.id,
         apiAccess: true,
       },
       select: {
@@ -97,7 +98,7 @@ export const internalTokenGenerator = async (req: Request, res: Response) => {
         cvCredits: true,
         posterCredits: true,
       },
-    });
+    })) as TokenClaimModel;
     if (!user) {
       res.status(403).json({ message: 'not authorized' });
       return;
@@ -138,7 +139,7 @@ export const internalTokenGenerator = async (req: Request, res: Response) => {
     const { token, type } = await prismaClient.key.create({
       data: {
         token: resContent.access_token,
-        userId: Auth.id,
+        userId: Auth!.id,
         type: 'ApiKey',
       },
     });
@@ -157,7 +158,7 @@ export const internalTokenGenerator = async (req: Request, res: Response) => {
 
 export const internalSubscriptionVerify = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const { id } = req.params;
 
@@ -174,14 +175,14 @@ export const internalSubscriptionVerify = async (
     },
   });
 
-  const date = new Date(user.registration);
+  const date = new Date(user!.registration!);
 
   if (
     Date.now() < date.getTime() &&
-    user.apiAccess &&
-    user.apiCredits > 0 &&
-    user.cvCredits > 0 &&
-    user.posterCredits > 0
+    user!.apiAccess &&
+    user!.apiCredits > 0 &&
+    user!.cvCredits > 0 &&
+    user!.posterCredits > 0
   ) {
     res.status(200).json({ message: 'subscription not expired' });
     return;

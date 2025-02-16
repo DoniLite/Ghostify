@@ -7,7 +7,7 @@ import {
 } from '../utils';
 
 export const stats = async (
-  url: string
+  url: string,
 ) => {
   // const headers = req.raw.headers;
   const stats = await loadStatistics();

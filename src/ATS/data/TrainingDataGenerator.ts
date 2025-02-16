@@ -106,7 +106,7 @@ export class TrainingDataManager {
       this.generator.addCategory(
         config.category,
         config.baseWords,
-        config.contextTemplates
+        config.contextTemplates,
       );
     });
 
@@ -128,10 +128,10 @@ export class TrainingDataManager {
     const jsonData = JSON.stringify(dataset, null, 2);
     fs.writeFileSync(
       path.join(customPath || DATASETS_PATH, `${name}.json`),
-      jsonData
+      jsonData,
     );
     console.log(
-      `Dataset ${id} saved to ${path.join(DATASETS_PATH, `${name}.json`)}`
+      `Dataset ${id} saved to ${path.join(DATASETS_PATH, `${name}.json`)}`,
     );
   }
 
@@ -147,7 +147,7 @@ export class TrainingDataManager {
   // Obtenir des exemples filtrés par catégorie
   getExamplesByCategory(
     datasetId: string,
-    category: string
+    category: string,
   ): TrainingExample[] {
     const dataset = this.datasets.get(datasetId);
     if (!dataset) {

@@ -1,14 +1,14 @@
-import 'vite/modulepreload-polyfill';
-
-const actionBtn = document.querySelector('#posterNewAction');
-const closerBtn = document.querySelector('#actionCloser');
-const rawHeaderNav = document.querySelector('#rawHeaderNav');
-const NavCloserBtn = document.querySelector('#NavCloserBtn');
-const rawHeadIcon = document.querySelector('#rawHeadIcon');
+const actionBtn = document.querySelector('#posterNewAction')!;
+const closerBtn = document.querySelector('#actionCloser')!;
+const rawHeaderNav = document.querySelector('#rawHeaderNav')!;
+const NavCloserBtn = document.querySelector('#NavCloserBtn')!;
+const rawHeadIcon = document.querySelector('#rawHeadIcon')!;
 /**
  * @type {HTMLElement}
  */
-const docRequester: HTMLElement = document.querySelector('#newDocumentRequester');
+const docRequester: HTMLElement = document.querySelector(
+  '#newDocumentRequester',
+)!;
 
 actionBtn.addEventListener('click', (e) => {
   e.preventDefault();

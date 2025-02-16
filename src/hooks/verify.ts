@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import jwt from 'jsonwebtoken'
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
 const protectedRoutes = [
   '/api/v1',
@@ -14,21 +14,21 @@ const protectedRoutes = [
 ];
 
 export const verify = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization
-    // console.log(token);
-    let decoded
-    if (protectedRoutes.includes(req.url)) {
-        if(!token || typeof token !== 'string') {
-            res.status(403).json({error: 'Access denied'});
-            next();
-        }
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.session.Token = decoded as string;
-        } catch (e) {
-            console.error(e);
-        };
-        next();
+  const token = req.headers.authorization;
+  // console.log(token);
+  let decoded;
+  if (protectedRoutes.includes(req.url)) {
+    if (!token || typeof token !== 'string') {
+      res.status(403).json({ error: 'Access denied' });
+      next();
+    }
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.session.Token = decoded as string;
+    } catch (e) {
+      console.error(e);
     }
     next();
-}
+  }
+  next();
+};

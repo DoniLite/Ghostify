@@ -1,9 +1,7 @@
-import { Request, Response } from "express";
-
-
+import { Request, Response } from 'express';
 
 export const documentView = async (req: Request, res: Response) => {
-    res.render('documentInput', {
-        service: 'poster'
-    });
-}
+  res.render('documentInput', {
+    service: 'poster',
+  });
+};

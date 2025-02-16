@@ -31,7 +31,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async runActorsAndGetOutputs<CrawlerOutPuts>(
     input: CrawlerInput,
-    runtimeOptions?: RuntimeOptions
+    runtimeOptions?: RuntimeOptions,
   ): Promise<CrawlerOutPuts[]> {
     const run = await this.#client.actor(ACTOR_ID).call(input);
 
@@ -52,13 +52,13 @@ export class ApifyCustomClient implements CrawlerClient {
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
     return {
       data: items,
-      ...run
+      ...run,
     } as T;
   }
 
   async crawlerBuilder(
     versionNumber: string,
-    crawlOptions?: ActorBuildOptions
+    crawlOptions?: ActorBuildOptions,
   ): Promise<Builder> {
     const build = await this.#client.build(versionNumber);
     const buildGeted = await build.get(crawlOptions);
@@ -81,7 +81,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getRequestQueue(
     id: string,
-    options?: RequestQueueUserOptions
+    options?: RequestQueueUserOptions,
   ): Promise<RequestQueueClient> {
     const requestQueueClient = await this.#client.requestQueue(id, options);
     return requestQueueClient;
@@ -99,7 +99,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getVersionClient(
     actorId: string,
-    versionNumber: string
+    versionNumber: string,
   ): Promise<ActorVersionClient> {
     const run = this.#client.actor(actorId);
     const version = run.version(versionNumber);
@@ -128,7 +128,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getStoreValue<T extends keyof unknown>(
     id: string,
-    key: string
+    key: string,
   ): Promise<StoreValue<T> | undefined> {
     const store = await this.#client.keyValueStore(id);
     const verify = await store.recordExists(key);

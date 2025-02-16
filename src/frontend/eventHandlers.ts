@@ -1,28 +1,18 @@
-import 'vite/modulepreload-polyfill';
-/**
- *
- * @param {Event} e
- */
+
 export const removeItemList = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLElement;
-  /**
-   * @type {Element}
-   */
   const parent = el.parentElement;
-  const secondParent = parent.parentElement;
-  const thirdParent = secondParent.parentElement;
-  const elList = thirdParent.querySelectorAll('.vl-parent');
+  const secondParent = parent!.parentElement;
+  const thirdParent = secondParent!.parentElement;
+  const elList = thirdParent!.querySelectorAll('.vl-parent')!;
   if (elList.length <= 1) {
     return;
   }
-  parent.remove();
+  parent?.remove();
 };
 
-/**
- *
- * @param {Event} e
- */
+
 export const addListItem = (e: Event) => {
   e.preventDefault();
   /**
@@ -33,7 +23,7 @@ export const addListItem = (e: Event) => {
   /**
    * @type {HTMLElement}
    */
-  const lastParent = firstParent.parentElement;
+  const lastParent = firstParent!.parentElement!;
   const listItemComponent = `
           <div
             data-index="1"
@@ -55,21 +45,20 @@ export const addListItem = (e: Event) => {
           </div>
 `;
   lastParent
-    .querySelector('.lst-component')
+    .querySelector('.lst-component')!
     .insertAdjacentHTML('beforeend', listItemComponent);
   /**
    * @type {Element[]}
    */
   lastParent
-    .querySelector('.lst-component')
-    .querySelectorAll('#listRemoveBtn')
+    .querySelector('.lst-component')!
+    .querySelectorAll('#listRemoveBtn')!
     .forEach((el) => {
       el.addEventListener('click', removeItemList);
     });
 };
 
 /**
- *
  * @param {Event} e
  */
 export const removeFormation = (e: Event) => {
@@ -78,9 +67,9 @@ export const removeFormation = (e: Event) => {
   /**
    * @type {Element}
    */
-  const parent = el.parentElement;
-  const secondParent = parent.parentElement;
-  const thirdParent = secondParent.parentElement;
+  const parent = el.parentElement!;
+  const secondParent = parent.parentElement!;
+  const thirdParent = secondParent.parentElement!;
   const elList = thirdParent.querySelectorAll('.vl-parent');
   if (elList.length <= 1) {
     return;
@@ -89,20 +78,19 @@ export const removeFormation = (e: Event) => {
 };
 
 /**
- *
  * @param {MouseEvent} e
  */
-export const addFormation = (e: MouseEvent) => {
+export const addFormation = (e: Event) => {
   e.preventDefault();
   /**
    * @type {EventTarget}
    */
   const el = e.currentTarget as HTMLElement;
-  const firstParent = el.parentElement;
+  const firstParent = el.parentElement!;
   /**
    * @type {HTMLElement}
    */
-  const lastParent = firstParent.parentElement;
+  const lastParent = firstParent.parentElement!;
   const listItemComponent = `
           <div
             data-index="1"
@@ -140,55 +128,47 @@ export const addFormation = (e: MouseEvent) => {
           </div>
 `;
   lastParent
-    .querySelector('.lst-component')
+    .querySelector('.lst-component')!
     .insertAdjacentHTML('beforeend', listItemComponent);
-  /**
-   * @type {Element[]}
-   */
+  
   lastParent
-    .querySelector('.lst-component')
-    .querySelectorAll('#listRemoveBtn')
+    .querySelector('.lst-component')!
+    .querySelectorAll('#listRemoveBtn')!
     .forEach((el) => {
       el.addEventListener('click', removeFormation);
     });
 
   lastParent
-    .querySelector('.lst-component')
-    .querySelectorAll('#formationInput')
+    .querySelector('.lst-component')!
+    .querySelectorAll('#formationInput')!
     .forEach((el) => {
       el.addEventListener('change', formationTrigger);
     });
 };
 
 /**
- *
  * @param {MouseEvent} e
  */
-export const addTask = (e: MouseEvent) => {
+export const addTask = (e: Event) => {
   e.preventDefault();
-  /**
-   * @type {EventTarget}
-   */
   const el = e.currentTarget as HTMLElement;
-  const firstParent = el.parentElement;
-  /**
-   * @type {HTMLElement}
-   */
-  const lastParent = firstParent.parentElement;
+  const firstParent = el.parentElement!;
+  const lastParent = firstParent.parentElement!;
   const inputNumber = lastParent.querySelectorAll('#taskInput').length;
   const mainInputValue =
-    lastParent.parentElement.querySelector<HTMLInputElement>('#experienceInput').value;
-  lastParent.parentElement
-    .querySelector('#experienceInput')
+    lastParent.parentElement!.querySelector<HTMLInputElement>('#experienceInput')!
+      .value;
+  lastParent.parentElement!
+    .querySelector('#experienceInput')!
     .setAttribute(
       'data-group',
       `${
         Number(
-          lastParent.parentElement.querySelector<HTMLInputElement>(
-            '#experienceInput'
-          ).dataset.group
+          lastParent.parentElement!.querySelector<HTMLInputElement>(
+            '#experienceInput',
+          )!.dataset.group,
         ) + 1
-      }`
+      }`,
     );
   const listItemComponent = `
           <div
@@ -235,42 +215,30 @@ export const addTask = (e: MouseEvent) => {
   });
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const removeTask = (e: MouseEvent) => {
+
+export const removeTask = (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
   const el = e.currentTarget as HTMLElement;
-  const firstParent = el.parentElement;
-  const secondParent = firstParent.parentElement;
+  const firstParent = el.parentElement!;
+  const secondParent = firstParent.parentElement!;
   if (secondParent.querySelectorAll('.vl-parent').length <= 1) {
     return;
   }
   firstParent.remove();
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const addExperience = (e: MouseEvent) => {
+
+export const addExperience = (e: Event) => {
   e.preventDefault();
 
   e.preventDefault();
-  /**
-   * @type {EventTarget}
-   */
   const el = e.currentTarget as HTMLElement;
-  const firstParent = el.parentElement;
-  const secondParent = firstParent.parentElement;
-  /**
-   * @type {HTMLElement}
-   */
-  const lastParent = secondParent.parentElement;
+  const firstParent = el.parentElement!;
+  const secondParent = firstParent.parentElement!;
+  const lastParent = secondParent.parentElement!;
   const listItemComponent = `
       <div id="" class="experienceGroupEl w-full mx-auto p-3 justify-center items-center">
         <div class="flex justify-between items-center w-full lg:p-2">
@@ -329,7 +297,7 @@ export const addExperience = (e: MouseEvent) => {
       </div>
 `;
   lastParent
-    .querySelector('#move')
+    .querySelector('#move')!
     .insertAdjacentHTML('beforebegin', listItemComponent);
   /**
    * @type {Element[]}
@@ -348,68 +316,51 @@ export const addExperience = (e: MouseEvent) => {
   });
 };
 
-/**
- *
- * @param {InputEvent} e
- */
-export const experienceTrigger = (e: InputEvent) => {
+
+export const experienceTrigger = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLInputElement;
-  /**
-   * @type {HTMLElement}
-   */
-  const parent = el.parentElement.parentElement;
-  parent.querySelectorAll('#taskInput').forEach((input, id) => {
+  const parent = el.parentElement!.parentElement!;
+  parent.querySelectorAll('#taskInput')!.forEach((input, id) => {
     input.setAttribute('name', `task-${el.value}-${id + 1}`);
   });
-  parent.querySelectorAll('#taskDateInput').forEach((input, id) => {
+  parent.querySelectorAll('#taskDateInput')!.forEach((input, id) => {
     input.setAttribute('name', `taskDate-${el.value}-${id + 1}`);
   });
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const removeExperience = (e: MouseEvent) => {
+
+export const removeExperience = (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
   const el = e.currentTarget as HTMLElement;
-  const firstParent = el.parentElement;
-  const secondParent = firstParent.parentElement;
+  const firstParent = el.parentElement!;
+  const secondParent = firstParent.parentElement!;
   secondParent.remove();
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const removeLanguage = (e: MouseEvent) => {
+
+export const removeLanguage = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLElement;
   if (
-    el.parentElement.parentElement.querySelectorAll('.vl-parent')
+    el.parentElement!.parentElement!.querySelectorAll('.vl-parent')
       .length <= 1
-  )
+  ) {
     return;
-  el.parentElement.remove();
+  }
+  el.parentElement!.remove();
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const addLanguage = (e: MouseEvent) => {
+
+export const addLanguage = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLElement;
-  const parent = el.parentElement;
-  /**
-   * @type {HTMLElement}
-   */
-  const secondParent = parent.parentElement;
-  secondParent.querySelector('.lst-component').insertAdjacentHTML(
+  const parent = el.parentElement!;
+  const secondParent = parent.parentElement!;
+  secondParent.querySelector('.lst-component')!.insertAdjacentHTML(
     'beforeend',
     `
           <div
@@ -440,7 +391,7 @@ export const addLanguage = (e: MouseEvent) => {
               ></i>
             </div>
           </div>
-    `
+    `,
   );
   secondParent.querySelectorAll('#languageRemoveBtn').forEach((el) => {
     el.addEventListener('click', removeLanguage);
@@ -451,33 +402,28 @@ export const addLanguage = (e: MouseEvent) => {
   });
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const removeInterest = (e: MouseEvent) => {
+
+export const removeInterest = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLElement;
   if (
-    el.parentElement.parentElement.querySelectorAll('.vl-parent')
+    el.parentElement!.parentElement!.querySelectorAll('.vl-parent')
       .length <= 1
-  )
+  ) {
     return;
-  el.parentElement.remove();
+  }
+  el.parentElement!.remove();
 };
 
-/**
- *
- * @param {MouseEvent} e
- */
-export const addInterest = (e: MouseEvent) => {
+
+export const addInterest = (e: Event) => {
   e.preventDefault();
   /**
    * @type {HTMLElement}
    */
   const el = e.currentTarget as HTMLElement;
-  const parent = el.parentElement.parentElement;
-  parent.querySelector('.lst-component').insertAdjacentHTML(
+  const parent = el.parentElement!.parentElement!;
+  parent.querySelector('.lst-component')!.insertAdjacentHTML(
     'beforeend',
     `
           <div
@@ -498,18 +444,15 @@ export const addInterest = (e: MouseEvent) => {
               ></i>
             </div>
           </div>
-    `
+    `,
   );
   parent.querySelectorAll('#interestRemoveBtn').forEach((el) => {
     el.addEventListener('click', removeInterest);
   });
 };
 
-/**
- *
- * @param {InputEvent} e
- */
-export const formationTrigger = (e: InputEvent) => {
+
+export const formationTrigger = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLInputElement;
   /**
@@ -520,27 +463,24 @@ export const formationTrigger = (e: InputEvent) => {
   /**
    * @type {HTMLElement}
    */
-  const parent = el.parentElement;
+  const parent = el.parentElement!;
   /**
    * @type {HTMLInputElement}
    */
-  const cert = parent.querySelector('#certificateInput');
+  const cert = parent.querySelector('#certificateInput')!;
   /**
    * @type {HTMLInputElement}
    */
-  const certDate = parent.querySelector('#certificationDateInput');
+  const certDate = parent.querySelector('#certificationDateInput')!;
   cert.setAttribute('name', `certificate-${content}`);
   certDate.setAttribute('name', `certificationDate-${content}`);
 };
 
-/**
- *
- * @param {InputEvent} e
- */
-export const languageTrigger = (e: InputEvent) => {
+
+export const languageTrigger = (e: Event) => {
   e.preventDefault();
   const el = e.currentTarget as HTMLInputElement;
-  el.parentElement
-    .querySelector('#languageOption')
+  el.parentElement!
+    .querySelector('#languageOption')!
     .setAttribute('name', `languageLevel-${el.value}`);
 };

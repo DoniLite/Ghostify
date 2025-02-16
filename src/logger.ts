@@ -21,13 +21,13 @@ export const logger = winston.createLogger({
         return `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}`;
       }
       return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-    })
+    }),
   ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.simple(),
       ),
     }),
     new winston.transports.File({

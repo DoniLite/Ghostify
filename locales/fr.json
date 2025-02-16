@@ -1,35 +1,35 @@
 {
-	"home": {
-		"welcome": "Publiez vos articles, créez un CV, convertissez vos documents et rejoignez notre forum."
-	},
-	"project": {
-		"title": "Consultez mon compte github pour trouver la documentation nécéssaire à l'usage, au partage et la participation des projets et outils présents dans cette gallerie de projets. Pour plus d'information référez vous à la documentation depuis la plateforme appropriée",
-		"notice": "Sachez que chacun de ces projets sont munis d'une license et régits par des droits particuliers. Veuillez les lire avant usage."
-	},
-	"meta": {
-		"firstH": "Présentez votre site au monde entier",
-        "formPlaceholder": "Ajouter votre site à notre référenciel ⚡",
-		"secondH": "Notre référenciel contient des milliers de sites et utilise un algorithme performant afin de veuiller à la mise à jour des données. Ces données sont récupérer depuis vos sites et utilisés selon certaines conditions légales. Nous vous donnons autant un moyen de vous faire de découvrir au monde entier et de nous aider à développer nos outils de scraping et de crawling à travers le web pour vous propser davantage de meilleurs ressources pour votre business.",
-		"thirdH": "Rejoindre l'abonnement Poster",
-        "thirdHSec": "Ou souscrire à une promotion",
-		"thirdHDesc": "Vous pouvez créer des publications et les partager à tous ceux que vous souhaitez . Pensez à les promouvoir pour permettre à tous les visiteurs de voir vos mises à jour.",
-		"top": "Les tops de la semaine",
-		"likable": "Vous pourriez aussi aimer ceux-ci"
-	},
-	"blog": {
-		"intro": "Bienvenue dans le monde fascinant de la programmation et des technologies modernes. Que vous soyez un développeur expérimenté ou novice passionné, vous trouverez ici des articles enrichissants, des tutoriels pratiques, et des astuces pour améliorer vos compétences!... Ou votre savoir tout simplement",
-		"popular": "Les plus consultés...",
-		"category": "categories"
-	},
-	"game": {
-		"intro": "Découvrez une panoplie de jeux passionnants",
-        "ressource": "Consulter la ressource",
-        "empty": "Aucune ressource, api ou module pour l'instant...",
-        "emptyApps": "Il n'y pas d'apps dans le store actuellement 🥲 nous vous ferons découvrir de nouvelles dans le futur 😇"
-	},
-    "footer": {
-        "copyright": "�� 2023 Ghostify. Tous droits réservés.",
-        "privacy": "Politique de confidentialité",
-        "terms": "Termes et conditions d'utilisation"
-    }
+  "home": {
+    "welcome": "Publiez vos articles, créez un CV, convertissez vos documents et rejoignez notre forum."
+  },
+  "project": {
+    "title": "Consultez mon compte github pour trouver la documentation nécéssaire à l'usage, au partage et la participation des projets et outils présents dans cette gallerie de projets. Pour plus d'information référez vous à la documentation depuis la plateforme appropriée",
+    "notice": "Sachez que chacun de ces projets sont munis d'une license et régits par des droits particuliers. Veuillez les lire avant usage."
+  },
+  "meta": {
+    "firstH": "Présentez votre site au monde entier",
+    "formPlaceholder": "Ajouter votre site à notre référenciel ⚡",
+    "secondH": "Notre référenciel contient des milliers de sites et utilise un algorithme performant afin de veuiller à la mise à jour des données. Ces données sont récupérer depuis vos sites et utilisés selon certaines conditions légales. Nous vous donnons autant un moyen de vous faire de découvrir au monde entier et de nous aider à développer nos outils de scraping et de crawling à travers le web pour vous propser davantage de meilleurs ressources pour votre business.",
+    "thirdH": "Rejoindre l'abonnement Poster",
+    "thirdHSec": "Ou souscrire à une promotion",
+    "thirdHDesc": "Vous pouvez créer des publications et les partager à tous ceux que vous souhaitez . Pensez à les promouvoir pour permettre à tous les visiteurs de voir vos mises à jour.",
+    "top": "Les tops de la semaine",
+    "likable": "Vous pourriez aussi aimer ceux-ci"
+  },
+  "blog": {
+    "intro": "Bienvenue dans le monde fascinant de la programmation et des technologies modernes. Que vous soyez un développeur expérimenté ou novice passionné, vous trouverez ici des articles enrichissants, des tutoriels pratiques, et des astuces pour améliorer vos compétences!... Ou votre savoir tout simplement",
+    "popular": "Les plus consultés...",
+    "category": "categories"
+  },
+  "game": {
+    "intro": "Découvrez une panoplie de jeux passionnants",
+    "ressource": "Consulter la ressource",
+    "empty": "Aucune ressource, api ou module pour l'instant...",
+    "emptyApps": "Il n'y pas d'apps dans le store actuellement 🥲 nous vous ferons découvrir de nouvelles dans le futur 😇"
+  },
+  "footer": {
+    "copyright": "�� 2023 Ghostify. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Termes et conditions d'utilisation"
+  }
 }

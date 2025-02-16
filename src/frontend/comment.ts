@@ -1,5 +1,5 @@
-import 'vite/modulepreload-polyfill';
-import { notificationPush, notificationsComponent } from './notifications.js';
+
+import { notificationPush, notificationsComponent } from './notifications.ts';
 
 /**
  * Initialise les événements pour un composant spécifique.
@@ -7,12 +7,13 @@ import { notificationPush, notificationsComponent } from './notifications.js';
  */
 const initializeComponent = (componentElement: HTMLElement) => {
   const fileControl = componentElement.querySelector<HTMLElement>(
-    '.commentFileControl'
+    '.commentFileControl',
   );
-  const fileInput =
-    componentElement.querySelector<HTMLInputElement>('.commentFileInput');
+  const fileInput = componentElement.querySelector<HTMLInputElement>(
+    '.commentFileInput',
+  );
   const formElement = componentElement.querySelector<HTMLFormElement>(
-    '.commentFormElement'
+    '.commentFormElement',
   );
 
   /**
@@ -30,8 +31,8 @@ const initializeComponent = (componentElement: HTMLElement) => {
     if (response.status === 200) {
       notificationPush(
         notificationsComponent.success(
-          'your comment has been posted successfully'
-        )
+          'your comment has been posted successfully',
+        ),
       );
     }
   };
@@ -45,7 +46,7 @@ const initializeComponent = (componentElement: HTMLElement) => {
     fileInput.addEventListener('change', (e) => {
       e.preventDefault();
       const tFile = e.currentTarget as HTMLInputElement;
-      const file = tFile.files[0];
+      const file = tFile.files![0];
       if (file) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -65,16 +66,16 @@ const initializeComponent = (componentElement: HTMLElement) => {
               />
             </div>
           `;
-          formElement.insertAdjacentHTML('beforeend', component);
+          formElement?.insertAdjacentHTML('beforeend', component);
 
           // Gestion de suppression locale
-          formElement.querySelectorAll('#removeFile').forEach((el) => {
+          formElement?.querySelectorAll('#removeFile').forEach((el) => {
             el.addEventListener('click', (e) => {
               e.preventDefault();
               const tEl = e.currentTarget as HTMLElement;
-              tEl.parentElement.remove();
+              tEl.parentElement?.remove();
               fileInput.files = null;
-              fileInput.value = null;
+              fileInput.value = '';
             });
           });
         };
@@ -90,6 +91,6 @@ const initializeComponent = (componentElement: HTMLElement) => {
 // Initialisation globale
 document
   .querySelectorAll('.commentComponent')
-  .forEach((componentElement: HTMLElement) => {
-    initializeComponent(componentElement);
+  .forEach((componentElement) => {
+    initializeComponent(componentElement as HTMLElement);
   });

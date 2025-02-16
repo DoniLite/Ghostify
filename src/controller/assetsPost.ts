@@ -1,6 +1,7 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { BodyXData } from '../@types';
-import { prismaClient } from '../config/db';
+import { BodyXData } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
 import crypto from 'node:crypto';
 
 interface Assets {
@@ -17,10 +18,9 @@ export const assetPoster = async (req: Request, res: Response) => {
       title: title,
       type: type,
       content: content,
-      uid:
-        typeof uid === 'undefined'
-          ? crypto.randomBytes(80).toString('hex')
-          : uid,
+      uid: typeof uid === 'undefined'
+        ? crypto.randomBytes(80).toString('hex')
+        : uid,
     },
   });
   res.send(JSON.stringify({ assetLink: `/asset?ref=${newAsset.uid}` }));

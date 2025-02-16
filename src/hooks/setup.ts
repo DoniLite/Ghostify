@@ -1,5 +1,13 @@
 import { prismaClient } from '../config/db';
-import { compareHash, conditionsMD, FAQMD, hashSomething, privacyMD, termsMD, unify } from '../utils';
+import {
+  compareHash,
+  conditionsMD,
+  FAQMD,
+  hashSomething,
+  privacyMD,
+  termsMD,
+  unify,
+} from '../utils';
 
 const SETUP_ASSETS = Boolean(process.env.SETUP_ASSETS);
 const uids = [
@@ -7,10 +15,10 @@ const uids = [
   'conditions',
   'policy',
   'FAQ',
-] as const 
+] as const;
 
 export const setUp = async (
-  generator?: (payload: string) => string
+  generator?: (payload: string) => string,
 ) => {
   const login = process.env.ADMIN_LOGIN;
   const password = await hashSomething(process.env.ADMIN_PASSWORD);
@@ -40,37 +48,37 @@ export const setUp = async (
       },
     }),
   ].forEach(async (el, i) => {
-    let htmlString
-    if(uids[i] === 'FAQ') {
+    let htmlString;
+    if (uids[i] === 'FAQ') {
       htmlString = await unify(FAQMD);
     }
-    if(uids[i] === 'conditions') {
+    if (uids[i] === 'conditions') {
       htmlString = await unify(conditionsMD);
     }
-    if(uids[i] === 'policy') {
+    if (uids[i] === 'policy') {
       htmlString = await unify(privacyMD);
     }
-    if(uids[i] === 'terms') {
+    if (uids[i] === 'terms') {
       htmlString = await unify(termsMD);
     }
-    if(!el) {
+    if (!el) {
       await prismaClient.assets.create({
         data: {
           type: 'Page',
           uid: uids[i],
           title: `Ghostify | ${uids[i]}`,
-          content: htmlString
+          content: htmlString,
         },
       });
     }
-    if(SETUP_ASSETS) {
+    if (SETUP_ASSETS) {
       await prismaClient.assets.update({
         where: {
           uid: uids[i],
         },
         data: {
           content: htmlString,
-        }
+        },
       });
     }
   });
@@ -92,7 +100,10 @@ export const setUp = async (
     });
     return;
   }
-  const compareResult = await compareHash(password, verifyIfadminPresent.password)
+  const compareResult = await compareHash(
+    password,
+    verifyIfadminPresent.password,
+  );
   if (compareResult) {
     console.log('Updating...');
     await prismaClient.admin.update({

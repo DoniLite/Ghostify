@@ -1,20 +1,27 @@
 'use strict';
+// @ts-types="@types/express"
 import express from 'express';
+// ts-types="@types/ejs"
 import ejs from 'ejs';
+// ts-types="@types/body-parser"
 import bodyParser from 'body-parser';
+// @ts-types="@types/express-session"
 import session from 'express-session';
+// @ts-types="@types/cookie-parser"
 import cookie from 'cookie-parser';
-import { prismaClient } from './config/db';
-import { ReqParams } from './@types';
+import { prismaClient } from './config/db.ts';
+import { ReqParams } from './@types/index.d.ts';
+// @ts-types="@types/cors"
 import cors from 'cors';
-import { home } from './routes/home';
-import { homeController } from './controller/home';
+import { home } from './routes/home.ts';
+import { homeController } from './controller/home.ts';
 import dotEnv from 'dotenv';
+// @ts-types="@types/jsonwebtoken"
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { store } from './controller/store';
-import { notifications } from './controller/notifications';
-import { webhooks } from './controller/webhooks';
-import { sessionStorageHook } from './hooks/sessionStorage';
+import { store } from './controller/store.ts';
+import { notifications } from './controller/notifications.ts';
+import { webhooks } from './controller/webhooks.ts';
+import { sessionStorageHook } from './hooks/sessionStorage.ts';
 import {
   about,
   conditions,
@@ -22,12 +29,12 @@ import {
   license,
   policy,
   terms,
-} from './routes/assets';
+} from './routes/assets.ts';
 // import { stats } from './hooks/statCounter';
-import { articlePost } from './controller/articlePost';
-import { projectPost } from './controller/projectPost';
-import { blog } from './routes/blog';
-import { on, EventEmitter } from 'node:events';
+import { articlePost } from './controller/articlePost.ts';
+import { projectPost } from './controller/projectPost.ts';
+import { blog } from './routes/blog.ts';
+import { EventEmitter, on } from 'node:events';
 import {
   authController,
   connexion,
@@ -37,85 +44,85 @@ import {
   registrationController,
   registrationView,
   serviceHome,
-} from './controller/api.v1';
+} from './controller/api.v1.ts';
 import {
   conversionView,
-  parserController,
   docSaver,
   docView,
+  loadPost,
+  parserController,
   poster,
   requestComponent,
+  requestHeadComponent,
   requestListComponent,
   updateDocView,
-  loadPost,
-  requestHeadComponent,
-} from './routes/poster';
-import { find } from './controller/finder';
-import { assetPoster } from './controller/assetsPost';
+} from './routes/poster.ts';
+import { find } from './controller/finder.ts';
+import { assetPoster } from './controller/assetsPost.ts';
 // import fastifyRedis from '@fastify/redis';
 // import RedisStore from 'connect-redis';
-import { setUp } from './hooks/setup';
+import { setUp } from './hooks/setup.ts';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 // import { stats } from './hooks/statCounter';
-import { verify } from './hooks/verify';
+import { verify } from './hooks/verify.ts';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import i18n from 'i18n';
+// @ts-types="@types/connect-sqlite3"
 import sql3 from 'connect-sqlite3';
-import { redirector } from './hooks/redirector';
-import { projects } from './routes/project';
-import { meta } from './routes/meta';
-import { contact } from './routes/contact';
-import { apiGaming } from './routes/APIs';
+import { redirector } from './hooks/redirector.ts';
+import { projects } from './routes/project.ts';
+import { meta } from './routes/meta.ts';
+import { contact } from './routes/contact.ts';
+import { apiGaming } from './routes/APIs.ts';
+// @ts-types="@types/passport"
 import passport from 'passport';
+// @ts-types="@types/passport-google-oauth20"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { test as testRoute } from './routes/test';
+import { test as testRoute } from './routes/test.ts';
+// @ts-types="@types/express-ws"
 import expressWs from 'express-ws';
-import { checkIfUserExist, updateProfile, updateUserName } from './routes/user';
-import { downloader, serveStatic } from './routes/serveStatic';
-import { cv, processCV } from './controller/processCv';
-import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv';
+import { checkIfUserExist, updateProfile, updateUserName } from './routes/user.ts';
+import { downloader, serveStatic } from './routes/serveStatic.ts';
+import { cv, processCV } from './controller/processCv.ts';
+import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv.ts';
 import Queue from 'bull';
-import {
-  cvDownloader,
-  verifyJWT,
-  getTimeElapsed,
-} from './utils';
-import { billing } from './routes/billing';
-import { documentView } from './routes/doc';
-import { logger } from './logger';
-import { onStat } from './hooks/events';
-import { stats } from './hooks/statCounter';
-import { auth, ROUTES } from './hooks/auth';
-import { Notifications, NotificationType } from '@prisma/client/default';
-import { NotificationBus } from './class/NotificationBus';
-import { feed, reactions } from './routes/feed';
-import { comment } from './controller/comments';
-import { webfont } from './routes/fonts';
-import { translator } from './routes/translate';
+import { cvDownloader, getTimeElapsed, verifyJWT } from './utils.ts';
+import { billing } from './routes/billing.ts';
+import { documentView } from './routes/doc.ts';
+import { logger } from './logger.ts';
+import { onStat } from './hooks/events.ts';
+import { stats } from './hooks/statCounter.ts';
+import { auth, ROUTES } from './hooks/auth.ts';
+import { Notifications, NotificationType } from '@prisma/client';
+import { NotificationBus } from "./class/NotificationBus.ts";
+import { feed, reactions } from "./routes/feed.ts";
+import { comment } from "./controller/comments.ts";
+import { webfont } from './routes/fonts.ts';
+import { translator } from './routes/translate.ts';
+import process from "node:process";
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env['GOOGLE_CLIENT_ID'],
-      clientSecret: process.env['GOOGLE_CLIENT_SECRET'],
-      callbackURL:
-        process.env.NODE_ENV === 'production'
-          ? 'https://ghostify.site/login/federated/google'
-          : 'http://localhost:3085/login/federated/google',
+      clientID: process.env['GOOGLE_CLIENT_ID'] as string,
+      clientSecret: process.env['GOOGLE_CLIENT_SECRET'] as string,
+      callbackURL: process.env.NODE_ENV === 'production'
+        ? 'https://ghostify.site/login/federated/google'
+        : 'http://localhost:3085/login/federated/google',
       scope: ['profile'],
       state: true,
     },
-    async (accessToken, refreshToken, profile, cb) => {
+    async (_accessToken, _refreshToken, profile, cb) => {
       const verifEmail = profile._json.email;
       const { picture } = profile._json;
       const userId = profile.id;
-      const fullname = `${profile.name.givenName} ${profile.name.familyName}`;
+      const fullname = `${profile!.name?.givenName} ${profile!.name?.familyName}`;
       if (!verifEmail) {
         const error = new Error('User not authenticated');
-        cb(error, null);
+        cb(error, undefined);
         return;
       }
       try {
@@ -124,9 +131,9 @@ passport.use(
         });
         if (checkExistedUser && checkExistedUser.providerId !== userId) {
           const error = new Error(
-            `User ${profile.emails[0].value} already exists`
+            `User ${profile!.emails![0].value} already exists`,
           );
-          cb(error, null);
+          cb(error, undefined);
           return;
         }
         if (checkExistedUser && checkExistedUser.providerId === userId) {
@@ -145,10 +152,10 @@ passport.use(
         });
         cb(null, newUser.id);
       } catch (err) {
-        cb(err, null);
+        cb(err, undefined);
       }
-    }
-  )
+    },
+  ),
 );
 
 passport.serializeUser((userId, done) => {
@@ -225,7 +232,7 @@ server.use((req, res, next) => {
 server.use(
   rateLimit({
     max: 100,
-  })
+  }),
 );
 
 server.options('*', cors());
@@ -300,7 +307,7 @@ server.use(
         imgSrc: ["'self'", 'data:', 'https://lh3.googleusercontent.com'],
       },
     },
-  }) //+
+  }), //+
 );
 // server.use(
 //   helmet.crossOriginResourcePolicy({
@@ -316,28 +323,24 @@ server.use(
     origin: '*',
     methods: ['GET', 'PUT', 'POST'],
     credentials: true,
-  })
+  }),
 );
 server.use(
   '/static',
   express.static(path.resolve(__dirname, '../src/public'), {
     maxAge: '1d', // Définit une durée de vie du cache de 1 jour
     etag: false, // Désactive les ETags (facultatif)
-    setHeaders:
-      process.env.NODE_ENV !== 'production'
-        ? null
-        : (res) => {
-            res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
-          },
-  })
+    setHeaders: process.env.NODE_ENV !== 'production' ? null : (res) => {
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
+    },
+  }),
 );
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookie(process.env.SESSION_SECRET));
-const sessionStorePath =
-  process.env.NODE_ENV === 'production'
-    ? path.resolve('/home/ubuntu/Ghostify/sessions')
-    : path.resolve(__dirname, '../src/config');
+const sessionStorePath = process.env.NODE_ENV === 'production'
+  ? path.resolve('/home/ubuntu/Ghostify/sessions')
+  : path.resolve(__dirname, '../src/config');
 
 // Assurez-vous que le dossier existe
 fs.mkdirSync(path.dirname(sessionStorePath), { recursive: true });
@@ -350,15 +353,14 @@ server.use(
     },
     name: 'sessionId',
     store: new SQLStore({
-      db:
-        process.env.NODE_ENV === 'production'
-          ? 'sessionProduction.db'
-          : 'sessions.db',
+      db: process.env.NODE_ENV === 'production'
+        ? 'sessionProduction.db'
+        : 'sessions.db',
       dir: sessionStorePath,
     }) as session.Store,
     saveUninitialized: false,
     resave: false,
-  })
+  }),
 );
 
 server.use(sessionStorageHook);
@@ -421,7 +423,7 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use((req, res, next) => {
+server.use((req, _res, next) => {
   logger.info(`Incoming request: ${req.method} ${req.url}`);
   ee.emit('stat', req.url);
   next();
@@ -434,7 +436,7 @@ export enum SocketEventType {
   NOTIFICATION = 'notification',
 }
 // Websocket routes
-server.ws('/', async (socket) => {
+server.ws('/', (socket) => {
   const notifications = new NotificationBus();
   const eeType = notifications.eventType;
 
@@ -444,7 +446,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.MESSAGE,
         data,
-      })
+      }),
     );
   });
 
@@ -454,7 +456,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      })
+      }),
     );
   });
 
@@ -464,7 +466,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.MESSAGE,
         data,
-      })
+      }),
     );
   });
 
@@ -474,7 +476,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      })
+      }),
     );
   });
 
@@ -484,7 +486,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      })
+      }),
     );
   });
 
@@ -494,7 +496,7 @@ server.ws('/', async (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      })
+      }),
     );
   });
 
@@ -577,7 +579,7 @@ server.ws('/', async (socket) => {
                 JSON.stringify({
                   title: notification.title,
                   content: notification.content,
-                })
+                }),
               );
             }
             break;
@@ -614,7 +616,7 @@ server.ws('/', async (socket) => {
                 data: {
                   notifications: notificationsUpdates,
                 },
-              })
+              }),
             );
             break;
           }
@@ -744,12 +746,12 @@ server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
 server.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  passport.authenticate('google', { scope: ['profile', 'email'] }),
 );
 server.get(
   '/login/federated/google',
   passport.authenticate('google', { failureRedirect: '/login' }),
-  googleAuth
+  googleAuth,
 );
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
@@ -841,7 +843,7 @@ export const cvQueue = new Queue<{
 
 export const statsQueue = new Queue<string>(
   'stats-saver',
-  'redis://127.0.0.1:6379'
+  'redis://127.0.0.1:6379',
 );
 
 export const NotificationQueue = new Queue<{

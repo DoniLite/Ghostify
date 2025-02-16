@@ -18,12 +18,12 @@ interface TestQuery {
 type TestLabel = 'url' | 'random' | 'post' | 'comment' | 'chunk';
 
 export const test = async (req: Request, res: Response) => {
-  const { health, data, service, ordered, by, endpoint } =
-    req.query as unknown as QueryXData<TestQuery>;
+  const { health, data, service, ordered, by, endpoint } = req
+    .query as unknown as QueryXData<TestQuery>;
 
-    /**
-     * The boolean parsed of the `health` parameter
-     */
+  /**
+   * The boolean parsed of the `health` parameter
+   */
   let bool;
 
   if (health) {
@@ -80,7 +80,7 @@ export const test = async (req: Request, res: Response) => {
     return;
   }
 
-  if(service && endpoint) {
+  if (service && endpoint) {
     const result = await testClass.check(service, endpoint);
     if (result) {
       res.status(200).json({ success: true, message: 'Service is alive' });

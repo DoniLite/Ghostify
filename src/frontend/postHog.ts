@@ -1,4 +1,3 @@
-import 'vite/modulepreload-polyfill';
 
 // !(function (t, e) {
 //   var o, n, p, r;

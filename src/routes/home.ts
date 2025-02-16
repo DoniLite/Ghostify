@@ -22,10 +22,10 @@ export const home: RequestHandler = async (req, res) => {
 
   const userData = req.session.Auth.authenticated
     ? await prismaClient.user.findUnique({
-        where: {
-          id: req.session.Auth.id,
-        },
-      })
+      where: {
+        id: req.session.Auth.id,
+      },
+    })
     : null;
 
   if (userData) {
@@ -41,10 +41,10 @@ export const home: RequestHandler = async (req, res) => {
   const firstUserPosts =
     req.session.Auth.authenticated && typeof req.session.Auth.id === 'number'
       ? await prismaClient.post.findMany({
-          where: {
-            userId: req.session.Auth.id,
-          },
-        })
+        where: {
+          userId: req.session.Auth.id,
+        },
+      })
       : [];
 
   const userPosts = firstUserPosts.map((post) => {
@@ -56,10 +56,10 @@ export const home: RequestHandler = async (req, res) => {
   const CVs =
     req.session.Auth.authenticated && typeof req.session.Auth.id === 'number'
       ? await prismaClient.cV.findMany({
-          where: {
-            userId: req.session.Auth.id,
-          },
-        })
+        where: {
+          userId: req.session.Auth.id,
+        },
+      })
       : [];
   console.log('user posts: ', userPosts);
   console.log('session object:', req.session.Auth);
@@ -67,10 +67,9 @@ export const home: RequestHandler = async (req, res) => {
   const Theme = req.session.Theme;
 
   res.render('index', {
-    auth:
-      typeof req.session.Auth !== 'undefined'
-        ? req.session.Auth.authenticated
-        : undefined,
+    auth: typeof req.session.Auth !== 'undefined'
+      ? req.session.Auth.authenticated
+      : undefined,
     theme: Theme,
     user: req.session.Auth.username || req.session.Auth.fullname,
     userId: req.session.Auth.id || req.session.Auth.login || '',

@@ -20,10 +20,9 @@ export const feed = async (req: Request, res: Response) => {
       return;
     }
 
-    const comment =
-      typeof tryParse === 'number'
-        ? await prismaClient.comment.findUnique({ where: { id: tryParse } })
-        : await prismaClient.comment.findUnique({ where: { token: tryParse } });
+    const comment = typeof tryParse === 'number'
+      ? await prismaClient.comment.findUnique({ where: { id: tryParse } })
+      : await prismaClient.comment.findUnique({ where: { token: tryParse } });
     if (!comment) {
       res.status(404).send('Comment not found');
       return;
@@ -65,17 +64,16 @@ export const feed = async (req: Request, res: Response) => {
                 },
               })
             ).file,
-            author:
-              (
-                await prismaClient.user.findUnique({
-                  where: {
-                    id: reply.userId,
-                  },
-                  select: {
-                    username: true,
-                  },
-                })
-              ).username ||
+            author: (
+              await prismaClient.user.findUnique({
+                where: {
+                  id: reply.userId,
+                },
+                select: {
+                  username: true,
+                },
+              })
+            ).username ||
               (
                 await prismaClient.user.findUnique({
                   where: {
@@ -93,7 +91,7 @@ export const feed = async (req: Request, res: Response) => {
             }),
             reactionsLength: reply.reactions.length,
           };
-        })
+        }),
       ),
       commentsLength: replies.length,
     };
@@ -139,7 +137,7 @@ export const reactions = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     logger.error(
-      `Error in feed at ${req.url} ${Date.now().toString()}: ${error}`
+      `Error in feed at ${req.url} ${Date.now().toString()}: ${error}`,
     );
     res.status(500).send('Internal server error');
   }

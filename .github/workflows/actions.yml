@@ -3,18 +3,18 @@ run-name: ${{ github.actor }}'s GitHub Actions
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-on: 
+on:
   push:
-    branches:    
+    branches:
       - main
       - 'octocat/**'
       - 'releases/**'
       - develop
-    tags:        
+    tags:
       - v2
       - v1.*
   pull_request:
-    branches:    
+    branches:
       - main
       - 'octocat/**'
   schedule:

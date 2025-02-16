@@ -10,8 +10,9 @@ export const terms = async (req: Request, res: Response) => {
       uid: 'terms',
     },
   });
-  if (!asset)
+  if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  }
   res.render('page', {
     content: asset.content,
     title: asset.title,
@@ -35,8 +36,9 @@ export const about = async (req: Request, res: Response) => {
       uid: 'about',
     },
   });
-  if (!asset)
+  if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  }
   res.render('page', {
     content: asset.content,
     title: asset.title,
@@ -55,8 +57,9 @@ export const policy = async (req: Request, res: Response) => {
       uid: 'policy',
     },
   });
-  if (!asset)
+  if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  }
   res.render('page', {
     content: asset.content,
     title: asset.title,
@@ -75,8 +78,9 @@ export const conditions = async (req: Request, res: Response) => {
       uid: 'conditions',
     },
   });
-  if (!asset)
+  if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  }
   res.render('page', {
     content: asset.content,
     title: asset.title,
@@ -95,8 +99,9 @@ export const FAQ = async (req: Request, res: Response) => {
       uid: 'FAQ',
     },
   });
-  if (!asset)
+  if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+  }
   res.render('page', {
     content: asset.content,
     title: asset.title,

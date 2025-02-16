@@ -1,6 +1,4 @@
-import 'vite/modulepreload-polyfill';
-
-const loader = document.querySelector('#loaderHead');
+const loader = document.querySelector('#loaderHead')!;
 
 const getLoaderInfo = async () => {
   const storageData = localStorage.getItem('session');
@@ -15,7 +13,7 @@ const getLoaderInfo = async () => {
     }
     const data = await result.json();
     if (data.persisted === true) {
-      window.location.href = '/home?persisted=true';
+      globalThis.location.href = '/home?persisted=true';
       return;
     }
     throw new Error('something went wrong');
@@ -29,7 +27,7 @@ const getLoaderInfo = async () => {
   }
   const data = await result.json();
   if (data.req === true) {
-    window.location.href = '/home?noApiData=true';
+    globalThis.location.href = '/home?noApiData=true';
     return;
   }
   throw new Error('nothing matching');
@@ -39,5 +37,5 @@ try {
   await getLoaderInfo();
 } catch (e) {
   console.error(e);
-  window.location.href = '/home?noApiData=true';
+  globalThis.location.href = '/home?noApiData=true';
 }

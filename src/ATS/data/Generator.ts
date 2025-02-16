@@ -25,7 +25,7 @@ export class TrainingDataGenerator {
     categoryName: string,
     baseWords: string[],
     contextTemplates: string[] = [],
-    variations: string[] = []
+    variations: string[] = [],
   ) {
     this.categories.set(categoryName, {
       baseWords,
@@ -60,7 +60,7 @@ export class TrainingDataGenerator {
         this.variations.push(
           ...relations.synonyms,
           ...relations.hypernyms,
-          ...relations.hyponyms
+          ...relations.hyponyms,
         );
       })
       .catch((err) => {

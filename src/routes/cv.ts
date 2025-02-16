@@ -24,10 +24,9 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
       metaData: JSON.stringify(req.session.CVData),
       img: req.session.CVData.img,
       uid,
-      url:
-        process.env.NODE_ENV === 'production'
-          ? `https://ghostify.site/cv/${uid}`
-          : `http://localhost:3085/cv/${uid}`,
+      url: process.env.NODE_ENV === 'production'
+        ? `https://ghostify.site/cv/${uid}`
+        : `http://localhost:3085/cv/${uid}`,
     },
   });
   if (newCV) {
@@ -47,7 +46,7 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
     { url: newCV.url, id: newCV.id },
     {
       attempts: 5,
-    }
+    },
   );
   req.session.JobsIDs = {
     ...req.session.JobsIDs,
@@ -100,10 +99,9 @@ export const getCV = async (req: Request, res: Response) => {
     cvObject.email = data.email;
     cvObject.phoneNumber = data.phone;
     cvObject.location = data.address;
-    cvObject.birthday =
-      api && api === 'true'
-        ? format(cvDate, 'yyyy-MM-dd')
-        : format(cvDate, 'dd /MM/yyyy');
+    cvObject.birthday = api && api === 'true'
+      ? format(cvDate, 'yyyy-MM-dd')
+      : format(cvDate, 'dd /MM/yyyy');
     cvObject.profile = data.profile;
     cvObject.skills = data.skills;
     cvObject.formations = data.formations.map((formation) => ({
@@ -121,12 +119,11 @@ export const getCV = async (req: Request, res: Response) => {
     cvObject.interest = data.interest;
     cvObject.languages = data.languages.map((language) => ({
       title: language.lang,
-      css:
-        language.level === 'basique'
-          ? 'w-[30%]'
-          : language.level === 'intermédiaire'
-          ? 'w-[60%]'
-          : 'w-full',
+      css: language.level === 'basique'
+        ? 'w-[30%]'
+        : language.level === 'intermédiaire'
+        ? 'w-[60%]'
+        : 'w-full',
       level: language.level,
     }));
     if (api && api === 'true') {
@@ -261,7 +258,7 @@ export const getCVTheme = async (req: Request, res: Response) => {
       console.log(
         'theme updated successfully : ',
         updatingTheme.type,
-        updatingTheme.mode
+        updatingTheme.mode,
       );
       res.status(200).json({ success: true });
       return;

@@ -1,9 +1,10 @@
-import 'express-session';
-import { Auth, DocumentStorage, RawCV, Service, StatsData } from '.';
-import { SuperUser } from '../class/SuperUser';
+// @ts-types="@types/express-session"
+import {} from 'express-session';
+import { Auth, DocumentStorage, RawCV, Service, StatsData } from './index.d.ts';
+import { SuperUser } from '../class/SuperUser.ts';
+import { Buffer } from 'node:buffer';
 
-declare module "express-session" {
-  
+declare module 'express-session'  {
 
   interface SessionData {
     Persisted?: boolean;
@@ -52,5 +53,4 @@ declare module "express-session" {
     };
     RedirectUrl?: string;
   }
-
 }

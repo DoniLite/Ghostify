@@ -1,11 +1,12 @@
 // import { FastifyReply, FastifyRequest } from 'fastify';
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { BodyXData } from '../@types';
-import { prismaClient } from '../config/db';
+import { BodyXData } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
 
 export const articlePost = async (req: Request, res: Response) => {
-  const { title, slug, content, category, description, keys } =
-    req.body as BodyXData<{
+  const { title, slug, content, category, description, keys } = req
+    .body as BodyXData<{
       title: string;
       slug: string;
       content: string;

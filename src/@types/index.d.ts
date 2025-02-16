@@ -18,10 +18,12 @@ import {
 } from 'apify-client';
 import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
 import sharp from 'sharp';
-import { prismaClient } from '../config/db';
-import { Can } from '../utils';
+import { prismaClient } from '../config/db.ts';
+import { Can } from '../utils.ts';
 export { Post } from '@prisma/client';
-import { WebSocket as WebSocketS } from 'ws';
+// @ts-types="npm:@types/ws"
+import { type WebSocket as WebSocketS } from 'npm:ws';
+import { type Buffer } from 'node:buffer';
 
 export interface Service {
   APIs?: {
@@ -51,15 +53,11 @@ export interface Secrets {
 export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
 
 export type Inf<T extends Can[]> = T extends (infer U)[]
-  ? U extends Can.CRUD
-    ? { data: typeof prismaClient }
-    : U extends Can.CreateUser
-    ? { data: typeof prismaClient.user }
-    : U extends Can.MakeComment
-    ? { data: typeof prismaClient.comment }
-    : U extends Can.MakeSecureAction
-    ? { data: typeof prismaClient }
-    : never
+  ? U extends Can.CRUD ? { data: typeof prismaClient }
+  : U extends Can.CreateUser ? { data: typeof prismaClient.user }
+  : U extends Can.MakeComment ? { data: typeof prismaClient.comment }
+  : U extends Can.MakeSecureAction ? { data: typeof prismaClient }
+  : never
   : never;
 
 export interface Certificates {
@@ -98,17 +96,17 @@ export interface Section {
 export interface CrawlerClient {
   runActorsAndGetOutputs<T>(
     input: CrawlerInput,
-    runtimeOptions?: RuntimeOptions
+    runtimeOptions?: RuntimeOptions,
   ): Promise<T[]>;
 
   run<T extends CrawlerOutPuts<never>>(
     input: CrawlerInput,
-    runOptions?: RunOptions
+    runOptions?: RunOptions,
   ): Promise<T>;
 
   crawlerBuilder(
     versionNumber: string,
-    options?: ActorBuildOptions
+    options?: ActorBuildOptions,
   ): Promise<Builder>;
 
   getLastRunClient(options?: ActorLastRunOptions): Promise<RunClient>;
@@ -117,7 +115,7 @@ export interface CrawlerClient {
 
   getRequestQueue(
     id: string,
-    options?: RequestQueueUserOptions
+    options?: RequestQueueUserOptions,
   ): Promise<RequestQueueClient>;
 
   getBuildsCollection(): Promise<BuildCollectionClient>;
@@ -126,19 +124,19 @@ export interface CrawlerClient {
 
   getVersionClient(
     actorId: string,
-    versionNumber: string
+    versionNumber: string,
   ): Promise<ActorVersionClient>;
 
   getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>>;
 
   getKeyList(
     id: string,
-    options?: KeyValueClientListKeysOptions
+    options?: KeyValueClientListKeysOptions,
   ): Promise<KeyValueListItem[]>;
 
   getStoreValue<T extends keyof unknown>(
     id: string,
-    key: string
+    key: string,
   ): Promise<StoreValue<T> | undefined>;
 }
 
@@ -246,9 +244,9 @@ export type PosterUserMeta = Record<
   string,
   | never
   | {
-      id: number;
-      title: string;
-    }[]
+    id: number;
+    title: string;
+  }[]
 >;
 
 export type Meta<T = unknown> = {
@@ -280,7 +278,7 @@ export interface DocumentStorage {
           index: number;
           section: number;
         }[];
-      }
+      },
     ]
   >;
 }
@@ -320,7 +318,7 @@ declare global {
     on: WebSocketS['on'];
   }
 
-  interface Window {
+  interface globalThis {
     App: Record<string, unknown>;
   }
 
@@ -355,7 +353,6 @@ export interface RawCV {
     level: string;
   }[];
 }
-
 
 export interface SecurityHashPayload {
   hash: string;
