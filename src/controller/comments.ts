@@ -1,4 +1,4 @@
-// @ts-types="@types/formidable"
+// @ts-types="npm:@types/formidable"
 import { IncomingForm } from 'formidable';
 // @ts-types="@types/express"
 import { Request, Response } from 'express';
