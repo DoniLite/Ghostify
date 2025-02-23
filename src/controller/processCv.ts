@@ -8,8 +8,9 @@ import { QueryXData, RawCV } from '../@types/index.d.ts';
 import { prismaClient } from '../config/db.ts';
 import { cvQueue, tokenGenerator } from '../server.ts';
 import { randomInt } from 'node:crypto';
+import process from "node:process";
 
-export const cv = (req: Request, res: Response) => {
+export const cv = (_req: Request, res: Response) => {
   res.render('components/cvForm', { service: undefined });
 };
 
@@ -24,11 +25,12 @@ export const processCV = async (req: Request, res: Response) => {
     minFileSize: 0,
     filter: function ({ mimetype }) {
       // keep only images
-      return mimetype && mimetype.includes('image');
+      if(mimetype && mimetype.includes('image')) return true;
+      return false;
     },
   });
   const { uid } = req.query as QueryXData<{ uid: string }>;
-  let result: false | string;
+  let result: false | string = "";
   const [fields, files] = await form.parse(req);
 
   console.log('formidable files: ', files);
@@ -49,18 +51,18 @@ export const processCV = async (req: Request, res: Response) => {
   }
   console.log('file : ' + file);
   console.log(result);
-  const cvType = fields.selectedCVType ? fields.selectedCVType[0] : undefined;
+  const cvType = fields.selectedCVType ? fields.selectedCVType[0] : "";
   const fileXPath = process.env.NODE_ENV === 'production'
     ? `https://ghostify.site/staticFile/` + tokenGenerator(`cv/${result}`)
     : `http://localhost:3085/staticFile/` + tokenGenerator(`cv/${result}`);
-  const data = JSON.parse(fields.jsonData[0]) as RawCV;
+  const data = JSON.parse(fields?.jsonData?.[0] ?? "") as RawCV;
   req.session.CVData = {
     ...data,
     img: fileXPath,
     cvType,
   };
   if (uid) {
-    let docId: number;
+    let docId: number = 0;
     let updating: boolean = false;
     try {
       const cvUpdating = await prismaClient.cV.update({
@@ -83,7 +85,7 @@ export const processCV = async (req: Request, res: Response) => {
       }
       console.log('user updated successfully:', cvUpdating.metaData);
       const cvJob = await cvQueue.add(
-        { url: cvUpdating.url, id: cvUpdating.id, docId, updating },
+        { url: cvUpdating.url!, id: cvUpdating.id, docId, updating },
         {
           attempts: 5,
         },
@@ -102,7 +104,7 @@ export const processCV = async (req: Request, res: Response) => {
       return;
     }
   }
-  if (req.session.Auth.authenticated && !req.session.Auth.isSuperUser) {
+  if (req.session?.Auth?.authenticated && !req.session?.Auth?.isSuperUser) {
     const checkIfUserHavePoints = await prismaClient.user.findUnique({
       where: {
         id: req.session.Auth.id,
@@ -111,7 +113,7 @@ export const processCV = async (req: Request, res: Response) => {
         cvCredits: true,
       },
     });
-    if (checkIfUserHavePoints.cvCredits < 100) {
+    if (checkIfUserHavePoints!.cvCredits < 100) {
       res.status(403).json({
         message: 'Not enough credits for CV creation',
         redirect: process.env.NODE_ENV === 'production'
@@ -146,7 +148,7 @@ export const processCV = async (req: Request, res: Response) => {
       console.log('user rest points:', updateUserPoints.cvCredits);
     }
     const cvJob = await cvQueue.add(
-      { url: newCV.url, id: newCV.id },
+      { url: newCV.url!, id: newCV.id },
       {
         attempts: 5,
       },

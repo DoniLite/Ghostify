@@ -1,5 +1,8 @@
+// @ts-types="@types/express"
 import { NextFunction, Request, Response } from 'express';
+// @ts-types="@types/jsonwebtoken"
 import jwt from 'jsonwebtoken';
+import process from "node:process";
 
 const protectedRoutes = [
   '/api/v1',
@@ -21,9 +24,10 @@ export const verify = (req: Request, res: Response, next: NextFunction) => {
     if (!token || typeof token !== 'string') {
       res.status(403).json({ error: 'Access denied' });
       next();
+      return;
     }
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET!);
       req.session.Token = decoded as string;
     } catch (e) {
       console.error(e);

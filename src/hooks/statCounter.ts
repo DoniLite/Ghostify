@@ -4,7 +4,7 @@ import {
   getWeekIndex,
   loadStatistics,
   saveStatistic,
-} from '../utils';
+} from '../utils.ts';
 
 export const stats = async (
   url: string,

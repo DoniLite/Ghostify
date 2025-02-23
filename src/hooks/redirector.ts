@@ -1,13 +1,14 @@
+// @ts-types="@types/express"
 import { NextFunction, Request, Response } from 'express';
-import { encrypt } from '../utils';
-import { QueryXData } from 'index';
+import { encrypt } from '../utils.ts';
+import { QueryXData } from '../@types/index.d.ts';
 
 const matchedRoutes = [
   '',
   '/',
 ];
 
-export const redirector = async (
+export const redirector = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -26,8 +27,8 @@ export const redirector = async (
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
       Date.now().toString(),
-      req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv,
+      req.session?.ServerKeys?.secretKey,
+      req.session?.ServerKeys?.iv,
     );
     res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,

@@ -1,10 +1,13 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
+// @ts-types="@types/formidable"
 import { IncomingForm } from 'formidable';
-import { renaming } from '../utils';
+import { renaming } from '../utils.ts';
 import path from 'node:path';
-import { prismaClient } from '../config/db';
-import { BodyXData } from 'index';
-import { tokenGenerator } from '../server';
+import { prismaClient } from '../config/db.ts';
+import { BodyXData } from '../@types/index.d.ts';
+import { tokenGenerator } from '../server.ts';
+import process from "node:process";
 
 export const updateProfile = async (req: Request, res: Response) => {
   const STATIC_DIR = '../../static/users';
@@ -16,7 +19,9 @@ export const updateProfile = async (req: Request, res: Response) => {
     minFileSize: 0,
     filter: function ({ mimetype }) {
       // keep only images
-      return mimetype && mimetype.includes('image');
+      if (mimetype && mimetype.includes('image')) return true;
+
+      return false;
     },
   });
 
@@ -41,14 +46,14 @@ export const updateProfile = async (req: Request, res: Response) => {
           tokenGenerator(`users/${result}`);
       const updatedUser = await prismaClient.user.update({
         where: {
-          id: Number(req.session.Auth.id),
+          id: Number(req.session!.Auth!.id),
         },
         data: {
           file: fileXPathService,
         },
       });
       console.log(updatedUser);
-      req.session.Auth.file = updatedUser.file; // Update the session file path to the new one
+      req.session!.Auth!.file! = updatedUser.file!; // Update the session file path to the new one
       res.status(200).json({
         message: 'Profile picture updated successfully',
         file: updatedUser.file,
@@ -94,6 +99,11 @@ export const updateUserName = async (req: Request, res: Response) => {
     },
   });
 
+  if (!lastInfo) {
+    res.status(404).send('no user found');
+    return;
+  }
+
   try {
     if (username) {
       const updatedUser = await prismaClient.user.update({
@@ -106,7 +116,7 @@ export const updateUserName = async (req: Request, res: Response) => {
           link: link ? link : lastInfo.link,
         },
       });
-      req.session.Auth.username = updatedUser.username;
+      req.session!.Auth!.username! = updatedUser.username!;
       console.log(req.session.Auth);
       console.log('new user:', updatedUser);
       res.status(200).json({ success: true });

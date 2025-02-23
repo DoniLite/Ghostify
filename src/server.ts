@@ -1,6 +1,6 @@
 'use strict';
 // @ts-types="@types/express"
-import express from 'express';
+import express, { RequestHandler } from 'express';
 // ts-types="@types/ejs"
 import ejs from 'ejs';
 // ts-types="@types/body-parser"
@@ -76,14 +76,13 @@ import { redirector } from './hooks/redirector.ts';
 import { projects } from './routes/project.ts';
 import { meta } from './routes/meta.ts';
 import { contact } from './routes/contact.ts';
-import { apiGaming } from './routes/APIs.ts';
 // @ts-types="@types/passport"
 import passport from 'passport';
 // @ts-types="@types/passport-google-oauth20"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { test as testRoute } from './routes/test.ts';
+import { test as testRoute } from './routes/testRoute.ts';
 // @ts-types="@types/express-ws"
-import expressWs from 'express-ws';
+import expressWs, { Application } from 'express-ws';
 import { checkIfUserExist, updateProfile, updateUserName } from './routes/user.ts';
 import { downloader, serveStatic } from './routes/serveStatic.ts';
 import { cv, processCV } from './controller/processCv.ts';
@@ -198,7 +197,7 @@ export const ee = new EventEmitter();
 
 dotEnv.config();
 const server = express();
-expressWs(server);
+expressWs(server as unknown as Application);
 // const socketUrl =
 //   process.env.NODE_ENV !== 'production'
 //     ? 'ws://localhost/notifications'
@@ -215,9 +214,9 @@ server.set('views', viewsPath);
 
 export const tokenGenerator = (payload: string, opt?: SignOptions) => {
   if (opt) {
-    return jwt.sign(payload, process.env.JWT_SECRET, opt);
+    return jwt.sign(payload, process.env.JWT_SECRET!, opt);
   }
-  return jwt.sign(payload, process.env.JWT_SECRET);
+  return jwt.sign(payload, process.env.JWT_SECRET!);
 };
 
 server.use(i18n.init);
@@ -229,11 +228,7 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use(
-  rateLimit({
-    max: 100,
-  }),
-);
+server.use(rateLimit() as unknown as RequestHandler);
 
 server.options('*', cors());
 
@@ -284,13 +279,13 @@ server.use(
         scriptSrc: [
           "'self'",
           'https://eu-assets.i.posthog.com',
-          (req: express.Request, res: express.Response) =>
+          (_req: express.Request, res: express.Response) =>
             `'nonce-${res.locals.cspNonce}'`,
         ],
         scriptSrcElem: [
           "'self'",
           'https://eu-assets.i.posthog.com/static/array.js',
-          (req: express.Request, res: express.Response) =>
+          (_req: express.Request, res: express.Response) =>
             `'nonce-${res.locals.cspNonce}'`,
         ],
         objectSrc: ["'none'"],
@@ -330,14 +325,14 @@ server.use(
   express.static(path.resolve(__dirname, '../src/public'), {
     maxAge: '1d', // Définit une durée de vie du cache de 1 jour
     etag: false, // Désactive les ETags (facultatif)
-    setHeaders: process.env.NODE_ENV !== 'production' ? null : (res) => {
+    setHeaders: process.env.NODE_ENV !== 'production' ? undefined : (res) => {
       res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
     },
   }),
 );
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
-server.use(cookie(process.env.SESSION_SECRET));
+server.use(cookie(process.env.SESSION_SECRET) as unknown as RequestHandler);
 const sessionStorePath = process.env.NODE_ENV === 'production'
   ? path.resolve('/home/ubuntu/Ghostify/sessions')
   : path.resolve(__dirname, '../src/config');
@@ -347,7 +342,7 @@ fs.mkdirSync(path.dirname(sessionStorePath), { recursive: true });
 
 server.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET!,
     cookie: {
       secure: 'auto',
     },
@@ -360,13 +355,13 @@ server.use(
     }) as session.Store,
     saveUninitialized: false,
     resave: false,
-  }),
+  }) as unknown as RequestHandler
 );
 
 server.use(sessionStorageHook);
 server.use(ROUTES, auth);
 
-server.use(passport.initialize());
+server.use(passport.initialize() as unknown as RequestHandler);
 server.use(passport.authenticate('session'));
 server.use(passport.session());
 
@@ -387,9 +382,9 @@ server.use((req, res, next) => {
 
       // S'assurer que req.session et req.session.Auth existent
 
-      req.session.Auth.authenticated = true;
+      req.session!.Auth!.authenticated = true;
       if (userId) {
-        req.session.Auth.id = Number(userId);
+        req.session!.Auth!.id! = Number(userId);
       }
 
       next(); // Appeler next() uniquement si le token est valide
@@ -651,8 +646,8 @@ server.get('/auth/token', async (req, res, next) => {
       return next();
     }
 
-    const userId = req.session.Auth.authenticated
-      ? req.session.Auth.login
+    const userId = req.session?.Auth?.authenticated
+      ? req.session?.Auth?.login
       : null;
 
     if (!userId) {
@@ -688,6 +683,7 @@ server.get('/api/token', async (req, res) => {
   const { generator, email, url }: ReqParams = req.query;
   if (!generator) {
     res.status(400).send('No generator found');
+    return;
   }
   const tokenChecked = await prismaClient.generatorData.findUnique({
     where: {
@@ -714,7 +710,6 @@ server.get('/blog', blog);
 server.get('/projects', projects);
 server.get('/hub', meta);
 server.get('/contact', contact);
-server.get('/api-gaming', apiGaming);
 server.get('/terms', terms);
 server.get('/conditions', conditions);
 server.get('/FAQ', FAQ);
@@ -724,13 +719,13 @@ server.get('/about', about);
 server.get('/billing', billing);
 server.get('/poster/docs', documentView);
 server.get('/poster/parser', conversionView);
-server.get('/promotion', (req, res) => {
+server.get('/promotion', (_req, res) => {
   res.render('/components/promotion', {
     auth: undefined,
     service: 'promotion',
   });
 });
-server.get('/404', (req, res) => {
+server.get('/404', (_req, res) => {
   res.render('404');
 });
 // Admin conn
@@ -800,7 +795,7 @@ server.use((req, res) => {
   res.status(404).render('404');
 });
 
-const port = parseInt(process.env.PORT) || 3085;
+const port = 3085;
 server.listen(port, '0.0.0.0', async () => {
   console.log(`Server listening at port: ${port}`);
 

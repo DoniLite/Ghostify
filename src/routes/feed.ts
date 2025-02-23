@@ -1,8 +1,9 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { BodyXData } from 'index';
-import { prismaClient } from '../config/db';
-import { getTimeElapsed, orderReactions, Reactions } from '../utils';
-import { logger } from '../logger';
+import { BodyXData } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
+import { getTimeElapsed, orderReactions, Reactions } from '../utils.ts';
+import { logger } from '../logger.ts';
 
 export const feed = async (req: Request, res: Response) => {
   try {
@@ -20,16 +21,17 @@ export const feed = async (req: Request, res: Response) => {
       return;
     }
 
-    const comment = typeof tryParse === 'number'
-      ? await prismaClient.comment.findUnique({ where: { id: tryParse } })
-      : await prismaClient.comment.findUnique({ where: { token: tryParse } });
+    const comment =
+      typeof tryParse === 'number'
+        ? await prismaClient.comment.findUnique({ where: { id: tryParse } })
+        : await prismaClient.comment.findUnique({ where: { token: tryParse } });
     if (!comment) {
       res.status(404).send('Comment not found');
       return;
     }
     const author = await prismaClient.user.findUnique({
       where: {
-        id: comment.userId,
+        id: comment.userId!,
       },
       select: {
         username: true,
@@ -44,8 +46,8 @@ export const feed = async (req: Request, res: Response) => {
     });
     const data = {
       ...comment,
-      userIcon: author.file,
-      author: author.username || author.fullname,
+      userIcon: author?.file,
+      author: author?.username || author?.fullname,
       time: getTimeElapsed(comment.createdAt),
       reactionsLength: comment.reactions.length,
       reactionsEls: orderReactions(comment.reactions as Reactions[]),
@@ -57,33 +59,34 @@ export const feed = async (req: Request, res: Response) => {
             userIcon: (
               await prismaClient.user.findUnique({
                 where: {
-                  id: reply.userId,
+                  id: reply.userId!,
                 },
                 select: {
                   file: true,
                 },
               })
-            ).file,
-            author: (
-              await prismaClient.user.findUnique({
-                where: {
-                  id: reply.userId,
-                },
-                select: {
-                  username: true,
-                },
-              })
-            ).username ||
+            )!.file,
+            author:
               (
                 await prismaClient.user.findUnique({
                   where: {
-                    id: reply.userId,
+                    id: reply.userId!,
+                  },
+                  select: {
+                    username: true,
+                  },
+                })
+              )?.username ||
+              (
+                await prismaClient.user.findUnique({
+                  where: {
+                    id: reply.userId!,
                   },
                   select: {
                     fullname: true,
                   },
                 })
-              ).fullname,
+              )?.fullname,
             commentsLength: await prismaClient.comment.count({
               where: {
                 commentId: reply.id,
@@ -91,15 +94,15 @@ export const feed = async (req: Request, res: Response) => {
             }),
             reactionsLength: reply.reactions.length,
           };
-        }),
+        })
       ),
       commentsLength: replies.length,
     };
     res.render('components/feed', {
       comment: data,
       mode: 'view',
-      userIcon: req.session.Auth.file || undefined,
-      auth: req.session.Auth.authenticated,
+      userIcon: req.session?.Auth?.file || undefined,
+      auth: req.session?.Auth?.authenticated,
       service: undefined,
     });
   } catch (e) {
@@ -137,7 +140,7 @@ export const reactions = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     logger.error(
-      `Error in feed at ${req.url} ${Date.now().toString()}: ${error}`,
+      `Error in feed at ${req.url} ${Date.now().toString()}: ${error}`
     );
     res.status(500).send('Internal server error');
   }

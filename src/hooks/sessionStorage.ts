@@ -3,15 +3,16 @@ import {
   generateAndSaveKeys,
   graphicsUploader,
   loadKeys,
-} from '../utils';
+} from '../utils.ts';
 import { randomInt } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+// @ts-types="@types/express"
 import { NextFunction, Request, Response } from 'express';
 
 export const sessionStorageHook = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   const allDirsFiles = fs.readdirSync(

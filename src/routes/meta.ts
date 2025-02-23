@@ -1,6 +1,7 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { prismaClient } from '../config/db';
-import { getTimeElapsed, orderReactions, Reactions } from '../utils';
+import { prismaClient } from '../config/db.ts';
+import { getTimeElapsed, orderReactions, Reactions } from '../utils.ts';
 import {} from 'date-fns';
 
 export const meta = async (req: Request, res: Response) => {
@@ -24,7 +25,7 @@ export const meta = async (req: Request, res: Response) => {
           relativeComments.map(async (eachComment) => {
             const thisCommentAuthor = await prismaClient.user.findUnique({
               where: {
-                id: eachComment.userId,
+                id: eachComment.userId!,
               },
               select: {
                 file: true,
@@ -39,20 +40,20 @@ export const meta = async (req: Request, res: Response) => {
             });
             return {
               ...eachComment,
-              userIcon: thisCommentAuthor.file,
+              userIcon: thisCommentAuthor?.file,
               time: getTimeElapsed(eachComment.createdAt),
               reactionsEls: orderReactions(
                 eachComment.reactions as Reactions[],
               ),
               reactionsLength: eachComment.reactions.length,
               commentsLength: thisCommentRelativeEls,
-              author: thisCommentAuthor.username || thisCommentAuthor.fullname,
+              author: thisCommentAuthor?.username || thisCommentAuthor?.fullname,
             };
           }),
         );
         const authorInfo = await prismaClient.user.findUnique({
           where: {
-            id: popular.userId,
+            id: popular.userId!,
           },
           select: {
             username: true,
@@ -66,9 +67,9 @@ export const meta = async (req: Request, res: Response) => {
           reactionsLength: popular.reactions.length,
           commentsLength: relativeComments.length,
           time: getTimeElapsed(popular.createdAt),
-          userIcon: authorInfo.file,
+          userIcon: authorInfo?.file,
           replies,
-          author: authorInfo.username || authorInfo.fullname,
+          author: authorInfo?.username || authorInfo?.fullname,
         };
       }),
   );
@@ -79,8 +80,8 @@ export const meta = async (req: Request, res: Response) => {
       ? req.session.Auth.authenticated
       : undefined,
     theme: theme,
-    userId: req.session.Auth.id,
-    userIcon: req.session.Auth.file,
+    userId: req.session?.Auth?.id,
+    userIcon: req.session?.Auth?.file,
     actues,
   });
 };

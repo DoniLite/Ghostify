@@ -4,32 +4,32 @@ import {
   List,
   PostFile,
   QueryXData,
-  Section,
-} from '../@types';
+} from '../@types/index.d.ts';
 import {
-  decrypt,
   DocumentMimeTypes,
-  encrypt,
   loadSecurityBearer,
   purgeSingleFIle,
   renaming,
   Service,
   unify,
   verifySecurity,
-} from '../utils';
-import { prismaClient } from '../config/db';
+} from '../utils.ts';
+import { prismaClient } from '../config/db.ts';
 // import util from 'util';
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 // import { pipeline } from 'stream';
 import { randomInt } from 'node:crypto';
+// @ts-types="@types/formidable"
 import { File as FormidableFile, IncomingForm } from 'formidable';
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { ee, tokenGenerator } from '../server';
+import { ee, tokenGenerator } from '../server.ts';
+import process from "node:process";
 
 // const pump = util.promisify(pipeline);
 
-export const poster = async (req: Request, res: Response) => {
+export const poster =  (req: Request, res: Response) => {
   const { service } = req.query as QueryXData<{ service: Service }>;
 
   try {
@@ -39,9 +39,9 @@ export const poster = async (req: Request, res: Response) => {
       service: service,
       auth: true,
       writterMode: true,
-      data: req.session.Auth.isSuperUser
+      data: req.session?.Auth?.isSuperUser
         ? { ...req.session.SuperUser }
-        : { id: req.session.Auth.id },
+        : { id: req.session?.Auth?.id },
     });
   } catch (e) {
     console.log(e);
@@ -66,9 +66,9 @@ export const updateDocView = async (req: Request, res: Response) => {
     service: 'poster',
     auth: true,
     writterMode: true,
-    data: req.session.Auth.isSuperUser
+    data: req.session?.Auth?.isSuperUser
       ? { ...req.session.SuperUser }
-      : { id: req.session.Auth.id },
+      : { id: req.session?.Auth?.id },
     mode: 'hydrate',
   });
 };
@@ -95,7 +95,7 @@ export const requestComponent = (req: Request, res: Response) => {
   }
 };
 
-export const requestHeadComponent = async (req: Request, res: Response) => {
+export const requestHeadComponent = (req: Request, res: Response) => {
   const { section, meta, title } = req.query as QueryXData<{
     section: string;
     meta: string;
@@ -114,7 +114,7 @@ export const requestHeadComponent = async (req: Request, res: Response) => {
   }
 };
 
-export const requestListComponent = async (req: Request, res: Response) => {
+export const requestListComponent = (req: Request, res: Response) => {
   const { section, index, data } = req.query as QueryXData<{
     section: string;
     index: string;
@@ -156,7 +156,9 @@ export const docSaver = async (req: Request, res: Response) => {
     minFileSize: 0,
     filter: function ({ mimetype }) {
       // keep only images
-      return mimetype && mimetype.includes('image');
+      if (mimetype && mimetype.includes('image')) return true;
+
+      return false;
     },
   });
   let json: boolean | undefined;
@@ -175,7 +177,7 @@ export const docSaver = async (req: Request, res: Response) => {
         description: '',
         visibility: 'Private',
         safe: false,
-        userId: req.session.Auth.id,
+        userId: req.session?.Auth?.id,
       },
     });
   if (!post) {
@@ -199,8 +201,8 @@ export const docSaver = async (req: Request, res: Response) => {
   console.log('Fields:', fields);
   console.log('Files:', files);
   try {
-    req.session.Storage = JSON.parse(fields.data.toString()) as DocumentStorage;
-    json = Boolean(fields.json[0]);
+    req.session.Storage = JSON.parse(fields?.data?.[0] ?? "") as DocumentStorage;
+    json = Boolean(fields?.json?.[0]);
     console.log(req.session.Storage, json);
   } catch (parseError) {
     console.error('Error parsing fields data:', parseError);
@@ -217,13 +219,11 @@ export const docSaver = async (req: Request, res: Response) => {
     '.shx',
   ];
   // Traiter les fichiers multiples
-  const fileArray: FormidableFile[] = Array.isArray(files.file)
-    ? files.file
-    : [files.file];
+  const fileArray: FormidableFile[] = files.file!;
   console.log(fileArray);
   if (fileArray.length > 0 && typeof fileArray[0] !== 'undefined') {
     for (let i = 0; i < fileArray.length; i++) {
-      const ext = path.extname(fileArray[i].originalFilename);
+      const ext = path.extname(fileArray[i].originalFilename!);
       // Vérifier les extensions dangereuses
       if (dangerousExtension.includes(ext)) {
         console.log('Inappropriate file detected');
@@ -256,8 +256,8 @@ export const docSaver = async (req: Request, res: Response) => {
         const nFile = await prismaClient.postFile.create({
           data: {
             filePath: fileXPathService,
-            index: Number(req.session.Storage.image[i].index),
-            sectionId: Number(req.session.Storage.image[i].section),
+            index: Number(req.session?.Storage?.image[i].index),
+            sectionId: Number(req.session?.Storage?.image[i].section),
             postId: post.id,
           },
         });
@@ -286,8 +286,8 @@ export const docSaver = async (req: Request, res: Response) => {
     data: {
       title: req.session.Storage.title,
       description: req.session.Storage.desc_or_meta,
-      userId: req.session.Auth.id && typeof req.session.Auth.id === 'number'
-        ? req.session.Auth.id
+      userId: req.session?.Auth?.id && typeof req.session?.Auth?.id === 'number'
+        ? req.session?.Auth?.id
         : null,
     },
   });
@@ -313,6 +313,11 @@ export const docView = async (req: Request, res: Response) => {
     },
   });
 
+  if (!article) {
+    res.status(404).send("Not article found");
+    return;
+  }
+
   if (article.inMemory) {
     let docString = `# ${article.title} \n`;
     const postFiles = await prismaClient.postFile.findMany({
@@ -328,7 +333,7 @@ export const docView = async (req: Request, res: Response) => {
     });
     postFiles.sort((a, b) => a.index - b.index);
     postSections.sort((a, b) => a.index - b.index);
-    postSections.forEach(async (section) => {
+    postSections.forEach( (section) => {
       docString += `## ${section.title} \n${section.content} \n`;
       const list: [
         {
@@ -396,9 +401,9 @@ export const docView = async (req: Request, res: Response) => {
           req.session.Auth.authenticated
         ? req.session.Auth.authenticated
         : false,
-      data: req.session.Auth.isSuperUser
+      data: req.session?.Auth?.isSuperUser
         ? { ...req.session.SuperUser }
-        : { id: req.session.Auth.id },
+        : { id: req.session?.Auth?.id },
       description: updatedContent.description,
       mode: 'reading',
     });
@@ -416,9 +421,9 @@ export const docView = async (req: Request, res: Response) => {
       typeof req.session.Auth !== 'undefined' && req.session.Auth.authenticated
         ? req.session.Auth.authenticated
         : false,
-    data: req.session.Auth.isSuperUser
+    data: req.session?.Auth?.isSuperUser
       ? { ...req.session.SuperUser }
-      : { id: req.session.Auth.id },
+      : { id: req.session?.Auth?.id },
   });
 };
 
@@ -443,6 +448,10 @@ export const loadPost = async (req: Request, res: Response) => {
       uid,
     },
   });
+  if (!post) {
+    res.status(404).send('this post not exists');
+    return;
+  }
   const allSections = await prismaClient.postSection.findMany({
     where: {
       postId: post.id,
@@ -478,7 +487,7 @@ export const loadPost = async (req: Request, res: Response) => {
     lists: {} as DocumentStorage['list'],
   };
   allSections.forEach((section) => {
-    const d = JSON.parse(section.meta) as [
+    const d = JSON.parse(section.meta!) as [
       {
         index: number;
         items: {
@@ -498,12 +507,12 @@ export const loadPost = async (req: Request, res: Response) => {
   res.status(200).json(data);
 };
 
-export const conversionView = async (req: Request, res: Response) => {
+export const conversionView = (_req: Request, res: Response) => {
   res.render('documentInput', { service: 'poster' });
 };
 
 export const parserController = async (req: Request, res: Response) => {
-  if (!req.session.Auth.authenticated) {
+  if (!req.session?.Auth?.authenticated) {
     if (req.headers['x-api-token']) {
       res.status(401).json({ message: 'authentication required' });
       return;
@@ -522,15 +531,17 @@ export const parserController = async (req: Request, res: Response) => {
     minFileSize: 0,
     filter: function ({ mimetype }) {
       // keep only images
-      return mimetype && mimeTypesArray.includes(mimetype as DocumentMimeTypes);
+      if (mimetype && mimeTypesArray.includes(mimetype as DocumentMimeTypes)) return true;
+
+      return false;
     },
   });
 
   const [fields, files] = await form.parse(req);
-  let out: string;
+  let out: string = "";
   for (const field in fields) {
     if (field === 'outputFormat') {
-      out = fields[field].toString();
+      out = fields[field]![0];
     }
     continue;
   }
@@ -538,7 +549,7 @@ export const parserController = async (req: Request, res: Response) => {
   const result = await renaming(file, STATIC_DIR);
   if (!result) {
     res.status(500).send('Something went wrong please try later');
-    purgeSingleFIle(file.filepath);
+    if (file) purgeSingleFIle(file.filepath);
     return;
   }
 
@@ -550,6 +561,11 @@ export const parserController = async (req: Request, res: Response) => {
   }
 
   const security = await loadSecurityBearer();
+  if (!security) {
+    res.status(500).send('Something went wrong please try later');
+    if (file) purgeSingleFIle(file.filepath);
+    return;
+  }
   const API_URL = '/api/v1/parser/';
   const API_PORT = process.env.NODE_ENV === 'production' ? 8080 : 8000;
   const apiRes = await fetch(

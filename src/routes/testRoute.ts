@@ -1,6 +1,7 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { QueryXData } from 'index';
-import { HealthChecker } from '../class/HealthChecker';
+import { QueryXData } from '../@types/index.d.ts';
+import { HealthChecker } from '../class/HealthChecker.ts';
 
 interface TestQuery {
   health: string;

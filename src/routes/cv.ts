@@ -1,14 +1,16 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { prismaClient } from '../config/db';
-import { cvQueue, tokenGenerator } from '../server';
+import { prismaClient } from '../config/db.ts';
+import { cvQueue, tokenGenerator } from '../server.ts';
 import { randomInt } from 'node:crypto';
-import { QueryXData, RawCV } from 'index';
+import { QueryXData, RawCV } from '../@types/index.d.ts';
 import { format } from 'date-fns';
-import { cvClass } from '../utils';
+import { cvClass } from '../utils.ts';
+import process from "node:process";
 
 export const cvProcessAPI = async (req: Request, res: Response) => {
   const date = new Date();
-  if (!req.session.Auth.authenticated) {
+  if (!req.session?.Auth?.authenticated) {
     res.status(403).send("You're not authenticated");
     return;
   }
@@ -20,7 +22,7 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
   const uid = tokenGenerator((date.getTime() + randomInt(1000)).toString());
   const newCV = await prismaClient.cV.create({
     data: {
-      userId: req.session.Auth.isSuperUser ? null : req.session.Auth.id,
+      userId: req.session?.Auth?.isSuperUser ? null : req.session?.Auth?.id,
       metaData: JSON.stringify(req.session.CVData),
       img: req.session.CVData.img,
       uid,
@@ -42,8 +44,8 @@ export const cvProcessAPI = async (req: Request, res: Response) => {
     });
     console.log('user rest points:', updateUserPoints.cvCredits);
   }
-  const cvJob = await cvQueue.add(
-    { url: newCV.url, id: newCV.id },
+  const cvJob = await cvQueue?.add(
+    { url: newCV.url!, id: newCV.id },
     {
       attempts: 5,
     },
@@ -65,6 +67,10 @@ export const getCV = async (req: Request, res: Response) => {
         uid: cv,
       },
     });
+    if(!cvData) {
+      res.status(404).send("this document is not found");
+      return;
+    }
     console.log('cvData: ', cvData);
     const cvType = cvData.type ? Number(cvData.type) : 1;
     const cvMode = cvData.mode ? Number(cvData.mode) : 1;
@@ -94,7 +100,7 @@ export const getCV = async (req: Request, res: Response) => {
       }[];
       css?: unknown;
     } = {};
-    cvObject.img = cvData.img;
+    cvObject.img = cvData.img ?? "";
     cvObject.fullName = data.name;
     cvObject.email = data.email;
     cvObject.phoneNumber = data.phone;
@@ -147,12 +153,12 @@ export const checkCVStatus = async (req: Request, res: Response) => {
   const { uid } = req.query as QueryXData<{ uid: string }>;
   if (req.session.JobsIDs) {
     const jobId = req.session.JobsIDs.cvJob;
-    const cvJob = await cvQueue.getJob(jobId);
-    const status = await cvJob.getState();
+    const cvJob = await cvQueue.getJob(jobId!);
+    const status = await cvJob?.getState();
     if (status === 'completed') {
       const cvData = await prismaClient.cV.findUnique({
         where: {
-          id: cvJob.data.id,
+          id: cvJob?.data.id,
         },
         select: {
           screenshot: true,
@@ -161,11 +167,11 @@ export const checkCVStatus = async (req: Request, res: Response) => {
       });
       res
         .status(200)
-        .json({ success: true, img: cvData.screenshot, doc: cvData.pdf });
+        .json({ success: true, img: cvData?.screenshot, doc: cvData?.pdf });
       return;
     }
     if (status === 'failed') {
-      await cvJob.retry();
+      await cvJob?.retry();
       res.json({
         success: false,
         message: "we have any problem getting your files let' try again",
@@ -199,7 +205,7 @@ export const checkCVStatus = async (req: Request, res: Response) => {
     });
     console.log(uid);
     console.log(tryingToGetResource);
-    if (tryingToGetResource.pdf && tryingToGetResource.screenshot) {
+    if (tryingToGetResource?.pdf && tryingToGetResource?.screenshot) {
       res.status(200).json({
         success: true,
         doc: tryingToGetResource.pdf,
@@ -224,7 +230,7 @@ export const getCVTheme = async (req: Request, res: Response) => {
       },
     });
     if (set && data && set === 'true') {
-      let docId: number;
+      let docId: number = 0;
       let updating: boolean = false;
       const [type, mode] = data.split(';');
       const updatingTheme = await prismaClient.cV.update({
@@ -246,7 +252,7 @@ export const getCVTheme = async (req: Request, res: Response) => {
         updating = true;
       }
       const newCVJob = await cvQueue.add({
-        url: updatingTheme.url,
+        url: updatingTheme.url ?? "",
         id: updatingTheme.id,
         docId,
         updating,
@@ -264,8 +270,8 @@ export const getCVTheme = async (req: Request, res: Response) => {
       return;
     }
     res.status(200).json({
-      type: theme.type || 1,
-      mode: theme.mode || 1,
+      type: theme?.type || 1,
+      mode: theme?.mode || 1,
     });
   } catch (e) {
     console.error(e);

@@ -1,6 +1,6 @@
-import { ee } from '../server';
-import { prismaClient } from '../config/db';
-import { Post } from 'index';
+import { ee } from '../server.ts';
+import { prismaClient } from '../config/db.ts';
+import { Post } from '../@types/index.d.ts';
 import cron from 'node-cron';
 
 export const PosterTask = async () => {
@@ -59,7 +59,7 @@ async function makeSomeThingWithPosts<T>(fn?: MakeSomeThingCb<Post[], T>) {
         fromApi: true,
       },
     });
-    await fn(posts);
+    if(fn) await fn(posts);
     console.log(posts);
     return true;
   } catch (e) {

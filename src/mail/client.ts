@@ -1,6 +1,7 @@
 import mailClient, { MailDataRequired } from '@sendgrid/mail';
+import process from "node:process";
 
-mailClient.setApiKey(process.env.SENDGRID_API_KEY);
+mailClient.setApiKey(process.env.SENDGRID_API_KEY!);
 
 export const mailDraft = (
   data: MailDataRequired | { html: string | string[]; to: string },

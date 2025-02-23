@@ -1,5 +1,6 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { prismaClient } from '../config/db';
+import { prismaClient } from '../config/db.ts';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -12,6 +13,7 @@ export const terms = async (req: Request, res: Response) => {
   });
   if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+    return;
   }
   res.render('page', {
     content: asset.content,
@@ -24,7 +26,7 @@ export const terms = async (req: Request, res: Response) => {
   });
 };
 
-export const license = async (req: Request, res: Response) => {
+export const license = (_req: Request, res: Response) => {
   const licenseFile = fs.readFileSync(path.join(__dirname, '../../LICENSE'));
   res.setHeader('Content-Type', 'text/plain').send(licenseFile);
 };
@@ -38,6 +40,7 @@ export const about = async (req: Request, res: Response) => {
   });
   if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+    return;
   }
   res.render('page', {
     content: asset.content,
@@ -59,6 +62,7 @@ export const policy = async (req: Request, res: Response) => {
   });
   if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+    return;
   }
   res.render('page', {
     content: asset.content,
@@ -80,6 +84,7 @@ export const conditions = async (req: Request, res: Response) => {
   });
   if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+    return;
   }
   res.render('page', {
     content: asset.content,
@@ -101,6 +106,7 @@ export const FAQ = async (req: Request, res: Response) => {
   });
   if (!asset) {
     res.status(404).send(JSON.stringify({ message: 'No asset found' }));
+    return;
   }
   res.render('page', {
     content: asset.content,

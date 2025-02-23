@@ -1,5 +1,6 @@
+// @ts-types="@types/express"
 import { NextFunction, Request, Response } from 'express';
-import { decrypt, encrypt } from '../utils';
+import { decrypt, encrypt } from '../utils.ts';
 
 const OPEN_ROUTES = ['/home'];
 const AUTH_ROUTES = [
@@ -21,10 +22,10 @@ export const ROUTES = [
 const isOpenRoute = (url: string) =>
   OPEN_ROUTES.some((route) => url.includes(route));
 
-const isAuthRoute = (url: string) =>
+const _isAuthRoute = (url: string) =>
   AUTH_ROUTES.some((route) => url.includes(route));
 
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
+export const auth = (req: Request, res: Response, next: NextFunction) => {
   const { cookies } = req;
   const lastTime = cookies['connection_time'];
 
@@ -37,8 +38,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       Date.now() > Number(
           decrypt(
             lastTime,
-            req.session.ServerKeys.secretKey,
-            req.session.ServerKeys.iv,
+            req.session?.ServerKeys?.secretKey,
+            req.session?.ServerKeys?.iv,
           ),
         )
     ) {
@@ -60,8 +61,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     req.session.Token = encrypt(
       cookieExpiration.getTime().toString(),
-      req.session.ServerKeys.secretKey,
-      req.session.ServerKeys.iv,
+      req.session?.ServerKeys?.secretKey,
+      req.session?.ServerKeys?.iv,
     );
 
     res.cookie('connection_time', req.session.Token, {

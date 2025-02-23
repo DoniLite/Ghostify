@@ -1,5 +1,6 @@
-import { Service } from 'index';
-import { prismaClient } from '../config/db';
+import { Service } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
+// @ts-types="@types/express"
 import { RequestHandler } from 'express';
 
 export const home: RequestHandler = async (req, res) => {
@@ -20,7 +21,7 @@ export const home: RequestHandler = async (req, res) => {
     service?: Service;
   } = {};
 
-  const userData = req.session.Auth.authenticated
+  const userData = req.session?.Auth?.authenticated
     ? await prismaClient.user.findUnique({
       where: {
         id: req.session.Auth.id,
@@ -35,11 +36,11 @@ export const home: RequestHandler = async (req, res) => {
     assets.apiAccess = userData.apiAccess;
     assets.registered = userData.registered;
     assets.service = {
-      Platform: req.session.Services.Platform,
+      Platform: req.session?.Services?.Platform,
     };
   }
   const firstUserPosts =
-    req.session.Auth.authenticated && typeof req.session.Auth.id === 'number'
+    req.session?.Auth?.authenticated && typeof req.session?.Auth?.id === 'number'
       ? await prismaClient.post.findMany({
         where: {
           userId: req.session.Auth.id,
@@ -54,7 +55,7 @@ export const home: RequestHandler = async (req, res) => {
     };
   });
   const CVs =
-    req.session.Auth.authenticated && typeof req.session.Auth.id === 'number'
+    req.session?.Auth?.authenticated && typeof req.session?.Auth?.id === 'number'
       ? await prismaClient.cV.findMany({
         where: {
           userId: req.session.Auth.id,
@@ -71,10 +72,10 @@ export const home: RequestHandler = async (req, res) => {
       ? req.session.Auth.authenticated
       : undefined,
     theme: Theme,
-    user: req.session.Auth.username || req.session.Auth.fullname,
-    userId: req.session.Auth.id || req.session.Auth.login || '',
+    user: req.session?.Auth?.username || req.session?.Auth?.fullname,
+    userId: req.session?.Auth?.id || req.session?.Auth?.login || '',
     userPosts,
-    userFile: req.session.Auth.file || undefined,
+    userFile: req.session?.Auth?.file || undefined,
     assets,
     bio: userData ? userData.bio : undefined,
     link: userData ? userData.link : undefined,

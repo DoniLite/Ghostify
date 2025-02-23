@@ -1,5 +1,6 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
-import { prismaClient } from '../config/db';
+import { prismaClient } from '../config/db.ts';
 
 export const projects = async (req: Request, res: Response) => {
   const projects = await prismaClient.project.findMany();

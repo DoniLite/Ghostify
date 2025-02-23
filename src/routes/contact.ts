@@ -1,3 +1,4 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
 
 export const contact = (req: Request, res: Response) => {

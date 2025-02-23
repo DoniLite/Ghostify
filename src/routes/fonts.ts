@@ -1,3 +1,4 @@
+// @ts-types="@types/express"
 import { Request, Response } from 'express';
 import path from 'node:path';
 

@@ -1,4 +1,4 @@
-import { prismaClient } from '../config/db';
+import { prismaClient } from '../config/db.ts';
 import {
   compareHash,
   conditionsMD,
@@ -7,7 +7,8 @@ import {
   privacyMD,
   termsMD,
   unify,
-} from '../utils';
+} from '../utils.ts';
+import process from "node:process";
 
 const SETUP_ASSETS = Boolean(process.env.SETUP_ASSETS);
 const uids = [
@@ -20,7 +21,7 @@ const uids = [
 export const setUp = async (
   generator?: (payload: string) => string,
 ) => {
-  const login = process.env.ADMIN_LOGIN;
+  const login = process.env.ADMIN_LOGIN!;
   const password = await hashSomething(process.env.ADMIN_PASSWORD);
 
   [
@@ -88,21 +89,21 @@ export const setUp = async (
       login: login,
     },
   });
-  if (!verifyIfadminPresent) {
+  if (!verifyIfadminPresent && generator) {
     console.log('setting up...');
     await prismaClient.admin.create({
       data: {
         role: 'admin',
         login: login,
         password: password,
-        token: generator(process.env.ADMIN_LOGIN),
+        token: generator(process.env.ADMIN_LOGIN!),
       },
     });
     return;
   }
   const compareResult = await compareHash(
     password,
-    verifyIfadminPresent.password,
+    verifyIfadminPresent!.password,
   );
   if (compareResult) {
     console.log('Updating...');

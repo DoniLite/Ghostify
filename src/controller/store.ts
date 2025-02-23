@@ -1,5 +1,6 @@
+// @ts-types="@types/express"
 import { RequestHandler } from 'express';
-import { BodyXData } from '../@types/index';
+import { BodyXData } from '../@types/index.d.ts';
 
 export const store: RequestHandler = (req, res) => {
   const body = req.body as BodyXData;

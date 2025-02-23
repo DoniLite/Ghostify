@@ -1,6 +1,7 @@
+// @ts-types="@types/express"
 import { RequestHandler } from 'express';
-import { prismaClient } from '../config/db';
-import { Post } from 'index';
+import { prismaClient } from '../config/db.ts';
+import { Post } from '../@types/index.d.ts';
 
 export const blog: RequestHandler = async (req, res) => {
   const Theme = req.session.Theme;
