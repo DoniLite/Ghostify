@@ -45,7 +45,7 @@ jobs:
             ${{ runner.os }}-deno-
 
       - name: Cache Dependencies
-        run: deno install --reload --lock=deno.lock --frozen=false
+        run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
       - name: Lint Code
         run: deno lint
