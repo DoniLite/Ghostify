@@ -2,7 +2,7 @@ name: Build Deno CD/CI
 run-name: ${{ github.actor }}'s GitHub Actions
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  DENO_DIR: /node_modules
+  DENO_DIR: ~/.cache/deno
 
 on:
   push:
@@ -37,29 +37,30 @@ jobs:
           deno-version: ${{ matrix.deno-version }}
           
       - name: Cache Deno dependencies
-    	uses: actions/cache@v4
-    	with:
-      	  path: ${{ env.DENO_DIR }}
-      	  key: ${{ hashFiles('deno.lock') }}
-        continue-on-error: true  # Continue even if cache is not found
-        
-      - name: Install dependencies
-      	run: deno install --reload --lock=deno.lock --allow-scripts --frozen=false --entrypoint .src/server.ts
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
+        continue-on-error: true
+
+      - name: Cache Dependencies
+        run: deno install --reload --lock=deno.lock
         
       - name: Lint Code
         run: deno lint
         
       - name: Check Types
-        run: deno check .src/server.ts
+        run: deno check src/server.ts
         
       - name: Run Tests
         run: deno test
         
       - name: Build Project
-        run: deno task build  # Assurez-vous d'avoir défini cette tâche dans deno.json
+        run: deno task build
         
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build
           path: dist/
+
