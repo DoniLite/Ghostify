@@ -2,6 +2,7 @@ name: Build Deno CD/CI
 run-name: ${{ github.actor }}'s GitHub Actions
 env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DENO_DIR: /node_modules
 
 on:
   push:
@@ -35,19 +36,15 @@ jobs:
         with:
           deno-version: ${{ matrix.deno-version }}
           
-      - name: Cache Deno Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.deno
-            ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deno-
+      - name: Cache Deno dependencies
+    	uses: actions/cache@v4
+    	with:
+      	  path: ${{ env.DENO_DIR }}
+      	  key: ${{ hashFiles('deno.lock') }}
         continue-on-error: true  # Continue even if cache is not found
-      
-      - name: Install Dependencies
-        run: deno install
+        
+      - name: Install dependencies
+      	run: deno install --reload --lock=deno.lock --allow-scripts --frozen=false --entrypoint .src/server.ts
         
       - name: Lint Code
         run: deno lint
