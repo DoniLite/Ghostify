@@ -47,7 +47,7 @@ jobs:
         continue-on-error: true  # Continue even if cache is not found
       
       - name: Install Dependencies
-        run: deno install --allow-scripts
+        run: deno install -A
         
       - name: Lint Code
         run: deno lint
