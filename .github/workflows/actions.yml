@@ -41,10 +41,11 @@ jobs:
         with:
           path: ${{ env.DENO_DIR }}
           key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
-        continue-on-error: true
+          restore-keys: |
+            ${{ runner.os }}-deno-
 
       - name: Cache Dependencies
-        run: deno install --reload --lock=deno.lock
+        run: deno cache --lock=deno.lock --reload
         
       - name: Lint Code
         run: deno lint
@@ -55,6 +56,9 @@ jobs:
       - name: Run Tests
         run: deno test
         
+      - name: Create dist directory
+        run: mkdir -p dist  # Crée le répertoire dist s'il n'existe pas
+        
       - name: Build Project
         run: deno task build
         
@@ -63,4 +67,3 @@ jobs:
         with:
           name: build
           path: dist/
-
