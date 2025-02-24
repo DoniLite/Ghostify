@@ -45,7 +45,7 @@ jobs:
             ${{ runner.os }}-deno-
 
       - name: Cache Dependencies
-        run: deno cache --lock=deno.lock --reload src/server.ts  # Ajoutez votre fichier d'entrée ici
+        run: deno install --reload --lock=deno.lock --frozen=false --entrypoint src/server.ts
         
       - name: Lint Code
         run: deno lint
