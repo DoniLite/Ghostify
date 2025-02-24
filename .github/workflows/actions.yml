@@ -30,11 +30,11 @@ jobs:
         deno-version: [1.41.0, 1.40.0]
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-    	  deno-version: v2.x
+          deno-version: v2.x
 
       - name: Cache Deno dependencies
         uses: actions/cache@v4
@@ -46,24 +46,25 @@ jobs:
 
       - name: Cache Dependencies
         run: deno install --reload --lock=deno.lock --frozen=false
-        
+
       - name: Lint Code
         run: deno lint
-        
+
       - name: Check Types
         run: deno check src/server.ts
-        
+
       - name: Run Tests
         run: deno test
-        
+
       - name: Create dist directory
         run: mkdir -p dist  # Crée le répertoire dist s'il n'existe pas
-        
+
       - name: Build Project
         run: deno task build
-        
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build
           path: dist/
+
