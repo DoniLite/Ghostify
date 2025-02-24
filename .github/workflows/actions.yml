@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno-version: [1.41.0, 1.40.0]  # Ajustez selon vos besoins
+        deno-version: [1.41.0, 1.40.0]
     steps:
       - uses: actions/checkout@v4
       
@@ -41,12 +41,13 @@ jobs:
           path: |
             ~/.deno
             ~/.cache/deno
-          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deno.lock') }}
           restore-keys: |
             ${{ runner.os }}-deno-
-            
+        continue-on-error: true  # Continue even if cache is not found
+      
       - name: Install Dependencies
-        run: deno install --allow-all
+        run: deno install --allow-scripts
         
       - name: Lint Code
         run: deno lint
@@ -64,4 +65,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: dist/  # Ajustez selon votre dossier de build
+          path: dist/
