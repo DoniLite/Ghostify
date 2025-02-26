@@ -19,10 +19,11 @@ import {
   DatasetRecord,
   RuntimeOptions,
   StoreValue,
-} from '../@types/index';
+} from '../@types/index.d.ts';
 import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
+import process from 'node:process';
 
-export const ACTOR_ID = process.env.ACTOR_ID;
+export const ACTOR_ID = process.env.ACTOR_ID!;
 export class ApifyCustomClient implements CrawlerClient {
   #client: ApifyClient;
   constructor(token: string) {
@@ -31,12 +32,12 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async runActorsAndGetOutputs<CrawlerOutPuts>(
     input: CrawlerInput,
-    runtimeOptions?: RuntimeOptions,
+    runtimeOptions?: RuntimeOptions
   ): Promise<CrawlerOutPuts[]> {
     const run = await this.#client.actor(ACTOR_ID).call(input);
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
-    if (runtimeOptions.iterateToConsole) {
+    if (runtimeOptions && runtimeOptions.iterateToConsole) {
       console.log('The request have been completed');
       console.log('...printing results');
       items.forEach((item) => console.dir(item));
@@ -44,9 +45,7 @@ export class ApifyCustomClient implements CrawlerClient {
     return items as CrawlerOutPuts[];
   }
 
-  async run<T extends CrawlerOutPuts<never>>(
-    input: CrawlerInput,
-  ): Promise<T> {
+  async run<T extends CrawlerOutPuts<never>>(input: CrawlerInput): Promise<T> {
     const run = await this.#client.actor(ACTOR_ID).start(input);
 
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
@@ -58,7 +57,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async crawlerBuilder(
     versionNumber: string,
-    crawlOptions?: ActorBuildOptions,
+    crawlOptions?: ActorBuildOptions
   ): Promise<Builder> {
     const build = await this.#client.build(versionNumber);
     const buildGeted = await build.get(crawlOptions);
@@ -81,7 +80,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getRequestQueue(
     id: string,
-    options?: RequestQueueUserOptions,
+    options?: RequestQueueUserOptions
   ): Promise<RequestQueueClient> {
     const requestQueueClient = await this.#client.requestQueue(id, options);
     return requestQueueClient;
@@ -92,15 +91,12 @@ export class ApifyCustomClient implements CrawlerClient {
     return buildCollectionClient;
   }
 
-  async getRunsCollection(): Promise<RunCollectionClient> {
+  getRunsCollection(): RunCollectionClient {
     const runCollection = this.#client.runs();
     return runCollection;
   }
 
-  async getVersionClient(
-    actorId: string,
-    versionNumber: string,
-  ): Promise<ActorVersionClient> {
+  getVersionClient(actorId: string, versionNumber: string): ActorVersionClient {
     const run = this.#client.actor(actorId);
     const version = run.version(versionNumber);
     return version;
@@ -118,9 +114,7 @@ export class ApifyCustomClient implements CrawlerClient {
     return data;
   }
 
-  async getKeyList(
-    id: string,
-  ): Promise<KeyValueListItem[]> {
+  async getKeyList(id: string): Promise<KeyValueListItem[]> {
     const store = await this.#client.keyValueStore(id);
     const keys = (await store.listKeys()).items;
     return keys;
@@ -128,7 +122,7 @@ export class ApifyCustomClient implements CrawlerClient {
 
   async getStoreValue<T extends keyof unknown>(
     id: string,
-    key: string,
+    key: string
   ): Promise<StoreValue<T> | undefined> {
     const store = await this.#client.keyValueStore(id);
     const verify = await store.recordExists(key);

@@ -1,20 +1,21 @@
 #!/usr/bin/env node
-import { Classifier } from './classifier';
+import { Classifier } from './classifier.ts';
 import {
   cvEducationConfig,
   cvSoftSkillsConfig,
   cvTechnicalConfig,
   techBlogConfig,
   tutorialBlogConfig,
-} from './data/dataTemplates';
+} from './data/dataTemplates.ts';
 import {
   CategoryConfig,
   TrainingDataManager,
-} from './data/TrainingDataGenerator';
-import { getWordRelations } from './data/wordnet';
+} from './data/TrainingDataGenerator.ts';
+import { getWordRelations } from './data/wordnet.ts';
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import path from 'node:path';
+import process from "node:process";
 
 /**
  * The Script command line args to define for the script execution
@@ -75,9 +76,9 @@ export enum MODELS_NAMES {
  * @param configs the data category config that will be extended
  * @returns {Promise<CategoryConfig[]>}
  */
-const extendTrainingDataConfig = async (
-  configs: CategoryConfig[],
-): Promise<CategoryConfig[]> => {
+const extendTrainingDataConfig = (
+  configs: CategoryConfig[]
+): CategoryConfig[] => {
   const newConfigs: CategoryConfig[] = [];
   for (const config of configs) {
     config.baseWords.forEach(async (word) => {
@@ -171,13 +172,13 @@ const actionFn = (toDo: 'train' | 'test') => {
     case MODELS_NAMES.CV_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.CV_CLASSIFIER,
-        path.resolve(__dirname, '../src/ATS/models'),
+        path.resolve(process.cwd(), '/src/ATS/models')
       );
       break;
     case MODELS_NAMES.BLOG_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.BLOG_CLASSIFIER,
-        path.resolve(__dirname, '../src/ATS/models'),
+        path.resolve(process.cwd(), '/src/ATS/models')
       );
       break;
     default:
@@ -189,14 +190,14 @@ const actionFn = (toDo: 'train' | 'test') => {
       manager.loadDataset(
         DATASETS_NAMES.CV,
         DATASETS_NAMES.CV,
-        path.resolve(__dirname, '../src/ATS/datasets'),
+        path.resolve(process.cwd(), '/src/ATS/datasets')
       );
       break;
     case DATASETS_NAMES.BLOG:
       manager.loadDataset(
         DATASETS_NAMES.BLOG,
         DATASETS_NAMES.BLOG,
-        path.resolve(__dirname, '../src/ATS/datasets'),
+        path.resolve(process.cwd(), '/src/ATS/datasets')
       );
       break;
 
@@ -254,7 +255,7 @@ const actionFn = (toDo: 'train' | 'test') => {
       classifier.train();
       const savedModel = classifier.stringify(
         model || saveModelName,
-        path.resolve(__dirname, '../src/ATS/models'),
+        path.resolve(process.cwd(), '/src/ATS/models')
       );
       if (savedModel) {
         console.log(`model: ${model || saveModelName} saved successfully`);
@@ -274,7 +275,7 @@ switch (args.process) {
     actionFn(args.process)();
     break;
   case 'init': {
-    const custom = path.resolve(__dirname, '../src/ATS/datasets');
+    const custom = path.resolve(process.cwd(), '/src/ATS/datasets');
     initDatasets(custom)
       .then(() => {
         console.log('Datasets initialized');

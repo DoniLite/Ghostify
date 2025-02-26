@@ -66,7 +66,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 // import { stats } from './hooks/statCounter';
 import { verify } from './hooks/verify.ts';
-import fs from 'node:fs';
+// import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import i18n from 'i18n';
@@ -80,10 +80,14 @@ import { contact } from './routes/contact.ts';
 import passport from 'passport';
 // @ts-types="@types/passport-google-oauth20"
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { test as testRoute } from './routes/testRoute.ts';
+// import { test as testRoute } from './routes/tRoute.ts';
 // @ts-types="@types/express-ws"
 import expressWs, { Application } from 'express-ws';
-import { checkIfUserExist, updateProfile, updateUserName } from './routes/user.ts';
+import {
+  checkIfUserExist,
+  updateProfile,
+  updateUserName,
+} from './routes/user.ts';
 import { downloader, serveStatic } from './routes/serveStatic.ts';
 import { cv, processCV } from './controller/processCv.ts';
 import { checkCVStatus, cvProcessAPI, getCV, getCVTheme } from './routes/cv.ts';
@@ -96,21 +100,22 @@ import { onStat } from './hooks/events.ts';
 import { stats } from './hooks/statCounter.ts';
 import { auth, ROUTES } from './hooks/auth.ts';
 import { Notifications, NotificationType } from '@prisma/client';
-import { NotificationBus } from "./class/NotificationBus.ts";
-import { feed, reactions } from "./routes/feed.ts";
-import { comment } from "./controller/comments.ts";
+import { NotificationBus } from './class/NotificationBus.ts';
+import { feed, reactions } from './routes/feed.ts';
+import { comment } from './controller/comments.ts';
 import { webfont } from './routes/fonts.ts';
 import { translator } from './routes/translate.ts';
-import process from "node:process";
+import process from 'node:process';
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env['GOOGLE_CLIENT_ID'] as string,
       clientSecret: process.env['GOOGLE_CLIENT_SECRET'] as string,
-      callbackURL: process.env.NODE_ENV === 'production'
-        ? 'https://ghostify.site/login/federated/google'
-        : 'http://localhost:3085/login/federated/google',
+      callbackURL:
+        process.env.NODE_ENV === 'production'
+          ? 'https://ghostify.site/login/federated/google'
+          : 'http://localhost:3085/login/federated/google',
       scope: ['profile'],
       state: true,
     },
@@ -118,7 +123,9 @@ passport.use(
       const verifEmail = profile._json.email;
       const { picture } = profile._json;
       const userId = profile.id;
-      const fullname = `${profile!.name?.givenName} ${profile!.name?.familyName}`;
+      const fullname = `${profile!.name?.givenName} ${
+        profile!.name?.familyName
+      }`;
       if (!verifEmail) {
         const error = new Error('User not authenticated');
         cb(error, undefined);
@@ -130,7 +137,7 @@ passport.use(
         });
         if (checkExistedUser && checkExistedUser.providerId !== userId) {
           const error = new Error(
-            `User ${profile!.emails![0].value} already exists`,
+            `User ${profile!.emails![0].value} already exists`
           );
           cb(error, undefined);
           return;
@@ -153,8 +160,8 @@ passport.use(
       } catch (err) {
         cb(err, undefined);
       }
-    },
-  ),
+    }
+  )
 );
 
 passport.serializeUser((userId, done) => {
@@ -178,7 +185,7 @@ passport.deserializeUser((userId, done) => {
 
 i18n.configure({
   locales: ['en', 'fr', 'es'], // Liste des langues supportées
-  directory: path.resolve(__dirname, '../locales'), // Répertoire où se trouvent les fichiers de traduction
+  directory: path.resolve(process.cwd(), './locales'), // Répertoire où se trouvent les fichiers de traduction
   defaultLocale: 'fr', // Langue par défaut
   queryParameter: 'lang',
   cookie: 'lang',
@@ -202,7 +209,7 @@ expressWs(server as unknown as Application);
 //   process.env.NODE_ENV !== 'production'
 //     ? 'ws://localhost/notifications'
 //     : 'ws://ghostify.site/notifications';
-const viewsPath = path.resolve(__dirname, '../views');
+const viewsPath = path.resolve(process.cwd(), '/views');
 server.engine('html', ejs.renderFile);
 server.set('view engine', 'ejs');
 server.set('views', viewsPath);
@@ -266,7 +273,7 @@ server.options('*', cors());
 //   crossOriginEmbedderPolicy: false, // Disable for external resources//+
 //   crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow certain cross-origin resources//+
 // };
-server.use((req, res, next) => {
+server.use((_req, res, next) => {
   // Générer un nonce unique pour chaque requête
   res.locals.cspNonce = crypto.randomBytes(32).toString('hex');
   next();
@@ -279,14 +286,12 @@ server.use(
         scriptSrc: [
           "'self'",
           'https://eu-assets.i.posthog.com',
-          (_req: express.Request, res: express.Response) =>
-            `'nonce-${res.locals.cspNonce}'`,
+          (_req, res) => `'nonce-${res.locals.cspNonce}'`,
         ],
         scriptSrcElem: [
           "'self'",
           'https://eu-assets.i.posthog.com/static/array.js',
-          (_req: express.Request, res: express.Response) =>
-            `'nonce-${res.locals.cspNonce}'`,
+          (_req, res) => `'nonce-${res.locals.cspNonce}'`,
         ],
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
@@ -302,7 +307,7 @@ server.use(
         imgSrc: ["'self'", 'data:', 'https://lh3.googleusercontent.com'],
       },
     },
-  }), //+
+  }) //+
 );
 // server.use(
 //   helmet.crossOriginResourcePolicy({
@@ -318,27 +323,26 @@ server.use(
     origin: '*',
     methods: ['GET', 'PUT', 'POST'],
     credentials: true,
-  }),
+  })
 );
 server.use(
   '/static',
-  express.static(path.resolve(__dirname, '../src/public'), {
+  express.static(path.resolve(process.cwd(), '/src/public'), {
     maxAge: '1d', // Définit une durée de vie du cache de 1 jour
     etag: false, // Désactive les ETags (facultatif)
-    setHeaders: process.env.NODE_ENV !== 'production' ? undefined : (res) => {
-      res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
-    },
-  }),
+    setHeaders:
+      process.env.NODE_ENV !== 'production'
+        ? undefined
+        : (res) => {
+            res.setHeader('Cache-Control', 'public, max-age=86400'); // 86400 secondes = 1 jour
+          },
+  })
 );
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookie(process.env.SESSION_SECRET) as unknown as RequestHandler);
-const sessionStorePath = process.env.NODE_ENV === 'production'
-  ? path.resolve('/home/ubuntu/Ghostify/sessions')
-  : path.resolve(__dirname, '../src/config');
+const sessionStorePath = path.resolve(process.cwd(), '/src/config');
 
-// Assurez-vous que le dossier existe
-fs.mkdirSync(path.dirname(sessionStorePath), { recursive: true });
 
 server.use(
   session({
@@ -348,9 +352,10 @@ server.use(
     },
     name: 'sessionId',
     store: new SQLStore({
-      db: process.env.NODE_ENV === 'production'
-        ? 'sessionProduction.db'
-        : 'sessions.db',
+      db:
+        process.env.NODE_ENV === 'production'
+          ? 'sessionProduction.db'
+          : 'sessions.db',
       dir: sessionStorePath,
     }) as session.Store,
     saveUninitialized: false,
@@ -441,7 +446,7 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.MESSAGE,
         data,
-      }),
+      })
     );
   });
 
@@ -451,7 +456,7 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      }),
+      })
     );
   });
 
@@ -461,7 +466,7 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.MESSAGE,
         data,
-      }),
+      })
     );
   });
 
@@ -471,7 +476,7 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      }),
+      })
     );
   });
 
@@ -481,7 +486,7 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      }),
+      })
     );
   });
 
@@ -491,12 +496,12 @@ server.ws('/', (socket) => {
         flash: true,
         type: SocketEventType.NOTIFICATION,
         data,
-      }),
+      })
     );
   });
 
   console.log('New client connected');
-  socket.on('message', async (msg) => {
+  socket.on('message', async (msg: unknown) => {
     try {
       const evData = JSON.parse(msg as unknown as string) as {
         type: SocketEventType;
@@ -574,7 +579,7 @@ server.ws('/', (socket) => {
                 JSON.stringify({
                   title: notification.title,
                   content: notification.content,
-                }),
+                })
               );
             }
             break;
@@ -611,7 +616,7 @@ server.ws('/', (socket) => {
                 data: {
                   notifications: notificationsUpdates,
                 },
-              }),
+              })
             );
             break;
           }
@@ -734,19 +739,19 @@ server.post('/projectPost', projectPost);
 server.post('/assetsPost', assetPoster);
 
 // API
-server.get('/test', testRoute);
+// server.get('/test', testRoute);
 server.get('/signin', connexion);
 server.get('/register', registrationView);
 server.post('/api/v1/register', registrationController);
 server.post('/api/v1/auth', authController);
 server.get(
   '/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }),
+  passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 server.get(
   '/login/federated/google',
   passport.authenticate('google', { failureRedirect: '/login' }),
-  googleAuth,
+  googleAuth
 );
 server.get('/service', serviceHome);
 server.get('/poster/new', poster);
@@ -838,7 +843,7 @@ export const cvQueue = new Queue<{
 
 export const statsQueue = new Queue<string>(
   'stats-saver',
-  'redis://127.0.0.1:6379',
+  'redis://127.0.0.1:6379'
 );
 
 export const NotificationQueue = new Queue<{
@@ -852,7 +857,7 @@ cvQueue.process(async (job, done) => {
     const downLoaderData = await cvDownloader(job.data);
     done(null, downLoaderData);
   } catch (e) {
-    done(e);
+    done(e as Error);
   }
 });
 
@@ -861,7 +866,7 @@ statsQueue.process(async (job, done) => {
     await stats(job.data);
     done(null);
   } catch (err) {
-    done(err);
+    done(err as Error);
   }
 });
 

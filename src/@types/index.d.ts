@@ -16,7 +16,6 @@ import {
   RunClient,
   RunCollectionClient,
 } from 'apify-client';
-import { ActorVersionClient } from 'apify-client/dist/resource_clients/actor_version';
 import sharp from 'sharp';
 import { prismaClient } from '../config/db.ts';
 import { Can } from '../utils.ts';
@@ -25,11 +24,16 @@ export { Post } from '@prisma/client';
 import { type WebSocket as WebSocketS } from 'npm:ws';
 import { type Buffer } from 'node:buffer';
 
+
+interface ActorVersionClient {
+  get(): void
+}
+
 export interface Service {
   APIs?: {
     name: string;
     endpoint: string;
-    docs?: string;
+    docs?: string | null;
     isSecure?: boolean;
   }[];
   chekHealth?: (service: string, endpoint: string) => boolean;
@@ -96,17 +100,17 @@ export interface Section {
 export interface CrawlerClient {
   runActorsAndGetOutputs<T>(
     input: CrawlerInput,
-    runtimeOptions?: RuntimeOptions,
+    runtimeOptions?: RuntimeOptions
   ): Promise<T[]>;
 
   run<T extends CrawlerOutPuts<never>>(
     input: CrawlerInput,
-    runOptions?: RunOptions,
+    runOptions?: RunOptions
   ): Promise<T>;
 
   crawlerBuilder(
     versionNumber: string,
-    options?: ActorBuildOptions,
+    options?: ActorBuildOptions
   ): Promise<Builder>;
 
   getLastRunClient(options?: ActorLastRunOptions): Promise<RunClient>;
@@ -115,28 +119,25 @@ export interface CrawlerClient {
 
   getRequestQueue(
     id: string,
-    options?: RequestQueueUserOptions,
+    options?: RequestQueueUserOptions
   ): Promise<RequestQueueClient>;
 
   getBuildsCollection(): Promise<BuildCollectionClient>;
 
-  getRunsCollection(): Promise<RunCollectionClient>;
+  getRunsCollection(): RunCollectionClient;
 
-  getVersionClient(
-    actorId: string,
-    versionNumber: string,
-  ): Promise<ActorVersionClient>;
+  getVersionClient(actorId: string, versionNumber: string): ActorVersionClient;
 
   getDataset<T extends DatasetRecord>(id?: string): Promise<Dataset<T>>;
 
   getKeyList(
     id: string,
-    options?: KeyValueClientListKeysOptions,
+    options?: KeyValueClientListKeysOptions
   ): Promise<KeyValueListItem[]>;
 
   getStoreValue<T extends keyof unknown>(
     id: string,
-    key: string,
+    key: string
   ): Promise<StoreValue<T> | undefined>;
 }
 
@@ -145,7 +146,7 @@ export type FetchFn<T = unknown> = Promise<T>;
 export type RunOptions = Record<string, string>;
 
 export interface Builder {
-  build: Build;
+  build?: Build;
   buildInstance: BuildClient;
 }
 

@@ -146,10 +146,10 @@ export const docSaver = async (req: Request, res: Response) => {
     uidPost: string;
   }>;
   console.log('Starting docSaver');
-  const STATIC_DIR = '../../static/posts';
+  const STATIC_DIR = '/static/posts';
   const date = new Date();
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -238,7 +238,10 @@ export const docSaver = async (req: Request, res: Response) => {
       const date = new Date();
       const r = randomInt(date.getTime()).toString();
       const fName = `${date.getTime().toString() + r}${ext}`;
-      const uploadPath = path.join(path.resolve(__dirname, STATIC_DIR), fName);
+      const uploadPath = path.join(
+        path.resolve(process.cwd(), STATIC_DIR),
+        fName
+      );
       // Déplacer le fichier téléchargé
       fs.rename(fileArray[i].filepath, uploadPath, async (renameErr) => {
         if (renameErr) {
@@ -521,10 +524,12 @@ export const parserController = async (req: Request, res: Response) => {
     res.status(401).redirect('/signin/?service=poster');
     return;
   }
-  const STATIC_DIR = path.resolve(path.join(__dirname, '../../static/test'));
+  const STATIC_DIR = path.resolve(
+    path.join(process.cwd(), '/static/test')
+  );
   const mimeTypesArray = Object.values(DocumentMimeTypes);
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -587,7 +592,7 @@ export const parserController = async (req: Request, res: Response) => {
   const fileExt = json.path.split('.').pop();
   const fileXName = `${fileName}.${fileExt}`;
   const SAVE_PATH = path.resolve(
-    path.join(__dirname, '../../static/downloads/doc'),
+    path.join(process.cwd(), '/static/downloads/doc'),
   );
   const serviceXPath = process.env.NODE_ENV !== 'production'
     ? `https://ghostify.site/downloader/${

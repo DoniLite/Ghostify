@@ -15,10 +15,10 @@ export const cv = (_req: Request, res: Response) => {
 };
 
 export const processCV = async (req: Request, res: Response) => {
-  const STATIC_DIR = '../../static/cv';
+  const STATIC_DIR = '/static/cv';
   const date = new Date();
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -38,7 +38,7 @@ export const processCV = async (req: Request, res: Response) => {
   const file = files?.userProfileFile?.[0];
   if (file) {
     try {
-      result = await renaming(file, path.resolve(__dirname, STATIC_DIR));
+      result = await renaming(file, path.resolve(process.cwd(), STATIC_DIR));
       if (result === false) {
         res.status(400).json({ message: 'Error while renaming CV file' });
         return;

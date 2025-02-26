@@ -26,6 +26,8 @@ import {
 } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { Translate, translate } from 'free-translate';
+import { Buffer } from "node:buffer";
+import process from "node:process";
 
 export const hashSomething = async (
   data: string | Buffer,
@@ -111,7 +113,7 @@ export async function analyzeImage(
   // Analyse des couleurs dominantes
   const palette = await Vibrant.from(imagePath).getPalette();
   const dominantColors = Object.values(palette).map(
-    (color) => color.hex || '',
+    (color) => color?.hex || '',
   );
 
   // Création de l'empreinte de l'image (hash)
@@ -144,7 +146,7 @@ export async function analyzeImage(
 }
 
 export function shouldFlagImage(
-  metadata: sharp.Metadata,
+  _metadata: sharp.Metadata,
   dominantColors: string[],
   ocrText: string,
 ): boolean {
@@ -176,7 +178,7 @@ export enum ProjectParticipationType {
   subscription = 'subscription',
 }
 
-export const DATA_PATH = path.resolve(path.join(__dirname, '../data'));
+export const DATA_PATH = path.resolve(path.join(process.cwd(), '/data'));
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export async function createDirIfNotExists(path: string) {
@@ -298,7 +300,7 @@ export async function generateAndSaveKeys(): Promise<{
     },
   });
 
-  if (verifyIfKeyExist) {
+  if (verifyIfKeyExist && verifyIfKeyExist.key && verifyIfKeyExist.iv) {
     return {
       secretKey: Buffer.from(verifyIfKeyExist.key, 'hex'),
       iv: Buffer.from(verifyIfKeyExist.iv, 'hex'),
@@ -315,8 +317,8 @@ export async function generateAndSaveKeys(): Promise<{
   });
   console.log('Clés générées et sauvegardées avec succès !');
   return {
-    secretKey: Buffer.from(newKey.key, 'hex'),
-    iv: Buffer.from(newKey.iv, 'hex'),
+    secretKey: Buffer.from(newKey.key!, 'hex'),
+    iv: Buffer.from(newKey.iv!, 'hex'),
   };
 }
 
@@ -327,7 +329,7 @@ export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
       uid: server_uid,
     },
   });
-  if (!keys) {
+  if (!keys || !keys.key || !keys.iv) {
     return await generateAndSaveKeys();
   }
 
@@ -711,8 +713,8 @@ export const cvDownloader = async (options: {
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
-  const STATIC_DIR = path.resolve(__dirname, '../static/downloads/doc');
-  const STATIC_IMG_DIR = path.resolve(__dirname, '../static/downloads/cv');
+  const STATIC_DIR = path.resolve(process.cwd(), '/static/downloads/doc');
+  const STATIC_IMG_DIR = path.resolve(process.cwd(), '/static/downloads/cv');
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: process.env.NODE_ENV === 'production'
@@ -843,13 +845,13 @@ export const orderReactions = (reactions: Reactions[]) => {
  * @param pathTo {string}
  * @returns {false | string}
  */
-export const renaming = async (file: formidable.File, pathTo: string) => {
+export const renaming = (file: formidable.File, pathTo: string) => {
   const ext = path.extname(file.originalFilename);
   const date = new Date();
   const r = crypto.randomInt(date.getTime()).toString();
   const fName = `${date.getTime().toString() + r}${ext}`;
   console.log(fName);
-  const xPath = path.resolve(__dirname, pathTo);
+  const xPath = path.resolve(process.cwd(), pathTo);
   const uploadPath = path.join(xPath, fName);
   try {
     fs.renameSync(file.filepath, uploadPath);
@@ -866,14 +868,18 @@ export function ensureDirectoryAccess(directory: string) {
     fs.accessSync(directory, fs.constants.W_OK);
   } catch (error) {
     console.error(`Problème d'accès au dossier : ${directory}`);
-    console.error(`Erreur : ${error.message}`);
+    console.error(`Erreur : ${(error as {message: string}).message}`);
 
     // Tente de créer le dossier avec les permissions appropriées
     try {
       fs.mkdirSync(directory, { recursive: true, mode: 0o755 });
       console.log(`Dossier créé : ${directory}`);
     } catch (mkdirError) {
-      console.error(`Impossible de créer le dossier : ${mkdirError.message}`);
+      console.error(
+        `Impossible de créer le dossier : ${
+          (mkdirError as { message: string }).message
+        }`
+      );
       throw mkdirError;
     }
   }
@@ -883,11 +889,11 @@ export function getTimeElapsed(date: Date) {
   const duration = intervalToDuration({ start: date, end: new Date() });
 
   // sourcery skip: use-braces
-  if (duration.weeks >= 1) return `${duration.weeks}w`;
-  if (duration.days >= 1) return `${duration.days}d`;
-  if (duration.hours >= 1) return `${duration.hours}h`;
-  if (duration.minutes >= 1) return `${duration.minutes}m`;
-  if (duration.seconds >= 1) return `${duration.seconds}s`;
+  if (duration.weeks && duration.weeks >= 1) return `${duration.weeks}w`;
+  if (duration.days && duration.days >= 1) return `${duration.days}d`;
+  if (duration.hours && duration.hours >= 1) return `${duration.hours}h`;
+  if (duration.minutes && duration.minutes >= 1) return `${duration.minutes}m`;
+  if (duration.seconds && duration.seconds >= 1) return `${duration.seconds}s`;
 
   return '0s';
 }
@@ -1020,8 +1026,8 @@ export const verifyJWT = (token: string) => {
 };
 
 // Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
-export const purgeFiles = async (files: string[]) => {
-  const STATIC_DIR = path.resolve(__dirname, '../static');
+export const purgeFiles = (files: string[]) => {
+  const STATIC_DIR = path.resolve(process.cwd(), '/static');
 
   // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
   if (files.length === 0) {
@@ -1068,7 +1074,7 @@ export const purgeSingleFIle = (path: string) => {
   }
 };
 
-const setupSecurity = async () => {
+const setupSecurity = () => {
   try {
     console.log('creating the new security.json');
     const SECURITY_DIR = path.resolve(__filename, '../../security');
@@ -1077,7 +1083,7 @@ const setupSecurity = async () => {
     const hash = tokenGenerator(date.toString());
     const security: SecurityHashPayload = {
       hash,
-      env: process.env.NODE_ENV,
+      env: process.env.NODE_ENV!,
       expire: date.toISOString(),
     };
     console.log('setup the security hash to expire in ' + date.toUTCString());
@@ -1093,7 +1099,7 @@ const setupSecurity = async () => {
 
 export const verifySecurity = async () => {
   try {
-    const SECURITY_DIR = path.resolve(__dirname, '../../security');
+    const SECURITY_DIR = path.resolve(process.cwd(), '/security');
     const filePath = path.join(SECURITY_DIR, 'security.json');
     if (fs.existsSync(filePath)) {
       console.log('found security.json processing file examination');
@@ -1120,8 +1126,8 @@ export const verifySecurity = async () => {
   }
 };
 
-export const loadSecurityBearer = async () => {
-  const SECURITY_DIR = path.resolve(__dirname, '../../security');
+export const loadSecurityBearer = () => {
+  const SECURITY_DIR = path.resolve(process.cwd(), '/security');
   const filePath = path.join(SECURITY_DIR, 'security.json');
   try {
     const fileContent = fs.readFileSync(filePath, 'utf8');

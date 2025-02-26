@@ -1,6 +1,6 @@
 import { ee, NotificationQueue } from '../server.ts';
 import { prismaClient } from '../config/db.ts';
-import { EventEmitter } from 'stream';
+import { EventEmitter } from 'node:stream';
 import type { Notifications, NotificationType } from '@prisma/client';
 import { DoneCallback, Job } from 'bull';
 import { logger } from '../logger.ts';
@@ -53,6 +53,8 @@ export class NotificationBus {
    *    notification.addCallBack<{
    *      yourJobType: string
    *    }>(yourCallBack);
+   * 
+   * 
    * ```
    *
    */

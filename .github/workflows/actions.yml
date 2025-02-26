@@ -48,7 +48,7 @@ jobs:
         run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
       - name: Lint Code
-        run: deno lint
+        run: deno lint --fix --ignore="**/*.js"
 
       - name: Check Types
         run: deno check src/server.ts

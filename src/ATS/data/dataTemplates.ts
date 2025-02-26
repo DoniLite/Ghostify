@@ -1,4 +1,4 @@
-import { CategoryConfig } from './TrainingDataGenerator';
+import { CategoryConfig } from './TrainingDataGenerator.ts';
 
 export const cvTechnicalConfig: CategoryConfig[] = [
   {

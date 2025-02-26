@@ -6,18 +6,20 @@ import { Request, Response } from 'express';
 import path from 'node:path';
 import { renaming } from '../utils.ts';
 import { prismaClient } from '../config/db.ts';
+import process from "node:process";
 
 export const comment = async (req: Request, res: Response) => {
-  const STATIC_DIR = `../../static/comments`;
+  const STATIC_DIR = `/static/comments`;
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
     minFileSize: 0,
     filter: function ({ mimetype }) {
       // keep only images
-      return mimetype && mimetype.includes('image');
+      if(mimetype && mimetype.includes('image')) return true;
+      return false;
     },
   });
   let pointerId: number | null = null;
@@ -29,11 +31,11 @@ export const comment = async (req: Request, res: Response) => {
   const file = files?.commentFile?.[0];
   for (const field in fields) {
     if (field === 'pointerId') {
-      pointerId = Number(fields[field].toString());
+      pointerId = Number(fields[field]?.[0]);
     } else if (field === 'comment') {
-      comment = fields[field].toString();
+      comment = fields[field]![0];
     } else if (field === 'pointerType') {
-      pointerType = fields[field].toString() as
+      pointerType = fields[field]![0] as
         | 'user'
         | 'post'
         | 'comment'
@@ -49,7 +51,7 @@ export const comment = async (req: Request, res: Response) => {
 
   if (file) {
     try {
-      result = await renaming(file, path.resolve(__dirname, STATIC_DIR));
+      result = await renaming(file, path.resolve(process.cwd(), STATIC_DIR));
       if (result === false) {
         res.status(400).json({ message: 'Error while renaming CV file' });
         return;

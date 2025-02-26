@@ -10,9 +10,9 @@ import { tokenGenerator } from '../server.ts';
 import process from "node:process";
 
 export const updateProfile = async (req: Request, res: Response) => {
-  const STATIC_DIR = '../../static/users';
+  const STATIC_DIR = '/static/users';
   const form = new IncomingForm({
-    uploadDir: path.resolve(__dirname, STATIC_DIR),
+    uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
     multiples: true, // Permet de gérer plusieurs fichiers
     allowEmptyFiles: true,
@@ -31,7 +31,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     try {
       const result = await renaming(
         file,
-        path.resolve(__dirname, STATIC_DIR),
+        path.resolve(process.cwd(), STATIC_DIR)
       );
       if (result === false) {
         res

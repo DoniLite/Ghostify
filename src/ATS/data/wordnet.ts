@@ -10,7 +10,7 @@ export interface WordRelations {
   hyponyms: string[];
 }
 
-export async function getWordRelations(word: string): Promise<WordRelations> {
+export function getWordRelations(word: string): Promise<WordRelations> {
   return new Promise((resolve) => {
     const relations: WordRelations = {
       synonyms: [],

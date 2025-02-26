@@ -3,8 +3,9 @@
   "specifiers": {
     "npm:@paypal/paypal-server-sdk@0.6.1": "0.6.1",
     "npm:@prisma/adapter-pg@^6.3.1": "6.3.1_pg@8.13.1",
+    "npm:@prisma/client@*": "6.4.1_prisma@6.3.1",
     "npm:@prisma/client@6.3.0": "6.3.0",
-    "npm:@prisma/client@^6.3.1": "6.3.1_prisma@6.3.1",
+    "npm:@prisma/client@6.4.1": "6.4.1_prisma@6.3.1",
     "npm:@sendgrid/mail@^8.1.4": "8.1.4",
     "npm:@tailwindcss/aspect-ratio@0.4.2": "0.4.2_tailwindcss@4.0.6",
     "npm:@tailwindcss/cli@*": "4.0.6",
@@ -21,6 +22,7 @@
     "npm:@types/express@*": "5.0.0",
     "npm:@types/express@5": "5.0.0",
     "npm:@types/express@^4.17.21": "4.17.21",
+    "npm:@types/formidable@*": "3.4.5",
     "npm:@types/formidable@^3.4.5": "3.4.5",
     "npm:@types/i18n@~0.13.12": "0.13.12",
     "npm:@types/jsdom@^21.1.7": "21.1.7",
@@ -31,6 +33,7 @@
     "npm:@types/pg@^8.11.11": "8.11.11",
     "npm:@types/showdown@^2.0.6": "2.0.6",
     "npm:@types/vhost@^3.0.9": "3.0.9",
+    "npm:@types/ws@*": "8.5.14",
     "npm:@types/ws@^8.5.14": "8.5.14",
     "npm:@types/yargs@^17.0.33": "17.0.33",
     "npm:apify-client@2.11.1": "2.11.1",
@@ -78,6 +81,7 @@
     "npm:tesseract.js@6.0.0": "6.0.0",
     "npm:vhost@3.0.2": "3.0.2",
     "npm:winston@3.17.0": "3.17.0",
+    "npm:ws@*": "8.18.0",
     "npm:ws@^8.18.0": "8.18.0",
     "npm:yargs@17.7.2": "17.7.2"
   },
@@ -606,8 +610,8 @@
     "@prisma/client@6.3.0": {
       "integrity": "sha512-BY3Fi28PUSk447Bpv22LhZp4HgNPo7NsEN+EteM1CLDnLjig5863jpW+3c3HHLFmml+nB/eJv1CjSriFZ8z7Cg=="
     },
-    "@prisma/client@6.3.1_prisma@6.3.1": {
-      "integrity": "sha512-ARAJaPs+eBkemdky/XU3cvGRl+mIPHCN2lCXsl5Vlb0E2gV+R6IN7aCI8CisRGszEZondwIsW9Iz8EJkTdykyA==",
+    "@prisma/client@6.4.1_prisma@6.3.1": {
+      "integrity": "sha512-A7Mwx44+GVZVexT5e2GF/WcKkEkNNKbgr059xpr5mn+oUm2ZW1svhe+0TRNBwCdzhfIZ+q23jEgsNPvKD9u+6g==",
       "dependencies": [
         "prisma"
       ]
@@ -5493,7 +5497,7 @@
       "npm:@paypal/paypal-server-sdk@0.6.1",
       "npm:@prisma/adapter-pg@^6.3.1",
       "npm:@prisma/client@6.3.0",
-      "npm:@prisma/client@^6.3.1",
+      "npm:@prisma/client@6.4.1",
       "npm:@sendgrid/mail@^8.1.4",
       "npm:@tailwindcss/aspect-ratio@0.4.2",
       "npm:@tailwindcss/cli@4.0.6",

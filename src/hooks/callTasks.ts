@@ -72,7 +72,7 @@ interface FilteredPosts {
   safe: Post[] | undefined;
   unsafe: Post[] | undefined;
 }
-async function postFilter(posts: Post[]): Promise<FilteredPosts> {
+function postFilter(_posts: Post[]): FilteredPosts {
   const filtered = {} as FilteredPosts;
   return filtered;
 }

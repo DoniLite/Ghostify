@@ -1,6 +1,6 @@
 // @ts-types="@types/express"
 import { Request, Response } from 'express';
 
-export const billing = async (req: Request, res: Response) => {
+export const billing = (_req: Request, res: Response) => {
   res.render('billing', { service: 'billing' });
 };

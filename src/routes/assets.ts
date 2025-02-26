@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { prismaClient } from '../config/db.ts';
 import path from 'node:path';
 import fs from 'node:fs';
+import process from "node:process";
 
 export const terms = async (req: Request, res: Response) => {
   const asset = await prismaClient.assets.findUnique({
@@ -27,7 +28,9 @@ export const terms = async (req: Request, res: Response) => {
 };
 
 export const license = (_req: Request, res: Response) => {
-  const licenseFile = fs.readFileSync(path.join(__dirname, '../../LICENSE'));
+  const licenseFile = fs.readFileSync(
+    path.join(process.cwd(), '/LICENSE')
+  );
   res.setHeader('Content-Type', 'text/plain').send(licenseFile);
 };
 

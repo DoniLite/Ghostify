@@ -1,4 +1,4 @@
-import { getWordRelations } from './wordnet';
+import { getWordRelations } from './wordnet.ts';
 
 // Types de base
 interface TrainingExample {

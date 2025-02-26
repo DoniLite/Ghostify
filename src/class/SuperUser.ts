@@ -1,23 +1,28 @@
-import { Certificates, Inf, Secrets, UserActor } from 'index';
-import path from 'path';
+import { Certificates, Inf, Secrets, UserActor } from '../@types/index.d.ts';
+import path from 'node:path';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
-import { decrypt, encrypt } from '../utils';
-import { tokenGenerator } from '../server';
-import { prismaClient } from '../config/db';
-import { Can } from '../utils';
+import { decrypt, encrypt, Can } from '../utils.ts';
+import { tokenGenerator } from '../server.ts';
+import { prismaClient } from '../config/db.ts';
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
 
-const SUPER_USER_DEFAULT = process.env.SUPER_USER_DEFAULT;
+const SUPER_USER_DEFAULT = process.env.SUPER_USER_DEFAULT!;
 
 export class SuperUser implements UserActor {
   userString;
   #passPhrase;
-  #health: string;
+  #health: string = '';
   permissions = [Can.CreateUser];
   #secretFilePath;
   #certificatePath;
   actions;
-  #certificate: Certificates;
+  #certificate: Certificates = {
+    pass: '',
+    health: '',
+    permissions: [Can.NotDefined],
+  };
   #encrypt;
   #decrypt;
   #token: string;
@@ -27,19 +32,19 @@ export class SuperUser implements UserActor {
     userSecret: string,
     passPhrase: string,
     setUp = true,
-    permissionSetup?: Can[],
+    permissionSetup?: Can[]
   ) {
     this.userString = userSecret;
     this.#passPhrase = passPhrase;
     this.#encrypt = encrypt;
     this.#decrypt = decrypt;
     this.#token = tokenGenerator(Date.now().toString());
-    this.#certificatePath = path.resolve(__dirname, '../data/certificates');
+    this.#certificatePath = path.resolve(process.cwd(), '/data/certificates');
     this.#secretFilePath = path.join(
-      __dirname,
-      '../data/secrets/keystore.json',
+      process.cwd(),
+      '/data/secrets/keystore.json'
     );
-    this.#secretsFolder = path.resolve(__dirname, '../data/secrets');
+    this.#secretsFolder = path.resolve(process.cwd(), '/data/secrets');
     if (!fs.existsSync(this.#secretsFolder)) fs.mkdirSync(this.#secretsFolder);
     if (!fs.existsSync(this.#certificatePath)) {
       fs.mkdirSync(this.#certificatePath);
@@ -51,13 +56,16 @@ export class SuperUser implements UserActor {
     if (!fs.existsSync(path.join(this.#secretsFolder, 'manifest.json'))) {
       fs.writeFileSync(
         path.join(this.#secretsFolder, 'manifest.json'),
-        JSON.stringify({ manifest: 'v1.0' }),
+        JSON.stringify({ manifest: 'v1.0' })
       );
     }
     if (setUp) {
       this.#setUp();
       if (permissionSetup) this.#updatePermission();
     } else {
+      if(!permissionSetup) {
+        throw Error("You must specify a permission array")
+      }
       this.permissions = permissionSetup;
       this.checkPermissions();
       this.#creator();
@@ -78,7 +86,7 @@ export class SuperUser implements UserActor {
     this.#health = this.#encrypt(
       String(heaht),
       this.#secrets.key,
-      this.#secrets.iv,
+      this.#secrets.iv
     );
   }
 
@@ -89,7 +97,7 @@ export class SuperUser implements UserActor {
       Can.MakeComment,
       Can.UpdateCirtificate,
       Can.MakeSecureAction,
-    ],
+    ]
   ) {
     this.permissions.forEach((permission) => {
       if (!permissions.includes(permission)) {
@@ -101,7 +109,7 @@ export class SuperUser implements UserActor {
   #checkHealth(key: string, health: string) {
     const manifestFile = fs.readFileSync(
       path.join(this.#secretsFolder, 'manifest.json'),
-      'utf8',
+      'utf8'
     );
     const manifest = JSON.parse(manifestFile) as Record<string, string>;
     if (typeof manifest[key] !== 'string') {
@@ -114,14 +122,14 @@ export class SuperUser implements UserActor {
   #setUserHealth(key: string, health: string) {
     const manifestFile = fs.readFileSync(
       path.join(this.#secretsFolder, 'manifest.json'),
-      'utf8',
+      'utf8'
     );
     const manifest = JSON.parse(manifestFile) as Record<string, string>;
     manifest[key] = health;
     fs.writeFileSync(
       path.join(this.#secretsFolder, 'manifest.json'),
       JSON.stringify(manifest),
-      'utf8',
+      'utf8'
     );
   }
 
@@ -185,7 +193,7 @@ export class SuperUser implements UserActor {
     }
     const certFile = fs.readFileSync(
       path.join(this.#certificatePath, `${cert}.json`),
-      'utf8',
+      'utf8'
     );
     const userCert = JSON.parse(certFile) as Certificates;
     if (userCert.pass !== pass) {
@@ -197,7 +205,7 @@ export class SuperUser implements UserActor {
   #setUp() {
     this.#certificate = this.#loadCertificate(
       this.userString,
-      this.#passPhrase,
+      this.#passPhrase
     );
     this.setHealth(this.#certificate.health);
     this.#setUserHealth(this.userString, this.#health);
@@ -212,14 +220,14 @@ export class SuperUser implements UserActor {
     }
     const certFile = fs.readFileSync(
       path.join(this.#certificatePath, `${cert}.json`),
-      'utf8',
+      'utf8'
     );
     const userCert = JSON.parse(certFile) as Certificates;
     userCert.health = health;
     fs.writeFileSync(
       path.join(this.#certificatePath, `${cert}.json`),
       JSON.stringify(userCert),
-      'utf8',
+      'utf8'
     );
   }
 
@@ -242,7 +250,7 @@ export class SuperUser implements UserActor {
     this.#setUserHealth(this.userString, this.#health);
     fs.writeFileSync(
       path.join(this.#certificatePath, `${this.userString}.json`),
-      JSON.stringify(newCert),
+      JSON.stringify(newCert)
     );
   }
 
@@ -256,7 +264,7 @@ export class SuperUser implements UserActor {
 
     fs.writeFileSync(
       path.join(this.#certificatePath, 'default.json'),
-      JSON.stringify(certificates),
+      JSON.stringify(certificates)
     );
   }
 
