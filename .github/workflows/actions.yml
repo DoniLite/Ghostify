@@ -54,7 +54,7 @@ jobs:
         run: deno lint --fix --ignore="**/*.js"
 
       - name: Run Tests
-        run: deno task test
+        run: deno task test-ci
 
       - name: Create dist directory
         run: mkdir -p dist # Crée le répertoire dist s'il n'existe pas

@@ -67,4 +67,4 @@ jobs:
 
       - name: Run TypeScript tests
         run: |
-          deno test
+          deno test-ci
