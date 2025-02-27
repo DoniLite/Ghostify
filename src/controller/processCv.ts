@@ -15,7 +15,7 @@ export const cv = (_req: Request, res: Response) => {
 };
 
 export const processCV = async (req: Request, res: Response) => {
-  const STATIC_DIR = '/static/cv';
+  const STATIC_DIR = './static/cv';
   const date = new Date();
   const form = new IncomingForm({
     uploadDir: path.resolve(process.cwd(), STATIC_DIR),

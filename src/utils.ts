@@ -9,7 +9,7 @@ import path from 'node:path';
 import crypto, { randomInt } from 'node:crypto';
 import sharp from 'sharp';
 import { Vibrant } from 'node-vibrant/node';
-import imageHash from 'image-hash';
+import {imageHash as hash} from 'image-hash';
 import Tesseract from 'tesseract.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
@@ -26,12 +26,12 @@ import {
 } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { Translate, translate } from 'free-translate';
-import { Buffer } from "node:buffer";
-import process from "node:process";
+import { Buffer } from 'node:buffer';
+import process from 'node:process';
 
 export const hashSomething = async (
   data: string | Buffer,
-  saltRond?: number,
+  saltRond?: number
 ) => {
   const round = saltRond || 14;
   const salt = await bcrypt.genSalt(round);
@@ -98,7 +98,7 @@ export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
 };
 
 export async function analyzeImage(
-  imagePath: string,
+  imagePath: string
 ): Promise<ImageAnalysisResult> {
   /*  // const arr = [
     ['#df750c', '#753911', '#f9d88a', '#ac7860', '#513d28', '#ae9d9c'][
@@ -113,12 +113,12 @@ export async function analyzeImage(
   // Analyse des couleurs dominantes
   const palette = await Vibrant.from(imagePath).getPalette();
   const dominantColors = Object.values(palette).map(
-    (color) => color?.hex || '',
+    (color) => color?.hex || ''
   );
 
   // Création de l'empreinte de l'image (hash)
   const imageHashResult = await new Promise<string>((resolve, reject) => {
-    imageHash.hash(imagePath, 16, 'hex', (error, hash) => {
+    hash(imagePath, 16, 'hex', (error: Error, hash: string) => {
       if (error) {
         reject(error);
       }
@@ -148,7 +148,7 @@ export async function analyzeImage(
 export function shouldFlagImage(
   _metadata: sharp.Metadata,
   dominantColors: string[],
-  ocrText: string,
+  ocrText: string
 ): boolean {
   // Exemple de règles simples pour flagger une image
   const prohibitedColors = ['#000000', '#ff0000']; // Couleurs interdites (ex: noir, rouge vif)
@@ -178,7 +178,7 @@ export enum ProjectParticipationType {
   subscription = 'subscription',
 }
 
-export const DATA_PATH = path.resolve(path.join(process.cwd(), '/data'));
+export const DATA_PATH = path.resolve(path.join(process.cwd(), './data'));
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export async function createDirIfNotExists(path: string) {
@@ -351,7 +351,7 @@ export function encrypt(text: string, secretKey: Buffer, iv: Buffer): string {
 export function decrypt(
   encryptedText: string,
   secretKey: Buffer,
-  iv: Buffer,
+  iv: Buffer
 ): string {
   const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, iv);
   let decrypted: string = decipher.update(encryptedText, 'hex', 'utf8');
@@ -713,13 +713,14 @@ export const cvDownloader = async (options: {
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
-  const STATIC_DIR = path.resolve(process.cwd(), '/static/downloads/doc');
-  const STATIC_IMG_DIR = path.resolve(process.cwd(), '/static/downloads/cv');
+  const STATIC_DIR = path.resolve(process.cwd(), './static/downloads/doc');
+  const STATIC_IMG_DIR = path.resolve(process.cwd(), './static/downloads/cv');
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: process.env.NODE_ENV === 'production'
-      ? '/usr/bin/chromium-browser'
-      : '/usr/bin/google-chrome',
+    executablePath:
+      process.env.NODE_ENV === 'production'
+        ? '/usr/bin/chromium-browser'
+        : '/usr/bin/google-chrome',
     args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
@@ -731,17 +732,19 @@ export const cvDownloader = async (options: {
   // Prendre un screenshot de la page entière
   await page.screenshot({ path: pngFilePath, fullPage: true });
 
-  const pngServicePath = process.env.NODE_ENV === 'production'
-    ? 'https://ghostify.site/staticFile/' +
-      tokenGenerator(`downloads/cv/${png}`)
-    : 'http://localhost:3085/staticFile/' +
-      tokenGenerator(`downloads/cv/${png}`);
+  const pngServicePath =
+    process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/staticFile/' +
+        tokenGenerator(`downloads/cv/${png}`)
+      : 'http://localhost:3085/staticFile/' +
+        tokenGenerator(`downloads/cv/${png}`);
 
-  const pdfServicePath = process.env.NODE_ENV === 'production'
-    ? 'https://ghostify.site/downloader/' +
-      tokenGenerator(`downloads/doc/${pdf}`)
-    : 'http://localhost:3085/downloader/' +
-      tokenGenerator(`downloads/doc/${pdf}`);
+  const pdfServicePath =
+    process.env.NODE_ENV === 'production'
+      ? 'https://ghostify.site/downloader/' +
+        tokenGenerator(`downloads/doc/${pdf}`)
+      : 'http://localhost:3085/downloader/' +
+        tokenGenerator(`downloads/doc/${pdf}`);
 
   const cvUpdating = await prismaClient.cV.update({
     where: {
@@ -814,18 +817,15 @@ export const orderReactions = (reactions: Reactions[]) => {
     },
     Laugh: {
       index: 0,
-      component:
-        `<i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>`,
+      component: `<i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>`,
     },
     Hurted: {
       index: 0,
-      component:
-        `<i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>`,
+      component: `<i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>`,
     },
     Good: {
       index: 0,
-      component:
-        `<i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>`,
+      component: `<i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>`,
     },
   };
   reactions.forEach((reaction) => {
@@ -846,7 +846,7 @@ export const orderReactions = (reactions: Reactions[]) => {
  * @returns {false | string}
  */
 export const renaming = (file: formidable.File, pathTo: string) => {
-  const ext = path.extname(file.originalFilename);
+  const ext = path.extname(file.originalFilename!);
   const date = new Date();
   const r = crypto.randomInt(date.getTime()).toString();
   const fName = `${date.getTime().toString() + r}${ext}`;
@@ -868,7 +868,7 @@ export function ensureDirectoryAccess(directory: string) {
     fs.accessSync(directory, fs.constants.W_OK);
   } catch (error) {
     console.error(`Problème d'accès au dossier : ${directory}`);
-    console.error(`Erreur : ${(error as {message: string}).message}`);
+    console.error(`Erreur : ${(error as { message: string }).message}`);
 
     // Tente de créer le dossier avec les permissions appropriées
     try {
@@ -1022,12 +1022,12 @@ export const cvClass = {
 } as const;
 
 export const verifyJWT = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  return jwt.verify(token, process.env.JWT_SECRET!);
 };
 
 // Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
 export const purgeFiles = (files: string[]) => {
-  const STATIC_DIR = path.resolve(process.cwd(), '/static');
+  const STATIC_DIR = path.resolve(process.cwd(), './static');
 
   // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
   if (files.length === 0) {
@@ -1035,7 +1035,7 @@ export const purgeFiles = (files: string[]) => {
   }
 
   // Vérifie les tokens pour chaque fichier (vérifie que `verifyJWT` retourne une chaîne pour chaque fichier)
-  const processedFiles = files.map((file) => verifyJWT(file) as string);
+  const processedFiles = files.map((file) => verifyJWT(file) as unknown as string);
 
   // Obtient le chemin d'architecture de dossiers en utilisant le premier fichier comme référence
   const filePath = processedFiles[0].split('/');
@@ -1061,12 +1061,12 @@ export const purgeFiles = (files: string[]) => {
   } catch (error) {
     console.error(
       `Erreur lors de la purge des fichiers dans le dossier ${DIR}:`,
-      error,
+      error
     );
   }
 };
 
-export const purgeSingleFIle = (path: string) => {
+export const purgeSingleFile = (path: string) => {
   try {
     fs.rmSync(path);
   } catch (err) {
@@ -1077,7 +1077,10 @@ export const purgeSingleFIle = (path: string) => {
 const setupSecurity = () => {
   try {
     console.log('creating the new security.json');
-    const SECURITY_DIR = path.resolve(__filename, '../../security');
+    if (!fs.existsSync(path.join(process.cwd(), '/security'))) {
+      fs.mkdirSync(path.join(process.cwd(), '/security'));
+    }
+    const SECURITY_DIR = path.resolve(process.cwd(), './security');
     const date = new Date();
     date.setDate(date.getDate() + 7);
     const hash = tokenGenerator(date.toString());
@@ -1099,7 +1102,7 @@ const setupSecurity = () => {
 
 export const verifySecurity = async () => {
   try {
-    const SECURITY_DIR = path.resolve(process.cwd(), '/security');
+    const SECURITY_DIR = path.resolve(process.cwd(), './security');
     const filePath = path.join(SECURITY_DIR, 'security.json');
     if (fs.existsSync(filePath)) {
       console.log('found security.json processing file examination');
@@ -1112,7 +1115,7 @@ export const verifySecurity = async () => {
       }
       if (process.env.NODE_ENV !== security.env) {
         console.log(
-          'security env are not set correctly updating security.json',
+          'security env are not set correctly updating security.json'
         );
         return await setupSecurity();
       }
@@ -1127,7 +1130,7 @@ export const verifySecurity = async () => {
 };
 
 export const loadSecurityBearer = () => {
-  const SECURITY_DIR = path.resolve(process.cwd(), '/security');
+  const SECURITY_DIR = path.resolve(process.cwd(), './security');
   const filePath = path.join(SECURITY_DIR, 'security.json');
   try {
     const fileContent = fs.readFileSync(filePath, 'utf8');
@@ -1150,13 +1153,11 @@ export enum DocumentMimeTypes {
 
   // Documents Microsoft Office
   DOC = 'application/msword',
-  DOCX =
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   XLS = 'application/vnd.ms-excel',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   PPT = 'application/vnd.ms-powerpoint',
-  PPTX =
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 
   // Documents OpenDocument
   ODT = 'application/vnd.oasis.opendocument.text',
@@ -1187,7 +1188,7 @@ export enum ImageMimeType {
 
 export const useTranslator = async (
   text: string,
-  options: Translate = { to: 'en' },
+  options: Translate = { to: 'en' }
 ) => {
   return await translate(text, options);
 };

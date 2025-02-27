@@ -8,7 +8,7 @@ import {
 import {
   DocumentMimeTypes,
   loadSecurityBearer,
-  purgeSingleFIle,
+  purgeSingleFile,
   renaming,
   Service,
   unify,
@@ -146,7 +146,7 @@ export const docSaver = async (req: Request, res: Response) => {
     uidPost: string;
   }>;
   console.log('Starting docSaver');
-  const STATIC_DIR = '/static/posts';
+  const STATIC_DIR = './static/posts';
   const date = new Date();
   const form = new IncomingForm({
     uploadDir: path.resolve(process.cwd(), STATIC_DIR),
@@ -227,7 +227,7 @@ export const docSaver = async (req: Request, res: Response) => {
       // Vérifier les extensions dangereuses
       if (dangerousExtension.includes(ext)) {
         console.log('Inappropriate file detected');
-        purgeSingleFIle(fileArray[i].filepath);
+        purgeSingleFile(fileArray[i].filepath);
         res.status(403).send('You want to send inappropriate content');
         return;
       }
@@ -525,7 +525,7 @@ export const parserController = async (req: Request, res: Response) => {
     return;
   }
   const STATIC_DIR = path.resolve(
-    path.join(process.cwd(), '/static/test')
+    path.join(process.cwd(), './static/test')
   );
   const mimeTypesArray = Object.values(DocumentMimeTypes);
   const form = new IncomingForm({
@@ -551,10 +551,10 @@ export const parserController = async (req: Request, res: Response) => {
     continue;
   }
   const file = files?.file?.[0];
-  const result = await renaming(file, STATIC_DIR);
+  const result = await renaming(file!, STATIC_DIR);
   if (!result) {
     res.status(500).send('Something went wrong please try later');
-    if (file) purgeSingleFIle(file.filepath);
+    if (file) purgeSingleFile(file.filepath);
     return;
   }
 
@@ -568,7 +568,7 @@ export const parserController = async (req: Request, res: Response) => {
   const security = await loadSecurityBearer();
   if (!security) {
     res.status(500).send('Something went wrong please try later');
-    if (file) purgeSingleFIle(file.filepath);
+    if (file) purgeSingleFile(file.filepath);
     return;
   }
   const API_URL = '/api/v1/parser/';
@@ -592,7 +592,7 @@ export const parserController = async (req: Request, res: Response) => {
   const fileExt = json.path.split('.').pop();
   const fileXName = `${fileName}.${fileExt}`;
   const SAVE_PATH = path.resolve(
-    path.join(process.cwd(), '/static/downloads/doc'),
+    path.join(process.cwd(), './static/downloads/doc'),
   );
   const serviceXPath = process.env.NODE_ENV !== 'production'
     ? `https://ghostify.site/downloader/${

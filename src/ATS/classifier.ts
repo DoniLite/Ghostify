@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from "node:process";
 
-const MODELS_PATH = path.resolve(process.cwd(), '/src/ATS/datasets');
+const MODELS_PATH = path.resolve(process.cwd(), './src/ATS/datasets');
 
 type StringifyClassifier<T> = T extends string ? boolean
   : string;

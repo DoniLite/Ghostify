@@ -20,7 +20,7 @@ export const internDocCreator = async (req: Request, res: Response) => {
     docType: string;
   }>;
 
-  const STATIC_DIR = path.resolve(process.cwd(), '/static');
+  const STATIC_DIR = path.resolve(process.cwd(), './static');
   const DOCUMENT_DIR = path.join(STATIC_DIR, 'downloads/doc');
 
   try {

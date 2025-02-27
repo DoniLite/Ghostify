@@ -39,12 +39,12 @@ export class SuperUser implements UserActor {
     this.#encrypt = encrypt;
     this.#decrypt = decrypt;
     this.#token = tokenGenerator(Date.now().toString());
-    this.#certificatePath = path.resolve(process.cwd(), '/data/certificates');
+    this.#certificatePath = path.resolve(process.cwd(), './data/certificates');
     this.#secretFilePath = path.join(
       process.cwd(),
       '/data/secrets/keystore.json'
     );
-    this.#secretsFolder = path.resolve(process.cwd(), '/data/secrets');
+    this.#secretsFolder = path.resolve(process.cwd(), './data/secrets');
     if (!fs.existsSync(this.#secretsFolder)) fs.mkdirSync(this.#secretsFolder);
     if (!fs.existsSync(this.#certificatePath)) {
       fs.mkdirSync(this.#certificatePath);

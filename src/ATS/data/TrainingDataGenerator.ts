@@ -3,7 +3,7 @@ import { TrainingDataGenerator } from './Generator.ts';
 import path from 'node:path';
 import process from "node:process";
 
-const DATASETS_PATH = path.resolve(process.cwd(), '/src/ATS/datasets');
+const DATASETS_PATH = path.resolve(process.cwd(), './src/ATS/datasets');
 // Types
 interface DatasetMetadata {
   name: string;

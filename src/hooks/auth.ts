@@ -38,8 +38,8 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
       Date.now() > Number(
           decrypt(
             lastTime,
-            req.session?.ServerKeys?.secretKey,
-            req.session?.ServerKeys?.iv,
+            req.session?.ServerKeys?.secretKey!,
+            req.session?.ServerKeys?.iv!,
           ),
         )
     ) {
@@ -61,8 +61,8 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
 
     req.session.Token = encrypt(
       cookieExpiration.getTime().toString(),
-      req.session?.ServerKeys?.secretKey,
-      req.session?.ServerKeys?.iv,
+      req.session?.ServerKeys?.secretKey!,
+      req.session?.ServerKeys?.iv!,
     );
 
     res.cookie('connection_time', req.session.Token, {

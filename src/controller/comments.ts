@@ -9,7 +9,7 @@ import { prismaClient } from '../config/db.ts';
 import process from "node:process";
 
 export const comment = async (req: Request, res: Response) => {
-  const STATIC_DIR = `/static/comments`;
+  const STATIC_DIR = `./static/comments`;
   const form = new IncomingForm({
     uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,

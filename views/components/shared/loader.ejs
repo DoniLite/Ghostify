@@ -1,6 +1,8 @@
-<!-- component -->
-<%- include('header') %>
+<% if (typeof isPage !== 'undefined' && isPage === true) { %>
+ <%- include('header') %>
+<% } %>
 <div
+  id="pageLoader"
   class="flex items-center justify-center w-full h-[100vh] text-white bg-gray-950"
 >
   <div id="loaderHead">
@@ -24,4 +26,6 @@
     </h1>
   </div>
 </div>
-<script type="module" src="/static/js/loader.js"></script>
+<% if (typeof isPage !== 'undefined' && isPage === true) { %>
+ <script type="module" src="/static/js/loader.js"></script>
+<% } %>

@@ -27,15 +27,15 @@ export const redirector = (
     cookieExpriration.setMinutes(cookieExpriration.getMinutes() + 15);
     req.session.Token = encrypt(
       Date.now().toString(),
-      req.session?.ServerKeys?.secretKey,
-      req.session?.ServerKeys?.iv,
+      req.session?.ServerKeys?.secretKey!,
+      req.session?.ServerKeys?.iv!,
     );
     res.cookie('connection_time', req.session.Token, {
       expires: cookieExpriration,
     });
-    res.render('loader', {
-      pagination: 0,
-      activeIndex: 0,
+    res.render('components/shared/loader', {
+      isPage: true,
+      title: 'Charging...',
     });
     return;
   }

@@ -22,7 +22,7 @@ export const setUp = async (
   generator?: (payload: string) => string,
 ) => {
   const login = process.env.ADMIN_LOGIN!;
-  const password = await hashSomething(process.env.ADMIN_PASSWORD);
+  const password = await hashSomething(process.env.ADMIN_PASSWORD!);
 
   [
     await prismaClient.assets.findUnique({

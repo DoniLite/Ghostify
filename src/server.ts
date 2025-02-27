@@ -209,7 +209,7 @@ expressWs(server as unknown as Application);
 //   process.env.NODE_ENV !== 'production'
 //     ? 'ws://localhost/notifications'
 //     : 'ws://ghostify.site/notifications';
-const viewsPath = path.resolve(process.cwd(), '/views');
+const viewsPath = path.resolve(process.cwd(), './views');
 server.engine('html', ejs.renderFile);
 server.set('view engine', 'ejs');
 server.set('views', viewsPath);
@@ -235,7 +235,11 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use(rateLimit() as unknown as RequestHandler);
+server.use(
+  rateLimit({
+    max: 100,
+  }) as unknown as RequestHandler
+);
 
 server.options('*', cors());
 
@@ -327,7 +331,7 @@ server.use(
 );
 server.use(
   '/static',
-  express.static(path.resolve(process.cwd(), '/src/public'), {
+  express.static(path.resolve(process.cwd(), './src/public'), {
     maxAge: '1d', // Définit une durée de vie du cache de 1 jour
     etag: false, // Désactive les ETags (facultatif)
     setHeaders:
@@ -341,8 +345,7 @@ server.use(
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookie(process.env.SESSION_SECRET) as unknown as RequestHandler);
-const sessionStorePath = path.resolve(process.cwd(), '/src/config');
-
+const sessionStorePath = path.resolve(process.cwd(), './src/config');
 
 server.use(
   session({

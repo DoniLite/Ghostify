@@ -172,13 +172,13 @@ const actionFn = (toDo: 'train' | 'test') => {
     case MODELS_NAMES.CV_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.CV_CLASSIFIER,
-        path.resolve(process.cwd(), '/src/ATS/models')
+        path.resolve(process.cwd(), './src/ATS/models')
       );
       break;
     case MODELS_NAMES.BLOG_CLASSIFIER:
       classifier.loadModel(
         MODELS_NAMES.BLOG_CLASSIFIER,
-        path.resolve(process.cwd(), '/src/ATS/models')
+        path.resolve(process.cwd(), './src/ATS/models')
       );
       break;
     default:
@@ -190,14 +190,14 @@ const actionFn = (toDo: 'train' | 'test') => {
       manager.loadDataset(
         DATASETS_NAMES.CV,
         DATASETS_NAMES.CV,
-        path.resolve(process.cwd(), '/src/ATS/datasets')
+        path.resolve(process.cwd(), './src/ATS/datasets')
       );
       break;
     case DATASETS_NAMES.BLOG:
       manager.loadDataset(
         DATASETS_NAMES.BLOG,
         DATASETS_NAMES.BLOG,
-        path.resolve(process.cwd(), '/src/ATS/datasets')
+        path.resolve(process.cwd(), './src/ATS/datasets')
       );
       break;
 
@@ -255,7 +255,7 @@ const actionFn = (toDo: 'train' | 'test') => {
       classifier.train();
       const savedModel = classifier.stringify(
         model || saveModelName,
-        path.resolve(process.cwd(), '/src/ATS/models')
+        path.resolve(process.cwd(), './src/ATS/models')
       );
       if (savedModel) {
         console.log(`model: ${model || saveModelName} saved successfully`);
@@ -275,7 +275,7 @@ switch (args.process) {
     actionFn(args.process)();
     break;
   case 'init': {
-    const custom = path.resolve(process.cwd(), '/src/ATS/datasets');
+    const custom = path.resolve(process.cwd(), './src/ATS/datasets');
     initDatasets(custom)
       .then(() => {
         console.log('Datasets initialized');

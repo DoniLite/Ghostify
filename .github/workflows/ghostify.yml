@@ -1,4 +1,6 @@
 name: Ghostify fullstack CI/CD
+env:
+  DENO_DIR: ~/.cache/deno
 
 on:
   push:
@@ -24,7 +26,7 @@ jobs:
 
       - name: Run linters
         run: |
-          make test
+          pip install flake8
           make lint
 
       - name: Run tests
@@ -43,14 +45,21 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install pnpm
-        uses: denoland/setup-deno@v1
+      - name: Install deno
+        uses: denoland/setup-deno@v2
         with:
-          version: latest
+          deno-version: v2.x
 
-      - name: Install dependencies
-        run: |
-          deno install
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      - name: Cache Dependencies
+        run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
       - name: Lint TypeScript
         run: |

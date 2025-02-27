@@ -47,6 +47,9 @@ jobs:
       - name: Cache Dependencies
         run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
+      - name: Generate types for prisma
+        run: deno task prisma:generate
+
       - name: Lint Code
         run: deno lint --fix --ignore="**/*.js"
 
@@ -54,10 +57,10 @@ jobs:
         run: deno check src/server.ts
 
       - name: Run Tests
-        run: deno test
+        run: deno task test
 
       - name: Create dist directory
-        run: mkdir -p dist  # Crée le répertoire dist s'il n'existe pas
+        run: mkdir -p dist # Crée le répertoire dist s'il n'existe pas
 
       - name: Build Project
         run: deno task build
@@ -67,4 +70,3 @@ jobs:
         with:
           name: build
           path: dist/
-

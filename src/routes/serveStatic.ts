@@ -7,7 +7,7 @@ import process from "node:process";
 
 export const serveStatic = (req: Request, res: Response) => {
   const { file } = req.params;
-  const resourceDir = path.resolve(process.cwd(), '/static');
+  const resourceDir = path.resolve(process.cwd(), './static');
   try {
     const rPath = jwt.verify(file, process.env.JWT_SECRET!);
     if (typeof rPath === 'string') {
@@ -25,7 +25,7 @@ export const serveStatic = (req: Request, res: Response) => {
 
 export const downloader =  (req: Request, res: Response) => {
   const { file } = req.params;
-  const resourceDir = path.resolve(process.cwd(), '/static');
+  const resourceDir = path.resolve(process.cwd(), './static');
   try {
     const rPath = jwt.verify(file, process.env.JWT_SECRET!);
     if (typeof rPath === 'string') {

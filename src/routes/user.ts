@@ -10,7 +10,7 @@ import { tokenGenerator } from '../server.ts';
 import process from "node:process";
 
 export const updateProfile = async (req: Request, res: Response) => {
-  const STATIC_DIR = '/static/users';
+  const STATIC_DIR = './static/users';
   const form = new IncomingForm({
     uploadDir: path.resolve(process.cwd(), STATIC_DIR),
     keepExtensions: true,
