@@ -116,7 +116,8 @@
     "strict": true,
     "types": [
       "./src/@types/index.d.ts",
-      "./src/@types/session.d.ts"
+      "./src/@types/session.d.ts",
+      "./src/@types/express-extend.d.ts"
     ],
     "checkJs": true
   },
