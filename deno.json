@@ -154,5 +154,13 @@
     "env": true,
     "run": true
   },
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "auto",
+  "test": {
+    "exclude": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.cache/**"
+    ]
+  }
 }
