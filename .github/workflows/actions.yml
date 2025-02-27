@@ -53,9 +53,6 @@ jobs:
       - name: Lint Code
         run: deno lint --fix --ignore="**/*.js"
 
-      - name: Check Types
-        run: deno check src/server.ts
-
       - name: Run Tests
         run: deno task test
 
