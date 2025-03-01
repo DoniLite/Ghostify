@@ -1,33 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Anton+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+VN:wght@100..400&display=swap');
 @import 'tailwindcss';
 
 ::-webkit-scrollbar {
   display: none;
 }
 
-.cookie-regular {
-  font-family: 'Cookie', cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.anton-sc-regular {
-  font-family: 'Anton SC', sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.pacifico-regular {
-  font-family: 'Pacifico', cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-
 @theme {
   --font-cookie: 'Cookie', 'cursive';
-  --font-sc: 'Aton SC', 'sans-serif';
-  --font-pacifico: 'Pacifico', 'cursive';
+  --font-playwrite: 'Playwrite VN', 'serif';
+  --font-nunito: 'Nunito', 'serif';
+  --font-inter: 'Inter', 'serif';
 }
 
 .card {

@@ -319,7 +319,7 @@ declare global {
     on: WebSocketS['on'];
   }
 
-  interface globalThis {
+  interface GlobalThis {
     App: Record<string, unknown>;
   }
 

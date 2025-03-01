@@ -24,7 +24,7 @@
       class="transition-all lg:hidden fixed left-2 sm:top-4 top-2 z-40"
     >
       <div class="flex flex-col justify-center h-full items-center">
-        <h1 class="text-xl text-bold text-white cookie-regular bg-transparent">
+        <h1 class="text-xl text-bold text-white font-cookie bg-transparent">
           Ghostify
         </h1>
         <img src="/static/SVG/ghost.svg" class="w-6 h-6" alt="" />
@@ -124,7 +124,7 @@
         >
           <a href="/api-gaming">
             <i class="fa-solid fa-flask-vial mr-3"></i>
-            APIs & GAMES
+            APIs
           </a>
         </li>
         <li
@@ -158,23 +158,22 @@
         id="officialIcon"
         class="flex flex-col p-5 justify-center h-full items-center transition-all mt-10"
       >
-        <h1 class="text-4xl text-bold cookie-regular bg-transparent">
+        <h1 class="text-4xl text-bold font-cookie bg-transparent">
           Ghostify
         </h1>
         <img src="/static/SVG/ghost.svg" class="w-12 h-12" alt="" />
       </div>
       <ul class="flex justify-between w-2/4 items-center pr-16">
         <li
-          class="flex items-center font-bold text-red-950 justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold text-orange-400 justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/">
             <i class="fa-solid fa-ghost mr-1"></i>
-            <% if (typeof auth !== 'undefined' && auth === true) { %> Me <% }
-            else { %> Ghost <% } %>
+            <% if (typeof auth !== 'undefined' && auth === true) { %> Me <% } else { %> Ghost <% } %>
           </a>
         </li>
         <li
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/projects">
             <i class="fa-solid fa-diagram-project mr-1"></i>
@@ -182,7 +181,7 @@
           </a>
         </li>
         <li
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/hub">
             <i class="fa-solid fa-at mr-1"></i>
@@ -190,7 +189,7 @@
           </a>
         </li>
         <li
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/blog">
             <i class="fa-solid fa-blog mr-1"></i>
@@ -198,15 +197,15 @@
           </a>
         </li>
         <li
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/api-gaming">
             <i class="fa-solid fa-flask-vial mr-1"></i>
-            APIs & Games
+            APIs
           </a>
         </li>
         <li
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all"
         >
           <a href="/contact">
             <i class="fa-solid fa-mug-saucer mr-1"></i>
@@ -216,7 +215,7 @@
         <% if (typeof auth !== 'undefined' && auth === true) { %>
         <li
           id="ghostifyPower"
-          class="flex items-center font-bold justify-center cursor-pointer hover:text-red-950 transition-all w-8 relative left-4 z-50"
+          class="flex items-center font-bold justify-center cursor-pointer hover:text-orange-400 transition-all w-8 relative left-4 z-50"
         >
           <i class="fa-solid fa-power-off fa-lg text-white"></i>
         </li>

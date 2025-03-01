@@ -67,7 +67,7 @@ export const home: RequestHandler = async (req, res) => {
   // const loaderCookie = req.cookies['ghostify_home_session'];
   const Theme = req.session.Theme;
 
-  res.render('index', {
+  res.render('home', {
     auth: typeof req.session.Auth !== 'undefined'
       ? req.session.Auth.authenticated
       : undefined,
