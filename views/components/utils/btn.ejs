@@ -1,0 +1,12 @@
+<% if (typeof link !== 'undefined') { %>
+<a
+  href="<%= link %>"
+  class=" <%= typeof elClass !== 'undefined' ? elClass : "" %> font-bold py-2 px-4 rounded-lg text-center"
+  ><%= content %></a
+>
+<% } else { %>
+<button
+  class="font-bold py-2 px-4 <%= typeof elClass !== 'undefined' ? elClass : "" %> rounded-lg text-center"
+  ><%= content %></button
+>
+<% } %>

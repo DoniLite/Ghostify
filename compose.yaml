@@ -1,0 +1,92 @@
+name: Ghostify_Services
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Server.Dockerfile
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:DoniLite13GhostifyDB@db:5432/ghostify?schema=own&connection_limit=5
+    ports:
+      - 3081:3081
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    volumes:
+      - ./static:/static
+      - ./cmd:/cmd
+      - ./security:/security
+    networks:
+      - ghostify_network
+
+  api:
+    build:
+      context: .
+      dockerfile: Api.Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./static:/static
+      - ./cmd:/cmd
+      - ./security:/security
+    networks:
+      - ghostify_network
+
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=ghostify
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    expose:
+      - 5432
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ghostify_network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80' # HTTP
+      - '443:443' # HTTPS
+    depends_on:
+      - server
+      - api
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      # - ./static:/usr/share/nginx/static:ro   # Pour les certificats SSL si nécessaire
+    networks:
+      - ghostify_network
+
+volumes:
+  db-data:
+  static:
+  cmd:
+  security:
+
+secrets:
+  db-password:
+    file: ./db/password.txt
+
+networks:
+  ghostify_network:
+    driver: bridge

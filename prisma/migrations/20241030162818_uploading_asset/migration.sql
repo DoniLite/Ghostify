@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Assets" ADD COLUMN     "file" TEXT,
+ADD COLUMN     "link" TEXT,
+ALTER COLUMN "uid" DROP NOT NULL,
+ALTER COLUMN "content" DROP NOT NULL;

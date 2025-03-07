@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/all.min.css" />
+    <link rel="icon" type="image/svg+xml" href="/static/SVG/gostify.svg" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <%- include('../h.ejs') %>
+  </head>
+
+  <% if (typeof service === 'undefined') { const service = 'Ghostify';} %>
+
+  <body>
+    <nav
+      id="rawHeaderNav"
+      class="fixed right-0 top-0 transition-all z-[500] translate-x-[200%] lg:w-[40%] w-[80%] bg-gray-950 p-4 text-gray-400"
+    >
+      <ul class="flex flex-col gap-4 w-full">
+        <div id="NavCloserBtn" class="absolute right-3">
+          <i class="fa-solid fa-xmark fa-lg"></i>
+        </div>
+        <% if (typeof auth !== 'undefined' && auth === true) { %>
+        <div class="flex gap-x-4 items-center">
+          <a
+            href="/home"
+            class=""
+          >
+            <img
+              class="w-16 h-16 object-cover border-2 border-orange-500 rounded-full p-1 cursor-pointer"
+              alt=" user profile"
+              src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
+            />
+          </a>
+          <a
+            href="/home"
+            class=""
+          >
+            <%= typeof username === 'undefined' ? 'User' : username %>
+          </a>
+        </div>
+        <% } %>
+        <a
+          class="flex items-center font-bold text-red-950 cursor-pointer hover:text-red-950 transition-all"
+          href="<% if (typeof auth === 'undefined') { %>/<% } else { %>/service?userId=<%= typeof data.id === 'undefined' ? data.userString : data.id  %>&service=<%= service %><% } %>"
+        >
+          <i class="fa-solid fa-ghost mr-3"></i>
+          <% if (service === 'poster') { %> <%= 'Poster->Ghost' %> <% } else if
+          (service=== 'api') { %> <%= 'APIs->Ghost' %> <% } else { %> <%=
+          'Ghost' %> <% } %>
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/projects"
+        >
+          <i class="fa-solid fa-diagram-project mr-3"></i>
+          Projects
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/hub"
+        >
+          <i class="fa-solid fa-at mr-3"></i>
+          Meta-Hub
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/blog"
+        >
+          <i class="fa-solid fa-blog mr-3"></i>
+          Blog
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/api-gaming"
+        >
+          <i class="fa-solid fa-flask-vial mr-3"></i>
+          Tester & GAMES
+        </a>
+        <a
+          class="flex items-center font-bold cursor-pointer hover:text-red-950 transition-all"
+          href="/contact"
+        >
+          <i class="fa-solid fa-mug-saucer mr-3"></i>
+          Contact
+        </a>
+      </ul>
+    </nav>
+    <% if (typeof auth !== 'undefined') { %> <% if (service === 'poster') { %>
+    <div
+      id="navHead"
+      class="w-full h-16 fixed top-0 flex items-center justify-between bg-gray-950 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl">Poster</h1>
+      <div
+        class="mobile-nav-icon bg-transparent transition-all flex items-center gap-x-8"
+      >
+        <% if (typeof writterMode !== 'undefined' && writterMode === true) { %>
+        <div id="viewRequester">
+          <i
+            class="fa-solid fa-eye fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+          ></i>
+        </div>
+        <% } %>
+        <% if (typeof mode !== 'undefined' && mode === 'reading') { %>
+         <div id="BGMode" class=" w-8 h-8 cursor-pointer"></div>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
+      </div>
+    </div>
+    <% } else if (service === 'api') {%>
+    <div
+      id="navHead"
+      class="w-full h-16 fixed top-0 flex items-center justify-between bg-orange-500 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl">Ghostify APIs</h1>
+      <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
+        <% if (typeof testerMode !== 'undefined' && testerMode === true) { %>
+        <i
+          class="fa-solid fa-terminal fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+        ></i>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
+      </div>
+    </div>
+    <% } else { %>
+    <div
+      id="navHead"
+      class="w-full fixed top-0 h-16 flex items-center justify-between bg-blue-800 text-white p-4"
+    >
+      <h1 class="text-white font-bold text-3xl"><%= title = 'Ghostify' %></h1>
+      <div class="mobile-nav-icon bg-transparent transition-all flex gap-x-4">
+        <% if (typeof testerMode !== 'undefined' && testerMode === true) { %>
+        <i
+          class="fa-solid fa-terminal fa-xl text-white font-bold shadow-xl bg-transparent p-2 cursor-pointer"
+        ></i>
+        <% } %>
+        <div id="rawHeadIcon" class="w-8">
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+          <div class="w-full h-1 rounded-xl bg-white mb-1"></div>
+        </div>
+      </div>
+    </div>
+    <% } %> <% } %>

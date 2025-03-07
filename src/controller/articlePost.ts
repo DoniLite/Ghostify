@@ -1,0 +1,71 @@
+// import { FastifyReply, FastifyRequest } from 'fastify';
+// @ts-types="@types/express"
+import { Request, Response } from 'express';
+import { BodyXData } from '../@types/index.d.ts';
+import { prismaClient } from '../config/db.ts';
+
+export const articlePost = async (req: Request, res: Response) => {
+  const { title, slug, content, category, description, keys } = req
+    .body as BodyXData<{
+      title: string;
+      slug: string;
+      content: string;
+      category: string;
+      description: string;
+      keys: string;
+    }>;
+
+  console.log(title, slug, content, category);
+
+  const postCategory = await prismaClient.category.findUnique({
+    where: {
+      title: category,
+    },
+  });
+
+  if (postCategory) {
+    const post = await prismaClient.post.create({
+      data: {
+        title: title,
+        description: description,
+        slug: slug,
+        content: content,
+        category: {
+          connect: postCategory,
+        },
+        safe: true,
+        visites: 0,
+        visibility: 'Public',
+      },
+    });
+    if (post) {
+      console.log(post);
+      res.send(JSON.stringify({ success: true, post }));
+    }
+  }
+
+  const post = await prismaClient.post.create({
+    data: {
+      title: title,
+      slug: slug,
+      safe: true,
+      visites: 0,
+      visibility: 'Public',
+      description: description,
+      content: content,
+      category: {
+        create: {
+          title: category,
+          keys: keys,
+        },
+      },
+    },
+  });
+
+  if (post) {
+    console.log(post);
+    res.send(JSON.stringify({ success: true, post }));
+  }
+
+  res.send(JSON.stringify({ success: false, post }));
+};

@@ -1,0 +1,87 @@
+// @ts-types="@types/express"
+import { Request, Response } from 'express';
+import { prismaClient } from '../config/db.ts';
+import { getTimeElapsed, orderReactions, Reactions } from '../utils.ts';
+import {} from 'date-fns';
+
+export const meta = async (req: Request, res: Response) => {
+  const theme = req.session.Theme;
+
+  const mostPopularActues = await prismaClient.comment.findMany({
+    where: {
+      isAnActu: true,
+    },
+  });
+
+  const actues = await Promise.all(
+    mostPopularActues
+      .map(async (popular) => {
+        const relativeComments = await prismaClient.comment.findMany({
+          where: {
+            commentId: popular.id,
+          },
+        });
+        const replies = await Promise.all(
+          relativeComments.map(async (eachComment) => {
+            const thisCommentAuthor = await prismaClient.user.findUnique({
+              where: {
+                id: eachComment.userId!,
+              },
+              select: {
+                file: true,
+                username: true,
+                fullname: true,
+              },
+            });
+            const thisCommentRelativeEls = await prismaClient.comment.count({
+              where: {
+                commentId: eachComment.id,
+              },
+            });
+            return {
+              ...eachComment,
+              userIcon: thisCommentAuthor?.file,
+              time: getTimeElapsed(eachComment.createdAt),
+              reactionsEls: orderReactions(
+                eachComment.reactions as Reactions[],
+              ),
+              reactionsLength: eachComment.reactions.length,
+              commentsLength: thisCommentRelativeEls,
+              author: thisCommentAuthor?.username || thisCommentAuthor?.fullname,
+            };
+          }),
+        );
+        const authorInfo = await prismaClient.user.findUnique({
+          where: {
+            id: popular.userId!,
+          },
+          select: {
+            username: true,
+            file: true,
+            fullname: true,
+          },
+        });
+        return {
+          ...popular,
+          reactionsEls: orderReactions(popular.reactions as Reactions[]),
+          reactionsLength: popular.reactions.length,
+          commentsLength: relativeComments.length,
+          time: getTimeElapsed(popular.createdAt),
+          userIcon: authorInfo?.file,
+          replies,
+          author: authorInfo?.username || authorInfo?.fullname,
+        };
+      }),
+  );
+  console.log(actues);
+
+  res.render('marketPlace', {
+    auth: typeof req.session.Auth !== 'undefined'
+      ? req.session.Auth.authenticated
+      : undefined,
+    theme: theme,
+    userId: req.session?.Auth?.id,
+    userIcon: req.session?.Auth?.file,
+    actues,
+  });
+};

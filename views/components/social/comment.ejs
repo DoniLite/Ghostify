@@ -1,0 +1,60 @@
+<div class="commentComponent w-full">
+  <% if (typeof auth !== 'undefined' && auth === true) { %>
+  <form class="relative w-full" id="commentFormElement">
+    <input
+      type="hidden"
+      name="pointerId"
+      value="<%= typeof pointer === 'undefined'? pointer = '' : pointer %>"
+    />
+    <input
+      type="hidden"
+      name="pointerType"
+      value="<%= typeof pointerType === 'undefined'? pointerType = '' : pointerType %>"
+    />
+    <input
+      type="file"
+      name="commentFile"
+      id="commentFileInput"
+      class="hidden"
+      accept="image/*"
+    />
+    <div
+      class="absolute top-6 lg:right-[22%] right-[20%] cursor-pointer z-50"
+      id="commentFileControl"
+    >
+      <i class="fa-solid fa-file fa-xl text-orange-500"></i>
+    </div>
+    <div class="w-full flex justify-between mt-4 relative">
+      <img
+        src="<% if (typeof userIcon === 'undefined') { %>/static/SVG/user.svg <% } else { %> <%= userIcon %> <% } %>"
+        class="w-8 h-8 rounded-full mt-3"
+        alt="user profil"
+      />
+      <div
+        class="w-full flex lg:flex-row items-center flex-col lg:gap-x-4 p-2 gap-y-3 relative"
+      >
+        <textarea
+          type="text"
+          name="comment"
+          id=""
+          class="w-full lg:w-[80%] outline-none bg-transparent pr-20 text-white border p-4 border-white rounded-lg relative"
+          placeholder="ajouter un commentaire"
+        ></textarea>
+        <button
+          type="submit"
+          class="p-2 w-8 h-8 rounded-full lg:mt-0 mt-4 flex justify-center lg:top-6 top-1 z-50 right-[6%] items-center absolute mx-auto lg:mx-0 text-white bg-orange-500"
+        >
+          <i class="fa-solid fa-arrow-up fa-xl"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+  <% } %>
+ 
+
+  <% if (typeof replies !== 'undefined' && Array.isArray(replies)) { %>
+   <%- include('replies.ejs', {replies: replies.slice(0, 3)}) %>
+  <% } %>
+
+</div>
+<script type="module" src="/static/js/comment.js"></script>

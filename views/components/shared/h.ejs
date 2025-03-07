@@ -1,0 +1,54 @@
+<% if (typeof title === 'undefined'){ %>
+<title>Ghostify - A multi-service platform</title>
+<meta name="twitter:title" content="Ghostify" />
+<meta property="og:title" content="Ghostify" />
+<% } else { %>
+<title><%= title %></title>
+<meta name="twitter:title" content="<%= title %>" />
+<meta property="og:title" content="<%= title %>" />
+<% } %> 
+<% if (typeof desc === 'undefined') { %>
+<meta
+  name="description"
+  content="Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
+/>
+<meta
+  property="og:description"
+  content="Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
+/>
+<meta
+  name="twitter:description"
+  content="Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
+/>
+<% } else { %>
+<meta name="description" content="<%= desc %>" />
+<meta property="og:description" content="<%= desc %>" />
+<meta name="twitter:description" content="<%= desc %>" />
+<% } %>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://ghostiy.site/" />
+<% if (typeof preview === 'undefined')  { %>
+ <meta name="twitter:card" content="/static/screen/screen1.png" />
+ <meta name="twitter:image" content="/static/screen/screen1.png" />
+ <meta property="og:image" content="/static/screen/screen1.png" />
+<% } else { %>
+  <meta name="twitter:card" content="<%= preview %>" />
+  <meta name="twitter:image" content="<%= preview %>" />
+  <meta property="og:image" content="<%= preview %>" />
+<% } %>
+<% if (typeof icon === 'undefined'){ %>
+<link rel="icon" type="image/x-icon" href="/static/SVG/ghost.svg" />
+<% } else { %>
+<link rel="icon" type="image/x-icon" href="<%= icon %>" />
+<% } %>
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://ghostiy.site/" />
+<!-- <meta name="theme-color" content="#000000"> -->
+<!-- <meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; img-src 'self' https://example.com; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.googleapis.com data:application/font-woff;charset=utf-8;base64 https://fonts.gstatic.com; connect-src 'self';"
+/> -->
+
+<link rel="alternate" href="https://ghostiy.site?lang=fr" hreflang="fr" />

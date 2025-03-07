@@ -1,0 +1,167 @@
+{
+  "tasks": {
+    "build": "deno run build:client && deno run tailwind",
+    "build:prod": "deno run build && deno run prisma:deploy",
+    "build:watch": "deno run build:client:watch && deno run tailwind:watch",
+    "start": "deno run build:prod && deno run --allow-net --allow-read --allow-write --allow-env src/server.ts",
+    "dev:server": "deno run build:watch & deno run --watch --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env src/server.ts",
+    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write",
+    "test-ci": "deno test --no-check --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write tests/",
+    "lint": "deno lint --fix --ignore=\"**/*.js\"",
+    "fmt": "deno fmt",
+    "build:client": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/client/build.ts",
+    "build:client:watch": "deno run -A scripts/client/build.ts --watch",
+    "tailwind": "deno run -A npm:@tailwindcss/cli -i ./main.css -o ./src/public/css/main.css",
+    "tailwind:watch": "deno run -A npm:@tailwindcss/cli -i ./main.css -o ./src/public/css/main.css --watch",
+    "setup:assets": "deno run --allow-read --allow-write --allow-run scripts/assets.ts",
+    "create:dirs": "deno run --allow-read --allow-write scripts/dir.ts",
+    "deploy:server": "deno run --allow-read --allow-write --allow-run --allow-net --allow-env scripts/deploy.ts",
+    "prisma:generate": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts generate",
+    "prisma:migrate": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts migrate-dev",
+    "prisma:migrate:name": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts migrate-dev --name",
+    "prisma:deploy": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts migrate-deploy",
+    "prisma:pull": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts db-pull",
+    "prisma:push": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts db-push",
+    "prisma:reset": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts migrate-reset",
+    "docker:build": "docker build -t test:latest .",
+    "docker:start": "docker run -p 3081:3081 test:latest",
+    "learn": "deno run --allow-run --allow-read --allow-env --allow-write ./src/ATS/labs.ts"
+  },
+  "imports": {
+    "$fresh/": "https://deno.land/x/fresh@1.6.5/",
+    "@prisma/adapter-pg": "npm:@prisma/adapter-pg@^6.3.1",
+    "@types/bcrypt": "npm:@types/bcrypt@^5.0.2",
+    "@types/body-parser": "npm:@types/body-parser@^1.19.5",
+    "@types/connect-sqlite3": "npm:@types/connect-sqlite3@^0.9.5",
+    "@types/cookie-parser": "npm:@types/cookie-parser@^1.4.8",
+    "@types/cors": "npm:@types/cors@^2.8.17",
+    "@types/ejs": "npm:@types/ejs@^3.1.5",
+    "@types/express": "npm:@types/express@^4.17.21",
+    "@types/express-session": "npm:@types/express-session@^1.18.1",
+    "@types/express-ws": "npm:@types/express-ws@^3.0.5",
+    "@types/formidable": "npm:@types/formidable@^3.4.5",
+    "@types/i18n": "npm:@types/i18n@^0.13.12",
+    "@types/jsdom": "npm:@types/jsdom@^21.1.7",
+    "@types/jsonwebtoken": "npm:@types/jsonwebtoken@^9.0.8",
+    "@types/passport": "npm:@types/passport@^1.0.17",
+    "@types/passport-google-oauth20": "npm:@types/passport-google-oauth20@^2.0.16",
+    "@types/pg": "npm:@types/pg@^8.11.11",
+    "@types/showdown": "npm:@types/showdown@^2.0.6",
+    "@types/vhost": "npm:@types/vhost@^3.0.9",
+    "@types/ws": "npm:@types/ws@^8.5.14",
+    "@types/yargs": "npm:@types/yargs@^17.0.33",
+    "cookie-parser": "npm:cookie-parser@^1.4.7",
+    "express": "npm:express@4.21.2",
+    "body-parser": "npm:body-parser@1.20.3",
+    "cors": "npm:cors@2.8.5",
+    "glob": "npm:glob@^11.0.1",
+    "helmet": "npm:helmet@8.0.0",
+    "express-rate-limit": "npm:express-rate-limit@7.5.0",
+    "express-session": "npm:express-session@1.18.1",
+    "express-ws": "npm:express-ws@5.0.2",
+    "prisma": "npm:prisma@6.3.1",
+    "vhost": "npm:vhost@3.0.2",
+    "bcrypt": "npm:bcrypt@5.1.1",
+    "jsonwebtoken": "npm:jsonwebtoken@9.0.2",
+    "passport": "npm:passport@0.7.0",
+    "passport-google-oauth20": "npm:passport-google-oauth20@2.0.0",
+    "prisma_client": "npm:@prisma/client@6.3.0",
+    "pg": "npm:pg@8.13.1",
+    "redis": "npm:redis@4.7.0",
+    "bull": "npm:bull@4.16.5",
+    "connect-redis": "npm:connect-redis@8.0.1",
+    "connect-sqlite3": "npm:connect-sqlite3@0.9.15",
+    "ejs": "npm:ejs@3.1.10",
+    "marked": "npm:marked@15.0.6",
+    "showdown": "npm:showdown@2.1.0",
+    "jsdom": "npm:jsdom@26.0.0",
+    "formidable": "npm:formidable@3.5.2",
+    "quill": "npm:quill@2.0.3",
+    "date-fns": "npm:date-fns@4.1.0",
+    "dotenv": "npm:dotenv@16.4.7",
+    "winston": "npm:winston@3.17.0",
+    "ws": "npm:ws@^8.18.0",
+    "yargs": "npm:yargs@17.7.2",
+    "natural": "npm:natural@8.0.1",
+    "node-cron": "npm:node-cron@3.0.3",
+    "nodemailer": "npm:nodemailer@6.10.0",
+    "@sendgrid/mail": "npm:@sendgrid/mail@^8.1.4",
+    "paypal-server-sdk": "npm:@paypal/paypal-server-sdk@0.6.1",
+    "sharp": "npm:sharp@0.33.5",
+    "image-hash": "npm:image-hash@5.3.2",
+    "node-vibrant": "npm:node-vibrant@4.0.3",
+    "tesseract.js": "npm:tesseract.js@6.0.0",
+    "puppeteer": "npm:puppeteer@24.1.1",
+    "apify-client": "npm:apify-client@2.11.1",
+    "tailwindcss": "npm:tailwindcss@4.0.6",
+    "@tailwindcss/cli": "npm:@tailwindcss/cli@4.0.6",
+    "@tailwindcss/typography": "npm:@tailwindcss/typography@0.5.16",
+    "@tailwindcss/aspect-ratio": "npm:@tailwindcss/aspect-ratio@0.4.2",
+    "postcss": "npm:postcss@8.5.1",
+    "autoprefixer": "npm:autoprefixer@10.4.20",
+    "i18n": "npm:i18n@0.15.1",
+    "free-translate": "npm:free-translate@0.6.1",
+    "dompurify": "npm:dompurify@3.2.4",
+    "@prisma/client": "npm:@prisma/client@6.4.1",
+    "std/": "https://deno.land/std@0.220.1/",
+    "oak": "https://deno.land/x/oak@v12.6.1/mod.ts",
+    "djwt": "https://deno.land/x/djwt@v3.0.1/mod.ts",
+    "postgres": "https://deno.land/x/postgres@v0.17.0/mod.ts"
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "deno.ns",
+      "dom"
+    ],
+    "strict": true,
+    "types": [
+      "./src/@types/index.d.ts",
+      "./src/@types/session.d.ts",
+      "./src/@types/express-extend.d.ts"
+    ],
+    "checkJs": true
+  },
+  "fmt": {
+    "files": {
+      "include": [
+        "src/"
+      ]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 80,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  },
+  "lint": {
+    "files": {
+      "include": [
+        "src/"
+      ]
+    },
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  },
+  "permissions": {
+    "net": true,
+    "read": true,
+    "write": true,
+    "env": true,
+    "run": true
+  },
+  "nodeModulesDir": "auto",
+  "test": {
+    "exclude": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.cache/**"
+    ]
+  }
+}
