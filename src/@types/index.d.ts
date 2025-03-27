@@ -17,8 +17,6 @@ import {
   RunCollectionClient,
 } from 'apify-client';
 import sharp from 'sharp';
-import { prismaClient } from '../config/db.ts';
-import { Can } from '../utils.ts';
 export { Post } from '@prisma/client';
 // @ts-types="npm:@types/ws"
 import { type WebSocket as WebSocketS } from 'npm:ws';
@@ -45,9 +43,53 @@ export interface Service {
   };
 }
 
-export interface UserActor {
-  checkPermissions(permissions: Can[]): void;
-}
+export interface SessionData {
+    Persisted?: boolean;
+    NoAPIsData?: boolean;
+    Cookies?: Record<string, unknown>;
+    Token?: string;
+    ServerKeys?: {
+      secretKey: Buffer;
+      iv: Buffer;
+    };
+    Theme?: {
+      background: string;
+      sun_1: ' #FFD700';
+      sun_2: ' #FFA500';
+      sun_3: ' #FF8C00';
+      sun_4: ' #FF6347';
+      sun_5: '#FFA500';
+      moon_1: '#8B4513';
+      moon_2: '#7B68EE';
+      morning_bg_from: 'from-blue-300';
+      morning_bg_to: 'to-lime-500';
+      evening_bg_from: 'from-blue-300';
+      evening_bg_to: 'to-lime-500';
+      night_bg_from: 'from-blue-300';
+      nigh_bg_from: 'to-lime-500';
+      footer: string;
+    };
+    Poster?: {
+      title: string;
+      metaData: string;
+      section: {
+        index: number;
+        title: string;
+        content: string;
+        file?: { url: string; description: string }[];
+      }[];
+    };
+    Stats?: StatsData;
+    Services?: Service;
+    Auth?: Auth;
+    Storage?: DocumentStorage;
+    CVData?: RawCV;
+    JobsIDs?: {
+      cvJob?: string | number;
+    };
+    RedirectUrl?: string;
+  }
+
 
 export interface Secrets {
   key: Buffer;
@@ -56,19 +98,6 @@ export interface Secrets {
 
 export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
 
-export type Inf<T extends Can[]> = T extends (infer U)[]
-  ? U extends Can.CRUD ? { data: typeof prismaClient }
-  : U extends Can.CreateUser ? { data: typeof prismaClient.user }
-  : U extends Can.MakeComment ? { data: typeof prismaClient.comment }
-  : U extends Can.MakeSecureAction ? { data: typeof prismaClient }
-  : never
-  : never;
-
-export interface Certificates {
-  pass: string;
-  health: string;
-  permissions: Can[];
-}
 
 export interface Auth {
   id?: number;
@@ -78,6 +107,28 @@ export interface Auth {
   username?: string;
   fullname?: string;
   file?: string;
+}
+
+export interface Geo {
+  reqId?: string;
+  ip?: string;
+  city?: string;
+  country?: string;
+  /* ISO 3166-2 code */
+  countryCode?: string;
+  region?: string;
+  /* ISO 3166-2 code */
+  regionCode?: string;
+  latitude?: string;
+  longitude?: string;
+  continent?: string;
+  postalCode?: string;
+  metroCode?: string;
+  timezone?: string;
+  asn?: string;
+  idcRegion?: string;
+  /** flag emoji */
+  flag?: string;
 }
 
 export interface Indexer {

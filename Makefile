@@ -17,15 +17,6 @@ $(VENV)/bin/activate: requirements.txt
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
-# Environnement de production
-.PHONY: setup-prod
-setup-prod: $(VENV)/bin/activate-prod
-
-$(VENV)/bin/activate-prod: requirements.prod.txt
-	python3.12 -m venv $(VENV)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.prod.txt
-
 .PHONY: install
 install: setup
 
@@ -63,15 +54,6 @@ format:
 	$(PYTHON) -m black $(SRC_DIR)
 	$(PYTHON) -m black $(TEST_DIR)
 
-# Exécution du crawler
-.PHONY: run
-run:
-	$(UVICORN) $(MODULE) --reload
-
-.PHONY: start-prod
-start-prod:
-	$(UVICORN) $(MODULE) --host 0.0.0.0 --port 8080
-
 # Sécurité
 .PHONY: security
 security:
@@ -93,7 +75,6 @@ docs:
 help:
 	@echo "Commandes disponibles:"
 	@echo "  make setup       - Crée l'environnement virtuel et installe les dépendances"
-	@echo "  make setup-prod  - Crée l'environnement de production avec requirements.prod.txt"
 	@echo "  make install     - Alias pour setup"
 	@echo "  make clean       - Nettoie les fichiers Python compilés et les caches"
 	@echo "  make clean-venv  - Nettoie tout, y compris l'environnement virtuel"
@@ -101,7 +82,6 @@ help:
 	@echo "  make lint        - Vérifie le style du code"
 	@echo "  make format      - Formate le code avec black"
 	@echo "  make run         - Lance l'application en développement en mode watch"
-	@echo "  make start-prod  - Lance l'application en production"
 	@echo "  make security    - Lance les vérifications de sécurité"
 	@echo "  make freeze      - Met à jour requirements.txt"
 	@echo "  make docs        - Génère la documentation"

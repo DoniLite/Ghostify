@@ -1,64 +1,65 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=21.6.1
-ARG PNPM_VERSION=9.1.3
+ARG DENO_VERSION=2.2.5
+ARG PYTHON_VERSION=3.12
 
 ################################################################################
-FROM node:${NODE_VERSION}-alpine as base
+# Base image avec Deno et Python
+FROM denoland/deno:${DENO_VERSION} as base
 
-# Install necessary system packages
-RUN apk add --no-cache sudo shadow
+# Install necessary system packages (including Python)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python${PYTHON_VERSION} \
+    python3-pip \
+    sudo \
+    make \
+    pandoc \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create a user with sudo rights
-RUN addgroup -S appgroup && \
-    usermod -a -G appgroup node && \
-    echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node
+RUN addgroup --system appgroup && \
+    adduser --system --ingroup appgroup deno && \
+    echo "deno ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/deno
 
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
-# Give ownership to node user
-RUN chown -R node:appgroup /usr/src/app
-
-# Install pnpm
-RUN --mount=type=cache,target=/root/.npm \
-    npm install -g pnpm@${PNPM_VERSION}
+# Give ownership to deno user
+RUN chown -R deno:appgroup /usr/app
 
 ################################################################################
+# Stage de récupération des dépendances
 FROM base as deps
 
-COPY --chown=node:appgroup ./prisma ./prisma
+COPY --chown=deno:appgroup ./deno.json ./deno.json
+COPY --chown=deno:appgroup ./deno.lock ./deno.lock
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --prod && pnpm run generate
-
+# Cache les modules Deno pour éviter de les re-télécharger à chaque build
+RUN deno cache --lock=deno.lock --lock-write $(cat deno.json | jq -r '.imports | keys[]') \
+    deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
 ################################################################################
+# Build l'application
 FROM deps as build
 
-RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
-    --mount=type=cache,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile
+COPY --chown=deno:appgroup . .
 
-COPY --chown=node:appgroup . .
-RUN pnpm run build
+# Compile et optimise l'application (optionnel)
+RUN deno compile --unstable --output app main.ts
 
 ################################################################################
+# Final stage - production
 FROM base as final
 
-ENV NODE_ENV production
+# Utiliser un environnement de production
+ENV DENO_ENV=production
 
-# Ensure proper permissions for the node user
-USER node
-RUN mkdir -p /usr/src/app/logs /usr/src/app/uploads
+# Définir l'utilisateur par défaut
+USER deno
 
-COPY --chown=node:appgroup package.json .
-COPY --chown=node:appgroup ./src ./src
-COPY --chown=node:appgroup --from=deps /usr/src/app/node_modules ./node_modules
-COPY --chown=node:appgroup --from=build /usr/src/app/build ./build
+# Copier les fichiers nécessaires
+COPY --chown=deno:appgroup --from=build /usr/app /usr/app
 
-EXPOSE 3081
+EXPOSE 8080
 
-CMD ["pnpm", "start"]
+# Lancer l'application avec Deno
+CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "--allow-run", "main.ts"]

@@ -1,28 +1,29 @@
+import { Buffer } from 'node:buffer';
+import { decrypt, encrypt, generateAndSaveKeys } from '../src/utils.ts';
 import { assertEquals, assertNotEquals } from 'jsr:@std/assert';
-import {
-  loadSecurityBearer,
-  purgeSingleFile,
-  verifySecurity,
-} from '../src/utils.ts';
-import path from 'node:path';
-import process from 'node:process';
 
 Deno.test('security test', async (t) => {
-  await t.step('should return true for valid security', async () => {
-    const isSecurityGenerated = await verifySecurity();
-    assertEquals(isSecurityGenerated, true);
-  });
+    let keys: {
+      secretKey: Buffer;
+      iv: Buffer;
+    };
+    const encryptContent = 'Hello world';
+    let encrypted: string;
+    await t.step('should create the security hash', async () => {
+        // await ensureDir(path.join(Deno.cwd(), './data'));
+        keys = await generateAndSaveKeys();
+        assertEquals(keys.secretKey.length, 32);
+        assertEquals(keys.iv.length, 16);
+    });
+    await t.step('should encrypt the content with the security hash', () => {
+        const {secretKey, iv} = keys;
+        encrypted = encrypt(encryptContent, secretKey, iv);
+        assertNotEquals(encrypted, encryptContent);
+    })
 
-  await t.step('should return the security payload', async () => {
-    const securityBearer = await loadSecurityBearer();
-    assertNotEquals(securityBearer, null);
-  });
-
-  await t.step('should remove the created security files', () => {
-    const SECURITY_DIR = path.resolve(
-      process.cwd(),
-      './security/security.json'
-    );
-    purgeSingleFile(SECURITY_DIR);
-  });
-});
+    await t.step('should decrypt the content with the security hash', () => {
+        const {secretKey, iv} = keys;
+        const decrypted = decrypt(encrypted, secretKey, iv);
+        assertEquals(decrypted, encryptContent);
+    })
+})

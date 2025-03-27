@@ -12,20 +12,29 @@ const flags = parseArgs(Deno.args, {
 });
 
 // Ensure build directory exists
-await ensureDir(path.join(process.cwd(), '/src/public/js'));
+await ensureDir(path.join(process.cwd(), '/static/js'));
 
 try {
   const _result = await build({
     entryPoints: [
       ...glob
-        .sync(['./src/frontend/**/*.ts', './src/frontend/**/*.js'])
+        .sync([
+          './src/frontend/**/*.ts',
+          './src/frontend/**/*.js',
+          './src/frontend/**/*.jsx',
+          './src/frontend/**/*.tsx',
+          './src/client/**/*.js',
+          './src/client/**/*.ts',
+          './src/client/**/*.jsx',
+          './src/client/**/*.tsx'
+        ])
         .map((file) => path.resolve(process.cwd(), file)),
     ], // Votre point d'entrée principal
     bundle: true,
     minify: !flags.watch,
     sourcemap: flags.watch ? 'inline' : false,
     target: ['chrome99', 'firefox99', 'safari15'],
-    outdir: path.join(process.cwd(), '/src/public/js'),
+    outdir: path.join(process.cwd(), '/static/js'),
     format: 'esm',
     platform: 'browser',
     plugins: [

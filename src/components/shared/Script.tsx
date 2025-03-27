@@ -1,0 +1,13 @@
+export default function () {
+  return (
+    <>
+      <script type='module' src='/static/js/shared.js'></script>
+      <script type='module' src='/static/js/notifications.js'></script>
+      <script type='module' src='/static/js/translator.js'></script>
+      <script type='module' src='/static/js/1.js'></script>
+      <script type='module' src='/static/js/network.js'></script>
+      <script type='module' src='/static/all.min.js'></script>
+      <script src='/static/js/postHog.js'></script>
+    </>
+  );
+}

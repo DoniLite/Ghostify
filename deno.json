@@ -4,15 +4,15 @@
     "build:prod": "deno run build && deno run prisma:deploy",
     "build:watch": "deno run build:client:watch && deno run tailwind:watch",
     "start": "deno run build:prod && deno run --allow-net --allow-read --allow-write --allow-env src/server.ts",
-    "dev:server": "deno run build:watch & deno run --watch --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env src/server.ts",
-    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write",
+    "dev:server": "deno run build:watch & deno run --watch --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
+    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks",
     "test-ci": "deno test --no-check --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write tests/",
     "lint": "deno lint --fix --ignore=\"**/*.js\"",
     "fmt": "deno fmt",
     "build:client": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/client/build.ts",
     "build:client:watch": "deno run -A scripts/client/build.ts --watch",
-    "tailwind": "deno run -A npm:@tailwindcss/cli -i ./main.css -o ./src/public/css/main.css",
-    "tailwind:watch": "deno run -A npm:@tailwindcss/cli -i ./main.css -o ./src/public/css/main.css --watch",
+    "tailwind": "deno run -A scripts/tailwind/build.ts build",
+    "tailwind:watch": "deno run -A scripts/tailwind/build.ts build --watch",
     "setup:assets": "deno run --allow-read --allow-write --allow-run scripts/assets.ts",
     "create:dirs": "deno run --allow-read --allow-write scripts/dir.ts",
     "deploy:server": "deno run --allow-read --allow-write --allow-run --allow-net --allow-env scripts/deploy.ts",
@@ -28,6 +28,11 @@
     "learn": "deno run --allow-run --allow-read --allow-env --allow-write ./src/ATS/labs.ts"
   },
   "imports": {
+    "hono": "npm:hono",
+    "hono-sessions": "npm:hono-sessions@^0.7.1",
+    "react-router": "npm:react-router@^7.3.0",
+    "zod": "npm:zod",
+    "@hono/zod-validator": "npm:@hono/zod-validator",
     "$fresh/": "https://deno.land/x/fresh@1.6.5/",
     "@prisma/adapter-pg": "npm:@prisma/adapter-pg@^6.3.1",
     "@types/bcrypt": "npm:@types/bcrypt@^5.0.2",
@@ -109,6 +114,8 @@
     "postgres": "https://deno.land/x/postgres@v0.17.0/mod.ts"
   },
   "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "hono/jsx",
     "lib": [
       "deno.window",
       "deno.ns",
@@ -116,9 +123,7 @@
     ],
     "strict": true,
     "types": [
-      "./src/@types/index.d.ts",
-      "./src/@types/session.d.ts",
-      "./src/@types/express-extend.d.ts"
+      "./src/@types/index.d.ts"
     ],
     "checkJs": true
   },

@@ -1,7 +1,7 @@
 name: Build Deno CD/CI
 run-name: ${{ github.actor }}'s GitHub Actions
 env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  # DATABASE_URL: ${{ secrets.DATABASE_URL }}
   DENO_DIR: ~/.cache/deno
 
 on:

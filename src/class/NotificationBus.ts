@@ -1,9 +1,9 @@
-import { ee, NotificationQueue } from '../server.ts';
 import { prismaClient } from '../config/db.ts';
 import { EventEmitter } from 'node:stream';
 import type { Notifications, NotificationType } from '@prisma/client';
 import { DoneCallback, Job } from 'bull';
 import { logger } from '../logger.ts';
+import { ee, NotificationQueue } from '../utils.ts';
 
 export class NotificationBus {
   /**

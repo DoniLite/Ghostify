@@ -1,13 +1,18 @@
-// @ts-types="@types/express"
-import { NextFunction, Request, Response } from 'express';
-import { decrypt, encrypt } from '../utils.ts';
+import { factory } from '../factory.ts';
+import {
+  // getCookie,
+  getSignedCookie,
+  // setCookie,
+  setSignedCookie,
+  deleteCookie,
+} from 'hono/cookie';
 
 const OPEN_ROUTES = ['/home'];
 const AUTH_ROUTES = [
   '/poster/docs',
   '/poster/parser',
   '/poster/view',
-  '/cvMaker',
+  '/cv/maker',
   '/poster/new',
   '/service',
   '/poster/update/:post',
@@ -19,61 +24,59 @@ export const ROUTES = [
   ...AUTH_ROUTES,
 ];
 
-const isOpenRoute = (url: string) =>
+const _isOpenRoute = (url: string) =>
   OPEN_ROUTES.some((route) => url.includes(route));
 
-const _isAuthRoute = (url: string) =>
+const isAuthRoute = (url: string) =>
   AUTH_ROUTES.some((route) => url.includes(route));
 
-export const auth = (req: Request, res: Response, next: NextFunction) => {
-  const { cookies } = req;
-  const lastTime = cookies['connection_time'];
 
-  const redirectToSignIn = () => res.redirect('/signin?service=poster');
-
+export const authMiddleware = factory.createMiddleware(async (c, next) => {
+  const redirectToSignIn = () => c.redirect('/login');
+  const { connection_time } = await getSignedCookie(
+    c,
+    Deno.env.get('SIGNED_COOKIE_SECRET')!
+  );
+  const session = c.get('session');
   try {
     // Vérification du temps de connexion
     if (
-      typeof lastTime === 'string' &&
-      Date.now() > Number(
-          decrypt(
-            lastTime,
-            req.session?.ServerKeys?.secretKey!,
-            req.session?.ServerKeys?.iv!,
-          ),
-        )
+      connection_time &&
+      typeof connection_time === 'string' &&
+      Date.now() > Number(connection_time)
     ) {
-      req.session.Auth = { authenticated: false };
-      req.session.RedirectUrl = req.baseUrl;
-      console.log(req.session.RedirectUrl);
-      return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
+      session.set('Auth', { authenticated: false });
+      session.set('RedirectUrl', c.req.url);
+      deleteCookie(c, 'connection_time');
+      console.log(c.req.url);
+      return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
     }
 
     // Vérification de l'authentification
-    if (!req.session.Auth || req.session.Auth.authenticated === false) {
-      req.session.RedirectUrl = req.baseUrl;
-      return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
+    if (!session.get('Auth') || session.get('Auth')?.authenticated === false) {
+      session.set('RedirectUrl', c.req.url);
+      deleteCookie(c, 'connection_time');
+      return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
     }
 
     // Renouvellement du token
     const cookieExpiration = new Date();
     cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
 
-    req.session.Token = encrypt(
-      cookieExpiration.getTime().toString(),
-      req.session?.ServerKeys?.secretKey!,
-      req.session?.ServerKeys?.iv!,
+    session.set('Token', cookieExpiration.getTime().toString());
+
+    await setSignedCookie(
+      c,
+      'connection_time',
+      session.get('Token')!,
+      Deno.env.get('SIGNED_COOKIE_SECRET')!
     );
 
-    res.cookie('connection_time', req.session.Token, {
-      expires: cookieExpiration,
-    });
-
-    next();
+    await next();
   } catch (error) {
     console.error('Authentication middleware error:', error);
-    req.session.RedirectUrl = req.baseUrl;
-    console.log(req.session.RedirectUrl);
-    return isOpenRoute(req.baseUrl) ? next() : redirectToSignIn();
+    session.set('RedirectUrl', c.req.url);
+    console.log(c.req.url);
+    return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
   }
-};
+});
