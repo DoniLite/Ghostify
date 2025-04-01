@@ -101,7 +101,6 @@ const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children }) => (
       <link rel='stylesheet' href='/static/all.min.css' />
       <link rel='icon' type='image/svg+xml' href='/static/SVG/gostify.svg' />
       <link rel='stylesheet' href='/static/css/main.css' />
-      <script type='module' src='/static/js/searcher.js'></script>
       {isHome && <Style>{styles}</Style>}
       <Meta {...meta} />
     </head>

@@ -1,7 +1,7 @@
 import { month } from './@types/index.d.ts';
 import fs, { promises as fsP } from 'node:fs';
 import path from 'node:path';
-import crypto, { randomInt } from 'node:crypto';
+import crypto from 'node:crypto';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
@@ -20,7 +20,7 @@ import Queue from 'bull';
 import { EventEmitter } from 'node:events';
 import { sign, verify } from 'hono/jwt';
 import { NotificationType } from '@prisma/client';
-import * as mime from 'https://deno.land/x/mime_types@1.0.0/mod.ts';
+import mime from './modules/mime.ts';
 import z from 'zod';
 
 export const ee = () => new EventEmitter();
@@ -36,7 +36,7 @@ export function getFileHeaders(filePath: string, download?: boolean) {
   const fileName = path.basename(filePath);
 
   // Déterminer le type MIME
-  const contentType = mime.contentType(path.extname(fileName)) || 'application/octet-stream';
+  const contentType = mime.getType(fileName) || 'application/octet-stream';
 
   // Déterminer le mode de disposition
   const disposition = download
@@ -158,18 +158,22 @@ interface Keys {
   iv: string;
 }
 
+export const generateKeys = () => {
+  const secretKey: Buffer = crypto.randomBytes(32);
+  const iv: Buffer = crypto.randomBytes(16);
+  return {
+    secretKey: secretKey.toString('hex'),
+    iv: iv.toString('hex'),
+  }
+}
 // Fonction pour générer et sauvegarder les clés
-export async function generateAndSaveKeys(): Promise<{
+export async function saveKeys(): Promise<{
   secretKey: Buffer;
   iv: Buffer;
 }> {
-  const secretKey: Buffer = crypto.randomBytes(32);
-  const iv: Buffer = crypto.randomBytes(16);
+  
 
-  const keys: Keys = {
-    secretKey: secretKey.toString('hex'),
-    iv: iv.toString('hex'),
-  };
+  const keys: Keys = generateKeys();
 
   const verifyIfKeyExist = await prismaClient.key.findUnique({
     where: {
@@ -207,7 +211,7 @@ export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
     },
   });
   if (!keys || !keys.key || !keys.iv) {
-    return await generateAndSaveKeys();
+    return await saveKeys();
   }
 
   return {
@@ -240,26 +244,6 @@ export function tokenTimeExpirationChecker(t: number) {
   const now = new Date();
   return now.getTime() <= t;
 }
-
-export const colors = {
-  sun_1: ' #FFD700',
-  sun_2: ' #FFA500',
-  sun_3: ' #FF8C00',
-  sun_4: ' #FF6347',
-  sun_5: '#FFA500',
-  moon_1: '#8B4513',
-  moon_2: '#7B68EE',
-  morning_bg_from: 'from-blue-300',
-  morning_bg_to: 'to-lime-500',
-  evening_bg_from: 'from-blue-300',
-  evening_bg_to: 'to-lime-500',
-  night_bg_from: 'from-blue-300',
-  nigh_bg_from: 'to-lime-500',
-} as const;
-
-export const graphicsUploader = () => {
-  return `background/${randomInt(1, 8)}.ejs`;
-};
 
 export const termsMD = `
 # 📝 **Terms of Service**
@@ -577,7 +561,8 @@ export async function contentDownloader<
     // Exécution de la fonction personnalisée
     if (fn) {
       const result = await fn(page);
-      await browser.close()
+      await page.close();
+      await browser.close();
       return {
         t: result
       } as InferDownloadResult<TOptions, TFn>;
@@ -586,7 +571,9 @@ export async function contentDownloader<
 
     return {
       page,
-      close: async () => await browser.close(),
+      close: async () => {
+        await browser.close();
+      },
     } as InferDownloadResult<TOptions, TFn>;
 
   } catch (error) {

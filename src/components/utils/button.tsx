@@ -7,10 +7,10 @@ export const Button = ({link, content, elClass, type}: {
     if(link) return (
       <a
         href={link}
-        class={`${elClass} font-bold py-2 px-4 rounded-lg text-center`}
+        class={`${elClass} font-bold rounded-lg text-center`}
       >{content}</a>
     );
     return (
-        <button type={type ?? 'button'} class={`rounded-lg text-center ${elClass}`}>{content}</button>
+        <button type={type ?? 'button'} class={`font-bold rounded-lg text-center ${elClass}`}>{content}</button>
     )
 };

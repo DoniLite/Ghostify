@@ -9,6 +9,8 @@ import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
 import Register from '../pages/Register.tsx';
+import TLayout from '../components/shared/TLayout.tsx';
+import Dashboard from '../pages/Dashboard.tsx';
 
 const authApp = factory.createApp();
 
@@ -93,10 +95,34 @@ const loginHandlers = factory.createHandlers(
 
 authApp.post('/login', ...loginHandlers);
 authApp.get('/login', authMiddleware, (c) => {
-  return c.html(<Login />);
+  const props = {
+    title: 'Ghostify | Login',
+    description: 'Login to your account',
+  }
+  return c.html(
+    <TLayout meta={props}>
+      <Login />
+    </TLayout>
+  );
 });
 authApp.get('/register', (c) => {
-  return c.html(<Register />)
+   const props = {
+    title: 'Ghostify | Login',
+    description: 'Login to your account',
+  }
+  return c.html(
+    <TLayout meta={props}>
+      <Register />
+    </TLayout>
+  );
+})
+authApp.get('/dashboard', authMiddleware, (c) => {
+  const props = {}
+  return c.html(
+    <TLayout meta={props}>
+      <Dashboard></Dashboard>
+    </TLayout>
+  )
 })
 
 export default authApp;

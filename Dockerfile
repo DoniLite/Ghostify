@@ -33,9 +33,17 @@ FROM base as deps
 COPY --chown=deno:appgroup ./deno.json ./deno.json
 COPY --chown=deno:appgroup ./deno.lock ./deno.lock
 
+# Install dependencies with proper permissions
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,source=requirements.prod.txt,target=requirements.prod.txt \
+    --mount=type=bind,source=Makefile,target=Makefile \
+    make setup
+
 # Cache les modules Deno pour éviter de les re-télécharger à chaque build
-RUN deno cache --lock=deno.lock --lock-write $(cat deno.json | jq -r '.imports | keys[]') \
-    deno install --reload --lock=deno.lock --frozen=false --allow-scripts
+RUN --mount=type=bind,source=deno.json,target=deno.json \
+    --mount=type=bind,source=deno.lock,target=deno.lock \
+    --mount=type=cache,target=/root/.cache/deno \
+    deno install --frozen --allow-scripts
 
 ################################################################################
 # Build l'application
@@ -44,7 +52,7 @@ FROM deps as build
 COPY --chown=deno:appgroup . .
 
 # Compile et optimise l'application (optionnel)
-RUN deno compile --unstable --output app main.ts
+RUN deno task build
 
 ################################################################################
 # Final stage - production
@@ -62,4 +70,4 @@ COPY --chown=deno:appgroup --from=build /usr/app /usr/app
 EXPOSE 8080
 
 # Lancer l'application avec Deno
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "--allow-run", "main.ts"]
+CMD ["deno", "task", "start"]

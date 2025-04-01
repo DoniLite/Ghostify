@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+VN:wght@100..400&display=swap');
-@import 'tailwindcss';
+@import 'tailwindcss' source("./src");
 
 ::-webkit-scrollbar {
   display: none;

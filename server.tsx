@@ -12,13 +12,15 @@ import dotenv from 'dotenv';
 import process from 'node:process';
 import { languageDetector } from 'hono/language';
 import { compress } from 'hono/compress';
-import $404 from './src/components/shared/404.tsx';
+import NotFound from './src/components/shared/404.tsx';
 import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
-import { getFileHeaders, verifyJWT } from './src/utils.ts';
+import { getFileHeaders, termsMD, unify, verifyJWT } from './src/utils.ts';
 import { stream } from 'hono/streaming';
+import authApp from './src/controller/auth.tsx';
+import { html } from 'hono/html';
 
 if (Deno.env.get('NODE_ENV') !== 'production') {
   dotenv.config();
@@ -48,7 +50,7 @@ app.use(
     },
   })
 );
-app.use('/auth/*', (c, next) => {
+app.use('/api/*', (c, next) => {
   const jwtMiddleware = jwt({
     secret: Deno.env.get('JWT_SECRET')!,
   });
@@ -89,6 +91,21 @@ app.get('/', (c) => {
     </Wrapper>
   );
 });
+app.get('/terms', async (c) => {
+  const terms = await unify(termsMD)
+  const htmlStr = html`<!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+      </head>
+      <body>
+        ${terms}
+      </body>
+    </html>`;
+  return c.html(htmlStr);
+})
 app.get('/download/:file', async (c) => {
   const file = c.req.param('file');
   const resourceDir = path.resolve(process.cwd(), './static');
@@ -135,8 +152,9 @@ app.get('/stream/:file', async (c) => {
   }
 })
 app.route('/document/', documentApp);
+app.route('/auth/', authApp);
 app.get('*', (c) => c.html(
-  <$404 />
+  <NotFound />
 ));
 
 Deno.serve({

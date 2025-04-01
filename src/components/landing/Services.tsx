@@ -16,7 +16,7 @@ export default function() {
             </p>
           </div>
 
-          <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+          <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
             <div class='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
               <div class='w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-6 text-white'>
                 <svg
@@ -36,7 +36,7 @@ export default function() {
               </div>
               <h3 class='text-xl font-bold mb-3'>Traduction de Documents</h3>
               <p class='text-gray-400 mb-5 flex-1'>
-                Traduisez vos documents dans différents types de 
+                Traduisez vos documents dans différents types de formats
               </p>
 
               <div class='mt-auto'>
@@ -54,7 +54,7 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Templates personnalisables</span>
+                    <span class='text-sm'>Performance et optimisation</span>
                   </div>
                   <div class='flex items-center mb-2'>
                     <svg
@@ -84,20 +84,20 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Génération en masse</span>
+                    <span class='text-sm'>Traduction en masse</span>
                   </div>
                 </div>
 
                 <div class='bg-gray-800 rounded-lg overflow-hidden p-2'>
                   <pre class='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
-                    <code>POST /api/documents/create</code>
+                    <code>POST /api/documents/translate</code>
                   </pre>
                   <pre class='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
                     <code>
                       {JSON.stringify({
                         template: 'invoice_v2',
                         data: { client: 'Acme Inc.', items: [...[]] },
-                      })}
+                      }, null, 4)}
                     </code>
                   </pre>
                 </div>
@@ -264,7 +264,7 @@ export default function() {
 
                 <div class='bg-gray-800 rounded-lg overflow-hidden p-2'>
                   <pre class='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
-                    <code>POST /api/convert</code>
+                    <code>POST /api/documents/convert</code>
                   </pre>
                   <pre class='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
                     <code>
@@ -272,7 +272,7 @@ export default function() {
                         source: 'pdf',
                         target: 'docx',
                         options: { preserveImages: true },
-                      })}
+                      }, null, 4)}
                     </code>
                   </pre>
                 </div>

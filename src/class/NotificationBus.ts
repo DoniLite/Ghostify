@@ -59,7 +59,7 @@ export class NotificationBus {
    *
    */
   constructor() {
-    this.eventBus = ee;
+    this.eventBus = ee();
     this.#crud = prismaClient.notifications;
     this.eventType = {
       Alert: 'Alert',

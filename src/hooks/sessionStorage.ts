@@ -1,7 +1,5 @@
 import {
-  colors,
-  generateAndSaveKeys,
-  graphicsUploader,
+  saveKeys,
   loadKeys,
 } from '../utils.ts';
 import { randomInt } from 'node:crypto';
@@ -20,13 +18,11 @@ const sessionMiddleware = factory.createMiddleware(async (c, next) => {
   const footerImg = `/static/img/${allDirsFiles[randomNumber]}`;
   const session = c.get('session');
   session.set('Theme', {
-    background: graphicsUploader(),
     footer: footerImg,
-    ...colors,
   });
   const keys = await loadKeys();
   if (!keys) {
-    await generateAndSaveKeys();
+    await saveKeys();
     session.set('ServerKeys', await loadKeys());
   }
   session.set('ServerKeys', keys);

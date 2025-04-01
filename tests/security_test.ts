@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { decrypt, encrypt, generateAndSaveKeys } from '../src/utils.ts';
+import { decrypt, encrypt, generateKeys } from '../src/utils.ts';
 import { assertEquals, assertNotEquals } from 'jsr:@std/assert';
 
 Deno.test('security test', async (t) => {
@@ -9,9 +9,13 @@ Deno.test('security test', async (t) => {
     };
     const encryptContent = 'Hello world';
     let encrypted: string;
-    await t.step('should create the security hash', async () => {
+    await t.step('should create the security hash', () => {
         // await ensureDir(path.join(Deno.cwd(), './data'));
-        keys = await generateAndSaveKeys();
+        const k = generateKeys();
+        keys = {
+            secretKey: Buffer.from(k.secretKey, 'hex'),
+            iv: Buffer.from(k.iv, 'hex')
+        }
         assertEquals(keys.secretKey.length, 32);
         assertEquals(keys.iv.length, 16);
     });

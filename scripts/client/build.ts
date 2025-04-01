@@ -4,7 +4,6 @@ import { parseArgs } from 'https://deno.land/std@0.224.0/cli/parse_args.ts';
 import { ensureDir } from 'https://deno.land/std@0.220.1/fs/ensure_dir.ts';
 import { glob } from 'glob';
 import path from 'node:path';
-import process from "node:process";
 
 const flags = parseArgs(Deno.args, {
   boolean: ['watch'],
@@ -12,7 +11,7 @@ const flags = parseArgs(Deno.args, {
 });
 
 // Ensure build directory exists
-await ensureDir(path.join(process.cwd(), '/static/js'));
+await ensureDir(path.join(Deno.cwd(), '/static/js'));
 
 try {
   const _result = await build({
@@ -26,20 +25,23 @@ try {
           './src/client/**/*.js',
           './src/client/**/*.ts',
           './src/client/**/*.jsx',
-          './src/client/**/*.tsx'
+          './src/client/**/*.tsx',
         ])
-        .map((file) => path.resolve(process.cwd(), file)),
+        .map((file) => path.resolve(Deno.cwd(), file)),
     ], // Votre point d'entrée principal
     bundle: true,
     minify: !flags.watch,
     sourcemap: flags.watch ? 'inline' : false,
     target: ['chrome99', 'firefox99', 'safari15'],
-    outdir: path.join(process.cwd(), '/static/js'),
+    outdir: path.join(Deno.cwd(), '/static/js'),
     format: 'esm',
+    jsx: 'automatic',
+    // jsxImportSource: path.join(Deno.cwd(), 'node_modules/hono/jsx/dom'),
     platform: 'browser',
     plugins: [
       ...denoPlugins({
         nodeModulesDir: true,
+        configPath: path.join(Deno.cwd(), 'deno.json'),
       }),
       // {
       //   name: 'node_modules',
@@ -73,7 +75,7 @@ try {
       // },
     ],
     define: {
-      'process.env.NODE_ENV': flags.watch ? '"development"' : '"production"',
+      'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
     },
   });
 

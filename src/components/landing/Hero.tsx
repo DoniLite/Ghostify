@@ -5,7 +5,7 @@ export default function () {
         <div class='flex flex-col md:flex-row items-center justify-between'>
           <div class='md:w-1/2 mb-12 md:mb-0'>
             <h1 class='text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6'>
-              Une plateforme pour booster votre
+              Une plateforme pour booster votre 
               <span class='bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent'>
                 productivité
               </span>
@@ -43,12 +43,12 @@ export default function () {
                 </div>
                 <div class='text-sm text-gray-400'>First</div>
               </div>
-              <div class='flex flex-col items-center'>
+              {/* <div class='flex flex-col items-center'>
                 <div class='text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-300 bg-clip-text text-transparent'>
-                  Full IA
+                  Customizable
                 </div>
-                <div class='text-sm text-gray-400'>support</div>
-              </div>
+                <div class='text-sm text-gray-400'>solutions</div>
+              </div> */}
             </div>
           </div>
 
