@@ -5,12 +5,12 @@ import Sidebar from './sidebar.tsx';
 
 const Dashboard = () => {
     return (
-      <div class='flex min-h-screen'>
+      <div class='grid  grid-cols-[29%_70%] w-full gap-3 h-screen over'>
         {/* Sidebar */}
         <Sidebar />
 
         {/* Main Content */}
-        <div class='ml-64 flex-1 p-5'>
+        <div class='p-5 w-full h-full overflow-y-scroll'>
           {/* Header */}
           <div class='flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm'>
             <h1 class='text-2xl font-semibold'>Tableau de bord</h1>

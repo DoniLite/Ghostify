@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { cvClass, cvDownloader, cvQueue, getLoc, renaming, tokenGenerator } from '../utils.ts';
+import { cvClass, cvDownloader, getLoc, renaming, tokenGenerator } from '../utils.ts';
 import type { QueryXData, RawCV } from '../@types/index.d.ts';
 import { prismaClient } from '../config/db.ts';
 import { randomInt } from 'node:crypto';
@@ -10,6 +10,7 @@ import Layout, { type LayoutType } from '../components/shared/Layout.tsx';
 import { logger } from '../logger.ts';
 import { format } from 'date-fns';
 import Template1 from '../components/cv/v1.tsx'
+import { cvQueue } from '../job.ts';
 
 const cvApp = factory.createApp();
 
@@ -22,11 +23,11 @@ cvQueue.process(async (job, done) => {
   }
 });
 
-cvApp.get('/', (c) => {
+cvApp.get('/', async (c) => {
   const session = c.get('session');
   const theme = session.get('Theme');
   const lang = c.get('language') as 'fr' | 'es' | 'en';
-  const loc = getLoc(lang);
+  const loc = await getLoc(lang);
   const footer = {
     bg: 'bg-gray-900',
     text: 'text-gray-100',
@@ -208,7 +209,7 @@ cvApp.get('/load/:cv', async (c) => {
   const { mode, api } = c.req.query() as QueryXData<{ mode: string; api: string }>;
   const session = c.get('session');
   const lang = c.get('language') as "fr" | "es" | "en";
-  const loc = getLoc(lang);
+  const loc = await getLoc(lang);
   const theme = session.get('Theme');
   // req.app.emit('downloader');
   try {

@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import puppeteer, { Page } from 'puppeteer';
+import puppeteer, { type Page } from 'puppeteer';
 import { prismaClient } from './config/db.ts';
 import bcrypt from 'bcrypt';
 import {
@@ -16,23 +16,21 @@ import {
 import { Translate, translate } from 'free-translate';
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
-import Queue from 'bull';
 import { EventEmitter } from 'node:events';
 import { sign, verify } from 'hono/jwt';
-import { NotificationType } from '@prisma/client';
 import mime from './modules/mime.ts';
 import z from 'zod';
-import en from '../locales/en.json' with { type: "json" };
-import fr from '../locales/fr.json' with {type: "json"};
-import es from '../locales/es.json' with {type: "json"};
 
-export const getLoc = (loc: 'en' | 'fr' | 'es') => {
+export const getLoc = async (loc: 'en' | 'fr' | 'es') => {
+  const en = await import(`../locales/en.json`, { with: { type: 'json' } });
+  const fr = await import(`../locales/fr.json`, { with: { type: 'json' } });
+  const es = await import(`../locales/es.json`, { with: { type: 'json' } });
   return {
     en,
     fr,
-    es
-  }[loc]
-}
+    es,
+  }[loc];
+};
 
 export const ee = () => new EventEmitter();
 
@@ -175,15 +173,13 @@ export const generateKeys = () => {
   return {
     secretKey: secretKey.toString('hex'),
     iv: iv.toString('hex'),
-  }
-}
+  };
+};
 // Fonction pour générer et sauvegarder les clés
 export async function saveKeys(): Promise<{
   secretKey: Buffer;
   iv: Buffer;
 }> {
-  
-
   const keys: Keys = generateKeys();
 
   const verifyIfKeyExist = await prismaClient.key.findUnique({
@@ -402,7 +398,7 @@ Make sure to check out our latest updates and follow us on social media for tips
 
 `;
 
-export const About = `
+export const AboutMD = `
 # À propos de notre plateforme
 
 Bienvenue sur notre plateforme, un espace innovant dédié à la création et à la publication de contenu de qualité. Nous avons conçu notre service pour répondre aux besoins des utilisateurs souhaitant s'exprimer, partager des idées et développer des compétences professionnelles. Voici un aperçu des trois services principaux que nous proposons :
@@ -463,10 +459,12 @@ Merci de faire partie de notre aventure !
 const ContentDownloaderSchema = z.object({
   url: z.string().optional(),
   content: z.string().optional(),
-  path: z.object({
-    png: z.string(),
-    pdf: z.string()
-  }).optional()
+  path: z
+    .object({
+      png: z.string(),
+      pdf: z.string(),
+    })
+    .optional(),
 });
 
 // Type générique pour les options de téléchargement
@@ -480,39 +478,39 @@ export type ContentDownloaderOptions = {
 };
 
 // Type générique pour la fonction de transformation
-export type PageTransformFn<TReturn = void> = (page: Page) => TReturn | Promise<TReturn>;
+export type PageTransformFn<TReturn = void> = (
+  page: Page
+) => TReturn | Promise<TReturn>;
 
 // Type utilitaire pour inférer le type de retour conditionnel
 type InferDownloadResult<
-  TOptions extends ContentDownloaderOptions, 
+  TOptions extends ContentDownloaderOptions,
   TFn extends PageTransformFn | undefined
-> = 
-  TOptions['path'] extends { png: string; pdf: string } 
-    ? {
-        data: {
-          imageToken: string;
-          pdfToken: string;
-        };
-      }
-    : TFn extends PageTransformFn 
-      ? {
-          t: Awaited<ReturnType<TFn>>;
-        }
-      : {
-          page: Page;
-          close: () => Promise<void>
-        };
+> = TOptions['path'] extends { png: string; pdf: string }
+  ? {
+      data: {
+        imageToken: string;
+        pdfToken: string;
+      };
+    }
+  : TFn extends PageTransformFn
+  ? {
+      t: Awaited<ReturnType<TFn>>;
+    }
+  : {
+      page: Page;
+      close: () => Promise<void>;
+    };
 
 /**
+ * @unsafe
+ *
  * Fonction de téléchargement de contenu hautement générique
  */
 export async function contentDownloader<
   TOptions extends ContentDownloaderOptions,
   TFn extends PageTransformFn | undefined = undefined
->(
-  opts: TOptions, 
-  fn?: TFn
-): Promise<InferDownloadResult<TOptions, TFn>> {
+>(opts: TOptions, fn?: TFn): Promise<InferDownloadResult<TOptions, TFn>> {
   // Validation des options
   ContentDownloaderSchema.parse(opts);
 
@@ -525,8 +523,10 @@ export async function contentDownloader<
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
   });
 
+  let page: Page | undefined;
+
   try {
-    const page = await browser.newPage();
+    page = await browser.newPage();
 
     // Chargement du contenu
     if (opts.content) {
@@ -558,14 +558,14 @@ export async function contentDownloader<
       // Génération des tokens
       const [imageToken, pdfToken] = await Promise.all([
         tokenGenerator({ path: `download/${png}` }),
-        tokenGenerator({ path: `download/${pdf}` })
+        tokenGenerator({ path: `download/${pdf}` }),
       ]);
 
       await page.close();
       await browser.close();
 
       return {
-        data: { imageToken, pdfToken }
+        data: { imageToken, pdfToken },
       } as InferDownloadResult<TOptions, TFn>;
     }
 
@@ -575,19 +575,23 @@ export async function contentDownloader<
       await page.close();
       await browser.close();
       return {
-        t: result
+        t: result,
       } as InferDownloadResult<TOptions, TFn>;
     }
-
 
     return {
       page,
       close: async () => {
+        if (page) {
+          await page.close();
+        }
         await browser.close();
       },
     } as InferDownloadResult<TOptions, TFn>;
-
   } catch (error) {
+    if (page && !page.isClosed()) {
+      await page.close();
+    }
     await browser.close();
     throw error;
   }
@@ -609,16 +613,16 @@ export const cvDownloader = async (options: {
     url: options.url,
     path: {
       pdf,
-      png
-    }
-  }
-  
+      png,
+    },
+  };
+
   const result = await contentDownloader(downloaderOpts);
   const { imageToken, pdfToken } = result.data;
 
   const pngServicePath = Deno.env.get('APP_HOST') + imageToken;
 
-  const pdfServicePath =  Deno.env.get('APP_HOST') + pdfToken;
+  const pdfServicePath = Deno.env.get('APP_HOST') + pdfToken;
 
   const cvUpdating = await prismaClient.cV.update({
     where: {
@@ -688,8 +692,8 @@ export const renaming = async (file: File, pathTo: string) => {
   const uploadPath = path.join(xPath, fName);
   try {
     // Convertir le fichier en tableau de bytes
-    const arrayBuffer = await file.arrayBuffer()
-    const uint8Array = new Uint8Array(arrayBuffer)
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
 
     // Stocker le fichier
     await Deno.writeFile(uploadPath, uint8Array);
@@ -727,13 +731,14 @@ export function getTimeElapsed(date: Date) {
   const duration = intervalToDuration({ start: date, end: new Date() });
 
   // sourcery skip: use-braces
-  if (duration.weeks && duration.weeks >= 1) return `${duration.weeks}w`;
+  if (duration.months && duration.months >= 1) return `${duration.months}M`;
+  if (duration.weeks && duration.weeks >= 1) return `${duration.weeks}W`;
   if (duration.days && duration.days >= 1) return `${duration.days}d`;
   if (duration.hours && duration.hours >= 1) return `${duration.hours}h`;
   if (duration.minutes && duration.minutes >= 1) return `${duration.minutes}m`;
   if (duration.seconds && duration.seconds >= 1) return `${duration.seconds}s`;
 
-  return '0s';
+  return 'now';
 }
 
 export const cvClass = {
@@ -914,12 +919,11 @@ export const purgeSingleFile = (path: string) => {
   }
 };
 
-
 export enum DocumentMimeTypes {
   // Documents texte
   PLAIN_TEXT = 'text/plain',
   HTML = 'text/html',
-  CSS = 'text/css', 
+  CSS = 'text/css',
   CSV = 'text/csv',
   XML = 'application/xml',
   XHTML = 'application/xhtml+xml',
@@ -965,16 +969,3 @@ export const useTranslator = async (
 ) => {
   return await translate(text, options);
 };
-
-export const cvQueue = new Queue<{
-  url: string;
-  id: number;
-  updating?: boolean;
-  docId?: number;
-}>('cv-processor', Deno.env.get('REDIS_HOST')!);
-
-export const NotificationQueue = new Queue<{
-  userId: number;
-  type: NotificationType;
-  payload: Record<string | number | symbol, unknown>;
-}>('notifications', Deno.env.get('REDIS_HOST')!);

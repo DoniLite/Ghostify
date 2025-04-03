@@ -7,15 +7,15 @@ import Meta, {type MetaProps} from './Meta.tsx';
 import { createContext } from 'hono/jsx'
 
 
-export const LocalsContext = createContext<LayoutType['locales']>({})
+export const LocalsContext = createContext<LayoutType['locales']>({default: {}});
 
 export type LayoutType = PropsWithChildren<{
-  theme?: string;
+  theme?: Record<string, string>;
   isHome?: boolean;
   header: HType;
   footer: FooterProps;
   meta?: MetaProps;
-  locales: Record<string, unknown>;
+  locales: {default: Record<string, unknown>};
   currentLocal: string;
 }>;
 

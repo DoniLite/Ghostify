@@ -43,7 +43,9 @@ const IconArrowUp = () => {
 
 let root = document?.getElementById('root');
 if(!root) {
-  root = document.createElement('div');
-  document.appendChild(root);
+  const el = document.createElement('div');
+  el.setAttribute('id', 'root');
+  document.appendChild(el);
+  root = document.getElementById('root')!;
 }
 render(<BackToTop />, root);

@@ -3,7 +3,8 @@ import { EventEmitter } from 'node:stream';
 import type { Notifications, NotificationType } from '@prisma/client';
 import { DoneCallback, Job } from 'bull';
 import { logger } from '../logger.ts';
-import { ee, NotificationQueue } from '../utils.ts';
+import { ee } from '../utils.ts';
+import { NotificationQueue } from '../job.ts';
 
 export class NotificationBus {
   /**

@@ -1,10 +1,11 @@
 import { LocalsContext } from './Layout.tsx';
 import Meta, { type MetaProps } from './Meta.tsx';
 import { PropsWithChildren, FC } from 'hono/jsx';
+import Script from './Script.tsx';
 
 type TLayout = PropsWithChildren<{
   meta?: MetaProps;
-  locales?: Record<string, unknown>;
+  locales?: { default: Record<string, unknown> };
   currentLocal?: string;
 }>;
 
@@ -25,9 +26,10 @@ const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal }) => {
         <Meta {...meta} />
       </head>
       <body>
-        <LocalsContext.Provider value={locales ?? {}}>
+        <LocalsContext.Provider value={locales ?? {default: {}}}>
           {children}
         </LocalsContext.Provider>
+        <Script />
       </body>
     </html>
   );

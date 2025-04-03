@@ -5,7 +5,6 @@ export type Props = {
   text: string;
   bg?: string;
   title: string;
-  theme: Record<string, unknown>;
 };
 
 const Footer = ({ linear, from, to, text, bg, title }: Props) => {

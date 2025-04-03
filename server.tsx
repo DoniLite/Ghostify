@@ -70,18 +70,15 @@ app.use(
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
 app.use('*', sessionManager);
-app.get('/', (c) => {
+app.get('/', async (c) => {
   const session = c.get('session');
   const lang = c.get('language') as 'en' | 'es' | 'fr';
-  const loc = getLoc(lang);
+  const loc = await getLoc(lang);
   const theme = session.get('Theme');
   const footer: FooterProps = {
     bg: 'bg-gray-900',
     text: 'text-gray-100',
     title: 'text-gray-400',
-    theme: {
-      footer: theme!.footer,
-    },
   };
   const layout: LayoutType = {
     isHome: true,
@@ -91,6 +88,7 @@ app.get('/', (c) => {
     footer,
     currentLocal: lang,
     locales: loc,
+    theme: theme ?? {},
   };
   return c.html(
     <Wrapper {...layout}>

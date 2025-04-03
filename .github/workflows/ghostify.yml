@@ -4,9 +4,9 @@ env:
 
 on:
   push:
-    branches: ['main', 'releases/**']
+    branches: ['main', 'develop', 'releases/**']
   pull_request:
-    branches: ['main', 'releases/**']
+    branches: ['main', 'develop', 'releases/**']
 
 jobs:
   test-python:
@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          make setup-prod
+          make setup
 
       - name: Run linters
         run: |
