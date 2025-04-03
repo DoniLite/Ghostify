@@ -7,7 +7,7 @@ export interface EditorProps {
 }
 
 const Editor: FC<EditorProps> = ({title}) => {
-  const editor = grapesjs.init({
+  const _editor = grapesjs.init({
     // Indicate where to init the editor. You can also pass an HTMLElement
     container: '#gjs',
     // Get the content for the canvas directly from the element

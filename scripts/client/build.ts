@@ -36,12 +36,17 @@ try {
     outdir: path.join(Deno.cwd(), '/static/js'),
     format: 'esm',
     jsx: 'automatic',
-    // jsxImportSource: path.join(Deno.cwd(), 'node_modules/hono/jsx/dom'),
+    jsxImportSource: 'hono/jsx/dom',
     platform: 'browser',
+    loader: {
+      '.ts': 'ts',
+      '.tsx': 'tsx',
+    },
     plugins: [
       ...denoPlugins({
         nodeModulesDir: true,
         configPath: path.join(Deno.cwd(), 'deno.json'),
+        loader: 'portable'
       }),
       // {
       //   name: 'node_modules',
