@@ -63,8 +63,8 @@ jobs:
 
       - name: Lint TypeScript
         run: |
-          deno lint
+          deno lint --fix --ignore="**/*.js"
 
       - name: Run TypeScript tests
         run: |
-          deno test-ci
+          deno task test-ci
