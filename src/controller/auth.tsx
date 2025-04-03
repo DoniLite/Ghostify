@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
 import Login from '../pages/Login.tsx';
 import { prismaClient } from '../config/db.ts';
-import { compareHash } from '../utils.ts';
+import { compareHash, getLoc } from '../utils.ts';
 import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
@@ -95,34 +95,40 @@ const loginHandlers = factory.createHandlers(
 
 authApp.post('/login', ...loginHandlers);
 authApp.get('/login', authMiddleware, (c) => {
+  const lang = c.get('language') as "fr" | "es" | "en";
+  const loc = getLoc(lang);
   const props = {
     title: 'Ghostify | Login',
     description: 'Login to your account',
   }
   return c.html(
-    <TLayout meta={props}>
+    <TLayout meta={props} locales={loc} currentLocal={lang}>
       <Login />
     </TLayout>
   );
 });
 authApp.get('/register', (c) => {
+  const lang = c.get('language') as 'fr' | 'es' | 'en';
+  const loc = getLoc(lang);
    const props = {
     title: 'Ghostify | Login',
     description: 'Login to your account',
   }
   return c.html(
-    <TLayout meta={props}>
+    <TLayout meta={props} locales={loc} currentLocal={lang}>
       <Register />
     </TLayout>
   );
 })
 authApp.get('/dashboard', authMiddleware, (c) => {
+  const lang = c.get('language') as 'fr' | 'es' | 'en';
+  const loc = getLoc(lang);
   const props = {}
   return c.html(
-    <TLayout meta={props}>
+    <TLayout meta={props} locales={loc} currentLocal={lang}>
       <Dashboard></Dashboard>
     </TLayout>
-  )
+  );
 })
 
 export default authApp;

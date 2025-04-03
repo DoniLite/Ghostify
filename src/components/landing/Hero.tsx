@@ -1,4 +1,8 @@
+import { useContext } from 'hono/jsx'
+import { LocalsContext } from '../shared/Layout.tsx';
+
 export default function () {
+  const _locales = useContext(LocalsContext);
   return (
     <section class='py-20 md:py-28'>
       <div class='container mx-auto px-4'>

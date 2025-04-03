@@ -1,13 +1,16 @@
+import { LocalsContext } from './Layout.tsx';
 import Meta, { type MetaProps } from './Meta.tsx';
 import { PropsWithChildren, FC } from 'hono/jsx';
 
 type TLayout = PropsWithChildren<{
   meta?: MetaProps;
+  locales?: Record<string, unknown>;
+  currentLocal?: string;
 }>;
 
-const Layout: FC<TLayout> = ({ meta, children }) => {
+const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal }) => {
   return (
-    <html lang='en'>
+    <html lang={currentLocal}>
       <head>
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -21,7 +24,11 @@ const Layout: FC<TLayout> = ({ meta, children }) => {
         <link rel='stylesheet' href='/static/css/main.css' />
         <Meta {...meta} />
       </head>
-      <body>{children}</body>
+      <body>
+        <LocalsContext.Provider value={locales ?? {}}>
+          {children}
+        </LocalsContext.Provider>
+      </body>
     </html>
   );
 };

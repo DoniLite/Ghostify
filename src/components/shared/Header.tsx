@@ -12,12 +12,12 @@ const header = ({ auth }: Header) => {
         id='mobileSiteIcon'
         class='transition-all lg:hidden fixed left-2 sm:top-4 top-2 z-40'
       >
-        <div class='flex flex-col justify-center h-full items-center'>
+        <a class='flex flex-col justify-center h-full items-center' href='/'>
           <h1 class='text-xl text-bold text-white font-cookie bg-transparent'>
             Ghostify
           </h1>
           <img src='/static/SVG/ghost.svg' class='w-6 h-6' alt='' />
-        </div>
+        </a>
       </div>
       <nav class='mobile-nav -translate-x-full text-gray-400 fixed'>
         <ul class='flex flex-col gap-4 w-full'>

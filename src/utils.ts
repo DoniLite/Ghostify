@@ -22,6 +22,17 @@ import { sign, verify } from 'hono/jwt';
 import { NotificationType } from '@prisma/client';
 import mime from './modules/mime.ts';
 import z from 'zod';
+import en from '../locales/en.json' with { type: "json" };
+import fr from '../locales/fr.json' with {type: "json"};
+import es from '../locales/es.json' with {type: "json"};
+
+export const getLoc = (loc: 'en' | 'fr' | 'es') => {
+  return {
+    en,
+    fr,
+    es
+  }[loc]
+}
 
 export const ee = () => new EventEmitter();
 
@@ -908,7 +919,7 @@ export enum DocumentMimeTypes {
   // Documents texte
   PLAIN_TEXT = 'text/plain',
   HTML = 'text/html',
-  CSS = 'text/css',
+  CSS = 'text/css', 
   CSV = 'text/csv',
   XML = 'application/xml',
   XHTML = 'application/xhtml+xml',
@@ -960,10 +971,10 @@ export const cvQueue = new Queue<{
   id: number;
   updating?: boolean;
   docId?: number;
-}>('cv-processor', 'redis://127.0.0.1:6379');
+}>('cv-processor', Deno.env.get('REDIS_HOST')!);
 
 export const NotificationQueue = new Queue<{
   userId: number;
   type: NotificationType;
   payload: Record<string | number | symbol, unknown>;
-}>('notifications', 'redis://127.0.0.1:6379');
+}>('notifications', Deno.env.get('REDIS_HOST')!);

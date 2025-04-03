@@ -17,7 +17,7 @@ import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
-import { getFileHeaders, termsMD, unify, verifyJWT } from './src/utils.ts';
+import { getFileHeaders, getLoc, termsMD, unify, verifyJWT } from './src/utils.ts';
 import { stream } from 'hono/streaming';
 import authApp from './src/controller/auth.tsx';
 import { html } from 'hono/html';
@@ -62,6 +62,9 @@ app.use(
   languageDetector({
     supportedLanguages: ['en', 'fr', 'es'], // Must include fallback
     fallbackLanguage: 'en', // Required
+    order: ['querystring', 'path', 'cookie', 'header'],
+    lookupCookie: 'lang',
+    lookupQueryString: 'lang'
   })
 );
 app.use('/static/*', serveStatic({ root: './' }));
@@ -69,6 +72,8 @@ app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
 app.use('*', sessionManager);
 app.get('/', (c) => {
   const session = c.get('session');
+  const lang = c.get('language') as 'en' | 'es' | 'fr';
+  const loc = getLoc(lang);
   const theme = session.get('Theme');
   const footer: FooterProps = {
     bg: 'bg-gray-900',
@@ -84,6 +89,8 @@ app.get('/', (c) => {
       auth: session.get('Auth')!.authenticated,
     },
     footer,
+    currentLocal: lang,
+    locales: loc,
   };
   return c.html(
     <Wrapper {...layout}>

@@ -52,12 +52,20 @@ services:
       # - ./static:/usr/share/nginx/static:ro   # Pour les certificats SSL si nécessaire
     networks:
       - ghostify_network
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379
+    volumes:
+      - redis_data:/data
 
 volumes:
   db-data:
   static:
   cmd:
   security:
+  redis_data:
 
 networks:
   ghostify_network:

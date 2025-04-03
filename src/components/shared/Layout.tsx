@@ -4,6 +4,10 @@ import Header, { type Header as HType } from './Header.tsx';
 import Script from './Script.tsx';
 import Footer, {Props as FooterProps} from './Footer.tsx';
 import Meta, {type MetaProps} from './Meta.tsx';
+import { createContext } from 'hono/jsx'
+
+
+export const LocalsContext = createContext<LayoutType['locales']>({})
 
 export type LayoutType = PropsWithChildren<{
   theme?: string;
@@ -11,6 +15,8 @@ export type LayoutType = PropsWithChildren<{
   header: HType;
   footer: FooterProps;
   meta?: MetaProps;
+  locales: Record<string, unknown>;
+  currentLocal: string;
 }>;
 
 const styles = css`
@@ -88,8 +94,8 @@ const styles = css`
 `;
 
 
-const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children }) => (
-  <html lang='en'>
+const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children, locales, currentLocal }) => (
+  <html lang={currentLocal}>
     <head>
       <meta charset='UTF-8' />
       <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -105,9 +111,11 @@ const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children }) => (
       <Meta {...meta} />
     </head>
     <body>
-      <Header {...header} />
-      {children}
-      <Footer {...footer} />
+      <LocalsContext.Provider value={locales}>
+        <Header {...header} />
+        {children}
+        <Footer {...footer} />
+      </LocalsContext.Provider>
       <Script />
     </body>
   </html>

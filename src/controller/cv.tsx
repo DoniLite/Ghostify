@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { cvClass, cvDownloader, cvQueue, renaming, tokenGenerator } from '../utils.ts';
+import { cvClass, cvDownloader, cvQueue, getLoc, renaming, tokenGenerator } from '../utils.ts';
 import type { QueryXData, RawCV } from '../@types/index.d.ts';
 import { prismaClient } from '../config/db.ts';
 import { randomInt } from 'node:crypto';
@@ -25,6 +25,8 @@ cvQueue.process(async (job, done) => {
 cvApp.get('/', (c) => {
   const session = c.get('session');
   const theme = session.get('Theme');
+  const lang = c.get('language') as 'fr' | 'es' | 'en';
+  const loc = getLoc(lang);
   const footer = {
     bg: 'bg-gray-900',
     text: 'text-gray-100',
@@ -43,6 +45,8 @@ cvApp.get('/', (c) => {
       title: 'Ghostify | CV Maker',
       desc: 'Build your professional CV step by step and host it on the platform to access it in one click',
     },
+    currentLocal: lang,
+    locales: loc,
   };
   return c.html(
     <Layout {...layout}>
@@ -203,6 +207,8 @@ cvApp.get('/load/:cv', async (c) => {
   const cv = c.req.param('cv');
   const { mode, api } = c.req.query() as QueryXData<{ mode: string; api: string }>;
   const session = c.get('session');
+  const lang = c.get('language') as "fr" | "es" | "en";
+  const loc = getLoc(lang);
   const theme = session.get('Theme');
   // req.app.emit('downloader');
   try {
@@ -311,6 +317,8 @@ cvApp.get('/load/:cv', async (c) => {
         title: `${cvData.user?.fullname} | Resume`,
         desc: `${cvData.user?.bio}`,
       },
+      currentLocal: lang,
+      locales: loc,
     };
     if(cvType === 1) {
       return c.html(

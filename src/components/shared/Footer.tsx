@@ -9,13 +9,19 @@ export type Props = {
 };
 
 const Footer = ({ linear, from, to, text, bg, title }: Props) => {
+  const mapProps = {
+    linear,
+    from,
+    to,
+    bg
+  }
   return (
     <div
       className={`w-full overflow-y-scroll h-full ${linear || bg || ''} ${
         linear ? `${from} ${to}` : ''
-      } ${text} lg:grid lg:grid-cols-5`}
+      } ${text} lg:grid lg:grid-cols-5 border-t border-orange-500`}
     >
-      <FooterMap />
+      <FooterMap {...mapProps} />
 
       <div className='px-4 py-16 sm:px-6 lg:col-span-3 lg:px-8'>
         <div className='grid grid-cols-1 gap-8 sm:grid-cols-2'>
@@ -289,8 +295,17 @@ const Footer = ({ linear, from, to, text, bg, title }: Props) => {
 };
 
 
-const FooterMap = () => (
-  <div className='relative h-32 lg:col-span-2 lg:h-full flex justify-center items-center bg-gray-900'>
+const FooterMap = ({ linear, bg, from, to}: {
+  linear?: string;
+  bg?: string;
+  from?: string;
+  to?: string;
+}) => (
+  <div
+    className={`relative h-32 lg:col-span-2 lg:h-full flex justify-center items-center bg-gray-900 ${
+      linear || bg || ''
+    } ${linear ? `${from} ${to}` : ''}`}
+  >
     <svg
       xmlns='http://www.w3.org/2000/svg'
       width='507.99631'

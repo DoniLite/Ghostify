@@ -1,71 +1,58 @@
-
-
-const Login = () => (
-    <div class="flex h-screen overflow-hidden">
-      <div
-        class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-100 bg-gray-800"
-      >
+const Login = () => {
+  return (
+    <div class='flex h-screen overflow-hidden'>
+      <div class='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-100 bg-gray-800'>
         <main>
-          <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-            <div
-              class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <h2 class="text-title-md2 font-bold text-black dark:text-white">
-                Connexion
+          <div class='mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10'>
+            <div class='mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+              <h2 class='text-title-md2 font-bold text-black dark:text-white'>
+                Login to your account
               </h2>
             </div>
-            <div
-              class="rounded-xl text-gray-100 bg-gray-950 shadow-default"
-            >
-              <div class="flex flex-wrap items-center">
-                <div class="hidden w-full xl:block xl:w-1/2 p-4">
-                  <div class="px-26 py-17.5 text-center">
-                    <h1 class=" text-white font-bold text-3xl text-center">
-                      Ghostify 
-                    </h1>
-                    <p class="font-medium mt-4 2xl:px-20">
-                      Nous sommes ravie de vous revoir,
-                    </p>
-                  </div>
+            <div class='rounded-xl text-gray-100 bg-gray-950 shadow-default'>
+              <div class='flex flex-wrap items-center'>
+                <div class='hidden w-full xl:w-1/2 p-4 xl:flex justify-center items-center'>
+                  <SVGIcon />
                 </div>
-                <div
-                  class="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2"
-                >
-                  <div class="w-full p-4 sm:p-12.5 xl:p-17.5">
-                    <a href="/support?target=FAQ&topic=accounts" class="mb-1.5 block font-medium">Besoin d'aide <i class="fa-solid fa-question text-white"></i></a>
-                    <h2
-                      class="mb-9 text-2xl font-bold text-white sm:text-title-xl2"
+                <div class='w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2'>
+                  <div class='w-full p-4 sm:p-12.5 xl:p-17.5'>
+                    <a
+                      href='/support?target=FAQ&topic=accounts'
+                      class='mb-1.5 block font-medium'
                     >
+                      Besoin d'aide{' '}
+                      <i class='fa-solid fa-question text-white'></i>
+                    </a>
+                    <h2 class='mb-9 text-2xl font-bold text-white sm:text-title-xl2'>
                       Sign In
                     </h2>
 
-                    <form id="authForm" method="post" action="/api/v1/auth" >
-                      <div class="mb-4">
-                        <label
-                          class="mb-2.5 block font-medium text-white"
-                          >login</label
-                        >
-                        <div class="relative">
+                    <form id='authForm' method='post' action='/api/v1/auth'>
+                      <div class='mb-4'>
+                        <label class='mb-2.5 block font-medium text-white'>
+                          login
+                        </label>
+                        <div class='relative'>
                           <input
-                            name="login"
-                            type="text"
-                            placeholder="Email or Username"
-                            class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            name='login'
+                            type='text'
+                            placeholder='Email or Username'
+                            class='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                           />
 
-                          <span class="absolute right-4 top-4">
+                          <span class='absolute right-4 top-4'>
                             <svg
-                              class="fill-current"
-                              width="22"
-                              height="22"
-                              viewBox="0 0 22 22"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
+                              class='fill-current'
+                              width='22'
+                              height='22'
+                              viewBox='0 0 22 22'
+                              fill='none'
+                              xmlns='http://www.w3.org/2000/svg'
                             >
-                              <g opacity="0.5">
+                              <g opacity='0.5'>
                                 <path
-                                  d="M19.2516 3.30005H2.75156C1.58281 3.30005 0.585938 4.26255 0.585938 5.46567V16.6032C0.585938 17.7719 1.54844 18.7688 2.75156 18.7688H19.2516C20.4203 18.7688 21.4172 17.8063 21.4172 16.6032V5.4313C21.4172 4.26255 20.4203 3.30005 19.2516 3.30005ZM19.2516 4.84692C19.2859 4.84692 19.3203 4.84692 19.3547 4.84692L11.0016 10.2094L2.64844 4.84692C2.68281 4.84692 2.71719 4.84692 2.75156 4.84692H19.2516ZM19.2516 17.1532H2.75156C2.40781 17.1532 2.13281 16.8782 2.13281 16.5344V6.35942L10.1766 11.5157C10.4172 11.6875 10.6922 11.7563 10.9672 11.7563C11.2422 11.7563 11.5172 11.6875 11.7578 11.5157L19.8016 6.35942V16.5688C19.8703 16.9125 19.5953 17.1532 19.2516 17.1532Z"
-                                  fill=""
+                                  d='M19.2516 3.30005H2.75156C1.58281 3.30005 0.585938 4.26255 0.585938 5.46567V16.6032C0.585938 17.7719 1.54844 18.7688 2.75156 18.7688H19.2516C20.4203 18.7688 21.4172 17.8063 21.4172 16.6032V5.4313C21.4172 4.26255 20.4203 3.30005 19.2516 3.30005ZM19.2516 4.84692C19.2859 4.84692 19.3203 4.84692 19.3547 4.84692L11.0016 10.2094L2.64844 4.84692C2.68281 4.84692 2.71719 4.84692 2.75156 4.84692H19.2516ZM19.2516 17.1532H2.75156C2.40781 17.1532 2.13281 16.8782 2.13281 16.5344V6.35942L10.1766 11.5157C10.4172 11.6875 10.6922 11.7563 10.9672 11.7563C11.2422 11.7563 11.5172 11.6875 11.7578 11.5157L19.8016 6.35942V16.5688C19.8703 16.9125 19.5953 17.1532 19.2516 17.1532Z'
+                                  fill=''
                                 />
                               </g>
                             </svg>
@@ -73,36 +60,35 @@ const Login = () => (
                         </div>
                       </div>
 
-                      <div class="mb-6">
-                        <label
-                          class="mb-2.5 block font-medium text-white"
-                          >Type your Password</label
-                        >
-                        <div class="relative">
+                      <div class='mb-6'>
+                        <label class='mb-2.5 block font-medium text-white'>
+                          Type your Password
+                        </label>
+                        <div class='relative'>
                           <input
-                            name="password"
-                            type="password"
-                            placeholder="Your password"
-                            class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                            name='password'
+                            type='password'
+                            placeholder='Your password'
+                            class='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                           />
 
-                          <span class="absolute right-4 top-4">
+                          <span class='absolute right-4 top-4'>
                             <svg
-                              class="fill-current"
-                              width="22"
-                              height="22"
-                              viewBox="0 0 22 22"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
+                              class='fill-current'
+                              width='22'
+                              height='22'
+                              viewBox='0 0 22 22'
+                              fill='none'
+                              xmlns='http://www.w3.org/2000/svg'
                             >
-                              <g opacity="0.5">
+                              <g opacity='0.5'>
                                 <path
-                                  d="M16.1547 6.80626V5.91251C16.1547 3.16251 14.0922 0.825009 11.4797 0.618759C10.0359 0.481259 8.59219 0.996884 7.52656 1.95938C6.46094 2.92188 5.84219 4.29688 5.84219 5.70626V6.80626C3.84844 7.18438 2.33594 8.93751 2.33594 11.0688V17.2906C2.33594 19.5594 4.19219 21.3813 6.42656 21.3813H15.5016C17.7703 21.3813 19.6266 19.525 19.6266 17.2563V11C19.6609 8.93751 18.1484 7.21876 16.1547 6.80626ZM8.55781 3.09376C9.31406 2.40626 10.3109 2.06251 11.3422 2.16563C13.1641 2.33751 14.6078 3.98751 14.6078 5.91251V6.70313H7.38906V5.67188C7.38906 4.70938 7.80156 3.78126 8.55781 3.09376ZM18.1141 17.2906C18.1141 18.7 16.9453 19.8688 15.5359 19.8688H6.46094C5.05156 19.8688 3.91719 18.7344 3.91719 17.325V11.0688C3.91719 9.52189 5.15469 8.28438 6.70156 8.28438H15.2953C16.8422 8.28438 18.1141 9.52188 18.1141 11V17.2906Z"
-                                  fill=""
+                                  d='M16.1547 6.80626V5.91251C16.1547 3.16251 14.0922 0.825009 11.4797 0.618759C10.0359 0.481259 8.59219 0.996884 7.52656 1.95938C6.46094 2.92188 5.84219 4.29688 5.84219 5.70626V6.80626C3.84844 7.18438 2.33594 8.93751 2.33594 11.0688V17.2906C2.33594 19.5594 4.19219 21.3813 6.42656 21.3813H15.5016C17.7703 21.3813 19.6266 19.525 19.6266 17.2563V11C19.6609 8.93751 18.1484 7.21876 16.1547 6.80626ZM8.55781 3.09376C9.31406 2.40626 10.3109 2.06251 11.3422 2.16563C13.1641 2.33751 14.6078 3.98751 14.6078 5.91251V6.70313H7.38906V5.67188C7.38906 4.70938 7.80156 3.78126 8.55781 3.09376ZM18.1141 17.2906C18.1141 18.7 16.9453 19.8688 15.5359 19.8688H6.46094C5.05156 19.8688 3.91719 18.7344 3.91719 17.325V11.0688C3.91719 9.52189 5.15469 8.28438 6.70156 8.28438H15.2953C16.8422 8.28438 18.1141 9.52188 18.1141 11V17.2906Z'
+                                  fill=''
                                 />
                                 <path
-                                  d="M10.9977 11.8594C10.5852 11.8594 10.207 12.2031 10.207 12.65V16.2594C10.207 16.6719 10.5508 17.05 10.9977 17.05C11.4102 17.05 11.7883 16.7063 11.7883 16.2594V12.6156C11.7883 12.2031 11.4102 11.8594 10.9977 11.8594Z"
-                                  fill=""
+                                  d='M10.9977 11.8594C10.5852 11.8594 10.207 12.2031 10.207 12.65V16.2594C10.207 16.6719 10.5508 17.05 10.9977 17.05C11.4102 17.05 11.7883 16.7063 11.7883 16.2594V12.6156C11.7883 12.2031 11.4102 11.8594 10.9977 11.8594Z'
+                                  fill=''
                                 />
                               </g>
                             </svg>
@@ -110,28 +96,41 @@ const Login = () => (
                         </div>
                       </div>
 
-                      <div class="mb-5">
+                      <div class='mb-5'>
                         <input
-                          type="submit"
-                          value="Sign In"
-                          class="w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-3 font-medium text-white hover:bg-opacity-90"
+                          type='submit'
+                          value='Sign In'
+                          class='w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-3 font-medium text-white hover:bg-opacity-90'
                         />
-                        <a href="/auth/google" class="btn w-full mt-4 flex relative gap-x-0 bg-gray-950 hover:bg-gray-950 hover:border-orange-600">
-                          <i class="fa-brands fa-google fa-2xl text-white p-0"></i>
-                          <span class="text-white font-bold text-2xl relative ">oogle</span>
+                        <a
+                          href='/auth/google'
+                          class='btn w-full mt-4 flex relative gap-x-0 bg-gray-950 hover:bg-gray-950 hover:border-orange-600'
+                        >
+                          <i class='fa-brands fa-google fa-2xl text-white p-0'></i>
+                          <span class='text-white font-bold text-2xl relative '>
+                            oogle
+                          </span>
                         </a>
                       </div>
 
-                     
-
-                      <div class="mt-6 text-center">
-                        <p class="font-medium mb-4">
+                      <div class='mt-6 text-center'>
+                        <p class='font-medium mb-4'>
                           If you don't have account
-                          <a href="/auth/register" class=" font-bold text-orange-600">Create new account</a>
+                          <a
+                            href='/auth/register'
+                            class=' font-bold text-orange-600'
+                          >
+                            Create new account
+                          </a>
                         </p>
-                        <p class="font-medium">
+                        <p class='font-medium'>
                           Any problem to login?
-                          <a href="signup.html" class=" font-bold text-orange-600">Check up here</a>
+                          <a
+                            href='signup.html'
+                            class=' font-bold text-orange-600'
+                          >
+                            Check up here
+                          </a>
                         </p>
                       </div>
                     </form>
@@ -143,7 +142,128 @@ const Login = () => (
         </main>
       </div>
     </div>
-);
+  );
+};
 
+const SVGIcon = () => {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='642.99652'
+      height='699.63874'
+      viewBox='0 0 642.99652 699.63874'
+      xmlns:xlink='http://www.w3.org/1999/xlink'
+      class=' w-full'
+    >
+      <path
+        d='m526.36926,329.63874c19.90002,12.82996,38.54004,30.01001,56,51.20001v32.39996c-8.52002-2.89996-41.03998-14.91998-53.88-33.92999-14.83997-21.96997-17.47998-55.32001-5.12-63.66998,3.21997-2.17004,7.13-2.44,11.41998-1.25,13.52997,9.72998,26.47003,21.52997,38.83002,35.27997,4.38,6.73004,7.09009,15.29999,8.75,23.96002v.40997c-15.98999-22.25995-34.79004-36.69995-56-44.39996Z'
+        fill='#F97316'
+      />
+      <path
+        d='m525.36926,130.63872c19.90002,12.82996,38.54004,30.01001,56,51.20001v7.39996c-1.66992-.57001-4.25-1.47998-7.42993-2.72998-14.28003-16.92999-30.56006-28.33002-48.57007-34.87,12.59998,8.12,24.69995,17.98999,36.31006,29.51996-12.28003-5.90997-26.64008-14.66998-34.19006-25.84998-.79999-1.17999-1.56-2.37-2.27997-3.57001-12.70001-21.08002-13.54004-44.20001-1.84003-52.09998,12.35999-8.35004,34.03003,3.47998,48.87,25.44,8.57996,12.70996,10.98999,32.42999,11.47998,46.77997-.78992,1.04004-1.56995,2.10004-2.34998,3.17999-15.98999-22.25995-34.79004-36.69995-56-44.39996Z'
+        fill='#F97316'
+      />
+      <path
+        d='m638.64929,248.8442v.01001c-1.42004,3.92999-3.19995,7.89995-5.32007,11.81001-3.1499,5.82001-7.98999,11.21997-13.46997,16.04999-5.87,5.17999-12.48999,9.70001-18.58008,13.37-8.5,5.13-15.96997,8.60999-18.90991,9.92999v-3.14996c16.89001-20.10004,34.84998-36.48004,54-48.82001-20.34009,7.38-38.44995,20.97998-54,41.70996v-13.88995c16.89001-20.10004,34.84998-36.48004,54-48.82001-20.34009,7.38-38.44995,20.97998-54,41.70996v-13.88995c16.66992-19.83002,34.37-36.04004,53.23999-48.32001,8.84009,7.10999,9.60999,24.26001,3.04004,42.29999v-.00002Z'
+        fill='#F97316'
+      />
+      <circle cx='143.68463' cy='245.54544' r='143.68463' fill='#ff6884' />
+      <path
+        id='uuid-9ac3c440-2c29-483e-b5ea-f157a67fda2d-168'
+        d='m593.86542,475.91107c12.08508,10.18033,16.6283,24.66791,10.14819,32.35791-6.4801,7.68994-21.52747,5.66974-33.61548-4.5159-4.88446-4.0025-8.73944-9.11652-11.24231-14.91425l-50.66037-43.78113,21.05191-23.33551,47.70709,45.63794c6.14044,1.48282,11.83636,4.41492,16.6109,8.55093h.00006Z'
+        fill='#fcb4b4'
+      />
+      <polygon
+        points='552.95795 443.51905 491.02707 363.99381 432.36926 256.63874 430.84827 405.52921 518.77356 477.74518 552.95795 443.51905'
+        fill='#2f2e41'
+      />
+      <polygon
+        points='283.55597 224.62357 297.74335 160.11792 345.16339 162.39891 357.33582 209.19409 283.55597 224.62357'
+        fill='#fcb4b4'
+      />
+      <polygon
+        points='283.55597 224.62357 297.74335 160.11792 345.16339 162.39891 357.33582 209.19409 283.55597 224.62357'
+        isolation='isolate'
+        opacity='.1'
+      />
+      <circle cx='320.27975' cy='124.33786' r='53.08847' fill='#fcb4b4' />
+      <path
+        d='m296.53302,144.83966v-.00003s-5.35571-.05193-16.49579-2.1235c-11.14008-2.07162,8.20172,23.95969,8.20172,23.95969-52.42401-21.89015-35.64839-77.41381-35.64839-77.41381-53.20448-10.17499-30.91603-57.47251-30.91603-57.47251,0,0,17.53793-33.84457,71.45114-31.6909,53.91318,2.15367,28.44357,55.32713,28.44357,55.32713,35.12576.06654,39.07767,31.72302,39.07767,31.72302,0,0-12.66254,1.58075-35.67487,7.42121-23.01227,5.84041-28.43887,50.26965-28.43887,50.26965l-.00006.00003-.00003.00003h-.00006Z'
+        fill='#2f2e41'
+      />
+      <path
+        d='m294.42831,204.30803l-2.39764-4.6693s-42.66142,4.94489-49.66142,11.47244-23,35.52756-23,35.52756l35,30.00003,40.05907-72.33072v-.00002Z'
+        fill='#ffb6b6'
+      />
+      <path
+        d='m347.36926,203.17417s32-8.53543,50,9.46457,39,51.00003,39,51.00003l-1,26-50-24.10236-38-62.3622v-.00005Z'
+        fill='#ffb6b6'
+      />
+      <path
+        d='m355.52676,199.63872s41.84253-15,68.84253,17,35,133.00002,35,133.00002c0,0,60.99997,186.99994,46,188.99994s-106.53979,7.52759-106.53979,7.52759l-31.46021-203.52756-14-143h2.15747v.00002Z'
+        fill='#2f2e41'
+      />
+      <path
+        d='m259.36926,379.63874l-10,36,136,10s-5-30.09448,0-41.04724l-126-4.95276Z'
+        fill='#fcb4b4'
+      />
+      <polygon
+        points='336.36926 613.63874 342.36926 699.63874 417.88895 697.63874 415.36926 610.63874 336.36926 613.63874'
+        fill='#fcb4b4'
+      />
+      <polygon
+        points='218.54477 605.13196 196.36926 698.63874 275.42792 698.10382 295.5704 621.67328 218.54477 605.13196'
+        fill='#fcb4b4'
+      />
+      <path
+        d='m353.36926,199.63872h-61.33859l-49.66142,66.00002,11,135s25.00002-7,60.00002-7h75s-11-35,3-49,4-79,4-79l-42-66v-.00002Z'
+        fill='#F97316'
+      />
+      <path
+        d='m244.36926,404.63874l-56,202.99994s82.46021,33.13385,132.2301,23.56696,117.7699-12.56696,117.7699-12.56696l-48-206-146-8v.00006Z'
+        fill='#2f2e41'
+      />
+      <path
+        id='uuid-73c6c48b-3ad6-4bf4-ae9b-2aead64e96c3-169'
+        d='m373.86539,478.91107c12.08511,10.18033,16.6283,24.66791,10.14822,32.35791-6.4801,7.68994-21.52747,5.66974-33.61551-4.5159-4.88449-4.0025-8.73944-9.11652-11.24231-14.91425l-50.66037-43.78113,21.05194-23.33551,47.70709,45.63794c6.14044,1.48282,11.83636,4.41492,16.61093,8.55093Z'
+        fill='#fcb4b4'
+      />
+      <polygon
+        points='342.95795 443.51905 281.02707 363.99381 222.36926 256.63874 220.84827 405.52921 308.77356 477.74518 342.95795 443.51905'
+        fill='#2f2e41'
+      />
+      <path
+        d='m296.21179,199.63872s-41.84253-15-68.84253,17-35,133.00002-35,133.00002c0,0-61,186.99994-46,188.99994s106.53979,7.52759,106.53979,7.52759l31.46021-203.52756,14-143h-2.15747v.00002Z'
+        fill='#2f2e41'
+      />
+      <rect
+        x='581.36926'
+        y='161.63872'
+        width='2'
+        height='348.00002'
+        fill='#3f3d56'
+      />
+      <path
+        d='m27.36927,518.63874c19.90002,12.82996,38.54004,30.01001,56,51.20001v32.39996c-8.52002-2.89996-41.03998-14.91998-53.88-33.92999-14.83997-21.96997-17.47998-55.32001-5.12-63.66998,3.21997-2.17004,7.13-2.44,11.41998-1.25,13.52997,9.72998,26.47003,21.52997,38.83002,35.27997,4.38,6.73004,7.09009,15.29999,8.75,23.96002v.40997c-15.98999-22.25995-34.79004-36.69995-56-44.39996Z'
+        fill='#F97316'
+      />
+      <path
+        d='m26.36927,319.63874c19.90002,12.82996,38.54004,30.01001,56,51.20001v7.39996c-1.66992-.57001-4.25-1.47998-7.42993-2.72998-14.28003-16.92999-30.56006-28.33002-48.57007-34.87,12.59998,8.12,24.69995,17.98999,36.31006,29.51996-12.28003-5.90997-26.64008-14.66998-34.19006-25.84998-.79999-1.17999-1.56-2.37-2.27997-3.57001-12.70001-21.08002-13.54004-44.20001-1.84003-52.09998,12.35999-8.35004,34.03003,3.47998,48.87,25.44,8.57996,12.70996,10.98999,32.42999,11.47998,46.77997-.78992,1.04004-1.56995,2.10004-2.34998,3.17999-15.98999-22.25995-34.79004-36.69995-55.99999-44.39996Z'
+        fill='#F97316'
+      />
+      <path
+        d='m139.64931,437.84421v.01001c-1.42004,3.92999-3.19995,7.89996-5.32007,11.81-3.1499,5.82001-7.98999,11.21997-13.46997,16.04999-5.87,5.17999-12.48999,9.70001-18.58008,13.37-8.5,5.13-15.96997,8.60999-18.90991,9.92999v-3.14996c16.89001-20.10004,34.84998-36.48004,54-48.82001-20.34009,7.38-38.44995,20.97998-54,41.70996v-13.88995c16.89001-20.10004,34.84998-36.48004,54-48.82001-20.34009,7.38-38.44995,20.97998-54,41.70996v-13.88995c16.66992-19.83002,34.37-36.04004,53.23999-48.32001,8.84009,7.10999,9.60999,24.26001,3.04004,42.29999Z'
+        fill='#F97316'
+      />
+      <rect
+        x='82.36927'
+        y='350.63874'
+        width='2'
+        height='347.99994'
+        fill='#3f3d56'
+      />
+    </svg>
+  );
+};
 
 export default Login;

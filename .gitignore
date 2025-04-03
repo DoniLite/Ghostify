@@ -179,3 +179,4 @@ cython_debug/
 /database
 /learn
 /.lightpanda-browser
+/views
