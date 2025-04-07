@@ -2,6 +2,7 @@
 /build
 /temp
 .env
+prod.env
 /test-results/
 /playwright-report/
 /blob-report/
@@ -15,7 +16,7 @@ node_modules/
 __pycache__/
 *.py[cod]
 *$py.class
-
+# .idea
 # C extensions
 *.so
 
@@ -175,6 +176,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /sessions
-/static
 /database
 /learn
+/.lightpanda-browser
+/views

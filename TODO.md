@@ -1,8 +1,6 @@
 # Liste des taches à accomplir
 
-- **Need to purify the nodes_modules**
-
-By removing (long) module
+- Rendre les nouveaux éléments sur le landing page comme des cards du même type que ceux créer pour les services c'est à dire avec les mêmes border et background
 
 ## Artist to listen
 

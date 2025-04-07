@@ -1,9 +1,10 @@
-import { ee, NotificationQueue } from '../server';
-import { prismaClient } from '../config/db';
-import { EventEmitter } from 'stream';
-import type { Notifications, NotificationType } from '@prisma/client/default';
+import { prismaClient } from '../config/db.ts';
+import { EventEmitter } from 'node:stream';
+import type { Notifications, NotificationType } from '@prisma/client';
 import { DoneCallback, Job } from 'bull';
-import { logger } from '../logger';
+import { logger } from '../logger.ts';
+import { ee } from '../utils.ts';
+import { NotificationQueue } from '../job.ts';
 
 export class NotificationBus {
   /**
@@ -13,31 +14,30 @@ export class NotificationBus {
    *  //this is used to fire an event
    *  eventBus.emit()
    * ```
-   *
    */
   eventBus: EventEmitter;
   eventType: typeof NotificationType;
   #crud: typeof prismaClient.notifications;
-  #callBack: (job: Job) => Promise<unknown>;
+  #callBack?: (job: Job) => Promise<unknown>;
   #queue: typeof NotificationQueue;
 
   /**
    * Construct a new NotificationBus instance:
-   * 
+   *
    * ```ts
    *    const notification = new NotificationBus();
    * ```
    *
    * This is used to set up all needed features to `crud` under notifications on the platform system
-   * 
+   *
    * For listening on the event from this class submit to the default `ee` (evenEmitter) on the `sever.ts` file
-   * 
+   *
    * ```ts
    *    ee.on('event', function (e) {
    *      console.log(e)
    *    })
    * ```
-   * 
+   *
    * This class can create notification for a specific ser with his `userId`
    * The notification can be add to a task queue using the `addCallBack` function
    * You must use a custom function that returns a data promise like this:
@@ -48,17 +48,19 @@ export class NotificationBus {
         userId: number;
    *   }>
    * ```
-   * 
+   *
    * Then you can add a callBack that will fire a new notifications after it successfully complete:
    * ```ts
    *    notification.addCallBack<{
    *      yourJobType: string
    *    }>(yourCallBack);
-   * ```
    * 
+   * 
+   * ```
+   *
    */
   constructor() {
-    this.eventBus = ee;
+    this.eventBus = ee();
     this.#crud = prismaClient.notifications;
     this.eventType = {
       Alert: 'Alert',
@@ -91,6 +93,9 @@ export class NotificationBus {
   }
 
   #doSomethingWithAndFire<T>(job: Job<T>, done: DoneCallback): void {
+    if (!this.#callBack) {
+      throw new Error('callback is not set');
+    }
     this.#callBack(job)
       .then((v) => {
         const d = v as {
@@ -113,7 +118,7 @@ export class NotificationBus {
           .catch((e) => {
             logger.error(
               `error during the task ${job.id} with data: ${job.data}`,
-              e
+              e,
             );
             done(e, null);
           });
@@ -121,7 +126,7 @@ export class NotificationBus {
       .catch((e) => {
         logger.error(
           `error during the task ${job.id} with data: ${job.data}`,
-          e
+          e,
         );
         done(e, null);
       });
@@ -145,7 +150,8 @@ export class NotificationBus {
    * @returns an object with a call method that can be used to add a new job in the queue
    */
   async addCallBack<T>(
-    func: Function
+    // deno-lint-ignore ban-types
+    func: Function,
   ): Promise<{ call: typeof NotificationQueue.add }> {
     this.#callBack = func as (job: Job) => Promise<unknown>;
     await this.#callBackQueue();
@@ -166,7 +172,7 @@ export class NotificationBus {
   addNotification(
     type: NotificationType,
     payload: Record<string | number | symbol, unknown>,
-    userId: number
+    userId: number,
   ): Promise<Notifications> {
     return this.#crud.create({
       data: {
@@ -178,7 +184,7 @@ export class NotificationBus {
   }
 
   async updateNotificationView(...notificationsId: number[]) {
-    return Promise.all(
+    return await Promise.all(
       notificationsId.map(async (id) => {
         return await this.#crud.update({
           where: {
@@ -188,7 +194,7 @@ export class NotificationBus {
             seen: true,
           },
         });
-      })
+      }),
     );
   }
 }

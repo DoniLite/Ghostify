@@ -1,9 +1,10 @@
 import winston from 'winston';
 import path from 'node:path';
 import fs from 'node:fs';
+import process from "node:process";
 
 // Créer le dossier logs s'il n'existe pas
-const logDir = path.join(__dirname, '../logs');
+const logDir = path.join(process.cwd(), '/logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
@@ -21,13 +22,13 @@ export const logger = winston.createLogger({
         return `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}`;
       }
       return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-    })
+    }),
   ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.simple(),
       ),
     }),
     new winston.transports.File({

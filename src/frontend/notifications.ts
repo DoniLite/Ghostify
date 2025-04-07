@@ -1,5 +1,3 @@
-import 'vite/modulepreload-polyfill';
-
 export const notificationPopup = new Audio('/static/media/notify.mp3');
 export const reactionPopup = new Audio('/static/media/popup.mp3');
 
@@ -28,9 +26,9 @@ export const notificationsComponent = {
 
 export const notificationPush = (notification: string) => {
   const notificationContainer = document.querySelector('#flash');
-  notificationContainer.insertAdjacentHTML('beforeend', notification);
+  notificationContainer!.insertAdjacentHTML('beforeend', notification);
   const interval = setInterval(() => {
-    notificationContainer.childNodes[0].remove();
+    notificationContainer!.childNodes[0].remove();
   }, 2000);
   setTimeout(() => {
     if (notificationContainer && notificationContainer.childNodes.length <= 0) {
@@ -41,14 +39,14 @@ export const notificationPush = (notification: string) => {
 
 //externals...
 
-window.App = window.App || {};
-App.notification = App.notification || {};
-App.notification = {
-  push: notificationPush,
-  info: notificationsComponent.info,
-  success: notificationsComponent.success,
-  error: notificationsComponent.error,
-  warning: notificationsComponent.warning,
-  notificationPopup,
-  reactionPopup
-}
+// globalThis = App || {};
+// App.notification = App.notification || {};
+// App.notification = {
+//   push: notificationPush,
+//   info: notificationsComponent.info,
+//   success: notificationsComponent.success,
+//   error: notificationsComponent.error,
+//   warning: notificationsComponent.warning,
+//   notificationPopup,
+//   reactionPopup,
+// };

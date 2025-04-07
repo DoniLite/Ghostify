@@ -1,0 +1,124 @@
+{
+  "tasks": {
+    "build": "deno run build:client && deno run tailwind",
+    "build:prod": "deno run build && deno run prisma:deploy",
+    "build:watch": "deno run build:client:watch && deno run tailwind:watch",
+    "start": "deno run prisma:deploy && deno run start:server",
+    "start:server": "deno run --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
+    "dev:server": "deno run build:watch & deno run watch:server",
+    "watch:server": "deno run --watch --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
+    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks",
+    "test-ci": "deno test --no-check --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks tests/",
+    "lint": "deno lint --fix --ignore=\"**/*.js\"",
+    "fmt": "deno fmt",
+    "build:client": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/client/build.ts",
+    "build:client:watch": "deno run -A scripts/client/build.ts --watch",
+    "tailwind": "deno run -A scripts/tailwind/build.ts build",
+    "tailwind:watch": "deno run -A scripts/tailwind/build.ts build --watch",
+    "setup:assets": "deno run --allow-read --allow-write --allow-run scripts/assets.ts",
+    "create:dirs": "deno run --allow-read --allow-write scripts/dir.ts",
+    "deploy:server": "deno run --allow-read --allow-write --allow-run --allow-net --allow-env scripts/deploy.ts",
+    "prisma:generate": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts generate",
+    "prisma:migrate": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts migrate-dev",
+    "prisma:migrate:name": "deno run --allow-run --allow-read --allow-env --allow-write scripts/db/prisma.ts migrate-dev --name",
+    "prisma:deploy": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts migrate-deploy",
+    "prisma:pull": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts db-pull",
+    "prisma:push": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts db-push",
+    "prisma:reset": "deno run --allow-run --allow-read --allow-env scripts/db/prisma.ts migrate-reset",
+    "docker:build": "docker build -t test:latest .",
+    "docker:start": "docker run -p 3081:3081 test:latest",
+    "learn": "deno run --allow-run --allow-read --allow-env --allow-write ./src/ATS/labs.ts",
+    "browser:install": "deno run --allow-run --allow-read --allow-env --allow-write --allow-net scripts/browser/browser-manager.ts install",
+    "browser:start": "./.lightpanda-browser/lightpanda serve --host 127.0.0.1 --port 9222",
+    "browser:test": "./.lightpanda-browser/lightpanda fetch --dump https://lightpanda.io"
+  },
+  "imports": {
+    "grapesjs": "npm:grapesjs@^0.22.6",
+    "hono": "npm:hono",
+    "hono-sessions": "npm:hono-sessions@^0.7.1",
+    "zod": "npm:zod",
+    "@hono/zod-validator": "npm:@hono/zod-validator",
+    "@types/bcrypt": "npm:@types/bcrypt@^5.0.2",
+    "@types/jsdom": "npm:@types/jsdom@^21.1.7",
+    "glob": "npm:glob@^11.0.1",
+    "prisma": "npm:prisma@6.3.1",
+    "bcrypt": "npm:bcrypt@5.1.1",
+    "bull": "npm:bull@4.16.5",
+    "marked": "npm:marked@15.0.6",
+    "jsdom": "npm:jsdom@26.0.0",
+    "quill": "npm:quill@2.0.3",
+    "date-fns": "npm:date-fns@4.1.0",
+    "dotenv": "npm:dotenv@16.4.7",
+    "winston": "npm:winston@3.17.0",
+    "node-cron": "npm:node-cron@3.0.3",
+    "@sendgrid/mail": "npm:@sendgrid/mail@^8.1.4",
+    "paypal-server-sdk": "npm:@paypal/paypal-server-sdk@0.6.1",
+    "puppeteer": "npm:puppeteer@24.1.1",
+    "tailwindcss": "npm:tailwindcss@4.0.6",
+    "@tailwindcss/cli": "npm:@tailwindcss/cli@4.0.6",
+    "@tailwindcss/typography": "npm:@tailwindcss/typography@0.5.16",
+    "@tailwindcss/aspect-ratio": "npm:@tailwindcss/aspect-ratio@0.4.2",
+    "free-translate": "npm:free-translate@0.6.1",
+    "dompurify": "npm:dompurify@3.2.4",
+    "@prisma/client": "npm:@prisma/client@6.4.1",
+    "std/": "https://deno.land/std@0.220.1/"
+  },
+  "compilerOptions": {
+    "jsx": "precompile",
+    "jsxImportSource": "hono/jsx",
+    "lib": [
+      "deno.window",
+      "deno.ns",
+      "dom"
+    ],
+    "strict": true,
+    "types": [
+      "./src/@types/index.d.ts"
+    ],
+    "checkJs": true
+  },
+  "fmt": {
+    "files": {
+      "include": [
+        "src/",
+        "scripts/",
+        "tests/"
+      ]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 80,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  },
+  "lint": {
+    "files": {
+      "include": [
+        "src/"
+      ]
+    },
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  },
+  "permissions": {
+    "net": true,
+    "read": true,
+    "write": true,
+    "env": true,
+    "run": true
+  },
+  "nodeModulesDir": "auto",
+  "test": {
+    "exclude": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.cache/**"
+    ]
+  }
+}

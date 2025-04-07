@@ -1,37 +1,68 @@
-import {
-  ImageAnalysisResult,
-  month,
-  SecurityHashPayload,
-  StatsData,
-} from './@types';
+import { month } from './@types/index.d.ts';
 import fs, { promises as fsP } from 'node:fs';
 import path from 'node:path';
-import crypto, { randomInt } from 'node:crypto';
-import sharp from 'sharp';
-import Vibrant from 'node-vibrant';
-import imageHash from 'image-hash';
-import Tesseract from 'tesseract.js';
+import crypto from 'node:crypto';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import puppeteer from 'puppeteer';
-import { prismaClient } from './config/db';
+import puppeteer, { type Page } from 'puppeteer';
+import { prismaClient } from './config/db.ts';
 import bcrypt from 'bcrypt';
-import formidable from 'formidable';
-import { ee, tokenGenerator } from './server';
 import {
   // formatDistanceToNow,
   // formatDuration,
   intervalToDuration,
 } from 'date-fns';
-import jwt from 'jsonwebtoken';
-import { translate, Translate } from 'free-translate';
+import { Translate, translate } from 'free-translate';
+import { Buffer } from 'node:buffer';
+import process from 'node:process';
+import { EventEmitter } from 'node:events';
+import { sign, verify } from 'hono/jwt';
+import mime from './modules/mime.ts';
+import z from 'zod';
+
+export const getLoc = async (loc: 'en' | 'fr' | 'es') => {
+  const en = await import(`../locales/en.json`, { with: { type: 'json' } });
+  const fr = await import(`../locales/fr.json`, { with: { type: 'json' } });
+  const es = await import(`../locales/es.json`, { with: { type: 'json' } });
+  return {
+    en,
+    fr,
+    es,
+  }[loc];
+};
+
+export const ee = () => new EventEmitter();
+
+export const tokenGenerator = async <T extends Record<string, unknown>>(
+  payload: T
+) => {
+  return await sign(payload, Deno.env.get('JWT_SECRET')!);
+};
+
+export function getFileHeaders(filePath: string, download?: boolean) {
+  // Extraire le nom de fichier
+  const fileName = path.basename(filePath);
+
+  // Déterminer le type MIME
+  const contentType = mime.getType(fileName) || 'application/octet-stream';
+
+  // Déterminer le mode de disposition
+  const disposition = download
+    ? 'attachment' // Affichage direct dans le navigateur
+    : 'inline'; // Téléchargement forcé
+
+  return {
+    'Content-Disposition': `${disposition}; filename="${fileName}"`,
+    'Content-Type': contentType,
+  };
+}
 
 export const hashSomething = async (
   data: string | Buffer,
-  saltRond?: number
+  saltRound?: number
 ) => {
-  const round = saltRond || 14;
+  const round = saltRound || 14;
   const salt = await bcrypt.genSalt(round);
   return await bcrypt.hash(data, salt);
 };
@@ -70,15 +101,6 @@ export const unify = async (str: string) => {
   return purify.sanitize(result);
 };
 
-export enum Can {
-  CreateUser = 'createUser',
-  MakeComment = 'makeComment',
-  CRUD = 'crud',
-  UpdateCirtificate = 'updateCirtificate',
-  MakeSecureAction = 'makeSecureAction',
-  NotDefined = 'notDef',
-}
-
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   if (typeof obj['title'] === 'string') {
     return obj['title'].toLowerCase().includes(k.toLocaleLowerCase());
@@ -95,88 +117,7 @@ export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   return false;
 };
 
-export async function analyzeImage(
-  imagePath: string
-): Promise<ImageAnalysisResult> {
-  /*  // const arr = [
-    ['#df750c', '#753911', '#f9d88a', '#ac7860', '#513d28', '#ae9d9c'][
-      ('#c04c1c', '#6b4115', '#f5c17e', '#507c9a', '#524d31', '#cdc4b6')
-    ][('#b47c53', '#041419', '#ecb28c', '#a58266', '#4d3e33', '#d0c3b5')][
-      ('#509ca8', '#21696f', '#ec9d7f', '#9b6c59', '#344851', '#aec1d0')
-    ][('#e62050', '#783d32', '#eeb699', '#a87460', '#523629', '#cb9b8f')],
-  ]; */
-  // Analyse des métadonnées
-  const metadata = await sharp(imagePath).metadata();
-
-  // Analyse des couleurs dominantes
-  const palette = await Vibrant.from(imagePath).getPalette();
-  const dominantColors = Object.values(palette).map(
-    (color) => color?.getHex() || ''
-  );
-
-  // Création de l'empreinte de l'image (hash)
-  const imageHashResult = await new Promise<string>((resolve, reject) => {
-    imageHash.hash(imagePath, 16, 'hex', (error, hash) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(hash);
-    });
-  });
-
-  // Extraction du texte via OCR
-  const ocrResult = await Tesseract.recognize(imagePath, 'eng', {
-    logger: (m) => console.log(m), // Optionnel: pour suivre la progression
-  });
-  const ocrText = ocrResult.data.text;
-
-  // Vérification si l'image doit être marquée
-  const flagged = shouldFlagImage(metadata, dominantColors, ocrText);
-
-  // Résultat final
-  return {
-    metadata,
-    dominantColors,
-    ocrText,
-    imageHash: imageHashResult,
-    flagged,
-  };
-}
-
-export function shouldFlagImage(
-  metadata: sharp.Metadata,
-  dominantColors: string[],
-  ocrText: string
-): boolean {
-  // Exemple de règles simples pour flagger une image
-  const prohibitedColors = ['#000000', '#ff0000']; // Couleurs interdites (ex: noir, rouge vif)
-  const prohibitedKeywords = ['violence', 'explicit', 'forbidden']; // Mots interdits dans le texte OCR
-
-  // Vérification des couleurs dominantes
-  const containsProhibitedColors = dominantColors.some((color) =>
-    prohibitedColors.includes(color.toLowerCase())
-  );
-
-  // Vérification du texte OCR
-  const containsProhibitedKeywords = prohibitedKeywords.some((keyword) =>
-    ocrText.toLowerCase().includes(keyword)
-  );
-
-  return containsProhibitedColors || containsProhibitedKeywords;
-}
-
-export function reduceStringSuite(text: string): string {
-  const debordedLength = Math.round(text.length / 2.5);
-  return text.slice(0, debordedLength).concat('...');
-}
-
-export enum ProjectParticipationType {
-  free = 'free',
-  colaboration = 'colaboration',
-  subscription = 'subscription',
-}
-
-export const DATA_PATH = path.resolve(path.join(__dirname, '../data'));
+export const DATA_PATH = path.resolve(path.join(Deno.cwd(), './data'));
 export const DATA_FILE = path.join(DATA_PATH, 'statistics.json');
 
 export async function createDirIfNotExists(path: string) {
@@ -184,14 +125,6 @@ export async function createDirIfNotExists(path: string) {
     await fsP.mkdir(path);
   }
   return;
-}
-
-export function convertStatsInput(statsInput: string): StatsData {
-  return JSON.parse(statsInput);
-}
-
-export function stringifyStats(stats: StatsData): string {
-  return JSON.stringify(stats, null, 4);
 }
 
 /**
@@ -228,69 +161,26 @@ export const getMonthWithDate = (monthIndex: number) => {
   return months[monthIndex];
 };
 
-function createFirstStatistic(): StatsData {
-  const date = new Date();
-  const month = getMonthWithDate(date.getMonth());
-  const week = getWeekIndex();
-  const stats: StatsData = {
-    total_visitor: 0,
-    urls: [],
-    weekly: {
-      index: week,
-      visitor: 0,
-    },
-    monthly: {
-      month: month,
-      visitor: 0,
-    },
-  };
-  return stats;
-}
-
-export async function loadStatistics(): Promise<StatsData> {
-  createDirIfNotExists(DATA_PATH);
-  if (!fs.existsSync(DATA_FILE)) {
-    return createFirstStatistic();
-  }
-  const jsonStrng = await fsP.readFile(DATA_FILE, 'utf8');
-  return convertStatsInput(jsonStrng);
-}
-
-export async function saveStatistic(stat: StatsData) {
-  try {
-    const json = stringifyStats(stat);
-    await fsP.writeFile(DATA_FILE, json, 'utf8');
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-export enum Service {
-  api = 'api',
-  poster = 'poster',
-  superUser = 'superUser',
-}
-
 // Définir une interface pour les clés
 interface Keys {
   secretKey: string;
   iv: string;
 }
 
-// Fonction pour générer et sauvegarder les clés
-export async function generateAndSaveKeys(): Promise<{
-  secretKey: Buffer;
-  iv: Buffer;
-}> {
+export const generateKeys = () => {
   const secretKey: Buffer = crypto.randomBytes(32);
   const iv: Buffer = crypto.randomBytes(16);
-
-  const keys: Keys = {
+  return {
     secretKey: secretKey.toString('hex'),
     iv: iv.toString('hex'),
   };
+};
+// Fonction pour générer et sauvegarder les clés
+export async function saveKeys(): Promise<{
+  secretKey: Buffer;
+  iv: Buffer;
+}> {
+  const keys: Keys = generateKeys();
 
   const verifyIfKeyExist = await prismaClient.key.findUnique({
     where: {
@@ -298,7 +188,7 @@ export async function generateAndSaveKeys(): Promise<{
     },
   });
 
-  if (verifyIfKeyExist) {
+  if (verifyIfKeyExist && verifyIfKeyExist.key && verifyIfKeyExist.iv) {
     return {
       secretKey: Buffer.from(verifyIfKeyExist.key, 'hex'),
       iv: Buffer.from(verifyIfKeyExist.iv, 'hex'),
@@ -315,8 +205,8 @@ export async function generateAndSaveKeys(): Promise<{
   });
   console.log('Clés générées et sauvegardées avec succès !');
   return {
-    secretKey: Buffer.from(newKey.key, 'hex'),
-    iv: Buffer.from(newKey.iv, 'hex'),
+    secretKey: Buffer.from(newKey.key!, 'hex'),
+    iv: Buffer.from(newKey.iv!, 'hex'),
   };
 }
 
@@ -327,8 +217,8 @@ export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
       uid: server_uid,
     },
   });
-  if (!keys) {
-    return await generateAndSaveKeys();
+  if (!keys || !keys.key || !keys.iv) {
+    return await saveKeys();
   }
 
   return {
@@ -357,146 +247,10 @@ export function decrypt(
   return decrypted;
 }
 
-export function subscriptionChecker(t: number) {
-  const now = new Date();
-  return now.getTime() <= t - 60 * 60 * 24 * 60 * 1000;
-}
-
 export function tokenTimeExpirationChecker(t: number) {
   const now = new Date();
   return now.getTime() <= t;
 }
-
-export const colors = {
-  sun_1: ' #FFD700',
-  sun_2: ' #FFA500',
-  sun_3: ' #FF8C00',
-  sun_4: ' #FF6347',
-  sun_5: '#FFA500',
-  moon_1: '#8B4513',
-  moon_2: '#7B68EE',
-  morning_bg_from: 'from-blue-300',
-  morning_bg_to: 'to-lime-500',
-  evening_bg_from: 'from-blue-300',
-  evening_bg_to: 'to-lime-500',
-  night_bg_from: 'from-blue-300',
-  nigh_bg_from: 'to-lime-500',
-} as const;
-
-interface DetectionResult {
-  sequence: string;
-  isInappropriate: boolean;
-  issues: string[];
-}
-
-function detectInappropriateContent(sequence: string): DetectionResult {
-  const issues: string[] = [];
-
-  // Regex examples for detecting problematic content
-  const profanityRegex = /(?:damn|hell|crap)/i;
-  const spamRegex = /(buy\s+now|free\s+money|click\s+here)/i;
-  const urlRegex = /https?:\/\/[^\s]+/gi;
-  const threatRegex =
-    /(i'm\s+going\s+to\s+kill|i\s+will\s+hurt|destroy\s+you|burn\s+down|murder\s+you|bomb\s+threat)/i;
-  const harassmentRegex =
-    /(you\s+are\s+a\s+(loser|idiot|stupid)|nobody\s+likes\s+you|go\s+away|get\s+lost|you're\s+worthless)/i;
-  const sexualContentRegex =
-    /(sex|porn|nude|xxx|orgasm|erection|masturbate|fetish|hardcore)/i;
-  const hateSpeechRegex =
-    /(hate\s+(speech|crime|you|them|him|her|this)|racial\s+slur|kill\s+all\s+[a-zA-Z]+|destroy\s+[a-zA-Z]+|[a-zA-Z]+\s+must\s+die)/i;
-  const fakeNewsRegex =
-    /(hoax|fake\s+news|not\s+true|lies|conspiracy\s+theory|plandemic|5G\s+causes\s+COVID)/i;
-  const promotionRegex =
-    /(buy\s+now|limited\s+offer|special\s+deal|order\s+today|free\s+gift|money\s+back\s+guarantee)/i;
-  const incitementRegex =
-    /(kill\s+(them|all|everyone)|burn\s+(them|all|everything)|bomb\s+the|shoot\s+them|attack\s+(now|everyone))/i;
-  const sensitivePoliticalContentRegex =
-    /(rigged\s+election|stolen\s+votes|political\s+prisoner|deep\s+state|corrupt\s+politician|fake\s+news\s+media)/i;
-  const defamationRegex =
-    /(slander|defame|libel|false\s+accusation|untrue\s+statements|character\s+assassination)/i;
-  const phishingRegex =
-    /(claim\s+your\s+prize|congratulations\s+you've\s+won|click\s+here\s+to\s+claim|urgent\s+response\s+required|bank\s+details\s+needed)/i;
-  const copyrightViolationRegex =
-    /(illegal\s+download|free\s+movie\s+streaming|pirated\s+software|torrent\s+download|unauthorized\s+distribution)/i;
-  const discriminationRegex =
-    /(sexist\s+remarks|racist\s+jokes|homophobic\s+slurs|hate\s+speech|discrimination\s+against)/i;
-  const illegalActivityRegex =
-    /(drug\s+dealing|robbery|hacking|illegal\s+weapons|buy\s+drugs\s+online|counterfeit\s+goods)/i;
-  const vulgarityRegex = /(fuck|shit|bitch|asshole|bastard|dickhead|cunt)/i;
-
-  const regexArray = [
-    { regex: profanityRegex, issue: 'Langage inapproprié détecté' },
-    { regex: spamRegex, issue: 'Spam détecté' },
-    { regex: urlRegex, issue: 'URL non autorisée détectée' },
-    { regex: threatRegex, issue: 'Menace ou violence détectée' },
-    { regex: harassmentRegex, issue: 'Harcèlement détecté' },
-    {
-      regex: sexualContentRegex,
-      issue: 'Contenu sexuellement explicite détecté',
-    },
-    { regex: hateSpeechRegex, issue: 'Discours haineux détecté' },
-    { regex: fakeNewsRegex, issue: 'Fake news détectée' },
-    {
-      regex: promotionRegex,
-      issue: 'Contenu promotionnel non autorisé détecté',
-    },
-    {
-      regex: incitementRegex,
-      issue: 'Incitation à la violence ou à la haine détectée',
-    },
-    {
-      regex: sensitivePoliticalContentRegex,
-      issue: 'Contenu politique sensible détecté',
-    },
-    { regex: defamationRegex, issue: 'Propos diffamatoires détectés' },
-    {
-      regex: phishingRegex,
-      issue: 'Tentative de phishing ou escroquerie détectée',
-    },
-    {
-      regex: copyrightViolationRegex,
-      issue: "Violation des droits d'auteur détectée",
-    },
-    { regex: discriminationRegex, issue: 'Discrimination détectée' },
-    { regex: illegalActivityRegex, issue: 'Activité illégale détectée' },
-    { regex: vulgarityRegex, issue: 'Langage grossier détecté' },
-  ];
-
-  regexArray.forEach((item) => {
-    if (item.regex.test(sequence)) {
-      issues.push(item.issue);
-    }
-  });
-
-  return {
-    sequence,
-    isInappropriate: issues.length > 0,
-    issues,
-  };
-}
-
-// Découpe le texte en séquences (phrases)
-function splitTextIntoSequences(text: string): string[] {
-  // Découpe par phrases basées sur les ponctuations communes
-  return text.split(/(?<=[.!?])\s+/);
-}
-
-// Fonction principale pour vérifier le texte
-export function checkTextContent(text: string): DetectionResult[] {
-  const sequences = splitTextIntoSequences(text);
-  const results: DetectionResult[] = [];
-
-  sequences.forEach((sequence) => {
-    const result = detectInappropriateContent(sequence);
-    results.push(result);
-  });
-
-  return results;
-}
-
-export const graphicsUploader = () => {
-  return `background/${randomInt(1, 8)}.ejs`;
-};
 
 export const termsMD = `
 # 📝 **Terms of Service**
@@ -644,7 +398,8 @@ Make sure to check out our latest updates and follow us on social media for tips
 
 `;
 
-export const About = `# À propos de notre plateforme
+export const AboutMD = `
+# À propos de notre plateforme
 
 Bienvenue sur notre plateforme, un espace innovant dédié à la création et à la publication de contenu de qualité. Nous avons conçu notre service pour répondre aux besoins des utilisateurs souhaitant s'exprimer, partager des idées et développer des compétences professionnelles. Voici un aperçu des trois services principaux que nous proposons :
 
@@ -700,6 +455,148 @@ Pour toute question ou suggestion, n'hésitez pas à nous contacter à l'adresse
 Merci de faire partie de notre aventure !
 `;
 
+// Schéma de validation des options
+const ContentDownloaderSchema = z.object({
+  url: z.string().optional(),
+  content: z.string().optional(),
+  path: z
+    .object({
+      png: z.string(),
+      pdf: z.string(),
+    })
+    .optional(),
+});
+
+// Type générique pour les options de téléchargement
+export type ContentDownloaderOptions = {
+  url?: string;
+  content?: string;
+  path?: {
+    png: string;
+    pdf: string;
+  };
+};
+
+// Type générique pour la fonction de transformation
+export type PageTransformFn<TReturn = void> = (
+  page: Page
+) => TReturn | Promise<TReturn>;
+
+// Type utilitaire pour inférer le type de retour conditionnel
+type InferDownloadResult<
+  TOptions extends ContentDownloaderOptions,
+  TFn extends PageTransformFn | undefined
+> = TOptions['path'] extends { png: string; pdf: string }
+  ? {
+      data: {
+        imageToken: string;
+        pdfToken: string;
+      };
+    }
+  : TFn extends PageTransformFn
+  ? {
+      t: Awaited<ReturnType<TFn>>;
+    }
+  : {
+      page: Page;
+      close: () => Promise<void>;
+    };
+
+/**
+ * @unsafe
+ *
+ * Fonction de téléchargement de contenu hautement générique
+ */
+export async function contentDownloader<
+  TOptions extends ContentDownloaderOptions,
+  TFn extends PageTransformFn | undefined = undefined
+>(opts: TOptions, fn?: TFn): Promise<InferDownloadResult<TOptions, TFn>> {
+  // Validation des options
+  ContentDownloaderSchema.parse(opts);
+
+  // Chemins statiques
+  const STATIC_DIR = path.resolve(Deno.cwd(), './static/downloads/doc');
+  const STATIC_IMG_DIR = path.resolve(Deno.cwd(), './static/downloads/cv');
+
+  // Lancement du navigateur
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+  });
+
+  let page: Page | undefined;
+
+  try {
+    page = await browser.newPage();
+
+    // Chargement du contenu
+    if (opts.content) {
+      await page.setContent(opts.content, { waitUntil: 'networkidle0' });
+    } else if (opts.url) {
+      await page.goto(opts.url, { waitUntil: 'networkidle0' });
+    }
+
+    // Gestion des chemins de fichiers
+    if (opts.path) {
+      const { pdf, png } = opts.path;
+      const pdfFilePath = path.join(STATIC_DIR, pdf);
+      const pngFilePath = path.join(STATIC_IMG_DIR, png);
+
+      // Génération PDF et PNG
+      await Promise.all([
+        page.pdf({
+          path: pdfFilePath,
+          format: 'A4',
+          printBackground: true,
+          margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' },
+        }),
+        page.screenshot({
+          path: pngFilePath,
+          fullPage: true,
+        }),
+      ]);
+
+      // Génération des tokens
+      const [imageToken, pdfToken] = await Promise.all([
+        tokenGenerator({ path: `download/${png}` }),
+        tokenGenerator({ path: `download/${pdf}` }),
+      ]);
+
+      await page.close();
+      await browser.close();
+
+      return {
+        data: { imageToken, pdfToken },
+      } as InferDownloadResult<TOptions, TFn>;
+    }
+
+    // Exécution de la fonction personnalisée
+    if (fn) {
+      const result = await fn(page);
+      await page.close();
+      await browser.close();
+      return {
+        t: result,
+      } as InferDownloadResult<TOptions, TFn>;
+    }
+
+    return {
+      page,
+      close: async () => {
+        if (page) {
+          await page.close();
+        }
+        await browser.close();
+      },
+    } as InferDownloadResult<TOptions, TFn>;
+  } catch (error) {
+    if (page && !page.isClosed()) {
+      await page.close();
+    }
+    await browser.close();
+    throw error;
+  }
+}
+
 export const cvDownloader = async (options: {
   url: string;
   id: number;
@@ -711,38 +608,21 @@ export const cvDownloader = async (options: {
   const date = new Date();
   const pdf = date.getTime().toString() + '.pdf';
   const png = date.getTime().toString() + '.png';
-  const STATIC_DIR = path.resolve(__dirname, '../static/downloads/doc');
-  const STATIC_IMG_DIR = path.resolve(__dirname, '../static/downloads/cv');
-  const browser = await puppeteer.launch({
-    headless: true,
-    executablePath:
-      process.env.NODE_ENV === 'production'
-        ? '/usr/bin/chromium-browser'
-        : '/usr/bin/google-chrome',
-    args: ['--disable-gpu', '--no-sandbox', '--disable-setuid-sandbox'],
-  });
-  const page = await browser.newPage();
-  await page.goto(options.url, { waitUntil: 'networkidle0' });
-  const pdfFilePath = path.join(STATIC_DIR, pdf);
-  const pngFilePath = path.join(STATIC_IMG_DIR, png);
-  await page.pdf({ path: pdfFilePath, format: 'A4', printBackground: true });
+  const eev = ee();
+  const downloaderOpts = {
+    url: options.url,
+    path: {
+      pdf,
+      png,
+    },
+  };
 
-  // Prendre un screenshot de la page entière
-  await page.screenshot({ path: pngFilePath, fullPage: true });
+  const result = await contentDownloader(downloaderOpts);
+  const { imageToken, pdfToken } = result.data;
 
-  const pngServicePath =
-    process.env.NODE_ENV === 'production'
-      ? 'https://ghostify.site/staticFile/' +
-        tokenGenerator(`downloads/cv/${png}`)
-      : 'http://localhost:3085/staticFile/' +
-        tokenGenerator(`downloads/cv/${png}`);
+  const pngServicePath = Deno.env.get('APP_HOST') + imageToken;
 
-  const pdfServicePath =
-    process.env.NODE_ENV === 'production'
-      ? 'https://ghostify.site/downloader/' +
-        tokenGenerator(`downloads/doc/${pdf}`)
-      : 'http://localhost:3085/downloader/' +
-        tokenGenerator(`downloads/doc/${pdf}`);
+  const pdfServicePath = Deno.env.get('APP_HOST') + pdfToken;
 
   const cvUpdating = await prismaClient.cV.update({
     where: {
@@ -757,7 +637,6 @@ export const cvDownloader = async (options: {
   if (typeof options.updating === 'undefined' || !options.updating) {
     doc = await prismaClient.document.create({
       data: {
-        uid: tokenGenerator((date.getTime() + randomInt(1000)).toString()),
         type: 'pdf',
         userId: cvUpdating.userId,
         downloadLink: cvUpdating.pdf,
@@ -775,8 +654,6 @@ export const cvDownloader = async (options: {
   });
 
   console.log('user doc created: ', doc);
-
-  await browser.close();
   console.log('function running end');
 
   await prismaClient.notifications.create({
@@ -788,9 +665,9 @@ export const cvDownloader = async (options: {
     },
   });
 
-  ee.emit('Info', {
+  eev.emit('Info', {
     title: `Votre CV a été créé`,
-    content: `Vous pouvez telecharger votre CV ici ${cvUpdating.pdf}`,
+    content: `Vous pouvez telecharger votre CV ici <a href="${cvUpdating.pdf}"></a>`,
     action: 'update',
   });
 
@@ -800,59 +677,26 @@ export const cvDownloader = async (options: {
   };
 };
 
-export enum Reactions {
-  Love = 'Love',
-  Laugh = 'Laugh',
-  Hurted = 'Hurted',
-  Good = 'Good',
-}
-
-export const orderReactions = (reactions: Reactions[]) => {
-  const reactionsObj = {
-    Love: {
-      index: 0,
-      component: `<i class="fa-solid fa-heart -ml-1 fa-lg text-red-600"></i>`,
-    },
-    Laugh: {
-      index: 0,
-      component: `<i class="fa-solid fa-lg fa-face-laugh-squint -ml-1 text-orange-400"></i>`,
-    },
-    Hurted: {
-      index: 0,
-      component: `<i class="fa-regular fa-thumbs-down fa-lg -ml-1 text-white"></i>`,
-    },
-    Good: {
-      index: 0,
-      component: `<i class="fa-regular fa-thumbs-up fa-lg -ml-1 text-white"></i>`,
-    },
-  };
-  reactions.forEach((reaction) => {
-    reactionsObj[reaction].index++;
-  });
-  return Object.entries(reactionsObj)
-    .map((el) => el[1])
-    .filter((el) => el.index > 0)
-    .sort((a, b) => a.index - b.index)
-    .reverse()
-    .map((el) => el.component);
-};
-
 /**
  * Function to rename a file using its location returns false if the operation fails and the file new full name if not
  * @param file {formidable.File}
  * @param pathTo {string}
- * @returns {false | string}
  */
-export const renaming = async (file: formidable.File, pathTo: string) => {
-  const ext = path.extname(file.originalFilename);
+export const renaming = async (file: File, pathTo: string) => {
+  const ext = path.extname(file.name);
   const date = new Date();
   const r = crypto.randomInt(date.getTime()).toString();
   const fName = `${date.getTime().toString() + r}${ext}`;
   console.log(fName);
-  const xPath = path.resolve(__dirname, pathTo);
+  const xPath = path.resolve(process.cwd(), pathTo);
   const uploadPath = path.join(xPath, fName);
   try {
-    fs.renameSync(file.filepath, uploadPath);
+    // Convertir le fichier en tableau de bytes
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    // Stocker le fichier
+    await Deno.writeFile(uploadPath, uint8Array);
     return fName;
   } catch (err) {
     console.error(err);
@@ -866,14 +710,18 @@ export function ensureDirectoryAccess(directory: string) {
     fs.accessSync(directory, fs.constants.W_OK);
   } catch (error) {
     console.error(`Problème d'accès au dossier : ${directory}`);
-    console.error(`Erreur : ${error.message}`);
+    console.error(`Erreur : ${(error as { message: string }).message}`);
 
     // Tente de créer le dossier avec les permissions appropriées
     try {
       fs.mkdirSync(directory, { recursive: true, mode: 0o755 });
       console.log(`Dossier créé : ${directory}`);
     } catch (mkdirError) {
-      console.error(`Impossible de créer le dossier : ${mkdirError.message}`);
+      console.error(
+        `Impossible de créer le dossier : ${
+          (mkdirError as { message: string }).message
+        }`
+      );
       throw mkdirError;
     }
   }
@@ -883,13 +731,14 @@ export function getTimeElapsed(date: Date) {
   const duration = intervalToDuration({ start: date, end: new Date() });
 
   // sourcery skip: use-braces
-  if (duration.weeks >= 1) return `${duration.weeks}w`;
-  if (duration.days >= 1) return `${duration.days}d`;
-  if (duration.hours >= 1) return `${duration.hours}h`;
-  if (duration.minutes >= 1) return `${duration.minutes}m`;
-  if (duration.seconds >= 1) return `${duration.seconds}s`;
+  if (duration.months && duration.months >= 1) return `${duration.months}M`;
+  if (duration.weeks && duration.weeks >= 1) return `${duration.weeks}W`;
+  if (duration.days && duration.days >= 1) return `${duration.days}d`;
+  if (duration.hours && duration.hours >= 1) return `${duration.hours}h`;
+  if (duration.minutes && duration.minutes >= 1) return `${duration.minutes}m`;
+  if (duration.seconds && duration.seconds >= 1) return `${duration.seconds}s`;
 
-  return '0s';
+  return 'now';
 }
 
 export const cvClass = {
@@ -1015,13 +864,13 @@ export const cvClass = {
   },
 } as const;
 
-export const verifyJWT = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+export const verifyJWT = async (token: string) => {
+  return await verify(token, Deno.env.get('JWT_SECRET')!);
 };
 
 // Supposons que `verifyJWT` soit une fonction asynchrone qui prend en charge des chaînes.
-export const purgeFiles = async (files: string[]) => {
-  const STATIC_DIR = path.resolve(__dirname, '../static');
+export const purgeFiles = (files: string[]) => {
+  const STATIC_DIR = path.resolve(process.cwd(), './static');
 
   // Vérifie que le tableau des fichiers n'est pas vide avant de continuer
   if (files.length === 0) {
@@ -1029,7 +878,9 @@ export const purgeFiles = async (files: string[]) => {
   }
 
   // Vérifie les tokens pour chaque fichier (vérifie que `verifyJWT` retourne une chaîne pour chaque fichier)
-  const processedFiles = files.map((file) => verifyJWT(file) as string);
+  const processedFiles = files.map(
+    (file) => verifyJWT(file) as unknown as string
+  );
 
   // Obtient le chemin d'architecture de dossiers en utilisant le premier fichier comme référence
   const filePath = processedFiles[0].split('/');
@@ -1060,76 +911,11 @@ export const purgeFiles = async (files: string[]) => {
   }
 };
 
-export const purgeSingleFIle = (path: string) => {
+export const purgeSingleFile = (path: string) => {
   try {
     fs.rmSync(path);
   } catch (err) {
     console.error(err);
-  }
-};
-
-const setupSecurity = async () => {
-  try {
-    console.log('creating the new security.json');
-    const SECURITY_DIR = path.resolve(__filename, '../../security');
-    const date = new Date();
-    date.setDate(date.getDate() + 7);
-    const hash = tokenGenerator(date.toString());
-    const security: SecurityHashPayload = {
-      hash,
-      env: process.env.NODE_ENV,
-      expire: date.toISOString(),
-    };
-    console.log('setup the security hash to expire in ' + date.toUTCString());
-    const filePath = path.join(SECURITY_DIR, 'security.json');
-    fs.writeFileSync(filePath, JSON.stringify(security, null, 2));
-    console.log('security.json successfully created');
-    return true;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
-
-export const verifySecurity = async () => {
-  try {
-    const SECURITY_DIR = path.resolve(__dirname, '../../security');
-    const filePath = path.join(SECURITY_DIR, 'security.json');
-    if (fs.existsSync(filePath)) {
-      console.log('found security.json processing file examination');
-      const content = fs.readFileSync(filePath, 'utf8');
-      const security: SecurityHashPayload = JSON.parse(content);
-      const date = new Date(security.expire);
-      if (Date.now() > date.getTime()) {
-        console.log('security expired trying to create a new security.json');
-        return await setupSecurity();
-      }
-      if (process.env.NODE_ENV !== security.env) {
-        console.log(
-          'security env are not set correctly updating security.json'
-        );
-        return await setupSecurity();
-      }
-      return true;
-    }
-    console.log('No security file found creating a new security.json');
-    return await setupSecurity();
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
-
-export const loadSecurityBearer = async () => {
-  const SECURITY_DIR = path.resolve(__dirname, '../../security');
-  const filePath = path.join(SECURITY_DIR, 'security.json');
-  try {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const security: SecurityHashPayload = JSON.parse(fileContent);
-    return security;
-  } catch (e) {
-    console.error(e);
-    return null;
   }
 };
 

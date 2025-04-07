@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,233 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Services {
-  id          Int     @id @default(autoincrement())
-  type        Service @unique
-  active      Boolean @default(false)
-  docs        String?
-  endpoint    String
-  isSecure    Boolean @default(true)
-  name        String
-  plateform   Boolean @default(true)
-  testingData String
-}
-
-model Vote {
-  id      Int    @id @default(autoincrement())
-  title   String
-  votes   Int    @default(0)
-  poll    String
-  class   Class
-  topicId Int?
-  Topic   Topic? @relation(fields: [topicId], references: [id])
-}
-
-model Topic {
-  id      Int       @id @default(autoincrement())
-  title   String    @unique
-  keyword String
-  comment Comment[]
-  vote    Vote[]
-}
-
 model Contact {
   id      Int     @id @default(autoincrement())
   email   String  @unique
   name    String?
   message String?
-}
-
-model Category {
-  id    Int    @id @default(autoincrement())
-  title String @unique
-  keys  String
-  post  Post[]
-}
-
-model PostSection {
-  id        Int      @id @default(autoincrement())
-  postId    Int
-  title     String
-  updatedAt DateTime @updatedAt
-  content   String?
-  header    Boolean  @default(false)
-  meta      String?
-  index     Int
-  parent    Post     @relation(fields: [postId], references: [id])
-}
-
-model Comment {
-  id          Int         @id @default(autoincrement())
-  file        String?
-  token       String?     @unique
-  reactions   Reactions[]
-  postId      Int?
-  content     String?
-  author      String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  commentId   Int?
-  signaled    Int         @default(0)
-  referred    String?
-  meta        String?
-  isAnActu    Boolean     @default(false)
-  isForumPost Boolean     @default(false)
-  promoted    Boolean     @default(false)
-  safe        Boolean     @default(false)
-  indexed     Boolean     @default(false)
-  visitors    Int         @default(0)
-  url         String?
-  indexerId   Int?
-  userId      Int?
-  topicId     Int?
-  comment     Comment?    @relation("CommentToComment", fields: [commentId], references: [id])
-  comments    Comment[]   @relation("CommentToComment")
-  Indexer     Indexer?    @relation(fields: [indexerId], references: [id])
-  post        Post?       @relation(fields: [postId], references: [id])
-  Topic       Topic?      @relation(fields: [topicId], references: [id])
-  user        User?       @relation(fields: [userId], references: [id])
-  Project     Project?    @relation(fields: [projectId], references: [id])
-  projectId   Int?
-
-  @@index([id, userId, topicId, postId, commentId, indexerId])
-}
-
-model postFile {
-  id          Int    @id @default(autoincrement())
-  filePath    String
-  sectionId   Int
-  index       Int
-  description String @default("")
-  postId      Int
-  filePost    Post   @relation(fields: [postId], references: [id])
-}
-
-model Post {
-  id            Int           @id @default(autoincrement())
-  uid           String?       @unique
-  title         String
-  description   String
-  safe          Boolean
-  url           String?
-  createdAt     DateTime      @default(now())
-  inMemory      Boolean       @default(true)
-  toUpdate      Boolean       @default(false)
-  updatedAt     DateTime      @updatedAt
-  content       String?
-  published     Boolean       @default(false)
-  slug          String?
-  categoryId    Int?
-  visibility    Visibility
-  visites       Int           @default(0)
-  fromApi       Boolean       @default(false)
-  parsedContent String?
-  indexerId     Int?
-  indexed       Boolean       @default(false)
-  userId        Int?
-  Comment       Comment[]
-  category      Category?     @relation(fields: [categoryId], references: [id])
-  indexer       Indexer?      @relation(fields: [indexerId], references: [id])
-  user          User?         @relation(fields: [userId], references: [id])
-  section       PostSection[]
-  files         postFile[]
-  documents     Document[]
-
-  @@index([published, createdAt, id, userId, indexerId])
-}
-
-model Indexer {
-  id        Int         @id @default(autoincrement())
-  keys      String
-  type      String      @unique
-  ApiModule ApiModule[]
-  Assets    Assets[]
-  Comment   Comment[]
-  game      GameData[]
-  post      Post[]
-  Project   Project[]
-  url       Url[]
-}
-
-model GamerStat {
-  id         Int       @id @default(autoincrement())
-  ip         String
-  url        String?   @unique
-  gamingDay  DateTime
-  gameId     Int?
-  gamerStats String
-  userId     Int?
-  game       GameData? @relation(fields: [gameId], references: [id])
-  user       User?     @relation(fields: [userId], references: [id])
-}
-
-model GameData {
-  id          Int         @id @default(autoincrement())
-  title       String
-  icon        String
-  description String
-  indexed     Boolean     @default(true)
-  data        String?
-  indexerId   Int
-  url         String
-  Indexer     Indexer     @relation(fields: [indexerId], references: [id])
-  gamers      GamerStat[]
-}
-
-model ApiModule {
-  id          Int           @id @default(autoincrement())
-  title       String
-  description String
-  url         String
-  type        ApiModuleType
-  scripts     String[]
-  testHook    String?
-  indexed     Boolean       @default(false)
-  indexerId   Int?
-  userId      Int
-  Indexer     Indexer?      @relation(fields: [indexerId], references: [id])
-  user        User          @relation(fields: [userId], references: [id])
-}
-
-model Project {
-  id                Int                      @id @default(autoincrement())
-  title             String
-  description       String
-  github            String?
-  gitlab            String?
-  bitbucket         String?
-  indexed           Boolean                  @default(false)
-  license           String
-  link              String
-  participation     String
-  participationType ProjectParticipationType
-  indexerId         Int?
-  indexer           Indexer?                 @relation(fields: [indexerId], references: [id])
-  comments          Comment[]
-}
-
-enum ProjectParticipationType {
-  Collaboration
-  Free
-  Subscription
-}
-
-model GeneratorData {
-  name  String  @id
-  email String?
-  url   String?
-}
-
-model Url {
-  id        Int      @id @default(autoincrement())
-  url       String
-  visit     Int      @default(0)
-  name      String
-  updatedAt DateTime @updatedAt
-  indexed   Boolean  @default(false)
-  health    Boolean  @default(false)
-  indexerId Int?
-  Indexer   Indexer? @relation(fields: [indexerId], references: [id])
 }
 
 model User {
@@ -258,13 +35,8 @@ model User {
   plan          UserPlan        @default(Free)
   bio           String?
   link          String?
-  ApiModule     ApiModule[]
-  Comment       Comment[]
-  GamerStat     GamerStat[]
   Key           Key[]
   notifications Notifications[]
-  Post          Post[]
-  promotion     Promotion[]
   CV            CV[]
   Document      Document[]
 }
@@ -280,19 +52,6 @@ model Key {
   user   User?   @relation(fields: [userId], references: [id])
 }
 
-model Assets {
-  id        Int       @id @default(autoincrement())
-  type      AssetType
-  uid       String?   @unique
-  content   String?
-  title     String
-  indexed   Boolean   @default(false)
-  indexerId Int?
-  file      String?
-  link      String?
-  Indexer   Indexer?  @relation(fields: [indexerId], references: [id])
-}
-
 model Admin {
   id         Int       @id @default(autoincrement())
   role       String
@@ -301,21 +60,6 @@ model Admin {
   token      String
   activities String?
   connection DateTime?
-}
-
-model Promotion {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  startDate   DateTime
-  endDate     DateTime
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  file        String?
-  link        String?
-  userId      Int?
-  User        User?    @relation(fields: [userId], references: [id])
 }
 
 model Notifications {
@@ -331,7 +75,7 @@ model Notifications {
 
 model Document {
   id           Int      @id @default(autoincrement())
-  uid          String?  @unique
+  uid          String   @unique @default(uuid())
   title        String?
   type         String
   downloadLink String?
@@ -339,7 +83,6 @@ model Document {
   updatedAt    DateTime @updatedAt
   userId       Int?
   User         User?    @relation(fields: [userId], references: [id])
-  Post         Post?    @relation(fields: [postId], references: [id])
   postId       Int?
 }
 
@@ -372,37 +115,10 @@ enum Service {
   APIs
 }
 
-enum Class {
-  A
-  B
-  S
-  SS
-  D
-}
-
 enum Permission {
   User
   Admin
   Root
-}
-
-enum Visibility {
-  Public
-  Private
-}
-
-enum Reactions {
-  Love
-  Laugh
-  Hurted
-  Good
-}
-
-enum ApiModuleType {
-  Api
-  Module
-  Ressource
-  Snippet
 }
 
 enum Provider {
@@ -432,13 +148,6 @@ enum KeyType {
   FacebookAuthCode
   RedditAuthCode
   PlateformKey
-}
-
-enum AssetType {
-  Component
-  Script
-  Page
-  Snippet
 }
 
 enum NotificationType {

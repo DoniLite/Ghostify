@@ -1,10 +1,7 @@
-import 'vite/modulepreload-polyfill';
-
 const mobileAuth = document.querySelector('#ghostifyPowerMob');
 const ghostifyPower = document.querySelector('#ghostifyPower');
 
 /**
- *
  * @param {Event} e
  */
 const disconnection = async (e: Event) => {
@@ -23,13 +20,13 @@ const disconnection = async (e: Event) => {
     const attr = el.getAttribute('id');
     if (typeof attr === 'string' && attr === 'ghostifyPower') {
       el.remove();
-      window.location.reload();
+      globalThis.location.reload();
       return;
     }
     el.style.display = 'none';
-    window.location.reload();
+    globalThis.location.reload();
   }
 };
 
-mobileAuth.addEventListener('click', disconnection);
-ghostifyPower.addEventListener('click', disconnection);
+mobileAuth?.addEventListener('click', disconnection);
+ghostifyPower?.addEventListener('click', disconnection);

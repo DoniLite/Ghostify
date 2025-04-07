@@ -1,21 +1,15 @@
-import 'vite/modulepreload-polyfill';
-import { notificationPush, notificationsComponent } from './notifications';
+import { notificationPush, notificationsComponent } from './notifications.ts';
 
-/**
- * Translate text
- *
- * @param {string} text
- * @returns {string}
- */
+
 export const translate = (text: string): string => {
-  const url = new URL(window.location.href);
+  const url = new URL(globalThis.location.href);
   const lang = url.searchParams.get('lang');
   if (typeof lang === 'string') {
     const xhr = new XMLHttpRequest();
     xhr.open(
       'GET',
       '/translate?text=' + encodeURIComponent(text) + '&to=' + lang,
-      false
+      false,
     ); // false = synchrone
     try {
       xhr.send();
@@ -31,14 +25,13 @@ export const translate = (text: string): string => {
   return text;
 };
 
-window.App.translator = App.translator || {};
+// window.App.translator = App.translator || {};
 
-App.translator = {
-  translate,
-  components: {
-    fr: {},
-    en: {},
-    es: {},
-  },
-};
-
+// App.translator = {
+//   translate,
+//   components: {
+//     fr: {},
+//     en: {},
+//     es: {},
+//   },
+// };

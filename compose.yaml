@@ -2,32 +2,10 @@ name: Ghostify_Services
 
 services:
   server:
-    build:
-      context: .
-      dockerfile: Server.Dockerfile
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:DoniLite13GhostifyDB@db:5432/ghostify?schema=own&connection_limit=5
-    ports:
-      - 3081:3081
-    depends_on:
-      db:
-        condition: service_healthy
-      api:
-        condition: service_started
-    volumes:
-      - ./static:/static
-      - ./cmd:/cmd
-      - ./security:/security
-    networks:
-      - ghostify_network
-
-  api:
-    build:
-      context: .
-      dockerfile: Api.Dockerfile
-    environment:
-      NODE_ENV: production
+      DENO_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=own&connection_limit=5
     ports:
       - 8080:8080
     depends_on:
@@ -43,49 +21,51 @@ services:
   db:
     image: postgres
     restart: always
-    user: postgres
-    secrets:
-      - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=ghostify
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     expose:
       - 5432
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: ["CMD", "pg_isready", "-U", "ghostify", "-d", "ghostify"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - ghostify_network
-  
+
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"      # HTTP
-      - "443:443"    # HTTPS
+      - '80:80' # HTTP
+      - '443:443' # HTTPS
     depends_on:
       - server
       - api
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro 
+      - ./nginx/ssl:/etc/nginx/ssl:ro
       # - ./static:/usr/share/nginx/static:ro   # Pour les certificats SSL si nécessaire
     networks:
       - ghostify_network
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379
+    volumes:
+      - redis_data:/data
 
 volumes:
   db-data:
   static:
   cmd:
   security:
-
-secrets:
-  db-password:
-    file: ./db/password.txt
+  redis_data:
 
 networks:
   ghostify_network:

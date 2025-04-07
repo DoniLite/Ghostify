@@ -1,20 +1,21 @@
-name: Build NodeJS CD/CI
+name: Build Deno CD/CI
 run-name: ${{ github.actor }}'s GitHub Actions
 env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  # DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DENO_DIR: ~/.cache/deno
 
-on: 
+on:
   push:
-    branches:    
+    branches:
       - main
       - 'octocat/**'
       - 'releases/**'
       - develop
-    tags:        
+    tags:
       - v2
       - v1.*
   pull_request:
-    branches:    
+    branches:
       - main
       - 'octocat/**'
   schedule:
@@ -22,35 +23,47 @@ on:
     - cron: '30 5 * * 2,4'
 
 jobs:
-  check-bats-version:
+  check-deno-version:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20]
+        deno-version: [1.41.0, 1.40.0]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Cache pnpm store
-        uses: actions/cache@v3
+          deno-version: v2.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          path: ${{ env.DENO_DIR }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-
-      - run: npm install -g bats
-      - run: bats -v
-      - name: Install Dependencies
-        run: npm install -g pnpm && pnpm install
+            ${{ runner.os }}-deno-
+
+      - name: Cache Dependencies
+        run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
+
+      - name: Generate types for prisma
+        run: deno task prisma:generate
+
       - name: Lint Code
-        run: pnpm lint
+        run: deno lint --fix --ignore="**/*.js"
+
       - name: Run Tests
-        run: pnpm test
+        run: deno task test-ci
+
+      - name: Create dist directory
+        run: mkdir -p dist # Crée le répertoire dist s'il n'existe pas
+
       - name: Build Project
-        run: pnpm exec tsc --outDir build
+        run: deno task build
+
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build/
+          path: dist/

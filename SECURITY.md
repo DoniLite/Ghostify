@@ -4,12 +4,12 @@
 
 The following table lists the versions of our project that are currently receiving security updates.
 
-| Version | Status              |
-| ------- | ------------------  |
-| > 1.x   | ✅ Supported         |
-| 0.5.x   | ✅ Supported         |
-| 0.4.x   | ✅ Supported         |
-| < 0.4   | ❌ Not Supported     |
+| Version | Status           |
+| ------- | ---------------- |
+| > 1.x   | ✅ Supported     |
+| 0.5.x   | ✅ Supported     |
+| 0.4.x   | ✅ Supported     |
+| < 0.4   | ❌ Not Supported |
 
 **Note**: We encourage users to upgrade to the latest supported version to benefit from security patches and enhancements.
 

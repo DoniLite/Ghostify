@@ -1,7 +1,5 @@
 import os
 
-from python.utils.web_client import requester
-
 
 def purge_files_after_transform(filename: str, dir: str, file_path: str = None):
 
@@ -36,20 +34,4 @@ def purge_files_after_transform(filename: str, dir: str, file_path: str = None):
         os.remove(file_path)
         print(f"The file {filename} in {directory_path} have been removed.")
         return True
-    return False
-
-
-async def subscription_verify(userId: int):
-    internal_server_url = (
-        f"http://localhost:3085/api/v1/internal/subscriptionChecker/{userId}"
-    )
-
-    res = await requester(url=internal_server_url)
-
-    if res.status_code >= 400:
-        return False
-
-    if res.status_code == 200:
-        return True
-
     return False

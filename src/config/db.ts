@@ -1,14 +1,18 @@
-import { PrismaClient } from '@prisma/client';
+import pkg from 'npm:@prisma/client';
+const { PrismaClient } = pkg;
 // import { createClient } from 'redis';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
+// @ts-types="@types/pg"
+// import pg from 'pg';
+// import { PrismaPg } from '@prisma/adapter-pg';
+// import process from "node:process";
 
-const connectionString = `${process.env.DATABASE_URL}`;
+// const { Pool } = pg;
+// const connectionString = `${process.env.DATABASE_URL}`;
 
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool, {
-  schema: 'own',
-});
+// const pool = new Pool({ connectionString });
+// const adapter = new PrismaPg(pool, {
+//   schema: 'own',
+// });
 
 // export const client = createClient({
 //   password: process.env.REDIS_PASSWORD,
@@ -38,6 +42,6 @@ const adapter = new PrismaPg(pool, {
 //     console.log(err);
 //   });
 
-export const prismaClient = new PrismaClient({ adapter });
+export const prismaClient = new PrismaClient();
 
 // redisStoreClient.connect().catch(console.error);

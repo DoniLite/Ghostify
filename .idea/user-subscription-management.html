@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Abonnements - DocFlow</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="bg-gray-50">
+  <!-- Navbar -->
+  <nav class="bg-indigo-600 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <div class="flex-shrink-0 flex items-center">
+            <span class="text-xl font-bold">DocFlow</span>
+          </div>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a href="#" class="border-transparent text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Dashboard
+            </a>
+            <a href="#" class="border-transparent text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Paramètres
+            </a>
+            <a href="#" class="border-indigo-300 text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Abonnements
+            </a>
+            <a href="#" class="border-transparent text-white hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              Services
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+            <button class="bg-indigo-600 p-1 rounded-full text-white hover:text-gray-200 focus:outline-none">
+              <i class="fas fa-bell"></i>
+            </button>
+            <div class="ml-3 relative">
+              <div>
+                <button class="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-600 focus:ring-white">
+                  <span class="sr-only">Open user menu</span>
+                  <div class="h-8 w-8 rounded-full bg-indigo-300 flex items-center justify-center">
+                    <i class="fas fa-user"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <!-- Current Plan Section -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+        <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Votre Abonnement Actuel
+          </h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Détails et statut de votre forfait
+          </p>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex items-center justify-between flex-wrap">
+            <div>
+              <h4 class="text-xl font-semibold text-indigo-600">Plan Pro</h4>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-2">
+                Actif
+              </span>
+              <p class="mt-2 text-gray-600">
+                Facturation mensuelle: <span class="font-medium">49,99€ / mois</span>
+              </p>
+              <p class="text-sm text-gray-500">
+                Prochain renouvellement: 15 mars 2025
+              </p>
+            </div>
+            <div class="mt-4 md:mt-0">
+              <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Changer de forfait
+              </button>
+              <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Gérer le paiement
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-6 border-t border-gray-200 pt-6">
+            <h5 class="text-lg font-medium text-gray-900">Caractéristiques incluses:</h5>
+            <ul class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">100 documents par mois</p>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">5 blogs hébergés</p>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">500 conversions de documents</p>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">25 CV générés par mois</p>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">Accès à toutes les API</p>
+              </li>
+              <li class="flex items-start">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-check text-green-500"></i>
+                </div>
+                <p class="ml-3 text-sm text-gray-700">Support prioritaire</p>
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-6 border-t border-gray-200 pt-6">
+            <h5 class="text-lg font-medium text-gray-900">Utilisation actuelle:</h5>
+            <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">
+                      Documents
+                    </dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                      57 / 100
+                    </dd>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                      <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 57%"></div>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">
+                      Blogs
+                    </dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                      3 / 5
+                    </dd>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                      <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 60%"></div>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">
+                      Conversions
+                    </dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                      215 / 500
+                    </dd>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                      <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 43%"></div>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">
+                      CV générés
+                    </dt>
+                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                      12 / 25
+                    </dd>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                      <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 48%"></div>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Plans Section -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Plans Disponibles
+          </h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Comparez et choisissez le plan qui vous convient
+          </p>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Starter Plan -->
+            <div class="border rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col">
+              <h3 class="text-xl font-medium text-gray-900">Starter</h3>
+              <div class="mt-4 flex items-baseline text-gray-900">
+                <span class="text-3xl font-extrabold tracking-tight">9,99€</span>
+                <span class="ml-1 text-xl font-semibold">/mois</span>
+              </div>
+              <p class="mt-5 text-gray-500 text-sm">Idéal pour les indépendants et les petits projets</p>
+              
+              <ul class="mt-6 space-y-4 flex-grow">
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">20 documents par mois</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">1 blog hébergé</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">100 conversions</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">5 CV par mois</span>
+                </li>
+              </ul>
+              
+              <button type="button" class="mt-8 block w-full py-2 px-3 text-center rounded-md shadow bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-medium">
+                Choisir
+              </button>
+            </div>
+
+            <!-- Pro Plan (Current) -->
+            <div class="border-2 border-indigo-500 rounded-lg p-6 shadow-md flex flex-col relative">
+              <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold uppercase px-3 py-1 rounded-bl-lg">
+                Actuel
+              </div>
+              <h3 class="text-xl font-medium text-gray-900">Pro</h3>
+              <div class="mt-4 flex items-baseline text-gray-900">
+                <span class="text-3xl font-extrabold tracking-tight">49,99€</span>
+                <span class="ml-1 text-xl font-semibold">/mois</span>
+              </div>
+              <p class="mt-5 text-gray-500 text-sm">Pour les équipes et les entreprises en croissance</p>
+              
+              <ul class="mt-6 space-y-4 flex-grow">
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">100 documents par mois</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">5 blogs hébergés</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">500 conversions</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">25 CV par mois</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Support prioritaire</span>
+                </li>
+              </ul>
+              
+              <button type="button" class="mt-8 block w-full py-2 px-3 text-center rounded-md shadow bg-indigo-500 hover:bg-indigo-600 text-white font-medium">
+                Plan actuel
+              </button>
+            </div>
+
+            <!-- Business Plan -->
+            <div class="border rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col">
+              <h3 class="text-xl font-medium text-gray-900">Business</h3>
+              <div class="mt-4 flex items-baseline text-gray-900">
+                <span class="text-3xl font-extrabold tracking-tight">99,99€</span>
+                <span class="ml-1 text-xl font-semibold">/mois</span>
+              </div>
+              <p class="mt-5 text-gray-500 text-sm">Pour les entreprises avec des besoins importants</p>
+              
+              <ul class="mt-6 space-y-4 flex-grow">
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">500 documents par mois</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">15 blogs hébergés</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">2000 conversions</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">100 CV par mois</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Support dédié 24/7</span>
+                </li>
+              </ul>
+              
+              <button type="button" class="mt-8 block w-full py-2 px-3 text-center rounded-md shadow bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-medium">
+                Choisir
+              </button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="border rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col">
+              <h3 class="text-xl font-medium text-gray-900">Enterprise</h3>
+              <div class="mt-4 flex items-baseline text-gray-900">
+                <span class="text-3xl font-extrabold tracking-tight">Sur mesure</span>
+              </div>
+              <p class="mt-5 text-gray-500 text-sm">Solutions personnalisées pour les grandes entreprises</p>
+              
+              <ul class="mt-6 space-y-4 flex-grow">
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Volume illimité</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Fonctionnalités sur mesure</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Intégration API complète</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">Support technique dédié</span>
+                </li>
+                <li class="flex">
+                  <i class="fas fa-check text-green-500 flex-shrink-0 mt-1"></i>
+                  <span class="ml-3 text-gray-500 text-sm">SLA personnalisé</span>
+                </li>
+              </ul>
+              
+              <button type="button" class="mt-8 block w-full py-2 px-3 text-center rounded-md shadow bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-medium">
+                Nous contacter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment History Section -->
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden mt-8">
+        <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Historique de facturation
+          </h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Vos factures et paiements récents
+          </p>
+        </div>
+        <div class="px-4 py-5 sm:p-6">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Montant
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Statut
+                </th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Facture
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  15 fév 2025
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  Plan Pro - Mensuel
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  49,99 €
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Payé
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Télécharger</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  15 jan 2025
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  Plan Pro - Mensuel
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  49,99 €
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Payé
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Télécharger</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  15 déc 2024
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  Plan Pro - Mensuel
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  49,99 €
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Payé
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Télécharger</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

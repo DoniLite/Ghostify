@@ -1,4 +1,3 @@
-import 'vite/modulepreload-polyfill';
 import {
   addExperience,
   addFormation,
@@ -9,22 +8,25 @@ import {
   experienceTrigger,
   formationTrigger,
   languageTrigger,
-} from './eventHandlers';
+} from './eventHandlers.ts';
 
-const cvActionModal = document.querySelector<HTMLElement>('#cvActionModal');
-const actionBtn = document.querySelector<HTMLElement>('#action');
+const cvActionModal = document.querySelector<HTMLElement>('#cvActionModal')!;
+const actionBtn = document.querySelector<HTMLElement>('#action')!;
 const closeCvActionModal = document.querySelector<HTMLElement>(
-  '#closeCvActionModal'
-);
-const firstTarget = document.querySelector<HTMLElement>('#translatorFirst');
-const secondTarget = document.querySelector<HTMLElement>('#translatorSecond');
-const zappingBtns = document.querySelectorAll('.zapping-btn');
-const translatorParent = document.querySelector<HTMLElement>('#translatorParent');
+  '#closeCvActionModal',
+)!;
+const firstTarget = document.querySelector<HTMLElement>('#translatorFirst')!;
+const secondTarget = document.querySelector<HTMLElement>('#translatorSecond')!;
+const zappingBtns = document.querySelectorAll('.zapping-btn')!;
+const translatorParent = document.querySelector<HTMLElement>(
+  '#translatorParent',
+)!;
 // const ressourceLoader = document.querySelector('#ressourceLoader');
-const assetEl = document.querySelector<HTMLElement>('#assetEl');
-const changeThemeBtn = document.querySelector<HTMLElement>('#changeTheme');
-const modifFormBtn = document.querySelector<HTMLElement>('#formModifierBtn');
-const resourceLoaderComponent = `<div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
+const assetEl = document.querySelector<HTMLElement>('#assetEl')!;
+const changeThemeBtn = document.querySelector<HTMLElement>('#changeTheme')!;
+const modifFormBtn = document.querySelector<HTMLElement>('#formModifierBtn')!;
+const resourceLoaderComponent =
+  `<div id="ressourceLoader" class=" w-full flex justify-center items-center gap-x-3 text-white mt-4">
           Chargement en cours veuillez patienter
           <span class="loading loading-spinner loading-lg bg-orange-500 text-center"></span>
         </div>`;
@@ -34,18 +36,17 @@ changeThemeBtn.addEventListener('click', async (e) => {
   const uid = actionBtn.dataset.uid;
   const req = await fetch(`/cv/theme/${uid}`);
   /**
-   *
    * @param {typeof res} data The data that will be used to update the theming
    */
   const updatingFrontWithTheme = (data: typeof res) => {
     const cvType = `${data.type};${data.mode}`;
     assetEl
-      .querySelector('#changingThemeFormParent')
+      .querySelector('#changingThemeFormParent')!
       .querySelectorAll('input')
       .forEach((el) => {
         if (el.value === cvType) {
           assetEl
-            .querySelector('#changingThemeFormParent')
+            .querySelector('#changingThemeFormParent')!
             .querySelectorAll('input')
             .forEach((input) =>
               input.classList.remove('border-4', 'border-orange-500')
@@ -198,13 +199,13 @@ changeThemeBtn.addEventListener('click', async (e) => {
   assetEl.childNodes.forEach((node) => node.remove());
   assetEl.insertAdjacentHTML('beforeend', themeComponent);
   assetEl
-    .querySelector('#changingThemeFormParent')
+    .querySelector('#changingThemeFormParent')!
     .querySelectorAll('input')
     .forEach((input) => {
       input.addEventListener('click', async (e) => {
         e.preventDefault();
         assetEl
-          .querySelector('#changingThemeFormParent')
+          .querySelector('#changingThemeFormParent')!
           .querySelectorAll('input')
           .forEach((input) =>
             input.classList.remove('border-4', 'border-orange-500')
@@ -213,11 +214,11 @@ changeThemeBtn.addEventListener('click', async (e) => {
         tEl.classList.toggle('border-4');
         tEl.classList.toggle('border-orange-500');
         const req2 = await fetch(
-          `/cv/theme/${uid}?set=true&data=${tEl.value}`
+          `/cv/theme/${uid}?set=true&data=${tEl.value}`,
         );
         const res2 = await req2.json();
         if (res2.success) {
-          window.location.reload();
+          globalThis.location.reload();
         }
       });
     });
@@ -239,7 +240,7 @@ modifFormBtn.addEventListener('click', async (e) => {
       assetEl.childNodes.forEach((node) => node.remove());
       assetEl.insertAdjacentHTML(
         'beforeend',
-        `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`
+        `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`,
       );
       return;
     }
@@ -304,7 +305,8 @@ modifFormBtn.addEventListener('click', async (e) => {
       css?: unknown;
     };
     console.log(res);
-    const formComponent = `<form id="formUpdateElementParent" class=" w-full flex-col gap-y-3">
+    const formComponent =
+      `<form id="formUpdateElementParent" class=" w-full flex-col gap-y-3">
         <div
           data-translate="200"
           id="first"
@@ -381,9 +383,10 @@ modifFormBtn.addEventListener('click', async (e) => {
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              ${res.skills
-                .map((skill, index) => {
-                  return `
+              ${
+        res.skills!
+          .map((skill, index) => {
+            return `
                   <div
                     data-index="${index}"
                     class="vl-parent flex gap-x-4 w-full items-center mt-4"
@@ -406,8 +409,9 @@ modifFormBtn.addEventListener('click', async (e) => {
                     </div>
                   </div>
                 `;
-                })
-                .join('')}
+          })
+          .join('')
+      }
             </div>
           </div>
 
@@ -421,9 +425,10 @@ modifFormBtn.addEventListener('click', async (e) => {
               </div>
             </div>
             <div  class="lst-component w-full flex flex-col gap-y-3">
-              ${res.formations
-                .map((formation, index) => {
-                  return `<div
+              ${
+        res.formations!
+          .map((formation, index) => {
+            return `<div
                           data-index="${index}"
                           class="vl-parent flex gap-x-4 w-full items-center mt-4"
                         >
@@ -464,8 +469,9 @@ modifFormBtn.addEventListener('click', async (e) => {
                             ></i>
                           </div>
                         </div>`;
-                })
-                .join('')}
+          })
+          .join('')
+      }
               
             </div>
           </div>
@@ -477,9 +483,10 @@ modifFormBtn.addEventListener('click', async (e) => {
           class="w-full mx-auto mt-4 bg-gray-950 text-white p-4 rounded-lg shadow-lg shadow-black flex flex-col gap-y-6 mb-4 relative"
         >
           <h1 class="text-2xl font-bold ml-8">Expérience professionnelle</h1>
-          ${res.experience
-            .map((el) => {
-              return `
+          ${
+        res.experience!
+          .map((el) => {
+            return `
             <div id="" class="experienceGroupEl w-full mx-auto p-3 justify-center items-center">
             <div class="flex justify-between items-center w-full lg:p-2">
               <div id="addExperience">
@@ -498,7 +505,8 @@ modifFormBtn.addEventListener('click', async (e) => {
               />
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              ${el.contents
+              ${
+              el.contents
                 .map((element, index) => {
                   return `
                 <div
@@ -538,12 +546,14 @@ modifFormBtn.addEventListener('click', async (e) => {
                 </div>
                 `;
                 })
-                .join('')}
+                .join('')
+            }
             </div>
           </div>
             `;
-            })
-            .join('')}
+          })
+          .join('')
+      }
           
         </div>
 
@@ -563,9 +573,10 @@ modifFormBtn.addEventListener('click', async (e) => {
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              ${res.interest
-                .map((el, index) => {
-                  return `<div
+              ${
+        res.interest!
+          .map((el, index) => {
+            return `<div
                           data-index="${index}"
                           class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
                         >
@@ -586,8 +597,9 @@ modifFormBtn.addEventListener('click', async (e) => {
                             ></i>
                           </div>
                         </div>`;
-                })
-                .join('')}
+          })
+          .join('')
+      }
             </div>
           </div>
 
@@ -601,9 +613,10 @@ modifFormBtn.addEventListener('click', async (e) => {
               </div>
             </div>
             <div id="" class="lst-component w-full flex flex-col gap-y-3">
-              ${res.languages
-                .map((lang, i) => {
-                  return `
+              ${
+        res.languages!
+          .map((lang, i) => {
+            return `
                 <div
                   data-index="${i}"
                   class="vl-parent flex gap-x-4 w-11/12 items-center mt-4"
@@ -639,8 +652,9 @@ modifFormBtn.addEventListener('click', async (e) => {
                     ></i>
                   </div>
                 </div>`;
-                })
-                .join('')}
+          })
+          .join('')
+      }
             </div>
             <button
                 type="submit"
@@ -656,43 +670,43 @@ modifFormBtn.addEventListener('click', async (e) => {
     assetEl.childNodes.forEach((node) => node.remove());
     assetEl.insertAdjacentHTML('beforeend', formComponent);
     assetEl
-      .querySelector('#formUpdateElementParent')
+      .querySelector('#formUpdateElementParent')!
       .addEventListener('submit', processCVForAPI);
-    assetEl.querySelector('#listAdd').addEventListener('click', addListItem);
+    assetEl.querySelector('#listAdd')!.addEventListener('click', addListItem);
     assetEl
-      .querySelector('#addFormation')
+      .querySelector('#addFormation')!
       .addEventListener('click', addFormation);
-    assetEl.querySelector('#addTask').addEventListener('click', addTask);
+    assetEl.querySelector('#addTask')!.addEventListener('click', addTask);
     assetEl
-      .querySelector('#addExperience')
+      .querySelector('#addExperience')!
       .addEventListener('click', addExperience);
     assetEl
-      .querySelector('#addLanguage')
+      .querySelector('#addLanguage')!
       .addEventListener('click', addLanguage);
     assetEl
-      .querySelector('#addInterest')
+      .querySelector('#addInterest')!
       .addEventListener('click', addInterest);
     assetEl
-      .querySelector('#formationInput')
+      .querySelector('#formationInput')!
       .addEventListener('change', formationTrigger);
     assetEl
-      .querySelector('#experienceInput')
+      .querySelector('#experienceInput')!
       .addEventListener('change', experienceTrigger);
     assetEl
-      .querySelector('#languageInput')
+      .querySelector('#languageInput')!
       .addEventListener('change', languageTrigger);
 
-    assetEl.querySelector('#userSrcImg').addEventListener('click', (e) => {
+    assetEl.querySelector('#userSrcImg')!.addEventListener('click', (e) => {
       e.preventDefault();
-      document.querySelector<HTMLInputElement>('#fileInput').click();
+      document.querySelector<HTMLInputElement>('#fileInput')!.click();
     });
 
     assetEl
-      .querySelector<HTMLInputElement>('#fileInput')
+      .querySelector<HTMLInputElement>('#fileInput')!
       .addEventListener('change', (e) => {
         e.preventDefault();
         const finput = e.currentTarget as HTMLInputElement;
-        const file = finput.files[0];
+        const file = finput.files![0];
         if (file) {
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -700,7 +714,7 @@ modifFormBtn.addEventListener('click', async (e) => {
             /**
              * @type {HTMLImageElement}
              */
-            const img = document.querySelector<HTMLImageElement>('#userSrcImg');
+            const img = document.querySelector<HTMLImageElement>('#userSrcImg')!;
             img.src = reader.result as string;
           };
         }
@@ -710,7 +724,7 @@ modifFormBtn.addEventListener('click', async (e) => {
     assetEl.childNodes.forEach((node) => node.remove());
     assetEl.insertAdjacentHTML(
       'beforeend',
-      `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`
+      `<div class=" flex w-full justify-center mt-4 text-white"><p>Une erreur est survenue...��� </p></div>`,
     );
   } finally {
     isProcessing = false;
@@ -726,7 +740,8 @@ const fetchResource = async () => {
       return;
     }
     firstTarget.children[1].remove();
-    const ressourceComponent = `<div id="" class=" flex w-full flex-col gap-y-4  mt-4">
+    const ressourceComponent =
+      `<div id="" class=" flex w-full flex-col gap-y-4  mt-4">
           <div class="flex gap-x-2 text-orange-500 font-bold items-center">
             <span class="text-white">PDF: </span>
             <a href="${res.doc}" class=" hover:underline line-clamp-2" target="_blank">
@@ -748,12 +763,13 @@ const fetchResource = async () => {
   }
   if (res.error) {
     firstTarget.children[1].remove();
-    const errorComponent = `<span class=" text-orange-500 text-center">Une erreur est survenue durant la récupération de vos données <br> We have'nt fetch your data successfully</span>`;
+    const errorComponent =
+      `<span class=" text-orange-500 text-center">Une erreur est survenue durant la récupération de vos données <br> We have'nt fetch your data successfully</span>`;
     firstTarget.insertAdjacentHTML('beforeend', errorComponent);
   }
 };
 
-window.onload = fetchResource;
+globalThis.onload = fetchResource;
 
 actionBtn.addEventListener('click', async (e) => {
   e.preventDefault();
@@ -778,14 +794,16 @@ zappingBtns.forEach((btn) => {
      */
     const el = e.currentTarget as HTMLElement;
     if (el.dataset.index === '1') {
-      translatorParent.style.transform = `translateX(-${firstTarget.dataset.translate}%)`;
+      translatorParent.style.transform =
+        `translateX(-${firstTarget.dataset.translate}%)`;
     } else {
-      translatorParent.style.transform = `translateX(-${secondTarget.dataset.translate}%)`;
+      translatorParent.style.transform =
+        `translateX(-${secondTarget.dataset.translate}%)`;
     }
     el.classList.remove('bg-white');
     el.classList.add('bg-orange-500');
-    zappingBtns.forEach((thisBtn: HTMLElement) => {
-      if (thisBtn.dataset.index !== el.dataset.index) {
+    zappingBtns.forEach((thisBtn) => {
+      if ((thisBtn as HTMLElement).dataset.index !== el.dataset.index) {
         thisBtn.classList.remove('bg-orange-500');
         thisBtn.classList.add('bg-white');
         return;
@@ -794,11 +812,8 @@ zappingBtns.forEach((btn) => {
   });
 });
 
-/**
- *
- * @param {FormDataEvent} event
- */
-const processCVForAPI = async (event: FormDataEvent) => {
+
+const processCVForAPI = async (event: Event) => {
   event.preventDefault();
   const form = new FormData(event.currentTarget as HTMLFormElement);
   const name = form.get('name');
@@ -809,8 +824,12 @@ const processCVForAPI = async (event: FormDataEvent) => {
   const profile = form.get('profile');
   const skills = form.getAll('skill');
   const interest = form.getAll('interest');
-  const formationGroup = assetEl.querySelector<HTMLElement>('#formationGroupEl');
-  const experienceGroup = assetEl.querySelector<HTMLElement>('#experienceGroup');
+  const formationGroup = assetEl.querySelector<HTMLElement>(
+    '#formationGroupEl',
+  );
+  const experienceGroup = assetEl.querySelector<HTMLElement>(
+    '#experienceGroup',
+  );
   console.log(formationGroup);
   const languageGroup = assetEl.querySelector<HTMLElement>('#languageGroup');
   /**
@@ -824,34 +843,38 @@ const processCVForAPI = async (event: FormDataEvent) => {
   /**
    * @type {{experience: string; details: {task: string; taskDate: string}[]}[]}
    */
-  const experiences: {experience: string; details: {task: string; taskDate: string}[]}[] = [];
-  
-  const languages: {lang: string; level: string}[] = [];
+  const experiences: {
+    experience: string;
+    details: { task: string; taskDate: string }[];
+  }[] = [];
 
-  
-  experienceGroup.querySelectorAll('.experienceGroupEl').forEach((el) => {
+  const languages: { lang: string; level: string }[] = [];
+
+  experienceGroup!.querySelectorAll('.experienceGroupEl').forEach((el) => {
     const details = [] as {
       task: string;
       taskDate: string;
     }[];
-    const exp = el.querySelector<HTMLInputElement>('input[name="experience"]').value;
+    const exp =
+      el.querySelector<HTMLInputElement>('input[name="experience"]')!.value;
     el.querySelectorAll('.lst-component').forEach((el) => {
       const task = el.querySelector<HTMLInputElement>(
-        'input[id="taskInput"]'
-      ).value;
+        'input[id="taskInput"]',
+      )!.value;
       const taskDate = el.querySelector<HTMLInputElement>(
-        'input[id="taskDateInput"]'
-      ).value;
+        'input[id="taskDateInput"]',
+      )!.value;
       details.push({ task, taskDate });
     });
     experiences.push({ experience: exp, details });
   });
-  languageGroup.querySelectorAll('.lst-component').forEach((el) => {
-    const lang = el.querySelector<HTMLInputElement>('#languageInput').value;
-    const languageOption =
-      el.querySelector<HTMLInputElement>('#languageOption');
-    const level =
-      languageOption?.value ?? languageOption?.getAttribute('name') ?? '';
+  languageGroup!.querySelectorAll('.lst-component').forEach((el) => {
+    const lang = el.querySelector<HTMLInputElement>('#languageInput')!.value;
+    const languageOption = el.querySelector<HTMLInputElement>(
+      '#languageOption',
+    );
+    const level = languageOption?.value ??
+      languageOption?.getAttribute('name') ?? '';
     languages.push({ lang, level });
   });
   const data = {
@@ -880,5 +903,5 @@ const processCVForAPI = async (event: FormDataEvent) => {
   });
   const res = await fetcher.json();
   // console.log(res.redirect);
-  window.location.href = res.redirect;
+  globalThis.location.href = res.redirect;
 };

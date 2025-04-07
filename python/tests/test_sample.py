@@ -1,8 +1,6 @@
-from transformers import GPT2Tokenizer, GPT2Model
+def inc(x):
+    return x + 1
 
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2Model.from_pretrained("gpt2")
-text = "Replace me by any text you'd like."
-encoded_input = tokenizer(text, return_tensors="pt")
-output = model(**encoded_input)
-print(output)
+
+def test_answer():
+    assert inc(3) == 4

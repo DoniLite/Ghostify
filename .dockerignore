@@ -57,5 +57,6 @@
 **/build
 **/dist
 **/temp
+**/node_modules
 LICENSE
 README.md

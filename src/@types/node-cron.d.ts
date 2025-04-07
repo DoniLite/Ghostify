@@ -1,4 +1,4 @@
-declare module "node-cron" {
+declare module 'node-cron' {
   class ScheduledTask {
     now(now?: string): void;
     start(): void;
@@ -14,8 +14,8 @@ declare module "node-cron" {
 
   function schedule(
     expression: string,
-    func: Promise<unknown> | ((...args: [])=> unknown),
-    options?: CronScheduleOptions | undefined
+    func: Promise<unknown> | ((...args: []) => unknown),
+    options?: CronScheduleOptions | undefined,
   ): ScheduledTask;
 
   function validate(expression: string): boolean;
