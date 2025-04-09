@@ -1,10 +1,13 @@
-import pkg from 'npm:@prisma/client';
-const { PrismaClient } = pkg;
+
 // import { createClient } from 'redis';
 // @ts-types="@types/pg"
 // import pg from 'pg';
 // import { PrismaPg } from '@prisma/adapter-pg';
 // import process from "node:process";
+
+import pkg from '@prisma/client';
+
+const { PrismaClient } = pkg;
 
 // const { Pool } = pg;
 // const connectionString = `${process.env.DATABASE_URL}`;

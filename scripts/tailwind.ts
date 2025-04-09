@@ -9,6 +9,7 @@ const TAILWIND_ARGS = [
   `${ROOT_DIR}/main.css`,
   '-o',
   `${ROOT_DIR}/static/css/main.css`,
+  '-m',
 ];
 
 let isRunning = false;
@@ -86,7 +87,6 @@ async function watchFiles() {
     const watcher = Deno.watchFs([
       `${ROOT_DIR}/src`,
       `${ROOT_DIR}/main.css`,
-      `${ROOT_DIR}/tailwind.config.js`,
     ]);
 
     for await (const event of watcher) {

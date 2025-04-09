@@ -5,10 +5,10 @@ import { getLoc } from '../utils.ts';
 
 const documentApp = factory.createApp();
 
-documentApp.get('/form', (c) => {
+documentApp.get('/form', async (c) => {
   const session = c.get('session');
   const lang = c.get('language') as "fr" | "es" | "en";
-  const loc = getLoc(lang);
+  const loc = await getLoc(lang);
   const theme = session.get('Theme');
   const footer = {
     bg: 'bg-gray-900',

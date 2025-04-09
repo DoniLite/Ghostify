@@ -94,8 +94,17 @@ const styles = css`
 `;
 
 
-const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children, locales, currentLocal }) => (
-  <html lang={currentLocal}>
+const Layout: FC<LayoutType> = ({
+  isHome,
+  header,
+  footer,
+  meta,
+  children,
+  locales,
+  currentLocal,
+  theme
+}) => (
+  <html lang={currentLocal} data-theme={theme?.default || theme?.userDefault || 'light'}>
     <head>
       <meta charset='UTF-8' />
       <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -115,6 +124,7 @@ const Layout: FC<LayoutType> = ({ isHome, header, footer, meta, children, locale
         <Header {...header} />
         {children}
         <Footer {...footer} />
+        <div id='backToTop'></div>
       </LocalsContext.Provider>
       <Script />
     </body>

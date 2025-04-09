@@ -3,15 +3,16 @@ import Meta, { type MetaProps } from './Meta.tsx';
 import { PropsWithChildren, FC } from 'hono/jsx';
 import Script from './Script.tsx';
 
-type TLayout = PropsWithChildren<{
+export type TLayout = PropsWithChildren<{
   meta?: MetaProps;
   locales?: { default: Record<string, unknown> };
   currentLocal?: string;
+  theme?: Record<string, string>;
 }>;
 
-const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal }) => {
+const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal, theme }) => {
   return (
-    <html lang={currentLocal}>
+    <html lang={currentLocal} data-theme={theme?.default || theme?.userDefault || 'light'}>
       <head>
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
@@ -28,6 +29,7 @@ const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal }) => {
       <body>
         <LocalsContext.Provider value={locales ?? {default: {}}}>
           {children}
+          <div id="backToTop"></div>
         </LocalsContext.Provider>
         <Script />
       </body>

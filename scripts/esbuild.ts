@@ -28,11 +28,11 @@ try {
           './src/client/**/*.tsx',
         ])
         .map((file) => path.resolve(Deno.cwd(), file)),
-    ], // Votre point d'entrée principal
+    ],
     bundle: true,
     minify: !flags.watch,
     sourcemap: flags.watch ? 'inline' : false,
-    target: ['chrome99', 'firefox99', 'safari15'],
+    target: 'esnext',
     outdir: path.join(Deno.cwd(), '/static/js'),
     format: 'esm',
     jsx: 'automatic',
@@ -41,46 +41,22 @@ try {
     loader: {
       '.ts': 'ts',
       '.tsx': 'tsx',
+      '.js': 'js',
+      '.jsx': 'jsx',
+      '.json': 'json',
+      '.css': 'css',
     },
     plugins: [
       ...denoPlugins({
         nodeModulesDir: true,
         configPath: path.join(Deno.cwd(), 'deno.json'),
-        loader: 'portable'
+        loader: 'portable',
+        // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
       }),
-      // {
-      //   name: 'node_modules',
-      //   setup(build) {
-      //     // Gérer les imports de node_modules
-      //     build.onResolve({ filter: /^[^./]|^\.[^./]|^\.\.[^/]/ }, (args) => {
-      //       if (args.kind === 'import-statement') {
-      //         return {
-      //           path: args.path,
-      //           namespace: 'node_modules',
-      //         };
-      //       }
-      //     });
-
-      //     build.onLoad(
-      //       { filter: /.*/, namespace: 'node_modules' },
-      //       async (args) => {
-      //         try {
-      //           const module = await import(args.path);
-      //           return {
-      //             contents: `export default ${JSON.stringify(module)}`,
-      //             loader: 'js',
-      //           };
-      //         } catch (e) {
-      //           console.error(`Failed to load ${args.path}:`, e);
-      //           return { contents: '' };
-      //         }
-      //       }
-      //     );
-      //   },
-      // },
     ],
     define: {
       'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
+      'globalThis.IS_BROWSER': 'true',
     },
   });
 

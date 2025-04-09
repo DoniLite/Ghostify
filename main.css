@@ -13,6 +13,8 @@
   --font-inter: 'Inter', 'serif';
 }
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 .card {
   @apply lg:w-3/4 w-[90%] mx-auto p-2 lg:gap-y-0 gap-y-3 lg:p-4 rounded-lg flex
     lg:justify-between flex-col lg:flex-row h-auto lg:h-auto items-center
@@ -25,6 +27,22 @@
 
 .poster-hidden {
   @apply translate-x-full;
+}
+
+.hide-dash-nav {
+  @apply xl:grid-cols-[5%_94%] grid-cols-[15%_84%]
+}
+
+.show-dash-nav {
+  @apply xl:grid-cols-[19%_80%]
+}
+
+.rotate-icon-inverse {
+  @apply transform rotate-[80]
+}
+
+.rotate-icon-just {
+  @apply transform rotate-[0]
 }
 
 @keyframes showing-nav {

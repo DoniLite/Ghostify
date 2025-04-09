@@ -1,4 +1,5 @@
 import { Button } from '../utils/button.tsx';
+import { Ghostify } from './Icons.tsx';
 
 export type Header = {
   auth: boolean;
@@ -16,7 +17,7 @@ const header = ({ auth }: Header) => {
           <h1 class='text-xl text-bold text-white font-cookie bg-transparent'>
             Ghostify
           </h1>
-          <img src='/static/SVG/ghost.svg' class='w-6 h-6' alt='' />
+          <Ghostify color='w-6 h-6' />
         </a>
       </div>
       <nav class='mobile-nav -translate-x-full text-gray-400 fixed'>
@@ -37,11 +38,10 @@ const header = ({ auth }: Header) => {
             <a href='/contact'>Contact</a>
           </li>
           {auth ? (
-            <>
-            </>
+            ''
           ) : (
-           <>
-             <Button
+            <>
+              <Button
                 content='Get Started'
                 elClass='bg-orange-500 text-white w-[98%] mx-auto py-2 bg-orange-400'
               />
@@ -49,7 +49,7 @@ const header = ({ auth }: Header) => {
                 content='Login'
                 elClass='bg-orange-500 text-white w-[98%] mx-auto py-2 bg-orange-400'
               />
-           </>
+            </>
           )}
         </ul>
       </nav>
@@ -81,7 +81,7 @@ const header = ({ auth }: Header) => {
           <img src='/static/SVG/ghost.svg' class='w-12 h-12' alt='' />
         </div>
         <ul class='flex justify-between w-2/4 items-center pr-16'>
-        <li class='flex items-center font-bold text-orange-400 justify-center cursor-pointer hover:text-orange-400 transition-all'>
+          <li class='flex items-center font-bold text-orange-400 justify-center cursor-pointer hover:text-orange-400 transition-all'>
             <a href='/'>Home</a>
           </li>
           <li class='flex items-center font-bold justify-center hover:text-orange-400 transition-all'>
