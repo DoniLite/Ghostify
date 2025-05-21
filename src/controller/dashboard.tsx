@@ -5,7 +5,7 @@ import TLayout, {
 } from '../components/shared/TLayout.tsx';
 import { factory } from '../factory.ts';
 import { authMiddleware } from '../hooks/auth.ts';
-import { getLoc } from '../utils.ts';
+import { getLoc } from '../utils/helpers.ts';
 
 const dashboardApp = factory.createApp();
 

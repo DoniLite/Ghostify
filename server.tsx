@@ -17,7 +17,7 @@ import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
-import { getFileHeaders, getLoc, termsMD, unify, verifyJWT } from './src/utils.ts';
+import { getFileHeaders, getLoc, termsMD, unify, verifyJWT } from './src/utils/helpers.ts';
 import { stream } from 'hono/streaming';
 import authApp from './src/controller/auth.tsx';
 import { html } from 'hono/html';

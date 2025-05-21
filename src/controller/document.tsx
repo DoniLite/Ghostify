@@ -1,7 +1,7 @@
 import Layout, { LayoutType } from '../components/shared/Layout.tsx';
 import { factory } from '../factory.ts';
 import DocumentForm from '../pages/Document.tsx';
-import { getLoc } from '../utils.ts';
+import { getLoc } from '../utils/helpers.ts';
 
 const documentApp = factory.createApp();
 
