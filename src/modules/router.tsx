@@ -158,7 +158,7 @@ export class HonoClientRouter {
    */
   private handleRouteChange(): void {
     let path = globalThis.location.pathname;
-    const search = globalThis.location.search;
+    const {search} = globalThis.location;
     const query = this.extractQueryParams(search);
 
     // Gérer le baseLink
