@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/*
+  Using OKLCH for colors provides better perceptual uniformity
+  and makes it easier to manipulate lightness (L), chroma (C), and hue (H).
+  The values below are estimates based on the provided Ghostify image.
+*/
+
+/* --- Inline Theme Configuration for Tailwind CSS v4 --- */
+@theme inline {
+  /* Mapping of semantic color names to CSS variables.
+     Tailwind utilities like `bg-background` will then use `var(--background)`.
+     For Tailwind v4, we define the aliases here.
+  */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Mapping for specific component colors, like sidebar from your example */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Chart colors mapping (as in your example) */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Mapping for border-radius values */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px); /* For completeness */
+
+  /* You can also define other theme properties directly here in v4, e.g., fonts, spacing, etc. */
+  /* For example:
+  --font-sans: 'Inter', sans-serif;
+  --spacing-1: 0.25rem;
+  */
+}
+
+/*
+  Custom variant for dark mode if you prefer explicit class toggling.
+  This assumes you'll add 'dark' class to your HTML element for dark mode.
+*/
+@custom-variant light (&:is(.light *));
+
+
+/* --- Dark Theme Variables (Default for Ghostify) --- */
+:root {
+  /*
+    All colors are defined using oklch() for perceptual uniformity and better control.
+    Values are carefully picked to match the visual feel of the provided image:
+    A very dark, slightly desaturated blue-black base with vibrant orange accents.
+  */
+
+  /* Neutrals: Base colors for backgrounds, text, borders in dark mode */
+  --background: oklch(0.08 0.02 260); /* Very dark, subtle purplish-blue */
+  --foreground: oklch(0.92 0.01 260); /* Muted, slightly warm off-white */
+  --card: oklch(0.12 0.025 260); /* Slightly lighter dark for card backgrounds */
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.15 0.03 260); /* Even lighter for popovers/modals */
+  --popover-foreground: var(--foreground);
+  --border: oklch(0.20 0.02 260); /* Subtle dark border line */
+  --input: var(--card); /* Input fields match card background */
+  --muted: oklch(0.10 0.02 260); /* Deeper dark for less prominent backgrounds */
+  --muted-foreground: oklch(0.60 0.015 260); /* Medium gray for muted text */
+  --ring: oklch(0.70 0.15 50); /* Primary orange for focus rings */
+
+  /* Semantic Colors: Main branding and action colors */
+  --primary: oklch(0.65 0.18 50); /* Vibrant Orange (main branding color from buttons/highlights) */
+  --primary-foreground: oklch(0.10 0.01 50); /* Very dark text on primary orange */
+  --secondary: oklch(0.55 0.08 220); /* A subtle cool blue for secondary actions/accents (like "Ghost" glow) */
+  --secondary-foreground: oklch(0.95 0.005 220); /* Light text on secondary blue */
+  --accent: oklch(0.75 0.15 50); /* Lighter orange for hover/active states on primary */
+  --accent-foreground: oklch(0.05 0.01 50); /* Dark text on light accent */
+  --destructive: oklch(0.60 0.18 10); /* Red for destructive actions */
+  --destructive-foreground: oklch(0.95 0.005 10); /* Light text on destructive red */
+
+  /* Sidebar Colors (as per your example, could be same as main theme or slightly different) */
+  --sidebar: var(--background); /* Keeping sidebar same as main background for simplicity, adjust if different */
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--secondary-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  /* Chart Colors (placeholders, adjust as needed for data visualization in dark mode) */
+  --chart-1: oklch(0.70 0.20 40); /* Warm orange-red */
+  --chart-2: oklch(0.65 0.15 180); /* Teal-blue */
+  --chart-3: oklch(0.60 0.10 240); /* Medium blue */
+  --chart-4: oklch(0.75 0.18 80); /* Yellow-green */
+  --chart-5: oklch(0.68 0.12 300); /* Purple-pink */
+
+  /* Border Radius */
+  --radius: 0.625rem; /* 10px - slightly rounded, fits the image better than 0.75rem */
+}
+
+/* --- Light Theme Variables (Optional - uncomment if you want to support light mode) --- */
+
+.light {
+  --background: oklch(0.98 0.005 260);
+  --foreground: oklch(0.15 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--foreground);
+  --border: oklch(0.90 0.008 260);
+  --input: oklch(0.90 0.008 260);
+  --muted: oklch(0.95 0.006 260);
+  --muted-foreground: oklch(0.40 0.008 260);
+  --ring: oklch(0.60 0.15 50);
+
+  --primary: oklch(0.55 0.18 50);
+  --primary-foreground: oklch(0.98 0.005 50);
+  --secondary: oklch(0.45 0.08 220);
+  --secondary-foreground: oklch(0.98 0.005 220);
+  --accent: oklch(0.85 0.05 50);
+  --accent-foreground: oklch(0.20 0.02 50);
+  --destructive: oklch(0.50 0.18 10);
+  --destructive-foreground: oklch(0.98 0.005 10);
+
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--secondary-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --chart-1: oklch(0.60 0.20 40);
+  --chart-2: oklch(0.55 0.15 180);
+  --chart-3: oklch(0.50 0.10 240);
+  --chart-4: oklch(0.65 0.18 80);
+  --chart-5: oklch(0.58 0.12 300);
+}
+
+
+/* --- Base Styles applied universally --- */
+@layer base {
+  * {
+    /* Apply border color using the mapped Tailwind utility */
+    @apply border-border;
+    /* Apply focus ring (outline) using the mapped Tailwind utility */
+    @apply outline-offset-2 outline-ring;
+    /* Explicitly remove default browser outline if using custom ring */
+    outline: 2px solid transparent;
+  }
+  body {
+    /* Apply background and text colors using mapped Tailwind utilities */
+    @apply bg-background text-foreground;
+    /* Font smoothing for better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
