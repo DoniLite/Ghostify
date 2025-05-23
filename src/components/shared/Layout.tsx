@@ -1,10 +1,9 @@
-import { PropsWithChildren, FC } from 'hono/jsx';
 import { css, Style } from 'hono/css';
 import Header, { type Header as HType } from './Header.tsx';
 import Script from './Script.tsx';
 import Footer, {Props as FooterProps} from './Footer.tsx';
 import Meta, {type MetaProps} from './Meta.tsx';
-import { createContext } from 'hono/jsx'
+import { createContext, FC, PropsWithChildren } from 'react';
 
 
 export const LocalsContext = createContext<LayoutType['locales']>({default: {}});
@@ -106,7 +105,7 @@ const Layout: FC<LayoutType> = ({
 }) => (
   <html lang={currentLocal} data-theme={theme?.default || theme?.userDefault || 'light'}>
     <head>
-      <meta charset='UTF-8' />
+      <meta charSet='UTF-8' />
       <meta name='viewport' content='width=device-width, initial-scale=1.0' />
       <meta
         name='author'

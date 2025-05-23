@@ -14,7 +14,7 @@ const flags = parseArgs(Deno.args, {
 await ensureDir(path.join(Deno.cwd(), '/static/js'));
 
 try {
-  const _result = await build({
+  await build({
     entryPoints: [
       ...glob
         .sync([
@@ -28,6 +28,41 @@ try {
           './src/client/**/*.tsx',
         ])
         .map((file) => path.resolve(Deno.cwd(), file)),
+    ],
+    bundle: true,
+    minify: !flags.watch,
+    sourcemap: flags.watch ? 'inline' : false,
+    target: 'esnext',
+    outdir: path.join(Deno.cwd(), '/static/js'),
+    format: 'esm',
+    jsx: 'automatic',
+    jsxImportSource: 'hono/jsx/dom',
+    platform: 'browser',
+    loader: {
+      '.ts': 'ts',
+      '.tsx': 'tsx',
+      '.js': 'js',
+      '.jsx': 'jsx',
+      '.json': 'json',
+      '.css': 'css',
+    },
+    plugins: [
+      ...denoPlugins({
+        nodeModulesDir: true,
+        configPath: path.join(Deno.cwd(), 'deno.json'),
+        loader: 'portable',
+        // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
+      }),
+    ],
+    define: {
+      'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
+      'globalThis.IS_BROWSER': 'true',
+    },
+  });
+
+  await build({
+    entryPoints: [
+      './client.tsx'
     ],
     bundle: true,
     minify: !flags.watch,

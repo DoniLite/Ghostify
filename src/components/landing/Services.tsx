@@ -1,27 +1,27 @@
 export default function() {
     return (
-      <section id='services' class='py-20'>
-        <div class='container mx-auto px-4'>
-          <div class='text-center mb-16'>
-            <span class='bg-gradient-to-r from-orange-600 to-orange-400 py-1 px-4 rounded-full text-sm font-medium text-white'>
+      <section id='services' className='py-20'>
+        <div className='container mx-auto px-4'>
+          <div className='text-center mb-16'>
+            <span className='bg-gradient-to-r from-orange-600 to-orange-400 py-1 px-4 rounded-full text-sm font-medium text-white'>
               Nos Services
             </span>
-            <h2 class='text-3xl md:text-4xl font-bold mt-4 mb-6'>
+            <h2 className='text-3xl md:text-4xl font-bold mt-4 mb-6'>
               Solutions documentaires complètes pour les développeurs
             </h2>
-            <p class='text-gray-400 max-w-2xl mx-auto'>
+            <p className='text-gray-400 max-w-2xl mx-auto'>
               Intégrez des fonctionnalités avancées de gestion documentaire à
               vos applications avec nos APIs hautement performantes et
               évolutives.
             </p>
           </div>
 
-          <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            <div class='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
-              <div class='w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-6 text-white'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+            <div className='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
+              <div className='w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-6 text-white'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
-                  class='h-7 w-7'
+                  className='h-7 w-7'
                   fill='none'
                   viewBox='0 0 24 24'
                   stroke='currentColor'
@@ -34,17 +34,17 @@ export default function() {
                   />
                 </svg>
               </div>
-              <h3 class='text-xl font-bold mb-3'>Traduction de Documents</h3>
-              <p class='text-gray-400 mb-5 flex-1'>
+              <h3 className='text-xl font-bold mb-3'>Traduction de Documents</h3>
+              <p className='text-gray-400 mb-5 flex-1'>
                 Traduisez vos documents dans différents types de formats
               </p>
 
-              <div class='mt-auto'>
-                <div class='mb-4'>
-                  <div class='flex items-center mb-2'>
+              <div className='mt-auto'>
+                <div className='mb-4'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -54,12 +54,12 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Performance et optimisation</span>
+                    <span className='text-sm'>Performance et optimisation</span>
                   </div>
-                  <div class='flex items-center mb-2'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -69,12 +69,12 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Formats PDF, DOCX, HTML</span>
+                    <span className='text-sm'>Formats PDF, DOCX, HTML</span>
                   </div>
-                  <div class='flex items-center'>
+                  <div className='flex items-center'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -84,15 +84,15 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Traduction en masse</span>
+                    <span className='text-sm'>Traduction en masse</span>
                   </div>
                 </div>
 
-                <div class='bg-gray-800 rounded-lg overflow-hidden p-2'>
-                  <pre class='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
+                <div className='bg-gray-800 rounded-lg overflow-hidden p-2'>
+                  <pre className='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
                     <code>POST /api/documents/translate</code>
                   </pre>
-                  <pre class='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
+                  <pre className='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
                     <code>
                       {JSON.stringify({
                         template: 'invoice_v2',
@@ -190,11 +190,11 @@ export default function() {
               </div>
             </div> */}
 
-            <div class='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
-              <div class='w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-pink-800 flex items-center justify-center mb-6 text-white'>
+            <div className='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
+              <div className='w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-pink-800 flex items-center justify-center mb-6 text-white'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
-                  class='h-7 w-7'
+                  className='h-7 w-7'
                   fill='none'
                   viewBox='0 0 24 24'
                   stroke='currentColor'
@@ -207,18 +207,18 @@ export default function() {
                   />
                 </svg>
               </div>
-              <h3 class='text-xl font-bold mb-3'>Conversion de Documents</h3>
-              <p class='text-gray-400 mb-5 flex-1'>
+              <h3 className='text-xl font-bold mb-3'>Conversion de Documents</h3>
+              <p className='text-gray-400 mb-5 flex-1'>
                 Convertissez vos documents entre différents formats tout en
                 préservant la mise en forme et les éléments complexes.
               </p>
 
-              <div class='mt-auto'>
-                <div class='mb-4'>
-                  <div class='flex items-center mb-2'>
+              <div className='mt-auto'>
+                <div className='mb-4'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -228,12 +228,12 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>PDF, DOCX, HTML, Markdown</span>
+                    <span className='text-sm'>PDF, DOCX, HTML, Markdown</span>
                   </div>
-                  <div class='flex items-center mb-2'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -243,12 +243,12 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Préservation de la mise en page</span>
+                    <span className='text-sm'>Préservation de la mise en page</span>
                   </div>
-                  <div class='flex items-center'>
+                  <div className='flex items-center'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -258,15 +258,15 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Traitement par lots</span>
+                    <span className='text-sm'>Traitement par lots</span>
                   </div>
                 </div>
 
-                <div class='bg-gray-800 rounded-lg overflow-hidden p-2'>
-                  <pre class='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
+                <div className='bg-gray-800 rounded-lg overflow-hidden p-2'>
+                  <pre className='text-xs text-cyan-400 overflow-x-auto custom-scrollbar'>
                     <code>POST /api/documents/convert</code>
                   </pre>
-                  <pre class='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
+                  <pre className='text-xs text-gray-400 overflow-x-auto custom-scrollbar'>
                     <code>
                       {JSON.stringify({
                         source: 'pdf',
@@ -279,11 +279,11 @@ export default function() {
               </div>
             </div>
 
-            <div class='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
-              <div class='w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center mb-6 text-white'>
+            <div className='glass rounded-xl p-6 border border-gray-800 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20 flex flex-col'>
+              <div className='w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center mb-6 text-white'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
-                  class='h-7 w-7'
+                  className='h-7 w-7'
                   fill='none'
                   viewBox='0 0 24 24'
                   stroke='currentColor'
@@ -296,18 +296,18 @@ export default function() {
                   />
                 </svg>
               </div>
-              <h3 class='text-xl font-bold mb-3'>Création de CV</h3>
-              <p class='text-gray-400 mb-5 flex-1'>
+              <h3 className='text-xl font-bold mb-3'>Création de CV</h3>
+              <p className='text-gray-400 mb-5 flex-1'>
                 Générez des CV professionnels avec des modèles personnalisables
                 pour les applications RH et les sites de recrutement.
               </p>
 
-              <div class='mt-auto'>
-                <div class='mb-4'>
-                  <div class='flex items-center mb-2'>
+              <div className='mt-auto'>
+                <div className='mb-4'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -317,12 +317,12 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Templates modernes</span>
+                    <span className='text-sm'>Templates modernes</span>
                   </div>
-                  <div class='flex items-center mb-2'>
+                  <div className='flex items-center mb-2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
-                      class='h-5 w-5 text-green-500 mr-2'
+                      className='h-5 w-5 text-green-500 mr-2'
                       viewBox='0 0 20 20'
                       fill='currentColor'
                     >
@@ -332,7 +332,7 @@ export default function() {
                         clip-rule='evenodd'
                       />
                     </svg>
-                    <span class='text-sm'>Personnalisation avancée</span>
+                    <span className='text-sm'>Personnalisation avancée</span>
                   </div>
                 </div>
               </div>

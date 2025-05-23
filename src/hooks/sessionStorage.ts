@@ -1,8 +1,5 @@
-import {
-  saveKeys,
-  loadKeys,
-} from '../utils/helpers.ts';
 import { factory } from '../factory.ts';
+import { loadKeys, saveKeys } from '../utils/security/cryptography.ts';
 
 
 const sessionMiddleware = factory.createMiddleware(async (c, next) => {

@@ -1,26 +1,31 @@
-import { Hono} from 'hono';
+import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
-import { Session, sessionMiddleware, CookieStore } from 'npm:hono-sessions';
+import { CookieStore, Session, sessionMiddleware } from 'npm:hono-sessions';
 import { type SessionData } from './src/@types/index.d.ts';
-import Wrapper, { type LayoutType } from './src/components/shared/Layout.tsx';
-import Index from './src/pages/Index.tsx';
+import { type LayoutType } from './src/components/shared/Layout.tsx';
 import { type Props as FooterProps } from './src/components/shared/Footer.tsx';
 import sessionManager from './src/hooks/sessionStorage.ts';
 import dotenv from 'dotenv';
 import process from 'node:process';
 import { languageDetector } from 'hono/language';
 import { compress } from 'hono/compress';
-import NotFound from './src/components/shared/404.tsx';
 import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
-import { getFileHeaders, getLoc, termsMD, unify, verifyJWT } from './src/utils/helpers.ts';
+import { getLoc } from './src/utils/helpers.ts';
 import { stream } from 'hono/streaming';
 import authApp from './src/controller/auth.tsx';
 import { html } from 'hono/html';
+import { termsMD } from './src/utils/templates/markdownPage.ts';
+import { unify } from './src/utils/security/purify.ts';
+import { verifyJWT } from './src/utils/security/jwt.ts';
+import { getFileHeaders } from './src/utils/file_system/headers.ts';
+import { renderToReadableStream } from 'react-dom/server';
+import App from './src/App.tsx';
+import { StaticRouter } from 'react-router-dom';
 
 if (Deno.env.get('NODE_ENV') !== 'production') {
   dotenv.config();
@@ -48,7 +53,7 @@ app.use(
       path: '/', // Required for this library to work properly
       httpOnly: true, // Recommended to avoid XSS attacks
     },
-  })
+  }),
 );
 app.use('/api/*', (c, next) => {
   const jwtMiddleware = jwt({
@@ -64,13 +69,13 @@ app.use(
     fallbackLanguage: 'en', // Required
     order: ['querystring', 'path', 'cookie', 'header'],
     lookupCookie: 'lang',
-    lookupQueryString: 'lang'
-  })
+    lookupQueryString: 'lang',
+  }),
 );
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
 app.use('*', sessionManager);
-app.get('/', async (c) => {
+app.get('/init', async (c) => {
   const session = c.get('session');
   const lang = c.get('language') as 'en' | 'es' | 'fr';
   const loc = await getLoc(lang);
@@ -90,15 +95,12 @@ app.get('/', async (c) => {
     locales: loc,
     theme: theme ?? {},
   };
-  return c.html(
-    <Wrapper {...layout}>
-      <Index />
-    </Wrapper>
-  );
+  return c.json(layout);
 });
 app.get('/terms', async (c) => {
-  const terms = await unify(termsMD)
-  const htmlStr = html`<!DOCTYPE html>
+  const terms = await unify(termsMD);
+  const htmlStr = html`
+    <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -108,14 +110,15 @@ app.get('/terms', async (c) => {
       <body>
         ${terms}
       </body>
-    </html>`;
+    </html>
+  `;
   return c.html(htmlStr);
-})
+});
 app.get('/download/:file', async (c) => {
   const file = c.req.param('file');
   const resourceDir = path.resolve(process.cwd(), './static');
   try {
-    const {path: rPath} = await verifyJWT(file);
+    const { path: rPath } = await verifyJWT(file);
     if (typeof rPath === 'string') {
       const resourcePath = path.join(resourceDir, rPath);
       const fileContent = await Deno.readFile(resourcePath);
@@ -139,7 +142,7 @@ app.get('/stream/:file', async (c) => {
   const file = c.req.param('file');
   const resourceDir = path.resolve(process.cwd(), './static');
   try {
-    const {path: rPath} = await verifyJWT(file);
+    const { path: rPath } = await verifyJWT(file);
     if (typeof rPath === 'string') {
       const resourcePath = path.join(resourceDir, rPath);
       const fileContent = await Deno.open(resourcePath);
@@ -155,13 +158,24 @@ app.get('/stream/:file', async (c) => {
     c.status(404);
     return c.text('cannot access to this resource');
   }
-})
+});
 app.route('/document/', documentApp);
 app.route('/auth/', authApp);
-app.get('*', (c) => c.html(
-  <NotFound />
-));
-
+app.get('*', async (c) => {
+  const stream = await renderToReadableStream(
+    <StaticRouter location={c.req.path}>
+      <App />
+    </StaticRouter>,
+    {
+      bootstrapScripts: ['/js/client.js'],
+    },
+  );
+  return c.newResponse(
+    stream,
+    200,
+    { 'content-type': 'text/html' },
+  );
+});
 Deno.serve({
-  port: 8080
-},app.fetch);
+  port: 8080,
+}, app.fetch);

@@ -4,13 +4,14 @@ import { z } from 'zod';
 import { validator } from 'hono/validator';
 import Login from '../pages/Login.tsx';
 import { prismaClient } from '../config/db.ts';
-import { compareHash, getLoc } from '../utils/helpers.ts';
+import { getLoc } from '../utils/helpers.ts';
 import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
 import Register from '../pages/Register.tsx';
 import TLayout from '../components/shared/TLayout.tsx';
 import dashboardApp from './dashboard.tsx';
+import { compareHash } from '../utils/security/hash.ts';
 
 const authApp = factory.createApp();
 
@@ -100,32 +101,32 @@ const loginHandlers = factory.createHandlers(
 );
 
 authApp.post('/login', ...loginHandlers);
-authApp.get('/login', authMiddleware, async (c) => {
-  const lang = c.get('language') as "fr" | "es" | "en";
-  const loc = await getLoc(lang);
-  const props = {
-    title: 'Ghostify | Login',
-    description: 'Login to your account',
-  }
-  return c.html(
-    <TLayout meta={props} locales={loc} currentLocal={lang}>
-      <Login />
-    </TLayout>
-  );
-});
-authApp.get('/register', async (c) => {
-  const lang = c.get('language') as 'fr' | 'es' | 'en';
-  const loc = await getLoc(lang);
-   const props = {
-    title: 'Ghostify | Login',
-    description: 'Login to your account',
-  }
-  return c.html(
-    <TLayout meta={props} locales={loc} currentLocal={lang}>
-      <Register />
-    </TLayout>
-  );
-})
+// authApp.get('/login', authMiddleware, async (c) => {
+//   const lang = c.get('language') as "fr" | "es" | "en";
+//   const loc = await getLoc(lang);
+//   const props = {
+//     title: 'Ghostify | Login',
+//     description: 'Login to your account',
+//   }
+//   return c.html(
+//     <TLayout meta={props} locales={loc} currentLocal={lang}>
+//       <Login />
+//     </TLayout>
+//   );
+// });
+// authApp.get('/register', async (c) => {
+//   const lang = c.get('language') as 'fr' | 'es' | 'en';
+//   const loc = await getLoc(lang);
+//    const props = {
+//     title: 'Ghostify | Login',
+//     description: 'Login to your account',
+//   }
+//   return c.html(
+//     <TLayout meta={props} locales={loc} currentLocal={lang}>
+//       <Register />
+//     </TLayout>
+//   );
+// })
 authApp.route('/dashboard', dashboardApp)
 
 export default authApp;

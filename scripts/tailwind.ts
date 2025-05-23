@@ -6,7 +6,7 @@ const TAILWIND_CMD = 'npx';
 const TAILWIND_ARGS = [
   '@tailwindcss/cli',
   '-i',
-  `${ROOT_DIR}/main.css`,
+  `${ROOT_DIR}/src/assets/tailwind.css`,
   '-o',
   `${ROOT_DIR}/static/css/main.css`,
   '-m',
