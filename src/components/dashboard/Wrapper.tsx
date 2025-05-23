@@ -1,16 +1,17 @@
-import { FC, PropsWithChildren } from 'hono/jsx';
+import { PropsWithChildren } from 'hono/jsx';
+import Sidebar from './sidebar.tsx';
 
-export type Props = PropsWithChildren<{
-  user?: string;
-}>;
-
-
-const Wrapper: FC<Props> = ({ children }) => {
-    return (
-        <div className='flex flex-col items-center justify-center h-screen'>
-            {children}
-        </div>
-    );
+const Wrapper = ({ children }: PropsWithChildren) => {
+  return (
+    <div id='dashboardContainer' class='grid hide-dash-nav w-full gap-3 h-screen overflow-hidden'>
+      <Sidebar />
+      {children}
+      <script
+        type='module'
+        src='/static/js/frontend/dashboard/index.js'
+      ></script>
+    </div>
+  );
 };
 
 export default Wrapper;

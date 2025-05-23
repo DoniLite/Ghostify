@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { cvClass, cvDownloader, getLoc, renaming, tokenGenerator } from '../utils.ts';
+import { cvClass, cvDownloader, getLoc, renaming, tokenGenerator } from '../utils/helpers.ts';
 import type { QueryXData, RawCV } from '../@types/index.d.ts';
 import { prismaClient } from '../config/db.ts';
 import { randomInt } from 'node:crypto';

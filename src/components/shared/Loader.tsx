@@ -11,20 +11,20 @@ const Loader = ({isPage} : Props) => {
         {isPage && <Header auth={false} />}
         <div
           id='pageLoader'
-          class='flex items-center justify-center w-full h-[100vh] text-white bg-gray-950'
+          className='flex items-center justify-center w-full h-[100vh] text-white bg-gray-950'
         >
           <div id='loaderHead'>
-            <h2 class=' animate-bounce lg:text-2xl font-bold'>
+            <h2 className=' animate-bounce lg:text-2xl font-bold'>
               Chargement veuillez patinter...
             </h2>
-            <h1 class='text-xl md:text-7xl font-bold flex items-center'>
+            <h1 className='text-xl md:text-7xl font-bold flex items-center'>
               L
               <svg
                 stroke='currentColor'
                 fill='currentColor'
                 stroke-width='0'
                 viewBox='0 0 24 24'
-                class='animate-spin'
+                className='animate-spin'
                 height='1em'
                 width='1em'
                 xmlns='http://www.w3.org/2000/svg'
