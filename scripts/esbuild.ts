@@ -36,7 +36,7 @@ try {
     outdir: path.join(Deno.cwd(), '/static/js'),
     format: 'esm',
     jsx: 'automatic',
-    jsxImportSource: 'hono/jsx/dom',
+    jsxImportSource: 'react',
     platform: 'browser',
     loader: {
       '.ts': 'ts',
@@ -71,7 +71,7 @@ try {
     outdir: path.join(Deno.cwd(), '/static/js'),
     format: 'esm',
     jsx: 'automatic',
-    jsxImportSource: 'hono/jsx/dom',
+    jsxImportSource: 'react',
     platform: 'browser',
     loader: {
       '.ts': 'ts',

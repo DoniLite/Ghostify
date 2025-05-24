@@ -1,16 +1,32 @@
-export const Button = ({link, content, elClass, type}: {
+import { PropsWithChildren } from 'react';
+
+type ButtonPropsType = PropsWithChildren<{
   link?: string;
-  content: string;
   elClass?: string;
-  type?: `button` | `submit` | `reset`
-}) => {
-    if(link) return (
+  type?: `button` | `submit` | `reset`;
+} & Record<string | number | symbol, unknown>>;
+
+export const Button = (
+  { link, children, elClass, type, ...rest }: ButtonPropsType,
+) => {
+  if (link) {
+    return (
       <a
         href={link}
-        class={`${elClass} font-bold rounded-lg text-center`}
-      >{content}</a>
+        className={`${elClass} font-bold rounded-lg text-center`}
+        {...rest}
+      >
+        {children}
+      </a>
     );
-    return (
-        <button type={type ?? 'button'} class={`font-bold rounded-lg text-center ${elClass}`}>{content}</button>
-    )
+  }
+  return (
+    <button
+      type={type ?? 'button'}
+      className={`font-bold rounded-lg text-center ${elClass}`}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
 };

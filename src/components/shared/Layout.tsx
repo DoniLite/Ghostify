@@ -1,24 +1,20 @@
-import { css, Style } from 'hono/css';
-import Header, { type Header as HType } from './Header.tsx';
+import Header from './Header.tsx';
 import Script from './Script.tsx';
-import Footer, {Props as FooterProps} from './Footer.tsx';
-import Meta, {type MetaProps} from './Meta.tsx';
+import Footer from './Footer.tsx';
+import Meta from './Meta.tsx';
 import { createContext, FC, PropsWithChildren } from 'react';
+import { defaultSeo, SeoContext } from './SEO.ts';
+import { ThemeProvider } from './ThemeProvider.tsx';
 
+export const LocalsContext = createContext<
+  { default: Record<string, unknown> }
+>({
+  default: {},
+});
 
-export const LocalsContext = createContext<LayoutType['locales']>({default: {}});
+export type LayoutType = PropsWithChildren;
 
-export type LayoutType = PropsWithChildren<{
-  theme?: Record<string, string>;
-  isHome?: boolean;
-  header: HType;
-  footer: FooterProps;
-  meta?: MetaProps;
-  locales: {default: Record<string, unknown>};
-  currentLocal: string;
-}>;
-
-const styles = css`
+const styles = `
   @keyframes float {
     0% {
       transform: translateY(0px);
@@ -92,41 +88,37 @@ const styles = css`
   }
 `;
 
-
-const Layout: FC<LayoutType> = ({
-  isHome,
-  header,
-  footer,
-  meta,
-  children,
-  locales,
-  currentLocal,
-  theme
-}) => (
-  <html lang={currentLocal} data-theme={theme?.default || theme?.userDefault || 'light'}>
-    <head>
-      <meta charSet='UTF-8' />
-      <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-      <meta
-        name='author'
-        content='This website is powered by Doni Lite and its contributors'
-      />
-      <meta name='creator' content='Doni Lite' />
-      <link rel='stylesheet' href='/static/all.min.css' />
-      <link rel='icon' type='image/svg+xml' href='/static/SVG/gostify.svg' />
-      <link rel='stylesheet' href='/static/css/main.css' />
-      {isHome && <Style>{styles}</Style>}
-      <Meta {...meta} />
-    </head>
-    <body>
-      <LocalsContext.Provider value={locales}>
-        <Header {...header} />
-        {children}
-        <Footer {...footer} />
-        <div id='backToTop'></div>
-      </LocalsContext.Provider>
-      <Script />
-    </body>
+const Layout: FC<LayoutType> = ({ children }) => (
+  <html
+    lang='fr'
+    // data-theme={theme?.default || theme?.userDefault || 'light'}
+  >
+    <SeoContext.Provider value={defaultSeo}>
+      <head>
+        <meta charSet='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta
+          name='author'
+          content='This website is powered by Doni Lite and its contributors'
+        />
+        <meta name='creator' content='Doni Lite' />
+        <link rel='stylesheet' href='/static/all.min.css' />
+        <link rel='icon' type='image/svg+xml' href='/static/SVG/gostify.svg' />
+        <link rel='stylesheet' href='/static/css/main.css' />
+        <style dangerouslySetInnerHTML={{ __html: styles }} />
+        <Meta />
+      </head>
+      <body>
+        <ThemeProvider defaultTheme="system" serverTheme="dark">
+          <LocalsContext.Provider value={{ default: {} }}>
+            <Header />
+            {children}
+            <Footer />
+          </LocalsContext.Provider>
+        </ThemeProvider>
+        <Script />
+      </body>
+    </SeoContext.Provider>
   </html>
 );
 

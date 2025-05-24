@@ -4,8 +4,6 @@ import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
 import { CookieStore, Session, sessionMiddleware } from 'npm:hono-sessions';
 import { type SessionData } from './src/@types/index.d.ts';
-import { type LayoutType } from './src/components/shared/Layout.tsx';
-import { type Props as FooterProps } from './src/components/shared/Footer.tsx';
 import sessionManager from './src/hooks/sessionStorage.ts';
 import dotenv from 'dotenv';
 import process from 'node:process';
@@ -26,6 +24,7 @@ import { getFileHeaders } from './src/utils/file_system/headers.ts';
 import { renderToReadableStream } from 'react-dom/server';
 import App from './src/App.tsx';
 import { StaticRouter } from 'react-router-dom';
+import { getThemeScript } from './src/components/shared/ThemeProvider.tsx';
 
 if (Deno.env.get('NODE_ENV') !== 'production') {
   dotenv.config();
@@ -80,17 +79,8 @@ app.get('/init', async (c) => {
   const lang = c.get('language') as 'en' | 'es' | 'fr';
   const loc = await getLoc(lang);
   const theme = session.get('Theme');
-  const footer: FooterProps = {
-    bg: 'bg-gray-900',
-    text: 'text-gray-100',
-    title: 'text-gray-400',
-  };
-  const layout: LayoutType = {
+  const layout = {
     isHome: true,
-    header: {
-      auth: session.get('Auth')!.authenticated,
-    },
-    footer,
     currentLocal: lang,
     locales: loc,
     theme: theme ?? {},
@@ -167,7 +157,8 @@ app.get('*', async (c) => {
       <App />
     </StaticRouter>,
     {
-      bootstrapScripts: ['/js/client.js'],
+      bootstrapModules: ['/static/js/client.js'],
+      bootstrapScriptContent: getThemeScript('dark')
     },
   );
   return c.newResponse(
