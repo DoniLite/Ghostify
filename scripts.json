@@ -5,7 +5,19 @@
       "cmd": "deno run --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
       "desc": "Running the Ghostify dev server",
       "watch": true,
-      "log": "debug"
+      "log": "info"
+    },
+    "build:client": {
+      "cmd": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/esbuild.ts",
+      "desc": "Running the esbuild compiling stage",
+      "watch": true,
+      "log": "info"
+    },
+    "tailwind": {
+      "cmd": "deno run -A scripts/tailwind.ts build",
+      "desc": "Running the tailwind compiling stage",
+      "watch": true,
+      "log": "info"
     }
   },
   "watcher": {

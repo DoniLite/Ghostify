@@ -25,35 +25,50 @@ const HeroSection = () => {
             </Button>
           </div>
         </div>
-        <div className='flex-1 flex justify-center lg:justify-end'>
-          <div className='w-full max-w-lg bg-card rounded-xl p-6 shadow-lg border border-border'>
-            {/* This is a simplified representation of the dashboard-like element */}
-            <div className='flex items-center space-x-2 mb-4'>
-              <span className='h-3 w-3 bg-red-500 rounded-full'></span>
-              <span className='h-3 w-3 bg-yellow-500 rounded-full'></span>
-              <span className='h-3 w-3 bg-green-500 rounded-full'></span>
+
+        <div className='md:w-5/12 floating relative'>
+          <div className='relative bg-card rounded-xl overflow-hidden border border-border shadow-xl'>
+            <div className='h-8 flex items-center px-4'>
+              <div className='flex space-x-1.5'>
+                <div className='w-3 h-3 rounded-full bg-red-500'></div>
+                <div className='w-3 h-3 rounded-full bg-yellow-500'></div>
+                <div className='w-3 h-3 rounded-full bg-green-500'></div>
+              </div>
             </div>
-            <div className='flex space-x-3 mb-4'>
-              <Button className='bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-nunito'>
-                Create
-              </Button>
-              <Button className='bg-accent text-accent-foreground px-4 py-2 rounded-md text-sm font-nunito'>
-                Convert
-              </Button>
-              <Button className='bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-nunito'>
-                CV
-              </Button>
-            </div>
-            <div className='space-y-4'>
-              <div className='h-8 bg-muted rounded-md w-full'></div>
-              <div className='h-8 bg-muted rounded-md w-11/12'></div>
-              <div className='h-8 bg-muted rounded-md w-full'></div>
-              <div className='h-8 bg-muted rounded-md w-10/12'></div>
-            </div>
-            <div className='mt-6 h-12 bg-gradient-to-r from-primary to-accent rounded-md'>
+            <div className='p-4 bg-muted'>
+              <div className='glass rounded-lg p-4 border border-border'>
+                <div className='flex space-x-2 mb-4'>
+                  <div className='px-2 py-1 rounded-md bg-primary text-xs font-medium'>
+                    Create
+                  </div>
+                  <div className='px-2 py-1 rounded-md bg-primary/10 text-xs font-medium'>
+                    Convert
+                  </div>
+                  <div className='px-2 py-1 rounded-md bg-primary/20 text-xs font-medium'>
+                    CV
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <div className='h-5 bg-secondary rounded w-3/4'></div>
+                  <div className='h-5 bg-secondary rounded'></div>
+                  <div className='h-5 bg-secondary rounded w-5/6'></div>
+                  <div className='h-20 bg-secondary rounded mt-4'></div>
+                </div>
+                <div className='mt-4 pb-2 border-t border-border pt-4'>
+                  <div className='h-8 w-full rounded-md bg-primary'>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div className='absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-r from-indigo-600 to-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20'>
+          </div>
+          <div className='absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20'>
+          </div>
         </div>
+
+
       </div>
     </section>
   );
