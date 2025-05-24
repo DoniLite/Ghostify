@@ -23,7 +23,7 @@ on:
     - cron: '30 5 * * 2,4'
 
 jobs:
-  check-deno-version:
+  deno-ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:

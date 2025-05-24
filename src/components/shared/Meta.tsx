@@ -1,13 +1,17 @@
-import {FC} from 'hono/jsx';
+import { useContext } from 'react';
+import { SeoContext } from './SEO.ts';
+import { useLocation } from 'react-router-dom';
 
 export interface MetaProps {
   title?: string;
   desc?: string;
   preview?: string;
   icon?: string;
+  [key: string]: string | undefined;
 }
 
-const Meta: FC<MetaProps> = ({ title, desc, preview, icon }) => {
+const Meta = () => {
+  const { title, desc, preview, icon, ...rest } = useContext(SeoContext).getSeo(useLocation().pathname) ?? {}
   return (
     <>
       <title>{title || 'Ghostify - A multi-service platform'}</title>
@@ -16,24 +20,18 @@ const Meta: FC<MetaProps> = ({ title, desc, preview, icon }) => {
 
       <meta
         name='description'
-        content={
-          desc ||
-          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
-        }
+        content={desc ||
+          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"}
       />
       <meta
         property='og:description'
-        content={
-          desc ||
-          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
-        }
+        content={desc ||
+          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"}
       />
       <meta
         name='twitter:description'
-        content={
-          desc ||
-          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"
-        }
+        content={desc ||
+          "Ghostify est une plateforme multi-service de création d'articles, de CV et de conversion de documents. | Ghostify is a multi-service platform for creating articles, resumes and document conversion"}
       />
 
       <meta charSet='UTF-8' />
@@ -62,7 +60,25 @@ const Meta: FC<MetaProps> = ({ title, desc, preview, icon }) => {
       <meta name='robots' content='index, follow' />
       <link rel='canonical' href='https://ghostiy.site/' />
 
-      <link rel='alternate' href='https://ghostiy.site?lang=fr' hreflang='fr' />
+      <link rel='alternate' href='https://ghostiy.site?lang=fr' hrefLang='fr' />
+      {Object.entries(rest).map(([metaName, value]) => {
+        if (metaName.includes('property')) {
+          return (
+            <meta
+              key={metaName}
+              property={metaName.split(':')[1]}
+              content={value}
+            />
+          );
+        }
+        return (
+          <meta
+            key={metaName}
+            name={metaName}
+            content={value}
+          />
+        );
+      })}
     </>
   );
 };
