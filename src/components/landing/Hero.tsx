@@ -6,7 +6,8 @@ const HeroSection = () => {
       <div className='container mx-auto flex flex-col lg:flex-row items-center justify-between gap-12'>
         <div className='flex-1 text-center lg:text-left'>
           <h1 className='text-4xl lg:text-6xl font-extrabold leading-tight text-foreground mb-6 font-nunito'>
-            Une plateforme pour booster votre<span className='text-primary'>
+            Une plateforme pour booster votre{' '}
+            <span className='text-primary'>
               productivité
             </span>
           </h1>

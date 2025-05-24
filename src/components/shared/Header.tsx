@@ -1,9 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '../utils/button.tsx';
 import { Ghostify } from './Icons.tsx';
 import { linkClass } from '../utils/links.ts';
+import { ThemeToggle } from './ThemeToogle.tsx';
 
 const Header = () => {
+  const navigate = useNavigate()
   return (
     <header className='fixed top-0 left-0 w-full z-50 py-4 px-6 lg:px-12 flex items-center justify-between bg-background'>
       <div className='flex items-center space-x-2'>
@@ -39,12 +41,18 @@ const Header = () => {
         </a>
       </nav>
       <div className='flex items-center space-x-4'>
-        <Button className='bg-primary text-primary-foreground px-5 py-2 rounded-md hover:bg-accent transition-colors font-nunito'>
+        <Button className='bg-primary text-primary-foreground px-5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-nunito'>
           Get Started
         </Button>
-        <Button className='bg-secondary text-secondary-foreground px-5 py-2 rounded-md hover:bg-secondary-foreground transition-colors font-nunito'>
+        <Button
+          className='bg-secondary text-secondary-foreground px-5 py-2 rounded-md hover:bg-secondary-foreground hover:text-secondary transition-colors font-nunito'
+          onClick={() => {
+            navigate('/login')
+          }}
+        >
           Login
         </Button>
+        <ThemeToggle />
       </div>
     </header>
   );

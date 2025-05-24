@@ -24,6 +24,7 @@ import { getFileHeaders } from './src/utils/file_system/headers.ts';
 import { renderToReadableStream } from 'react-dom/server';
 import App from './src/App.tsx';
 import { StaticRouter } from 'react-router-dom';
+import { getThemeScript } from './src/components/shared/ThemeProvider.tsx';
 
 if (Deno.env.get('NODE_ENV') !== 'production') {
   dotenv.config();
@@ -156,7 +157,8 @@ app.get('*', async (c) => {
       <App />
     </StaticRouter>,
     {
-      bootstrapScripts: ['/js/client.js'],
+      bootstrapModules: ['/static/js/client.js'],
+      bootstrapScriptContent: getThemeScript('dark')
     },
   );
   return c.newResponse(

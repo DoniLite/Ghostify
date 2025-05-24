@@ -4,8 +4,11 @@ import Footer from './Footer.tsx';
 import Meta from './Meta.tsx';
 import { createContext, FC, PropsWithChildren } from 'react';
 import { defaultSeo, SeoContext } from './SEO.ts';
+import { ThemeProvider } from './ThemeProvider.tsx';
 
-export const LocalsContext = createContext<{ default: Record<string, unknown> }>({
+export const LocalsContext = createContext<
+  { default: Record<string, unknown> }
+>({
   default: {},
 });
 
@@ -85,10 +88,9 @@ const styles = `
   }
 `;
 
-const Layout: FC<LayoutType> = ({children}) => (
+const Layout: FC<LayoutType> = ({ children }) => (
   <html
-    lang="fr"
-    className="light"
+    lang='fr'
     // data-theme={theme?.default || theme?.userDefault || 'light'}
   >
     <SeoContext.Provider value={defaultSeo}>
@@ -107,12 +109,13 @@ const Layout: FC<LayoutType> = ({children}) => (
         <Meta />
       </head>
       <body>
-        <LocalsContext.Provider value={{default: {}}}>
-          <Header />
-          {children}
-          <Footer />
-          <div id='backToTop'></div>
-        </LocalsContext.Provider>
+        <ThemeProvider defaultTheme="system" serverTheme="dark">
+          <LocalsContext.Provider value={{ default: {} }}>
+            <Header />
+            {children}
+            <Footer />
+          </LocalsContext.Provider>
+        </ThemeProvider>
         <Script />
       </body>
     </SeoContext.Provider>

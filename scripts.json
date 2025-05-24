@@ -1,0 +1,30 @@
+{
+  "$schema": "[https://deno.land/x/denon@2.5.0/schema.json](https://deno.land/x/denon@2.5.0/schema.json)",
+  "scripts": {
+    "start:server": {
+      "cmd": "deno run --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
+      "desc": "Running the Ghostify dev server",
+      "watch": true,
+      "log": "debug"
+    }
+  },
+  "watcher": {
+    "interval": 350,
+    "exts": [
+      "ts",
+      "tsx"
+    ],
+    "match": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "server.tsx",
+      "scripts/**/*.ts"
+    ],
+    "skip": [
+      "*/.git/*",
+      "static/js/*",
+      "static/css/*"
+    ],
+    "legacy": false
+  }
+}
