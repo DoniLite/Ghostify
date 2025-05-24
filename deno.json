@@ -89,6 +89,7 @@
     "dompurify": "npm:dompurify@3.2.5",
     "@prisma/client": "npm:@prisma/client@6.6.0",
     "std/": "https://deno.land/std@0.220.1/",
+    "stores/": "/src/stores/",
     "zustand": "npm:zustand@^5.0.5"
   },
   "fmt": {
