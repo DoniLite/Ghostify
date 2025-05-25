@@ -78,7 +78,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     if (typeof window === 'undefined') return;
     
     const html = document.documentElement;
-    const body = document.body;
+    const {body} = document;
     
     // Supprimer les anciennes classes
     html.classList.remove('light', 'dark');
