@@ -1,1 +1,1 @@
-# Ghostify <img src="./static/ghostify.svg" style="width: 2.5rem; height: 2.5rem; position: relative; top: 0.7rem;" />
+# Ghostify <img src="./static/ghostify.svg" alt="Project icon" style="width: 30px; height: 30px; position: relative; top: 5px;" />
