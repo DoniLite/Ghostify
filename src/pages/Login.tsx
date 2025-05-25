@@ -1,48 +1,48 @@
 const Login = () => {
   return (
-    <div class='flex h-screen overflow-hidden'>
-      <div class='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-100 bg-gray-800'>
+    <div className='flex h-screen overflow-hidden'>
+      <div className='relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden text-gray-100 bg-gray-800'>
         <main>
-          <div class='mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10'>
-            <div class='mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
-              <h2 class='text-title-md2 font-bold text-black dark:text-white'>
+          <div className='mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10'>
+            <div className='mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+              <h2 className='text-title-md2 font-bold text-black dark:text-white'>
                 Login to your account
               </h2>
             </div>
-            <div class='rounded-xl text-gray-100 bg-gray-950 shadow-default'>
-              <div class='flex flex-wrap items-center'>
-                <div class='hidden w-full xl:w-1/2 p-4 xl:flex justify-center items-center'>
+            <div className='rounded-xl text-gray-100 bg-gray-950 shadow-default'>
+              <div className='flex flex-wrap items-center'>
+                <div className='hidden w-full xl:w-1/2 p-4 xl:flex justify-center items-center'>
                   <SVGIcon />
                 </div>
-                <div class='w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2'>
-                  <div class='w-full p-4 sm:p-12.5 xl:p-17.5'>
+                <div className='w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2'>
+                  <div className='w-full p-4 sm:p-12.5 xl:p-17.5'>
                     <a
                       href='/support?target=FAQ&topic=accounts'
-                      class='mb-1.5 block font-medium'
+                      className='mb-1.5 block font-medium'
                     >
                       Besoin d'aide{' '}
-                      <i class='fa-solid fa-question text-white'></i>
+                      <i className='fa-solid fa-question text-white'></i>
                     </a>
-                    <h2 class='mb-9 text-2xl font-bold text-white sm:text-title-xl2'>
+                    <h2 className='mb-9 text-2xl font-bold text-white sm:text-title-xl2'>
                       Sign In
                     </h2>
 
                     <form id='authForm' method='post' action='/api/v1/auth'>
-                      <div class='mb-4'>
-                        <label class='mb-2.5 block font-medium text-white'>
+                      <div className='mb-4'>
+                        <label className='mb-2.5 block font-medium text-white'>
                           login
                         </label>
-                        <div class='relative'>
+                        <div className='relative'>
                           <input
                             name='login'
                             type='text'
                             placeholder='Email or Username'
-                            class='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                            className='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                           />
 
-                          <span class='absolute right-4 top-4'>
+                          <span className='absolute right-4 top-4'>
                             <svg
-                              class='fill-current'
+                              className='fill-current'
                               width='22'
                               height='22'
                               viewBox='0 0 22 22'
@@ -60,21 +60,21 @@ const Login = () => {
                         </div>
                       </div>
 
-                      <div class='mb-6'>
-                        <label class='mb-2.5 block font-medium text-white'>
+                      <div className='mb-6'>
+                        <label className='mb-2.5 block font-medium text-white'>
                           Type your Password
                         </label>
-                        <div class='relative'>
+                        <div className='relative'>
                           <input
                             name='password'
                             type='password'
                             placeholder='Your password'
-                            class='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
+                            className='w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary'
                           />
 
-                          <span class='absolute right-4 top-4'>
+                          <span className='absolute right-4 top-4'>
                             <svg
-                              class='fill-current'
+                              className='fill-current'
                               width='22'
                               height='22'
                               viewBox='0 0 22 22'
@@ -96,38 +96,38 @@ const Login = () => {
                         </div>
                       </div>
 
-                      <div class='mb-5'>
+                      <div className='mb-5'>
                         <input
                           type='submit'
                           value='Sign In'
-                          class='w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-3 font-medium text-white hover:bg-opacity-90'
+                          className='w-full transition-all hover:text-gray-950 hover:bg-white cursor-pointer rounded-lg border border-primary bg-primary p-3 font-medium text-white hover:bg-opacity-90'
                         />
                         <a
                           href='/auth/google'
-                          class='btn w-full mt-4 flex relative gap-x-0 bg-gray-950 hover:bg-gray-950 hover:border-orange-600'
+                          className='btn w-full mt-4 flex relative gap-x-0 bg-gray-950 hover:bg-gray-950 hover:border-orange-600'
                         >
-                          <i class='fa-brands fa-google fa-2xl text-white p-0'></i>
-                          <span class='text-white font-bold text-2xl relative '>
+                          <i className='fa-brands fa-google fa-2xl text-white p-0'></i>
+                          <span className='text-white font-bold text-2xl relative '>
                             oogle
                           </span>
                         </a>
                       </div>
 
-                      <div class='mt-6 text-center'>
-                        <p class='font-medium mb-4'>
+                      <div className='mt-6 text-center'>
+                        <p className='font-medium mb-4'>
                           If you don't have account
                           <a
                             href='/auth/register'
-                            class=' font-bold text-orange-600'
+                            className=' font-bold text-orange-600'
                           >
                             Create new account
                           </a>
                         </p>
-                        <p class='font-medium'>
+                        <p className='font-medium'>
                           Any problem to login?
                           <a
                             href='signup.html'
-                            class=' font-bold text-orange-600'
+                            className=' font-bold text-orange-600'
                           >
                             Check up here
                           </a>
@@ -152,8 +152,8 @@ const SVGIcon = () => {
       width='642.99652'
       height='699.63874'
       viewBox='0 0 642.99652 699.63874'
-      xmlns:xlink='http://www.w3.org/1999/xlink'
-      class=' w-full'
+      xmlnsXlink='http://www.w3.org/1999/xlink'
+      className=' w-full'
     >
       <path
         d='m526.36926,329.63874c19.90002,12.82996,38.54004,30.01001,56,51.20001v32.39996c-8.52002-2.89996-41.03998-14.91998-53.88-33.92999-14.83997-21.96997-17.47998-55.32001-5.12-63.66998,3.21997-2.17004,7.13-2.44,11.41998-1.25,13.52997,9.72998,26.47003,21.52997,38.83002,35.27997,4.38,6.73004,7.09009,15.29999,8.75,23.96002v.40997c-15.98999-22.25995-34.79004-36.69995-56-44.39996Z'
@@ -183,7 +183,6 @@ const SVGIcon = () => {
       />
       <polygon
         points='283.55597 224.62357 297.74335 160.11792 345.16339 162.39891 357.33582 209.19409 283.55597 224.62357'
-        isolation='isolate'
         opacity='.1'
       />
       <circle cx='320.27975' cy='124.33786' r='53.08847' fill='#fcb4b4' />

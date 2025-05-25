@@ -7,4 +7,9 @@ hydrateRoot(
   <BrowserRouter>
     <App />
   </BrowserRouter>,
+  {
+    onCaughtError(err) {
+      console.error('error during the rendering ====> ', err)
+    }
+  }
 );

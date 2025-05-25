@@ -1,396 +1,164 @@
-export type Props = {
-  linear?: string;
-  from?: string;
-  to?: string;
-  text: string;
-  bg?: string;
-  title: string;
-};
+import {
+  Facebook,
+  Github,
+  Instagram,
+  Linkedin,
+  Send,
+  Twitter,
+} from 'lucide-react'; // Assuming lucide-react for icons
+import { Ghostify } from './Icons.tsx';
+import { Button } from '../utils/button.tsx';
 
-const Footer = ({ linear, from, to, text, bg, title }: Props) => {
-  const mapProps = {
-    linear,
-    from,
-    to,
-    bg
-  }
+const Footer = () => {
   return (
-    <div
-      className={`w-full overflow-y-scroll h-full ${linear || bg || ''} ${
-        linear ? `${from} ${to}` : ''
-      } ${text} lg:grid lg:grid-cols-5 border-t border-orange-500`}
-    >
-      <FooterMap {...mapProps} />
-
-      <div className='px-4 py-16 sm:px-6 lg:col-span-3 lg:px-8'>
-        <div className='grid grid-cols-1 gap-8 sm:grid-cols-2'>
-          <div>
-            <p>
-              <a
-                target='_blank'
-                rel='noreferrer'
-                href='https://github.com/DoniLite'
-                className={`block text-2xl font-medium ${title} hover:opacity-75 sm:text-3xl`}
-              >
-                Ghostify.
-              </a>
-            </p>
-
-            <div className={`mt-8 space-y-1 text-sm ${text}`}>
-              <h1>Souscris à la newsletter!</h1>
-              <form
-                id='newsLetter'
-                className='flex lg:gap-x-4 lg:flex-row flex-col gap-y-3'
-              >
-                <input
-                  type='text'
-                  name='newsletter'
-                  id='newsletter'
-                  className={`outline-none p-1 bg-transparent border-b-2 border-white ${title}`}
-                  placeholder="Passez nous votre mail et on s'occupe du reste"
-                />
-                <button
-                  type='submit'
-                  title='Send it!'
-                  className={`p-2 ${title} transition-all hover:${
-                    bg || linear
-                  } border font-bold flex justify-center items-center rounded-full`}
-                >
-                  <i className='fa-solid fa-rocket hover:text-red-900 transition-all text-white self-end'></i>
-                </button>
-              </form>
-            </div>
-
-            <ul className={`mt-8 flex gap-6 ${text}`}>
-              <li>
-                <a
-                  href='https://www.facebook.com/doni.lite.3?mibextid=ZbWKwL'
-                  rel='noreferrer'
-                  target='_blank'
-                  className={`${text} transition hover:opacity-75`}
-                >
-                  <span className='sr-only'>Facebook</span>
-                  <svg
-                    className='h-6 w-6'
-                    fill='currentColor'
-                    viewBox='0 0 24 24'
-                    aria-hidden='true'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href='#'
-                  rel='noreferrer'
-                  target='_blank'
-                  class='<%= text %> transition hover:opacity-75'
-                >
-                  <span class='sr-only'>Instagram</span>
-
-                  <svg
-                    class='h-6 w-6'
-                    fill='currentColor'
-                    viewBox='0 0 24 24'
-                    aria-hidden='true'
-                  >
-                    <path
-                      fill-rule='evenodd'
-                      d='M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z'
-                      clip-rule='evenodd'
-                    />
-                  </svg>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href='#'
-                  rel='noreferrer'
-                  target='_blank'
-                  class='<%= text %> transition hover:opacity-75'
-                >
-                  <span class='sr-only'>X</span>
-
-                  <svg
-                    class='h-6 w-6'
-                    fill='currentColor'
-                    viewBox='0 0 512 512'
-                    aria-hidden='true'
-                  >
-                    <path
-                      fill-rule='evenodd'
-                      d='M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z'
-                      clip-rule='evenodd'
-                    />
-                  </svg>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href='https://github.com/DoniLite'
-                  rel='noreferrer'
-                  target='_blank'
-                  class='<%= text %> transition hover:opacity-75'
-                >
-                  <span class='sr-only'>GitHub</span>
-
-                  <svg
-                    class='h-6 w-6'
-                    fill='currentColor'
-                    viewBox='0 0 24 24'
-                    aria-hidden='true'
-                  >
-                    <path
-                      fill-rule='evenodd'
-                      d='M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z'
-                      clip-rule='evenodd'
-                    />
-                  </svg>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href='https://www.linkedin.com/in/yao-messan-nogb%C3%A9dzi-3b3696239/'
-                  rel='noreferrer'
-                  target='_blank'
-                  class='<%= text %> transition hover:opacity-75'
-                >
-                  <span class='sr-only'>Linkedin</span>
-
-                  <svg
-                    class='h-6 w-6'
-                    fill='currentColor'
-                    viewBox='0 0 448 512'
-                    aria-hidden='true'
-                  >
-                    <path
-                      fill-rule='evenodd'
-                      d='M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z'
-                      clip-rule='evenodd'
-                    />
-                  </svg>
-                </a>
-              </li>
-            </ul>
+    <footer className='py-16 px-6 lg:px-12 bg-card text-card-foreground border-t border-border'>
+      <div className='container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'>
+        {/* Section 1: Ghostify branding and newsletter */}
+        <div className='flex flex-col items-center md:items-start text-center md:text-left'>
+          <div className='flex items-center space-x-2 mb-4'>
+            <Ghostify className='h-8 w-8 text-primary' />
+            <span className='font-bold text-3xl font-nunito'>Ghostify.</span>
           </div>
-
-          <div class='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-            <div>
-              <p class={`font-medium ${title}`}>Services</p>
-
-              <ul class={`mt-6 space-y-4 text-sm ${text}`}>
-                <li>
-                  <a
-                    href='/poster/new?service=blog'
-                    class='transition hover:opacity-75'
-                  >
-                    Poster for blog and documents parsing
-                  </a>
-                </li>
-
-                <li>
-                  <a href='#searcher' class='transition hover:opacity-75'>
-                    Try the basic web search
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href='/home?pagination=4'
-                    class='transition hover:opacity-75'
-                  >
-                    Gaming & Testing
-                  </a>
-                </li>
-
-                <li>
-                  <a href='#' class='transition hover:opacity-75'>
-                    Marketing & Data-analyzes support
-                  </a>
-                </li>
-
-                <li>
-                  <a href='#' class='transition hover:opacity-75'>
-                    Web Dev {'>'} backend & front & security & smart net
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <p class={`font-medium ${title}`}>Help & Support Contact</p>
-
-              <ul class='mt-6 space-y-4 text-sm <%= text %>'>
-                <li>
-                  <a href='#' class='transition hover:opacity-75'>
-                    About
-                  </a>
-                </li>
-
-                <li>
-                  <a href='/FAQ' class='transition hover:opacity-75'>
-                    FAQ
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href='/home?pagination=5'
-                    class='transition hover:opacity-75'
-                  >
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <p className='text-muted-foreground mb-4 font-inter'>
+            Souscris à la newsletter!
+          </p>
+          <div className='flex w-full max-w-sm'>
+            <input
+              type='email'
+              placeholder="Passez nous votre mail et on s'y"
+              className='flex-1 px-4 py-2 rounded-l-md bg-input text-foreground border border-border focus:outline-none focus:ring-2 focus:ring-ring'
+            />
+            <Button className='bg-primary text-primary-foreground p-3 rounded-r-md hover:bg-accent transition-colors'>
+              <Send size={20} />
+            </Button>
+          </div>
+          <div className='flex space-x-6 mt-6'>
+            <a
+              href='#'
+              className='text-muted-foreground hover:text-primary transition-colors'
+            >
+              <Facebook size={24} />
+            </a>
+            <a
+              href='#'
+              className='text-muted-foreground hover:text-primary transition-colors'
+            >
+              <Instagram size={24} />
+            </a>
+            <a
+              href='#'
+              className='text-muted-foreground hover:text-primary transition-colors'
+            >
+              <Twitter size={24} />
+            </a>
+            <a
+              href='#'
+              className='text-muted-foreground hover:text-primary transition-colors'
+            >
+              <Github size={24} />
+            </a>
+            <a
+              href='#'
+              className='text-muted-foreground hover:text-primary transition-colors'
+            >
+              <Linkedin size={24} />
+            </a>
           </div>
         </div>
 
-        <div class='mt-12 border-t border-gray-100 pt-12'>
-          <div class='sm:flex sm:items-center sm:justify-between'>
-            <ul class='flex flex-wrap gap-4 text-xs'>
-              <li>
-                <a href='/terms' class={`${text} transition hover:opacity-75`}>
-                  Terms & Conditions
-                </a>
-              </li>
+        {/* Section 2: Services */}
+        <div>
+          <h4 className='text-xl font-bold mb-6 font-nunito text-center md:text-left'>
+            Services
+          </h4>
+          <ul className='space-y-3 text-muted-foreground text-center md:text-left font-inter'>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Poster for blog and documents parsing
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Try the basic web search
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Gaming & Testing
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Marketing & Data-analyzes support
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Web Dev &gt; backend &amp; front &amp; security &amp; smart net
+              </a>
+            </li>
+          </ul>
+        </div>
 
-              <li>
-                <a
-                  href='/privacy'
-                  class={`${text} transition hover:opacity-75`}
-                >
-                  Privacy Policy
-                </a>
-              </li>
+        {/* Section 3: Help & Support */}
+        <div>
+          <h4 className='text-xl font-bold mb-6 font-nunito text-center md:text-left'>
+            Help & Support
+          </h4>
+          <ul className='space-y-3 text-muted-foreground text-center md:text-left font-inter'>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Contact
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                About
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                FAQ
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Contact
+              </a>
+            </li>{' '}
+            {/* Duplicate in original, keeping for fidelity */}
+          </ul>
+        </div>
 
-              <li>
-                <a
-                  href='/conditions'
-                  class={`${text} transition hover:opacity-75`}
-                >
-                  Conditions of use
-                </a>
-              </li>
-            </ul>
-
-            <p class={`mt-8 text-xs ${text} sm:mt-0`}>
-              &copy; 2024. Ghostify. All rights reserved.
-            </p>
-          </div>
+        {/* Section 4: Legal */}
+        <div>
+          <h4 className='text-xl font-bold mb-6 font-nunito text-center md:text-left'>
+          </h4>{' '}
+          {/* Placeholder for alignment */}
+          <ul className='space-y-3 text-muted-foreground text-center md:text-left font-inter'>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Terms & Conditions
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a href='#' className='hover:text-primary transition-colors'>
+                Conditions of use
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
+      <div className='mt-12 pt-8 border-t border-border text-center text-muted-foreground text-sm font-inter'>
+        © 2024. Ghostify. All rights reserved.
+      </div>
+    </footer>
   );
 };
-
-
-const FooterMap = ({ linear, bg, from, to}: {
-  linear?: string;
-  bg?: string;
-  from?: string;
-  to?: string;
-}) => (
-  <div
-    className={`relative h-32 lg:col-span-2 lg:h-full flex justify-center items-center bg-gray-900 ${
-      linear || bg || ''
-    } ${linear ? `${from} ${to}` : ''}`}
-  >
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='507.99631'
-      height='486.46461'
-      viewBox='0 0 507.99631 486.46461'
-      xmlns:xlink='http://www.w3.org/1999/xlink'
-      className=' w-full'
-    >
-      <g>
-        <path
-          d='m339.28132,144.85552c-1.7577,2.08666-3.98893,3.72206-6.50814,4.76945l-7.21532,8.12517-20.43689,24.67773-13.80738,8.35194-6.41109-11.03715,30.26457-29.48015,8.43338-8.58048c.67621-2.64418,1.97584-5.08773,3.79079-7.1256,4.4675-5.16172,10.75245-7.03932,14.03602-4.19587,3.28421,2.84414,2.32391,9.33233-2.14593,14.49496Z'
-          fill='#ffafaf'
-        />
-        <path
-          d='m215.75649,169.37563l13.29016-22.11774,56.5433,24.29522,30.90638-25.25171s12.2617,10.56233,12.69962,10.93955-31.16616,44.15089-33.41028,44.09926c-2.24412-.05162-80.02919-31.96459-80.02919-31.96459Z'
-          fill='#F97316'
-        />
-      </g>
-      <path
-        d='m0,479.24451c0,.66003.53003,1.19,1.19006,1.19h505.61625c.65997,0,1.19-.52997,1.19-1.19,0-.65997-.53003-1.19-1.19-1.19H1.19006c-.66003,0-1.19006.53003-1.19006,1.19Z'
-        fill='#3f3d58'
-      />
-      <g>
-        <path
-          d='m343.37799,0c40.25244,0,73,30.72852,73,68.5,0,10.55371-2.62939,21.05078-7.61865,30.46875h.06006l-1.32129,2.29688c-11.2124,19.31543-17.43848,41.3125-18.00342,63.61133-.17139,6.79785-5.6333,12.12305-12.43359,12.12305h-56.88623c-7.33008,0-13.48633-5.25439-14.6377-12.49316-2.80176-17.6123-8.40527-34.58301-16.65332-50.44238-11.93457-12.55957-18.50586-28.73633-18.50586-45.56445C270.37799,30.72852,303.12604,0,343.37799,0Zm62.35107,100.3291l.47314-.85156c5.34863-9.49414,8.17578-20.20605,8.17578-30.97754,0-36.66797-31.85059-66.5-71-66.5s-71,29.83203-71,66.5c0,16.3584,6.41016,32.08594,18.05078,44.28711l.16309.22852c8.38379,16.08594,14.07715,33.30469,16.91992,51.17676.99609,6.26221,6.32227,10.80762,12.66309,10.80762h56.88623c5.70703,0,10.29004-4.46875,10.43457-10.17383.57227-22.60645,6.87695-44.90723,18.2334-64.49707Z'
-          fill='#3f3d56'
-        />
-        <path
-          d='m384.93105,172.00015h-75.10596c-2.38802,0-4.26057,2.0505-4.04437,4.42871l.70322,7.73563c.58849,6.4735,2.63111,12.73056,5.97549,18.3044h0c.55924.93206,1.61518,1.44245,2.69433,1.31238,22.25527-2.68252,44.03088-2.77033,65.28482-.03885,1.16266.14942,2.29074-.44478,2.81498-1.49325l.48135-.9627c2.40753-4.81506,3.8933-10.03792,4.38068-15.39922l.85983-9.45839c.2162-2.37821-1.65635-4.42871-4.04437-4.42871Z'
-          fill='#3f3d56'
-        />
-        <path
-          d='m317.37807,198.50015h61.5v40.02791c0,7.15949-5.8126,12.97209-12.97209,12.97209h-35.55581c-7.15949,0-12.97209-5.8126-12.97209-12.97209v-40.02791h0Z'
-          fill='#3f3d56'
-        />
-        <path
-          d='m356.04202,262.00015h-13.32791c-1.466,0-2.84175-.70799-3.69384-1.90092l-8.6422-12.09908h38l-8.6422,12.09908c-.85209,1.19293-2.22785,1.90092-3.69384,1.90092Z'
-          fill='#3f3d56'
-        />
-        <path
-          d='m366.12615,35.32647c-9.78508,2.02614-19.57015,4.05229-29.35523,6.07843-4.40004.91109-9.32793,1.38395-13.32571,3.57071-3.87589,2.12009-6.59038,6.56839-5.20384,11.0215,1.32408,4.25251,5.23235,6.92014,9.42433,7.86845,4.65106,1.05217,9.63356,1.04475,14.37444,1.41071,4.9449.38171,9.8898.76341,14.8347,1.14512,2.35337.18166,4.71905.30711,7.06693.54884.751.07732,1.56979.16944,2.18644.64589-.0093-.00719.20836.12917.08769.15012-.02354.00409-.02548-.1543-.02207-.16491.09529-.29674.05612-.01596-.02075-.01525-.02699.00025-.73526.46812-1.13042.54199-1.06603.1993-2.24216.05431-3.32237.03591-2.34708-.03998-4.69541.00436-7.03935.13214-4.71747.25718-9.42845.84396-14.06835,1.73284-4.56402.87434-9.10646,2.03846-13.48968,3.58913-4.24986,1.5035-8.70105,4.35866-8.81664,9.39621-.10856,4.73132,3.996,8.0562,8.17609,9.24474,2.14995.6113,4.41565.83289,6.62081,1.16093,2.46033.366,4.92067.732,7.381,1.098,4.83866.7198,9.67731,1.4396,14.51597,2.15939,2.46033.366,4.92067.732,7.381,1.098,1.14726.17067,2.30106.3178,3.44447.5124.42158.07175.8192.20433,1.23503.28965-.27921-.05729.06722-.05682.01.00821.18217.11163.18258.09478.00123-.05057l-.12357-.18156c-.28234-.79255-.27258-.89695.2426-1.8342.09836-.17895.29818.00572.04346-.02243-.27188-.03004.16303-.03404-.12656.08556-.14478.05979-.30217.10049-.45291.14219-1.13922.31519-2.33285.47986-3.4924.70755-2.41053.47332-4.82107.94664-7.2316,1.41996-4.74071.93086-9.48148,1.86146-14.22214,2.79259-8.35115,1.64029-17.22027,3.8587-22.225,11.39391-1.08873,1.63921-1.87883,3.52803-2.27347,5.45482-.3248,1.58578.45984,3.24097,2.09532,3.69036,1.48351.40763,3.36372-.50056,3.69036-2.09532,1.58533-7.74015,10.055-10.51989,17.02006-11.99627,4.61722-.97871,9.26281-1.83505,13.89412-2.74444,4.66759-.91651,9.40939-1.66266,14.0371-2.76137,1.9455-.4619,4.05633-1.65799,4.60012-3.7324.59537-2.27118-.52565-4.46368-2.5843-5.52174-1.97445-1.01478-4.3215-1.09484-6.47893-1.41577-2.37832-.3538-4.75665-.7076-7.13497-1.0614-4.83866-.7198-9.67731-1.4396-14.51597-2.15939-2.37832-.3538-4.75665-.7076-7.13497-1.0614-2.20524-.32805-4.47061-.54956-6.62081-1.16093-1.45474-.41363-2.94324-1.12339-3.58581-2.50851-.20717-.44658-.26047-.7716-.119-1.27388.19418-.68946.73416-1.33156,1.3351-1.80673,1.38526-1.09533,3.26028-1.58401,4.90692-2.1123,2.16064-.6932,4.34524-1.31168,6.54859-1.85409,4.37442-1.07688,8.82057-1.86498,13.30492-2.30181,2.33636-.22759,4.68064-.37227,7.02727-.43316,2.22033-.05761,4.44462.07999,6.66212.0113,2.36368-.07321,4.7965-.70515,6.41923-2.53748,1.66997-1.88567,2.07596-4.4605.91412-6.72101-2.29915-4.47333-8.39123-4.03382-12.63808-4.36164-4.86248-.37534-9.72497-.75069-14.58745-1.12603-4.54681-.35098-9.22151-.4249-13.72887-1.12463-1.66926-.25914-3.59306-.73621-4.85191-1.73087-1.15405-.91186-1.9032-2.10742-1.81149-3.30544.08531-1.1144,1.22331-2.34531,2.41464-3.02936,1.67141-.95972,3.64349-1.31787,5.51016-1.70703,9.60699-2.00283,19.21945-3.97979,28.82914-5.96962,2.36473-.48965,4.72945-.9793,7.09418-1.46895,1.58727-.32867,2.50472-2.20063,2.09532-3.69036-.45286-1.64789-2.09848-2.42494-3.69036-2.09532h0Z'
-          fill='#F97316'
-        />
-      </g>
-      <rect
-        x='220.374'
-        y='131.00008'
-        width='19.65164'
-        height='38.14729'
-        fill='#ffafaf'
-      />
-      <path
-        d='m272.4694,237.29842l-47.39512-3.46794s-19.65164,45.08316-4.62391,73.98263l10.40381,60.11088-4.11409,98.93814h21.52698l33.45017-159.04903-9.24783-70.51469Z'
-        fill='#2f2e41'
-      />
-      <polygon
-        points='263.22157 287.79173 281.71723 303.89042 272.4694 461.55826 251.66179 461.55826 263.22157 287.79173'
-        fill='#2f2e41'
-      />
-      <circle cx='229.93432' cy='113.93163' r='24.56883' fill='#ffafaf' />
-      <path
-        d='m226.9916,443.38148l25.37943,4.0095,4.76997,18.20598s20.60701,7.75462,10.67776,16.18143c-9.92926,8.42681-46.61071,4.07002-49.5109-1.97463s8.68374-36.42227,8.68374-36.42227Z'
-        fill='#2f2e41'
-      />
-      <path
-        d='m247.79921,443.38148l25.37943,4.0095,4.76997,18.20598s20.60701,7.75462,10.67776,16.18143c-9.92926,8.42681-46.61071,4.07002-49.5109-1.97463-2.90019-6.04465,8.68374-36.42227,8.68374-36.42227Z'
-        fill='#2f2e41'
-      />
-      <path
-        d='m317.91302,233.38836c-2.72814.03013-5.42343-.59303-7.86116-1.81815l-10.86519-.16383-32.03545.62181-15.33933-5.01036,4.17817-12.06083,42.0881,3.68989,12.00513.78955c2.44471-1.2134,5.14429-1.82351,7.87283-1.77842,6.82654.01602,12.35101,3.55244,12.33967,7.89606-.01143,4.34454-5.554,7.85149-12.38277,7.83429Z'
-        fill='#ffafaf'
-      />
-      <path
-        d='m241.83597,145.39813h-24.32173l-8.04567,24.27555,15.60571,64.15681,47.39512,3.46794-2.88995-26.00952v-.00002c5.5955-9.09267,5.14898-20.66363-1.1306-29.29804l-26.61289-36.59272Z'
-        fill='#F97316'
-      />
-      <path
-        d='m218.7164,155.80194l25.43153-4.3658,18.49566,58.69679,39.30327,6.93587v16.76169c0,.57799-53.79192,5.2019-55.21743,3.46794-1.42552-1.73397-28.01302-81.49649-28.01302-81.49649Z'
-        fill='#F97316'
-      />
-      <path
-        d='m242.20224,99.6872c3.0182,4.89641.23544,11.34568-3.48262,15.73434s-8.5123,8.24091-10.17231,13.74806c-1.48833,4.93758-.13451,10.26267,1.61586,15.11355,1.75037,4.85088,3.9266,9.68736,4.10704,14.84122.18044,5.15386-2.25871,10.84543-7.11336,12.58531-4.9817,1.78542-10.8712-1.02037-15.66949,1.21154-6.24995,2.90715-7.66621,12.972-14.47977,14.01544-4.19317.64215-8.0793-2.99326-9.2512-7.07022-1.17191-4.07697-.33022-8.42859.51692-12.5852,2.32107-11.38866,4.64215-22.77731,6.96322-34.16597,1.93126-9.476,3.86253-18.952,5.79379-28.428,1.15307-5.65769,2.5212-11.70956,6.77327-15.61583,5.19577-4.77321,13.02743-4.88668,20.07709-4.60062,6.477.26282,13.21543.70598,18.85408,3.90382,5.63865,3.19784,9.7803,9.99526,7.82913,16.17697-1.82241-4.35077-7.26723-6.7915-11.72774-5.25714'
-        fill='#2f2e41'
-      />
-    </svg>
-  </div>
-);
 
 export default Footer;
