@@ -62,8 +62,15 @@ const Meta = () => {
 
       <link rel='alternate' href='https://ghostiy.site?lang=fr' hrefLang='fr' />
       {Object.entries(rest).map(([metaName, value]) => {
-        if (metaName.includes('property')) {
+        // If the metaName starts with 'og:' or 'twitter:', use 'property', else use 'name'
+        if (metaName.startsWith('og:') || metaName.startsWith('twitter:')) {
           return (
+            <meta property={metaName} content={value} key={metaName} />
+          );
+        }
+        return (
+          <meta name={metaName} content={value} key={metaName} />
+        );
             <meta
               key={metaName}
               property={metaName.split(':')[1]}
