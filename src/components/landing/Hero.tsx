@@ -1,6 +1,8 @@
+import { useTranslation } from '../shared/TranslationContext.tsx';
 import { Button } from '../utils/button.tsx';
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   return (
     <section className='relative h-screen flex items-center justify-center pt-24 pb-12 px-6 lg:px-12 bg-background'>
       <div className='container mx-auto flex flex-col lg:flex-row items-center justify-between gap-12'>
@@ -67,8 +69,6 @@ const HeroSection = () => {
           <div className='absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20'>
           </div>
         </div>
-
-
       </div>
     </section>
   );
