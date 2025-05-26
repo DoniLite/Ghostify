@@ -1,6 +1,6 @@
-import fr from '../../locales/fr.json' with { type: 'json' };
-import en from '../../locales/en.json' with { type: 'json' };
-import es from '../../locales/es.json' with { type: 'json' };
+import fr from '../../locales/fr.ts';
+import en from '../../locales/en.ts';
+import es from '../../locales/es.ts';
 
 export type Join<K, P> = K extends string | number
   ? P extends string | number ? `${K}.${P}`

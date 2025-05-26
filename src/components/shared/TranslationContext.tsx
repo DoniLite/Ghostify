@@ -15,8 +15,8 @@ import {
 export interface TranslationContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (
-    key: TranslationKeys,
+  t: <T extends TranslationKeys>(
+    key: T,
     variables?: Record<string, string | number>,
   ) => string;
   availableLocales: Locale[];

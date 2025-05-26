@@ -54,6 +54,8 @@
   "imports": {
     "@deno-plc/vite-plugin-deno": "jsr:@deno-plc/vite-plugin-deno@^2.3.3",
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.4",
+    "@testing-library/dom": "npm:@testing-library/dom@^10.4.0",
+    "@testing-library/react": "npm:@testing-library/react@^16.3.0",
     "@types/react": "npm:@types/react@^19.1.5",
     "@types/react-dom": "npm:@types/react-dom@^19.1.5",
     "grapesjs": "npm:grapesjs@^0.22.6",

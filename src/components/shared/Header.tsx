@@ -3,6 +3,7 @@ import { Button } from '../utils/button.tsx';
 import { Ghostify } from './Icons.tsx';
 import { linkClass } from '../utils/links.ts';
 import { ThemeToggle } from './ThemeToogle.tsx';
+import { LanguageSwitcher } from './LanguageSwitcher.tsx';
 
 const Header = () => {
   const navigate = useNavigate()
@@ -53,6 +54,7 @@ const Header = () => {
           Login
         </Button>
         <ThemeToggle />
+        <LanguageSwitcher />
       </div>
     </header>
   );
