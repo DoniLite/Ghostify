@@ -20,7 +20,7 @@ const HeroSection = () => {
             <Button className='bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent transition-colors font-nunito'>
               {t('home.hero.cta.1')}
             </Button>
-            <Button className='border border-input text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
+            <Button className='border border-border text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
               {t('home.hero.cta.2')}
             </Button>
           </div>

@@ -20,7 +20,7 @@ const CtaSection = () => {
             <Button className='bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent transition-colors font-nunito'>
               Découvrir
             </Button>
-            <Button className='border border-input text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
+            <Button className='border border-border text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
               En savoir plus
             </Button>
           </div>

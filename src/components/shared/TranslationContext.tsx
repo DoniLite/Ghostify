@@ -65,6 +65,10 @@ export function TranslationProvider(
           return key;
         }
 
+        if (typeof translation === 'object' && Array.isArray(translation)) {
+          return translation
+        }
+
         let result = String(translation);
 
         // Remplacer les variables si fournies

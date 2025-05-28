@@ -56,6 +56,14 @@ export default {
         ],
       },
     },
+    "cta": {
+      "first_cta": {
+        "title": ""
+      },
+      "second_cta": {
+        
+      }
+    }
   },
   'header': {
     'buttons': {
