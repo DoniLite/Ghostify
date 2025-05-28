@@ -1,4 +1,3 @@
-import { Languages } from 'lucide-react';
 import { Locale } from '../../@types/translation.ts';
 import { useTranslation } from './TranslationContext.tsx';
 
@@ -19,7 +18,7 @@ export function LanguageSwitcher() {
     >
       {availableLocales.map((loc) => (
         <option key={loc} value={loc}>
-          {localeNames[loc]} <Languages size={10} className='text-foreground' />
+          {localeNames[loc]}
         </option>
       ))}
     </select>
