@@ -1,6 +1,6 @@
 import { LocalsContext } from './Layout.tsx';
 import Meta, { type MetaProps } from './Meta.tsx';
-import { PropsWithChildren, FC } from 'hono/jsx';
+import { PropsWithChildren, FC } from 'react';
 import Script from './Script.tsx';
 
 export type TLayout = PropsWithChildren<{
@@ -10,11 +10,11 @@ export type TLayout = PropsWithChildren<{
   theme?: Record<string, string>;
 }>;
 
-const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal, theme }) => {
+const Layout: FC<TLayout> = ({ children, locales, currentLocal, theme }) => {
   return (
     <html lang={currentLocal} data-theme={theme?.default || theme?.userDefault || 'light'}>
       <head>
-        <meta charset='UTF-8' />
+        <meta charSet='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <meta
           name='author'
@@ -24,7 +24,7 @@ const Layout: FC<TLayout> = ({ meta, children, locales, currentLocal, theme }) =
         <link rel='stylesheet' href='/static/all.min.css' />
         <link rel='icon' type='image/svg+xml' href='/static/SVG/gostify.svg' />
         <link rel='stylesheet' href='/static/css/main.css' />
-        <Meta {...meta} />
+        <Meta />
       </head>
       <body>
         <LocalsContext.Provider value={locales ?? {default: {}}}>
