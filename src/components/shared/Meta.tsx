@@ -68,16 +68,16 @@ const Meta = () => {
             <meta property={metaName} content={value} key={metaName} />
           );
         }
-        return (
-          <meta name={metaName} content={value} key={metaName} />
-        );
-            <meta
-              key={metaName}
-              property={metaName.split(':')[1]}
-              content={value}
-            />
-          );
-        }
+        // return (
+        //   <meta name={metaName} content={value} key={metaName} />
+        // );
+        //     <meta
+        //       key={metaName}
+        //       property={metaName.split(':')[1]}
+        //       content={value}
+        //     />
+        //   );
+        // }
         return (
           <meta
             key={metaName}

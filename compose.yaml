@@ -2,14 +2,23 @@ name: Ghostify_Services
 
 services:
   server:
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
+      DB_NAME: ghostify_db
+      DB_HOST: db
+      DB_USER: ghostify
+      DB_PASSWORD: doni_lite_is_the_server_owner_password
       NODE_ENV: production
       DENO_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=own&connection_limit=5
+      DATABASE_URL: postgresql://ghostify:doni_lite_is_the_server_owner_password@db:5432/ghostify_db?schema=own&connection_limit=5
     ports:
       - 8080:8080
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     volumes:
       - ./static:/static
@@ -19,16 +28,17 @@ services:
       - ghostify_network
 
   db:
-    image: postgres
+    image: postgres:latest
+    container_name: ghostify_db
     restart: always
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    expose:
-      - 5432
+      POSTGRES_USER: ghostify
+      POSTGRES_PASSWORD: doni_lite_is_the_server_owner_password
+      POSTGRES_DB: ghostify_db
+    ports:
+      - "5433:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "ghostify", "-d", "ghostify"]
       interval: 10s
@@ -44,7 +54,6 @@ services:
       - '443:443' # HTTPS
     depends_on:
       - server
-      - api
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro

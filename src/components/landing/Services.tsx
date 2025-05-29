@@ -1,4 +1,5 @@
 import { FileText, Repeat2, UserCheck } from 'lucide-react'; // Assuming lucide-react for icons
+import { useTranslation } from '../shared/TranslationContext.tsx';
 
 type ServiceCardProps = {
   icon: React.ReactNode;
@@ -46,51 +47,40 @@ const ServiceCard = (
 );
 
 const ServicesSection = () => {
+  const { t } = useTranslation();
   return (
     <section className='py-20 px-6 lg:px-12 bg-background text-center'>
       <div className='container mx-auto'>
         <span className='text-primary text-lg font-semibold font-nunito'>
-          Nos Services
+          {t('home.services.id')}
         </span>
         <h2 className='text-4xl lg:text-5xl font-extrabold text-foreground mt-4 mb-12 font-nunito'>
-          Solutions documentaires complètes pour les développeurs
+          {t('home.services.title')}
         </h2>
         <p className='text-lg text-muted-foreground mb-16 max-w-2xl mx-auto font-inter'>
-          Intégrez des fonctionnalités avancées de gestion documentaire à vos
-          applications avec nos API's hautement performantes et évolutives.
+          {t('home.services.description')}
         </p>
 
         <div className='flex flex-col lg:flex-row justify-center items-stretch gap-8'>
           <ServiceCard
             icon={<FileText size={36} />}
-            title='Traduction de Documents'
-            description='Traduisez vos documents dans différents types de formats'
-            features={[
-              'Performance et optimisation',
-              'Formats PDF, DOCX, HTML',
-              'Traduction en masse',
-            ]}
+            title={t('home.services.translation_service.title')}
+            description={t('home.services.translation_service.description')}
+            features={t('home.services.translation_service.fields') as unknown as string[]}
             apiCode={`POST /api/documents/translate\n{\n  "template": "invoice_v2",\n  "data": {\n    "client": "Acme Inc.",\n    "items": []\n  }\n}`}
           />
           <ServiceCard
             icon={<Repeat2 size={36} />}
-            title='Conversion de Documents'
-            description='Convertissez vos documents entre différents formats tout en préservant la mise en forme et les éléments complexes.'
-            features={[
-              'PDF, DOCX, HTML, Markdown',
-              'Préservation de la mise en page',
-              'Traitement par lots',
-            ]}
+            title={t('home.services.conversion_service.title')}
+            description={t('home.services.conversion_service.description')}
+            features={t('home.services.conversion_service.fields') as unknown as string[]}
             apiCode={`POST /api/documents/convert\n{\n  "source": "pdf",\n  "target": "docx",\n  "options": {\n    "preserveImages": true\n  }\n}`}
           />
           <ServiceCard
             icon={<UserCheck size={36} />}
-            title='Création de CV'
-            description='Générez des CV professionnels avec des modèles personnalisables pour les applications RH et les sites de recrutement.'
-            features={[
-              'Templates modernes',
-              'Personnalisation avancée',
-            ]}
+            title={t('home.services.cv_service.title')}
+            description={t('home.services.cv_service.description')}
+            features={t('home.services.cv_service.fields') as unknown as string[]}
           />
         </div>
       </div>

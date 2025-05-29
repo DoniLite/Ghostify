@@ -1,27 +1,27 @@
+import { useTranslation } from '../shared/TranslationContext.tsx';
 import { Button } from '../utils/button.tsx';
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   return (
     <section className='relative h-screen flex items-center justify-center pt-24 pb-12 px-6 lg:px-12 bg-background'>
       <div className='container mx-auto flex flex-col lg:flex-row items-center justify-between gap-12'>
         <div className='flex-1 text-center lg:text-left'>
           <h1 className='text-4xl lg:text-6xl font-extrabold leading-tight text-foreground mb-6 font-nunito'>
-            Une plateforme pour booster votre{' '}
+            {t('home.hero.welcome_1')}{' '}
             <span className='text-primary'>
-              productivité
+              {t('home.hero.welcome_2')}
             </span>
           </h1>
           <p className='text-lg lg:text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0 font-inter'>
-            Ghostify est une plateforme de production et de partage de contenu,
-            incluant des services comme la création et la conversion de document
-            et de Cirruculum Vitae.
+            {t('home.hero.description')}
           </p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
-            <Button className='bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent transition-colors font-nunito'>
-              Essayer gratuitement
+            <Button className='bg-primary cursor-pointer text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent transition-colors font-nunito'>
+              {t('home.hero.cta.1')}
             </Button>
-            <Button className='border border-input text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
-              Consulter la doc
+            <Button className='border cursor-pointer border-border text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>
+              {t('home.hero.cta.2')}
             </Button>
           </div>
         </div>
@@ -67,8 +67,6 @@ const HeroSection = () => {
           <div className='absolute -top-4 -left-4 w-32 h-32 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20'>
           </div>
         </div>
-
-
       </div>
     </section>
   );

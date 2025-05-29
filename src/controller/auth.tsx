@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { validator } from 'hono/validator';
 import Login from '../pages/Login.tsx';
 import { prismaClient } from '../config/db.ts';
-import { getLoc } from '../utils/helpers.ts';
 import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';

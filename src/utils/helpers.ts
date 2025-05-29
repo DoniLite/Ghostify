@@ -8,17 +8,6 @@ import {
 import { Translate, translate } from 'free-translate';
 import { month } from '../@types/index.d.ts';
 
-export const getLoc = async (loc: 'en' | 'fr' | 'es') => {
-  const en = await import(`../../locales/en.json`, { with: { type: 'json' } });
-  const fr = await import(`../../locales/fr.json`, { with: { type: 'json' } });
-  const es = await import(`../../locales/es.json`, { with: { type: 'json' } });
-  return {
-    en,
-    fr,
-    es,
-  }[loc];
-};
-
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
   if (typeof obj['title'] === 'string') {
     return obj['title'].toLowerCase().includes(k.toLocaleLowerCase());

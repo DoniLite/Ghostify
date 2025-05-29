@@ -13,7 +13,6 @@ import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
-import { getLoc } from './src/utils/helpers.ts';
 import { stream } from 'hono/streaming';
 import authApp from './src/controller/auth.tsx';
 import { html } from 'hono/html';
@@ -74,15 +73,13 @@ app.use(
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
 app.use('*', sessionManager);
-app.get('/init', async (c) => {
+app.get('/init', (c) => {
   const session = c.get('session');
   const lang = c.get('language') as 'en' | 'es' | 'fr';
-  const loc = await getLoc(lang);
   const theme = session.get('Theme');
   const layout = {
     isHome: true,
     currentLocal: lang,
-    locales: loc,
     theme: theme ?? {},
   };
   return c.json(layout);

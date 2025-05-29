@@ -1,7 +1,8 @@
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react'; // Importe useRef et useEffect
+import { useEffect, useRef, useState } from 'react'; // Importe useRef et useEffect
 import { useTheme } from './ThemeProvider.tsx';
 import { Button } from '../utils/button.tsx';
+import { useTranslation } from './TranslationContext.tsx';
 
 interface ThemeToggleProps {
   className?: string;
@@ -14,7 +15,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 }) => {
   const { theme, toggleTheme, isHydrated } = useTheme();
   const [isAnimating, setIsAnimating] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top'); // Nouvel état pour la position du tooltip
+  const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>(
+    'top',
+  ); // Nouvel état pour la position du tooltip
   const buttonRef = useRef<HTMLButtonElement>(null); // Référence au bouton
 
   const handleToggle = () => {
@@ -36,15 +39,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   };
 
   const getThemeLabel = () => {
-    switch (theme) {
-      case 'light':
-        return 'Mode Clair';
-      case 'system':
-        return 'Mode Système';
-      case 'dark':
-      default:
-        return 'Mode Sombre';
-    }
+    const { t } = useTranslation();
+    return t(`common.mode.${theme}`);
   };
 
   // Logique pour déterminer la position du tooltip
@@ -108,20 +104,17 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   `;
 
   // Classes de positionnement spécifiques
-  const tooltipPositionClasses =
-    tooltipPosition === 'top'
-      ? `${showLabel ? '-top-16' : '-top-12'}` // Anciennes positions pour le haut
-      : `${showLabel ? 'top-full mt-4' : 'top-full mt-3'}`; // Nouvelle position pour le bas (ajustée pour la flèche)
+  const tooltipPositionClasses = tooltipPosition === 'top'
+    ? `${showLabel ? '-top-16' : '-top-12'}` // Anciennes positions pour le haut
+    : `${showLabel ? 'top-full mt-4' : 'top-full mt-3'}`; // Nouvelle position pour le bas (ajustée pour la flèche)
 
-  const tooltipArrowClasses =
-    tooltipPosition === 'top'
-      ? 'absolute top-full left-1/2 transform -translate-x-1/2' // Flèche en bas pour tooltip en haut
-      : 'absolute bottom-full left-1/2 transform -translate-x-1/2'; // Flèche en haut pour tooltip en bas
+  const tooltipArrowClasses = tooltipPosition === 'top'
+    ? 'absolute top-full left-1/2 transform -translate-x-1/2' // Flèche en bas pour tooltip en haut
+    : 'absolute bottom-full left-1/2 transform -translate-x-1/2'; // Flèche en haut pour tooltip en bas
 
-  const tooltipArrowInnerClasses =
-    tooltipPosition === 'top'
-      ? 'w-2 h-2 bg-popover border-r border-b border-border transform rotate-45 -mt-1'
-      : 'w-2 h-2 bg-popover border-l border-t border-border transform rotate-45 mt-1'; // Flèche tournée pour le bas
+  const tooltipArrowInnerClasses = tooltipPosition === 'top'
+    ? 'w-2 h-2 bg-popover border-r border-b border-border transform rotate-45 -mt-1'
+    : 'w-2 h-2 bg-popover border-l border-t border-border transform rotate-45 mt-1'; // Flèche tournée pour le bas
 
   return (
     <div className={`relative inline-flex items-center group ${className}`}>
