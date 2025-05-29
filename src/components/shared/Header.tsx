@@ -44,11 +44,11 @@ const Header = () => {
         </a>
       </nav>
       <div className='flex items-center space-x-4'>
-        <Button className='bg-primary text-primary-foreground px-5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-nunito'>
+        <Button className='bg-primary cursor-pointer text-primary-foreground px-5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-nunito'>
           {t('header.buttons.get_started')}
         </Button>
         <Button
-          className='bg-secondary text-secondary-foreground px-5 py-2 rounded-md hover:bg-secondary-foreground hover:text-secondary transition-colors font-nunito'
+          className='bg-secondary cursor-pointer text-secondary-foreground px-5 py-2 rounded-md hover:bg-secondary-foreground hover:text-secondary transition-colors font-nunito'
           onClick={() => {
             navigate('/login');
           }}

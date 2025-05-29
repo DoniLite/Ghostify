@@ -6,12 +6,12 @@ import { TranslationProvider } from './components/shared/TranslationContext.tsx'
 import { detectLocale } from './utils/translation.ts';
 
 export default function App() {
-  const isServerSide = typeof window === 'undefined';
+  const isServerSide = () => typeof window === 'undefined';
   const defaultLocale = detectLocale();
   return (
     <TranslationProvider
       initialLocale={defaultLocale}
-      serverSide={isServerSide}
+      serverSide={isServerSide()}
     >
       <Wrapper>
         <Routes>
