@@ -2,13 +2,10 @@ import { factory } from '../factory.ts';
 import { authMiddleware } from '../hooks/auth.ts';
 import { z } from 'zod';
 import { validator } from 'hono/validator';
-import Login from '../pages/Login.tsx';
 import { prismaClient } from '../config/db.ts';
 import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
-import Register from '../pages/Register.tsx';
-import TLayout from '../components/shared/TLayout.tsx';
 import dashboardApp from './dashboard.tsx';
 import { compareHash } from '../utils/security/hash.ts';
 

@@ -11,7 +11,6 @@ import { languageDetector } from 'hono/language';
 import { compress } from 'hono/compress';
 import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
-import documentApp from './src/controller/document.tsx';
 import path from 'node:path';
 import { stream } from 'hono/streaming';
 import authApp from './src/controller/auth.tsx';
@@ -24,6 +23,8 @@ import { renderToReadableStream } from 'react-dom/server';
 import App from './src/App.tsx';
 import { StaticRouter } from 'react-router-dom';
 import { getThemeScript } from './src/components/shared/ThemeProvider.tsx';
+import ApiRoutes from './src/api.ts';
+import { cache } from 'hono/cache';
 
 if (Deno.env.get('NODE_ENV') !== 'production') {
   dotenv.config();
@@ -40,6 +41,8 @@ const app = new Hono<{
 
 const store = new CookieStore();
 
+
+// Middlewares
 app.use(
   '*',
   sessionMiddleware({
@@ -53,12 +56,12 @@ app.use(
     },
   }),
 );
-app.use('/api/*', (c, next) => {
-  const jwtMiddleware = jwt({
-    secret: Deno.env.get('JWT_SECRET')!,
-  });
-  return jwtMiddleware(c, next);
-});
+// app.use('/api/*', (c, next) => {
+//   const jwtMiddleware = jwt({
+//     secret: Deno.env.get('JWT_SECRET')!,
+//   });
+//   return jwtMiddleware(c, next);
+// });
 app.use(compress());
 app.use(
   '/*',
@@ -73,6 +76,20 @@ app.use(
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
 app.use('*', sessionManager);
+app.use(
+  '*',
+  cache({
+    cacheName: 'ghostify-cache',
+    cacheControl: 'max-age=3600',
+    wait: true
+  }),
+);
+
+// Registered Routes
+app.route('/auth/', authApp);
+app.route('/api/v1', ApiRoutes)
+
+// Routes
 app.get('/init', (c) => {
   const session = c.get('session');
   const lang = c.get('language') as 'en' | 'es' | 'fr';
@@ -146,8 +163,6 @@ app.get('/stream/:file', async (c) => {
     return c.text('cannot access to this resource');
   }
 });
-app.route('/document/', documentApp);
-app.route('/auth/', authApp);
 app.get('*', async (c) => {
   const stream = await renderToReadableStream(
     <StaticRouter location={c.req.path}>
