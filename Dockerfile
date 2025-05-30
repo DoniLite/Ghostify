@@ -9,8 +9,6 @@ FROM denoland/deno:${DENO_VERSION} as base
 
 # Install necessary system packages (including Python)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python${PYTHON_VERSION} \
-    python3-pip \
     sudo \
     make \
     pandoc \

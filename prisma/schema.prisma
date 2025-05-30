@@ -37,7 +37,7 @@ model User {
   link          String?
   Key           Key[]
   notifications Notifications[]
-  CV            CV[]
+  CV            Resume[]
   Document      Document[]
 }
 
@@ -86,7 +86,7 @@ model Document {
   postId       Int?
 }
 
-model CV {
+model Resume {
   id         Int      @id @default(autoincrement())
   uid        String?  @unique
   url        String?

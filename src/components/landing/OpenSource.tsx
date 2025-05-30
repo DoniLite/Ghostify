@@ -29,7 +29,7 @@ const OpenSourceSection = () => {
   );
 };
 
-const svgStyle = `.st0{fill:#59BE4C;} .st1{fill:#FFFFFF;} .st2{fill:#000005;}
+const svgStyle = `.st0{fill:#59BE4C;} .st1{fill:#FFFFFF;} .st2{@apply fill-secondary;}
   .st2{fill:#000005;}
   .st1{fill:#FFFFFF;}
   .st0{fill:#f29b11;}`;

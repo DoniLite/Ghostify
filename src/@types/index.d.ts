@@ -1,4 +1,3 @@
-export { Post } from '@prisma/client';
 import { type Buffer } from 'node:buffer';
 
 

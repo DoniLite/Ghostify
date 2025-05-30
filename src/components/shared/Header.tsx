@@ -4,7 +4,7 @@ import { Ghostify } from './Icons.tsx';
 import { linkClass } from '../utils/links.ts';
 import { ThemeToggle } from './ThemeToogle.tsx';
 import { LanguageSwitcher } from './LanguageSwitcher.tsx';
-import { useTranslation } from './TranslationContext.tsx';
+import { useLocalURI, useTranslation } from './TranslationContext.tsx';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Header = () => {
       </div>
       <nav className='hidden lg:flex items-center space-x-8'>
         <NavLink
-          to='/'
+          to={useLocalURI('/')}
           className={linkClass}
         >
           {t('common.home')}
@@ -50,7 +50,7 @@ const Header = () => {
         <Button
           className='bg-secondary cursor-pointer text-secondary-foreground px-5 py-2 rounded-md hover:bg-secondary-foreground hover:text-secondary transition-colors font-nunito'
           onClick={() => {
-            navigate('/login');
+            navigate(useLocalURI('/login'));
           }}
         >
           {t('header.buttons.login')}
