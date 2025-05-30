@@ -1,10 +1,10 @@
-import { prismaClient } from '../config/db.ts';
+import { prismaClient } from '../../config/db.ts';
 import { EventEmitter } from 'node:stream';
 import type { Notifications, NotificationType } from '@prisma/client';
 import { DoneCallback, Job } from 'bull';
-import { logger } from '../logger.ts';
-import { ee } from '../utils/helpers.ts';
-import { NotificationQueue } from '../job.ts';
+import { logger } from '../../logger.ts';
+import { NotificationQueue } from '../../job.ts';
+import { ee } from './eventBus.ts';
 
 export class NotificationBus {
   /**
@@ -60,7 +60,7 @@ export class NotificationBus {
    *
    */
   constructor() {
-    this.eventBus = ee();
+    this.eventBus = ee;
     this.#crud = prismaClient.notifications;
     this.eventType = {
       Alert: 'Alert',

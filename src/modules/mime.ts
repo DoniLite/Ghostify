@@ -8,7 +8,6 @@ export class MimeTypes {
   private db: MimeDatabase;
 
   constructor(customTypes: MimeDatabase = {}) {
-    // Base de données par défaut des types MIME courants
     this.db = {
       // Documents texte
       'txt': 'text/plain',

@@ -6,7 +6,7 @@ mailClient.setApiKey(process.env.SENDGRID_API_KEY!);
 export const mailDraft = (
   data: MailDataRequired | { html: string | string[]; to: string },
 ) => {
-  const aditionnal = {};
+  const additional = {};
   const msg = {
     to: 'nogbedziyaomessan13@gmail.com', // Change to your recipient
     from: 'ghostify@ghostify.site', // Change to your verified sender
@@ -16,13 +16,13 @@ export const mailDraft = (
   if ('to' in data && 'from' in data && 'subject' in data && 'text' in data) {
     return {
       ...data,
-      ...aditionnal,
+      ...additional,
     };
   }
   return {
     ...data,
     ...msg,
-    ...aditionnal,
+    ...additional,
   };
 };
 

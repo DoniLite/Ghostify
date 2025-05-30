@@ -1,4 +1,5 @@
-import { FC } from 'hono/jsx';
+import { FC } from 'react';
+
 
 export interface CVProps {
   fullName?: string;

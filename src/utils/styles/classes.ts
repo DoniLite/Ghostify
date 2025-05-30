@@ -1,4 +1,4 @@
-export const cvClass = {
+export const resumeClasses = {
   v1: {
     mode1: {
       bg1: 'cv1-mode1-bg1',

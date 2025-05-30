@@ -1,7 +1,6 @@
 import { LocalsContext } from './Layout.tsx';
 import Meta, { type MetaProps } from './Meta.tsx';
 import { PropsWithChildren, FC } from 'react';
-import Script from './Script.tsx';
 
 export type TLayout = PropsWithChildren<{
   meta?: MetaProps;
@@ -31,7 +30,6 @@ const Layout: FC<TLayout> = ({ children, locales, currentLocal, theme }) => {
           {children}
           <div id="backToTop"></div>
         </LocalsContext.Provider>
-        <Script />
       </body>
     </html>
   );

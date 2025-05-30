@@ -1,5 +1,3 @@
-// src/routes/og.ts
-import { cors } from 'npm:hono/cors';
 import {
   GenerationError,
   ogGenerator,
@@ -11,14 +9,6 @@ import { factory } from '../factory.ts';
 
 const og = factory.createApp();
 
-// Middleware CORS for images
-og.use(
-  '*',
-  cors({
-    origin: ['http://localhost:8080', 'https://votre-domaine.com'],
-    allowMethods: ['GET'],
-  }),
-);
 
 
 og.get('/', async (c) => {

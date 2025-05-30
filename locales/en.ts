@@ -15,7 +15,7 @@ export default {
       'welcome_1': 'A platform to boost your',
       'welcome_2': 'productivity',
       'description':
-        'Ghostify is a content production and sharing platform, including services such as document and Curriculum Vitae creation and conversion.',
+        'Ghostify is a content production and sharing platform, including services such as document and Resume creation and conversion.',
       'cta': {
         '1': 'Try for free',
         '2': 'View documentation',
