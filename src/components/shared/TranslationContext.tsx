@@ -13,6 +13,9 @@ import {
 } from '../../@types/translation.ts';
 
 export interface TranslationContextType {
+  /**
+   * The current local
+   */
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: <T extends TranslationKeys>(
@@ -66,7 +69,7 @@ export function TranslationProvider(
         }
 
         if (typeof translation === 'object' && Array.isArray(translation)) {
-          return translation
+          return translation;
         }
 
         let result = String(translation);
@@ -112,4 +115,9 @@ export function useTranslation(): TranslationContextType {
   }
 
   return context;
+}
+
+export function useLocalURI(uri: string): string {
+  const { locale } = useTranslation();
+  return `${uri}?lang=${locale}`;
 }

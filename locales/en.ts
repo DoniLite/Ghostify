@@ -70,20 +70,21 @@ export default {
         'title': 'We support +30 document types in terms of conversion',
         'description':
           'Our conversion software allows you to achieve satisfactory results regardless of your desired input or output. Thanks to powerful tools, we preserve the format and original quality of your documents. You can also choose to convert them in bulk or use our API if you wish to integrate it into your own solutions.',
-        'btn': 'Try for free'
+        'btn': 'Try for free',
       },
     },
     'productivity': {
       'title': 'Everything you need to boost your productivity',
-      'description': 'Ghostify is a productivity platform that allows you to draw inspiration not only from other users\' content but also to benefit from AI assistance for your various tasks while taking into account your preferences.'
+      'description':
+        "Ghostify is a productivity platform that allows you to draw inspiration not only from other users' content but also to benefit from AI assistance for your various tasks while taking into account your preferences.",
     },
     'open_source': {
       'title': {
         1: 'we are',
-        2: 'Open Source'
+        2: 'Open Source',
       },
-      'btn': 'View on Github'
-    }
+      'btn': 'View on Github',
+    },
   },
   'header': {
     'buttons': {
@@ -91,4 +92,6 @@ export default {
       'login': 'Login',
     },
   },
+  'footer': {},
+  'not_found': {}
 };
