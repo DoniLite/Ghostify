@@ -30,7 +30,7 @@ export const TranslationContext = createContext<TranslationContextType | null>(
 );
 
 export interface I18nProviderProps {
-  children: ReactNode;
+  children?: ReactNode;
   initialLocale: Locale;
   serverSide?: boolean;
 }
