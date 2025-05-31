@@ -3,7 +3,7 @@ import { authMiddleware } from '../hooks/auth.ts';
 
 const dashboardApp = factory.createApp();
 
-dashboardApp.get('/', authMiddleware, async (c) => {
+dashboardApp.get('/', authMiddleware, (c) => {
   return c.html('');
 });
 

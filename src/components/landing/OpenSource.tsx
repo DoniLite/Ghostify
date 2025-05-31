@@ -29,10 +29,7 @@ const OpenSourceSection = () => {
   );
 };
 
-const svgStyle = `.st0{fill:#59BE4C;} .st1{fill:#FFFFFF;} .st2{@apply fill-secondary;}
-  .st2{fill:#000005;}
-  .st1{fill:#FFFFFF;}
-  .st0{fill:#f29b11;}`;
+const svgStyle = `.st0{fill: var(--primary);} .st1{fill: var(--secondary);} .st2{fill: var(--foreground);}`;
 const CodingSVG = ({ ...rest }: Record<string, unknown>) => (
   <svg
     {...rest}

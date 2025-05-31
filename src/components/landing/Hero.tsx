@@ -17,7 +17,7 @@ const HeroSection = () => {
             {t('home.hero.description')}
           </p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center lg:justify-start'>
-            <Button className='bg-primary cursor-pointer text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent transition-colors font-nunito'>
+            <Button className='bg-primary cursor-pointer text-primary-foreground px-8 py-3 rounded-md text-lg hover:bg-accent hover:text-accent-foreground transition-colors font-nunito'>
               {t('home.hero.cta.1')}
             </Button>
             <Button className='border cursor-pointer border-border text-foreground px-8 py-3 rounded-md text-lg hover:bg-muted transition-colors font-nunito'>

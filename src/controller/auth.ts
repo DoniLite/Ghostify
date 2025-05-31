@@ -6,7 +6,7 @@ import { prismaClient } from '../config/db.ts';
 import { HTTPException } from 'hono/http-exception';
 import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
-import dashboardApp from './dashboard.tsx';
+import dashboardApp from './dashboard.ts';
 import { compareHash } from '../utils/security/hash.ts';
 
 const authApp = factory.createApp();

@@ -65,8 +65,8 @@ async function loadGoogleFonts() {
 async function loadLocalFonts() {
   try {
     const fontFiles = [
-      join(projectRoot, 'static/webfonts/Inter.ttf'),
-      join(projectRoot, 'static/webfonts/Inter_bold.ttf'),
+      join(projectRoot, 'static/fonts/Inter.ttf'),
+      join(projectRoot, 'static/fonts/Inter_bold.ttf'),
     ];
 
 

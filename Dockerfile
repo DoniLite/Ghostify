@@ -25,7 +25,6 @@ WORKDIR /usr/app
 RUN chown -R deno:appgroup /usr/app
 
 ################################################################################
-# Stage de récupération des dépendances
 FROM base as deps
 
 COPY --chown=deno:appgroup ./deno.json ./deno.json

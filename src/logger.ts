@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import process from "node:process";
 
-// Créer le dossier logs s'il n'existe pas
+
 const logDir = path.join(process.cwd(), '/logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });

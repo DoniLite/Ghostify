@@ -1,5 +1,4 @@
 import Header from './Header.tsx';
-import Script from './Script.tsx';
 import Footer from './Footer.tsx';
 import Meta from './Meta.tsx';
 import { createContext, FC, PropsWithChildren } from 'react';
@@ -116,7 +115,6 @@ const Layout: FC<LayoutType> = ({ children }) => (
             <Footer />
           </LocalsContext.Provider>
         </ThemeProvider>
-        <Script />
       </body>
     </SeoContext.Provider>
   </html>

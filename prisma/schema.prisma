@@ -147,7 +147,7 @@ enum KeyType {
   LinkedInAuthCode
   FacebookAuthCode
   RedditAuthCode
-  PlateformKey
+  PlatformKey
 }
 
 enum NotificationType {

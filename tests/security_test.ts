@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
-import { decrypt, encrypt, generateKeys } from '../src/utils/helpers.ts';
 import { assertEquals, assertNotEquals } from 'jsr:@std/assert';
+import { decrypt, encrypt, generateKeys } from '../src/utils/security/cryptography.ts';
 
 Deno.test('security test', async (t) => {
     let keys: {

@@ -1,3 +1,5 @@
+import { User } from '@prisma/client';
+
 export interface ApiResponse<T = unknown> {
     data: T;
     status: number;
@@ -57,28 +59,27 @@ export interface ApiResponse<T = unknown> {
   }
   
   export interface ApiRoutes {
-    // Exemple de routes - à adapter selon ton API
     users: {
       list: {
         method: 'GET';
-        response: { id: number; name: string; email: string }[];
+        response: User[];
         params?: { page?: number; limit?: number };
       };
       get: {
         method: 'GET';
-        response: { id: number; name: string; email: string };
+        response: User;
         params: { id: number };
       };
       create: {
         method: 'POST';
-        response: { id: number; name: string; email: string };
+        response: { id: User['id']; name: User['fullname']; email: User['email'] };
         body: { name: string; email: string };
       };
       update: {
         method: 'PUT';
         response: { id: number; name: string; email: string };
         params: { id: number };
-        body: { name?: string; email?: string };
+        body: Partial<User>;
       };
       delete: {
         method: 'DELETE';
@@ -86,7 +87,7 @@ export interface ApiResponse<T = unknown> {
         params: { id: number };
       };
     };
-    posts: {
+    documents: {
       list: {
         method: 'GET';
         response: { id: number; title: string; content: string; userId: number }[];

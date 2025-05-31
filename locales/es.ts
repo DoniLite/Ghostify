@@ -1,8 +1,13 @@
-export default {
+const locales = {
   'common': {
     'home': 'Inicio',
     'contact': 'Contacto',
     'pricing': 'Precios',
+    'get_started': 'Empezar',
+    'per': 'Por',
+    'month': 'Mes',
+    'year': 'Año',
+    'day': 'Día',
     'products': 'Productos',
     'mode': {
       'system': 'Modo del sistema',
@@ -76,15 +81,16 @@ export default {
     },
     'productivity': {
       'title': 'Todo lo que necesitas para impulsar tu productividad',
-      'description': 'Ghostify es una plataforma de productividad que te permite inspirarte no solo en el contenido de otros usuarios, sino también beneficiarte de la asistencia de IA para tus diversas tareas, teniendo en cuenta tus preferencias.'
+      'description':
+        'Ghostify es una plataforma de productividad que te permite inspirarte no solo en el contenido de otros usuarios, sino también beneficiarte de la asistencia de IA para tus diversas tareas, teniendo en cuenta tus preferencias.',
     },
     'open_source': {
       'title': {
         1: 'Somos de',
-        2: 'Código Abierto'
+        2: 'Código Abierto',
       },
-      'btn': 'Ver en Github'
-    }
+      'btn': 'Ver en Github',
+    },
   },
   'header': {
     'buttons': {
@@ -93,3 +99,5 @@ export default {
     },
   },
 };
+
+export default locales;
