@@ -13,7 +13,7 @@ import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import path from 'node:path';
 import { stream } from 'hono/streaming';
-import authApp from './src/controller/auth.tsx';
+import authApp from './src/controller/auth.ts';
 import { html } from 'hono/html';
 import { termsMD } from './src/utils/templates/markdownPage.ts';
 import { unify } from './src/utils/security/purify.ts';

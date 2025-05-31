@@ -1,9 +1,14 @@
-export default {
+const locales = {
   'common': {
     'home': 'Home',
     'contact': 'Contact',
     'pricing': 'Pricing',
     'products': 'Products',
+    'get_started': 'Get started',
+    'per': 'By',
+    'month': 'Month',
+    'year': 'Year',
+    'day': 'Day',
     'mode': {
       'system': 'System Mode',
       'light': 'Light Mode',
@@ -88,10 +93,46 @@ export default {
   },
   'header': {
     'buttons': {
-      'get_started': 'Det started',
+      'get_started': 'Get started',
       'login': 'Login',
     },
   },
+  'billing': {
+    'pro': {
+      id: 'Pro',
+      'pack': [
+        'Document basic toolkit: Creation, 30GB free Storage, Team workspace sharing (5 workspaces, 10 max connections)',
+        'Unlimited Document Convertor',
+        '50k token/mo Document Translator',
+        'Unlimited Resume creation',
+        'Hosted and Sharable Resume',
+      ]
+    },
+    'stater': {
+      id: 'Starter',
+      'pack': [
+        'Document basic toolkit: Creation, 15GB free Storage, Team workspace sharing (2 workspace, 5 max connections)',
+        '10GB/mo Documents Convertor',
+        'Unlimited Resume creation',
+        'Hosted and Sharable Resume'
+      ]
+    }
+  },
+  'contact': {
+    'title': 'Get in Touch',
+    'subtitle': 'We\'d love to hear from you! Send us a message or find our contact details below.',
+    'form_heading': 'Send us a Message',
+    'form_name': 'Your Name',
+    'form_email': 'Your Email',
+    'form_subject': 'Subject',
+    'form_message': 'Your Message',
+    'form_submit': 'Send Message',
+    'form_sending': 'Sending...',
+    'form_success': 'Message sent successfully! We\'ll get back to you soon.',
+    'form_error': 'Failed to send message. Please try again later.'
+  },
   'footer': {},
-  'not_found': {}
+  'not_found': {},
 };
+
+export default locales;

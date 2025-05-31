@@ -30,18 +30,18 @@ const Header = () => {
         >
           {t('common.products')}
         </a>
-        <a
-          href='#'
-          className='text-foreground hover:text-primary transition-colors font-nunito'
+        <NavLink
+          to={useLocalURI('/pricing')}
+          className={linkClass}
         >
           {t('common.pricing')}
-        </a>
-        <a
-          href='#'
-          className='text-foreground hover:text-primary transition-colors font-nunito'
+        </NavLink>
+        <NavLink
+          to={useLocalURI('/contact')}
+          className={linkClass}
         >
           {t('common.contact')}
-        </a>
+        </NavLink>
       </nav>
       <div className='flex items-center space-x-4'>
         <Button className='bg-primary cursor-pointer text-primary-foreground px-5 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors font-nunito'>

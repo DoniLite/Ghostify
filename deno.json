@@ -122,7 +122,8 @@
       "tags": [
         "recommended"
       ]
-    }
+    },
+    "plugins": []
   },
   "permissions": {
     "net": true,
