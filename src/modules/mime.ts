@@ -1,4 +1,3 @@
-// mime.ts - Module MIME simple pour Deno fonctionnant hors ligne
 
 export interface MimeDatabase {
   [extension: string]: string;
@@ -9,7 +8,7 @@ export class MimeTypes {
 
   constructor(customTypes: MimeDatabase = {}) {
     this.db = {
-      // Documents texte
+      // Documents
       'txt': 'text/plain',
       'html': 'text/html',
       'htm': 'text/html',
@@ -41,7 +40,7 @@ export class MimeTypes {
       'wav': 'audio/wav',
       'ogg': 'audio/ogg',
       
-      // Vidéo
+      // Video
       'mp4': 'video/mp4',
       'webm': 'video/webm',
       
@@ -59,7 +58,7 @@ export class MimeTypes {
       'tar': 'application/x-tar',
       'gz': 'application/gzip',
       
-      // Autres
+      // Other
       'wasm': 'application/wasm',
       'xml': 'application/xml',
       'woff': 'font/woff',
@@ -70,19 +69,18 @@ export class MimeTypes {
       // Fallback
       'bin': 'application/octet-stream',
       
-      // Fichiers spécifiques à Deno
+      // Deno specific files
       'jsonc': 'application/jsonc',
       'toml': 'application/toml',
       'yml': 'application/yaml',
       'yaml': 'application/yaml',
     };
     
-    // Fusionner avec les types personnalisés
     this.db = { ...this.db, ...customTypes };
   }
 
   /**
-   * Obtient le type MIME à partir de l'extension de fichier
+   * Obtaining the MIME Type from the file extension
    */
   getType(path: string): string | null {
     const extension = path.split('.').pop()?.toLowerCase() || '';
@@ -90,7 +88,7 @@ export class MimeTypes {
   }
 
   /**
-   * Obtient l'extension de fichier à partir du type MIME
+   * Obtaining file extension from the MIME
    */
   getExtension(mimeType: string): string | null {
     for (const [ext, type] of Object.entries(this.db)) {
@@ -102,26 +100,25 @@ export class MimeTypes {
   }
 
   /**
-   * Ajoute ou met à jour un type MIME
+   * Adding new MIME Type to the store
    */
   addType(extension: string, mimeType: string): void {
     this.db[extension.toLowerCase()] = mimeType;
   }
 
   /**
-   * Supprime un type MIME
+   * Removing a MIME Type
    */
   removeType(extension: string): void {
     delete this.db[extension.toLowerCase()];
   }
 
   /**
-   * Vérifie si une extension est connue
+   * Verifying if any extension is known
    */
   hasType(extension: string): boolean {
     return extension.toLowerCase() in this.db;
   }
 }
 
-// Exportation d'une instance par défaut prête à l'emploi
 export default new MimeTypes();
