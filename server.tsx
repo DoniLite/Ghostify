@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 import process from 'node:process';
 import { languageDetector } from 'hono/language';
 import { compress } from 'hono/compress';
-import { jwt } from 'hono/jwt';
+// import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
 import path from 'node:path';
 import { stream } from 'hono/streaming';

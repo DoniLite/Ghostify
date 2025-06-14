@@ -68,7 +68,7 @@ jobs:
         run: deno task test-ci
 
       - name: Build Project
-        run: deno task build
+        run: deno task build:preview
 
       - name: Create dist directory (if not created by build)
         # This step might be redundant if deno task build creates 'dist'
@@ -77,6 +77,5 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: deno-build-artifacts
+          name: ghostify-client-preview
           path: dist/
-          retention-days: 7

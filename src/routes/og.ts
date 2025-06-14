@@ -164,10 +164,12 @@ og.get('/page/:pageType', async (c) => {
 });
 
 // Fonction utilitaire pour récupérer les données d'un document
-async function getDocumentData(
-  documentId: string,
-  userId?: string,
-): Promise<DocumentOGData | undefined> {
+// async function getDocumentData(
+function getDocumentData(
+  _documentId: string,
+  _userId?: string,
+// ): Promise<DocumentOGData | undefined> {
+): DocumentOGData | undefined {
   try {
     // Ici tu intègres ta logique de récupération depuis ta base de données
     // Exemple avec une API ou une base de données

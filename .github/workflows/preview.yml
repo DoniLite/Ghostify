@@ -1,38 +1,25 @@
-# .github/workflows/react-preview.yml
-name: React Client Preview Deployment
+# .github/workflows/preview.yml
+name: Ghostify Preview Deployment
 
 on:
-  workflow_run:
-    workflows: ["Ghostify Fullstack CI/CD", "Deno CD/CI Workflow"]
-    types:
-      - completed
+  push:
     branches:
       - main
       - develop
-      - 'releases/**'
+  pull_request:
+    branches:
+      - main
+      - develop
 
 # Ensure the workflow only runs if ALL preceding workflows were successful
 # You might need to adjust this logic based on which specific jobs you want to gate on.
 # For simplicity, this example assumes the workflows are the gatekeepers.
 jobs:
-  # Check if the triggering workflow run was successful
-  check_prerequisites:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check workflow run conclusion
-        if: github.event.workflow_run.conclusion == 'success'
-        run: echo "Pre-requisite workflows passed. Proceeding with deployment."
-      - name: Fail if prerequisites not met
-        if: github.event.workflow_run.conclusion != 'success'
-        run: |
-          echo "One or more pre-requisite workflows failed. Skipping deployment."
-          exit 1
-
-  build-and-deploy-react:
-    runs-on: ubuntu-latest
-    needs: check_prerequisites # This job depends on the check_prerequisites job
-    # This ensures deployment only happens if the previous workflows passed
-    if: needs.check_prerequisites.result == 'success'
+    strategy:
+      matrix:
+        deno-version: ["2.x"]
 
     permissions:
       pages: write # Required to deploy to GitHub Pages
@@ -46,24 +33,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Download preview artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: "20.x" # Or your preferred Node.js version for React
-          cache: 'npm' # Cache npm dependencies
-          cache-dependency-path: package-lock.json # Or yarn.lock/pnpm-lock.yaml
-
-      - name: Install React Dependencies
-        run: npm ci # Use npm ci for clean installs in CI
-
-      - name: Build React Application
-        run: npm run build # Or your build command, e.g., yarn build, pnpm build
-
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./build # Adjust this path to your React app's build output directory
+          name: ghostify-client-preview
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          folder: dist
+          branch: ghostify-preview
