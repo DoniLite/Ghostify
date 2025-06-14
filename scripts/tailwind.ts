@@ -121,6 +121,7 @@ await new Command()
       await watchFiles();
     } else {
       await buildTailwind();
+      Deno.exit(0);
     }
   })
   .parse(Deno.args);
