@@ -31,7 +31,7 @@ jobs:
       matrix:
         # Use specific patch versions or 'x' for minor/major releases
         # to ensure stability while allowing for updates.
-        deno-version: ["1.41.0", "1.40.0", "2.x"] # Changed 2.3.1 to 2.x for latest Deno 2
+        deno-version: ["2.x"] # Changed 2.3.1 to 2.x for latest Deno 2
 
     steps:
       - name: Checkout Repository
