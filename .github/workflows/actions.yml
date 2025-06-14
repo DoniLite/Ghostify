@@ -55,7 +55,7 @@ jobs:
 
       - name: Download Deno Modules
         # Using deno cache to ensure all modules are downloaded and cached
-        run: deno cache --reload --lock deno.lock
+        run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
 
       - name: Generate Types for Prisma
         run: deno task prisma:generate
