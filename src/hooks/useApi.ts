@@ -114,7 +114,7 @@ class ApiClient {
     }
   }
 
-  // Méthodes typées pour tes routes
+  // Typed method for the routes
   call<
     R extends RouteKey,
     E extends EndpointKey<R>,
@@ -152,10 +152,10 @@ class ApiClient {
       );
     }
 
-    // Construction du path en fonction de l'endpoint
+    // Building the path depending on the endpoint
     let path = `/${String(route)}`;
 
-    // Si ce n'est pas une liste et qu'on a un ID dans les params
+    // If not a list or have an ID in the param
     if (
       endpoint !== 'list' && options?.params &&
       typeof options.params === 'object' && 'id' in options.params
@@ -173,10 +173,10 @@ class ApiClient {
   }
 }
 
-// Instance globale
+// Global Instance
 export const apiClient = new ApiClient();
 
-// Hook personnalisé useApi
+
 export function useApi<
   R extends RouteKey,
   E extends EndpointKey<R>,

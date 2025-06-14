@@ -1,59 +1,26 @@
 import path from 'node:path';
-import { cvClass, cvDownloader, getLoc, renaming, tokenGenerator } from '../utils/helpers.ts';
 import type { QueryXData, RawCV } from '../@types/index.d.ts';
 import { prismaClient } from '../config/db.ts';
 import { randomInt } from 'node:crypto';
 import process from 'node:process';
 import { factory } from '../factory.ts';
-import CvForm from '../pages/CvForm.tsx';
-import Layout, { type LayoutType } from '../components/shared/Layout.tsx';
 import { logger } from '../logger.ts';
 import { format } from 'date-fns';
-import Template1 from '../components/cv/v1.tsx'
 import { cvQueue } from '../job.ts';
+import { contentDownloader } from '../utils/cv/downloader.ts';
+import { renaming } from '../utils/file_system/helpers.ts';
+import { tokenGenerator } from '../utils/security/jwt.ts';
+import { resumeClasses } from '../utils/styles/classes.ts';
 
 const cvApp = factory.createApp();
 
 cvQueue.process(async (job, done) => {
   try {
-    const downLoaderData = await cvDownloader(job.data);
+    const downLoaderData = await contentDownloader(job.data);
     done(null, downLoaderData);
   } catch (e) {
     done(e as Error);
   }
-});
-
-cvApp.get('/', async (c) => {
-  const session = c.get('session');
-  const theme = session.get('Theme');
-  const lang = c.get('language') as 'fr' | 'es' | 'en';
-  const loc = await getLoc(lang);
-  const footer = {
-    bg: 'bg-gray-900',
-    text: 'text-gray-100',
-    title: 'text-gray-400',
-    theme: {
-      footer: theme!.footer,
-    },
-  };
-  const layout: LayoutType = {
-    isHome: true,
-    header: {
-      auth: session.get('Auth')!.authenticated,
-    },
-    footer,
-    meta: {
-      title: 'Ghostify | CV Maker',
-      desc: 'Build your professional CV step by step and host it on the platform to access it in one click',
-    },
-    currentLocal: lang,
-    locales: loc,
-  };
-  return c.html(
-    <Layout {...layout}>
-      <CvForm />
-    </Layout>
-  );
 });
 
 type CvFormFields = {
@@ -207,10 +174,6 @@ cvApp.post('/process', async (c) => {
 cvApp.get('/load/:cv', async (c) => {
   const cv = c.req.param('cv');
   const { mode, api } = c.req.query() as QueryXData<{ mode: string; api: string }>;
-  const session = c.get('session');
-  const lang = c.get('language') as "fr" | "es" | "en";
-  const loc = await getLoc(lang);
-  const theme = session.get('Theme');
   // req.app.emit('downloader');
   try {
     const cvData = await prismaClient.cV.findUnique({
@@ -228,7 +191,7 @@ cvApp.get('/load/:cv', async (c) => {
     const cvType = cvData.type ? Number(cvData.type) : 1;
     const cvMode = cvData.mode ? Number(cvData.mode) : 1;
     const cvTheme =
-      cvClass[`v${cvType as 1 | 2 | 3}`][`mode${cvMode as 1 | 2 | 3 | 4 | 5}`];
+      resumeClasses[`v${cvType as 1 | 2 | 3}`][`mode${cvMode as 1 | 2 | 3 | 4 | 5}`];
     const data = JSON.parse(cvData.metaData) as RawCV;
     const cvDate = new Date(data.birthday);
     const cvObject: {
@@ -300,34 +263,7 @@ cvApp.get('/load/:cv', async (c) => {
       mode,
       cvTheme,
     };
-    const footer = {
-      bg: 'bg-gray-900',
-      text: 'text-gray-100',
-      title: 'text-gray-400',
-      theme: {
-        footer: theme!.footer,
-      },
-    };
-    const layout: LayoutType = {
-      isHome: true,
-      header: {
-        auth: session.get('Auth')!.authenticated,
-      },
-      footer,
-      meta: {
-        title: `${cvData.user?.fullname} | Resume`,
-        desc: `${cvData.user?.bio}`,
-      },
-      currentLocal: lang,
-      locales: loc,
-    };
-    if(cvType === 1) {
-      return c.html(
-        <Layout {...layout}>
-          <Template1 {...props} />
-        </Layout>
-      );
-    }
+    return c.json(props)
   } catch (err) {
     console.error(err);
     return c.json({ success: false });

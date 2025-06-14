@@ -1,69 +1,81 @@
-name: Build Deno CD/CI
-run-name: ${{ github.actor }}'s GitHub Actions
+# .github/workflows/deno-cd-ci.yml
+name: Deno CD/CI Workflow
+run-name: ${{ github.actor }}'s Deno CI/CD
+
 env:
-  # DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  DENO_DIR: ~/.cache/deno
+  DENO_DIR: ~/.cache/deno # Still useful for consistent path reference
 
 on:
   push:
     branches:
       - main
-      - 'octocat/**'
-      - 'releases/**'
+      - "octocat/**" # Consider if this is still needed
+      - "releases/**"
       - develop
     tags:
       - v2
-      - v1.*
+      - "v1.*"
   pull_request:
     branches:
       - main
-      - 'octocat/**'
+      - "octocat/**" # Consider if this is still needed
+      - develop
   schedule:
-    - cron: '30 5 * * 1,3'
-    - cron: '30 5 * * 2,4'
+    # Runs at 05:30 AM on Monday, Tuesday, Wednesday, Thursday
+    - cron: "30 5 * * 1-4"
 
 jobs:
-  deno-ci:
+  deno-backend-ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno-version: [1.41.0, 1.40.0, 2.3.1]
-    steps:
-      - uses: actions/checkout@v4
+        # Use specific patch versions or 'x' for minor/major releases
+        # to ensure stability while allowing for updates.
+        deno-version: ["2.x"] # Changed 2.3.1 to 2.x for latest Deno 2
 
-      - name: Setup Deno
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno and Restore Cache
+        # The denoland/setup-deno action handles caching for DENO_DIR automatically
+        # when deno-version is specified and a deno.lock is present.
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: ${{ matrix.deno-version }}
 
-      - name: Cache Deno dependencies
+      - name: Cache Deno Dependencies (Explicitly if needed, but setup-deno often handles it)
         uses: actions/cache@v4
         with:
           path: ${{ env.DENO_DIR }}
           key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
             ${{ runner.os }}-deno-
+            ${{ runner.os }}-
 
-      - name: Cache Dependencies
-        run: deno install --reload --lock=deno.lock --frozen=false --allow-scripts
+      - name: Download Deno Modules
+        # Using deno cache to ensure all modules are downloaded and cached
+        run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
 
-      - name: Generate types for prisma
+      - name: Generate Types for Prisma
         run: deno task prisma:generate
 
       - name: Lint Code
-        run: deno lint --fix --ignore="**/*.js"
+        # Consider making --fix a separate step or running it locally before commit
+        run: deno lint --ignore="**/*.js"
 
       - name: Run Tests
         run: deno task test-ci
 
-      - name: Create dist directory
-        run: mkdir -p dist # Crée le répertoire dist s'il n'existe pas
-
       - name: Build Project
-        run: deno task build
+        run: deno task build:preview
+
+      - name: Create dist directory (if not created by build)
+        # This step might be redundant if deno task build creates 'dist'
+        run: mkdir -p dist
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: ghostify-client-preview
           path: dist/

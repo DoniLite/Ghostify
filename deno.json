@@ -4,6 +4,8 @@
     "build:prod": "deno run build && deno run prisma:deploy",
     "build:watch": "deno run build:client:watch && deno run tailwind:watch",
     "build:client": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/esbuild.ts",
+    "build:preview": "deno run tailwind && deno run build:preview:client",
+    "build:preview:client": "deno run --allow-read --allow-write --allow-env --allow-net --allow-run scripts/esbuild.ts --preview",
     "build:client:watch": "deno run -A scripts/esbuild.ts --watch",
     "start": "deno run prisma:deploy && deno run start:server",
     "start:server": "deno run --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
@@ -52,16 +54,24 @@
     "checkJs": true
   },
   "imports": {
+    "@b-fuze/deno-dom": "jsr:@b-fuze/deno-dom@^0.1.49",
     "@deno-plc/vite-plugin-deno": "jsr:@deno-plc/vite-plugin-deno@^2.3.3",
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.4",
+    "@lexical/link": "npm:@lexical/link@^0.32.1",
+    "@lexical/list": "npm:@lexical/list@^0.32.1",
+    "@lexical/react": "npm:@lexical/react@^0.32.1",
+    "@lexical/rich-text": "npm:@lexical/rich-text@^0.32.1",
+    "@lexical/table": "npm:@lexical/table@^0.32.1",
     "@resvg/resvg-js": "npm:@resvg/resvg-js@^2.6.2",
     "@testing-library/dom": "npm:@testing-library/dom@^10.4.0",
     "@testing-library/react": "npm:@testing-library/react@^16.3.0",
+    "@testing-library/user-event": "npm:@testing-library/user-event@^14.6.1",
     "@types/react": "npm:@types/react@^19.1.5",
     "@types/react-dom": "npm:@types/react-dom@^19.1.5",
     "grapesjs": "npm:grapesjs@^0.22.6",
     "hono": "npm:hono@4.7.10",
     "hono-sessions": "npm:hono-sessions@^0.7.2",
+    "lexical": "npm:lexical@^0.32.1",
     "lucide-react": "npm:lucide-react@^0.511.0",
     "react": "npm:react@^19.1.0",
     "react-dom": "npm:react-dom@^19.1.0",
@@ -122,7 +132,8 @@
       "tags": [
         "recommended"
       ]
-    }
+    },
+    "plugins": []
   },
   "permissions": {
     "net": true,

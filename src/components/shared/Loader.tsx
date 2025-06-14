@@ -1,14 +1,7 @@
-import Header from './Header.tsx';
 
-
-export type Props = {
-    isPage?: boolean
-}
-
-const Loader = ({isPage} : Props) => {
+const Loader = () => {
     return (
       <>
-        {isPage && <Header auth={false} />}
         <div
           id='pageLoader'
           className='flex items-center justify-center w-full h-[100vh] text-white bg-gray-950'
@@ -35,7 +28,6 @@ const Loader = ({isPage} : Props) => {
             </h1>
           </div>
         </div>
-        {isPage && <script type='module' src='/static/js/loader.js'></script>}
       </>
     );
 };

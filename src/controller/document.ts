@@ -1,6 +1,4 @@
-import Layout, { LayoutType } from '../components/shared/Layout.tsx';
 import { factory } from '../factory.ts';
-import DocumentForm from '../pages/Document.tsx';
 
 const documentApp = factory.createApp();
 

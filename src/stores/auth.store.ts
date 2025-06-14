@@ -13,7 +13,9 @@ interface AuthStore {
   disconnect(): Promise<void>;
   setPayload(loginPayload: AuthStore['auth']['payload']): void;
   clearPayload(): void;
-  checkLoginState(): Promise<boolean>;
+  // checkLoginState(): Promise<boolean>;
+  checkLoginState(): boolean;
+
 }
 
 export const useAuthStore = create<AuthStore>()((set) => ({
@@ -41,7 +43,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
         payload: undefined
     }
   })),
-  checkLoginState: async () => {
+  checkLoginState: () => {
     return true
   },
 }));

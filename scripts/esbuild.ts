@@ -1,106 +1,165 @@
-import { build, stop } from 'https://deno.land/x/esbuild@v0.20.1/mod.js';
+import { build } from 'https://deno.land/x/esbuild@v0.20.1/mod.js';
 import { denoPlugins } from 'https://deno.land/x/esbuild_deno_loader@0.9.0/mod.ts';
 import { parseArgs } from 'https://deno.land/std@0.224.0/cli/parse_args.ts';
-import { ensureDir } from 'https://deno.land/std@0.220.1/fs/ensure_dir.ts';
+import { ensureDir, copy } from 'https://deno.land/std@0.220.1/fs/mod.ts';
 import { glob } from 'glob';
 import path from 'node:path';
 
 const flags = parseArgs(Deno.args, {
-  boolean: ['watch'],
-  default: { watch: false },
+  boolean: ['watch', 'preview'],
+  default: { watch: false, preview: false },
 });
 
-// Ensure build directory exists
+// Ensure build directories exist
 await ensureDir(path.join(Deno.cwd(), '/static/js'));
+if (flags.preview) {
+  await ensureDir(path.join(Deno.cwd(), '/dist/js'));
+  await ensureDir(path.join(Deno.cwd(), '/dist/css'));
+}
 
 try {
-  await build({
-    entryPoints: [
-      ...glob
-        .sync([
-          './src/frontend/**/*.ts',
-          './src/frontend/**/*.js',
-          './src/frontend/**/*.jsx',
-          './src/frontend/**/*.tsx',
-          './src/client/**/*.js',
-          './src/client/**/*.ts',
-          './src/client/**/*.jsx',
-          './src/client/**/*.tsx',
-        ])
-        .map((file) => path.resolve(Deno.cwd(), file)),
-    ],
-    bundle: true,
-    minify: !flags.watch,
-    sourcemap: flags.watch ? 'inline' : false,
-    target: 'esnext',
-    outdir: path.join(Deno.cwd(), '/static/js'),
-    format: 'esm',
-    jsx: 'automatic',
-    jsxImportSource: 'react',
-    platform: 'browser',
-    loader: {
-      '.ts': 'ts',
-      '.tsx': 'tsx',
-      '.js': 'js',
-      '.jsx': 'jsx',
-      '.json': 'json',
-      '.css': 'css',
-    },
-    plugins: [
-      ...denoPlugins({
-        nodeModulesDir: true,
-        configPath: path.join(Deno.cwd(), 'deno.json'),
-        loader: 'portable',
-        // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
-      }),
-    ],
-    define: {
-      'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
-      'globalThis.IS_BROWSER': 'true',
-    },
-  });
+  if (!flags.preview) {
+    // Normal build process for the application
+    await build({
+      entryPoints: [
+        ...glob
+          .sync([
+            './src/frontend/**/*.ts',
+            './src/frontend/**/*.js',
+            './src/frontend/**/*.jsx',
+            './src/frontend/**/*.tsx',
+            './src/client/**/*.js',
+            './src/client/**/*.ts',
+            './src/client/**/*.jsx',
+            './src/client/**/*.tsx',
+          ])
+          .map((file) => path.resolve(Deno.cwd(), file)),
+      ],
+      bundle: true,
+      minify: !flags.watch,
+      sourcemap: flags.watch ? 'inline' : false,
+      target: 'esnext',
+      outdir: path.join(Deno.cwd(), '/static/js'),
+      format: 'esm',
+      jsx: 'automatic',
+      jsxImportSource: 'react',
+      platform: 'browser',
+      loader: {
+        '.ts': 'ts',
+        '.tsx': 'tsx',
+        '.js': 'js',
+        '.jsx': 'jsx',
+        '.json': 'json',
+        '.css': 'css',
+      },
+      plugins: [
+        ...denoPlugins({
+          nodeModulesDir: true,
+          configPath: path.join(Deno.cwd(), 'deno.json'),
+          loader: 'portable',
+          // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
+        }),
+      ],
+      define: {
+        'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
+        'globalThis.IS_BROWSER': 'true',
+      },
+    });
 
-  await build({
-    entryPoints: [
-      './client.tsx'
-    ],
-    bundle: true,
-    minify: !flags.watch,
-    sourcemap: flags.watch ? 'inline' : false,
-    target: 'esnext',
-    outdir: path.join(Deno.cwd(), '/static/js'),
-    format: 'esm',
-    jsx: 'automatic',
-    jsxImportSource: 'react',
-    platform: 'browser',
-    loader: {
-      '.ts': 'ts',
-      '.tsx': 'tsx',
-      '.js': 'js',
-      '.jsx': 'jsx',
-      '.json': 'json',
-      '.css': 'css',
-    },
-    plugins: [
-      ...denoPlugins({
-        nodeModulesDir: true,
-        configPath: path.join(Deno.cwd(), 'deno.json'),
-        loader: 'portable',
-        // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
-      }),
-    ],
-    define: {
-      'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
-      'globalThis.IS_BROWSER': 'true',
-    },
-  });
+    await build({
+      entryPoints: [
+        './client.tsx'
+      ],
+      bundle: true,
+      minify: !flags.watch,
+      sourcemap: flags.watch ? 'inline' : false,
+      target: 'esnext',
+      outdir: path.join(Deno.cwd(), '/static/js'),
+      format: 'esm',
+      jsx: 'automatic',
+      jsxImportSource: 'react',
+      platform: 'browser',
+      loader: {
+        '.ts': 'ts',
+        '.tsx': 'tsx',
+        '.js': 'js',
+        '.jsx': 'jsx',
+        '.json': 'json',
+        '.css': 'css',
+      },
+      plugins: [
+        ...denoPlugins({
+          nodeModulesDir: true,
+          configPath: path.join(Deno.cwd(), 'deno.json'),
+          loader: 'portable',
+          // importMapURL: `file://${path.join(Deno.cwd(), 'import_map.json')}`,
+        }),
+      ],
+      define: {
+        'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
+        'globalThis.IS_BROWSER': 'true',
+      },
+    });
+  } else {
+    // Preview build process
+    await build({
+      entryPoints: ['./client.preview.tsx'],
+      bundle: true,
+      minify: true,
+      sourcemap: false,
+      target: 'esnext',
+      outdir: path.join(Deno.cwd(), '/dist/js'),
+      format: 'esm',
+      jsx: 'automatic',
+      jsxImportSource: 'react',
+      platform: 'browser',
+      loader: {
+        '.ts': 'ts',
+        '.tsx': 'tsx',
+        '.js': 'js',
+        '.jsx': 'jsx',
+        '.json': 'json',
+        '.css': 'css',
+      },
+      plugins: [
+        ...denoPlugins({
+          nodeModulesDir: true,
+          configPath: path.join(Deno.cwd(), 'deno.json'),
+          loader: 'portable',
+        }),
+      ],
+      define: {
+        'process.env.DENO_ENV': '"production"',
+        'globalThis.IS_BROWSER': 'true',
+      },
+    });
+
+    // Copy static assets to dist
+    await copy(
+      path.join(Deno.cwd(), '/static/css'),
+      path.join(Deno.cwd(), '/dist/css'),
+      { overwrite: true }
+    );
+    
+    await copy(
+      path.join(Deno.cwd(), '/static/ghostify.svg'),
+      path.join(Deno.cwd(), '/dist/ghostify.svg'),
+      { overwrite: true }
+    );
+
+    await copy(
+      path.join(Deno.cwd(), '/preview.html'),
+      path.join(Deno.cwd(), '/dist/index.html'),
+      { overwrite: true }
+    );
+  }
 
   console.log('Build completed!');
 
   if (flags.watch) {
     console.log('Watching for changes...');
   } else {
-    await stop();
+    Deno.exit(0);
   }
 } catch (error) {
   console.error('Build failed:', error);
