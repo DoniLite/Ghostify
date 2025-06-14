@@ -9,20 +9,20 @@ on:
   push:
     branches:
       - main
-      - 'octocat/**' # Consider if this is still needed
-      - 'releases/**'
+      - "octocat/**" # Consider if this is still needed
+      - "releases/**"
       - develop
     tags:
       - v2
-      - 'v1.*'
+      - "v1.*"
   pull_request:
     branches:
       - main
-      - 'octocat/**' # Consider if this is still needed
+      - "octocat/**" # Consider if this is still needed
       - develop
   schedule:
     # Runs at 05:30 AM on Monday, Tuesday, Wednesday, Thursday
-    - cron: '30 5 * * 1-4'
+    - cron: "30 5 * * 1-4"
 
 jobs:
   deno-backend-ci:
@@ -31,7 +31,7 @@ jobs:
       matrix:
         # Use specific patch versions or 'x' for minor/major releases
         # to ensure stability while allowing for updates.
-        deno-version: ['1.41.0', '1.40.0', '2.x'] # Changed 2.3.1 to 2.x for latest Deno 2
+        deno-version: ["1.41.0", "1.40.0", "2.x"] # Changed 2.3.1 to 2.x for latest Deno 2
 
     steps:
       - name: Checkout Repository
@@ -55,7 +55,7 @@ jobs:
 
       - name: Download Deno Modules
         # Using deno cache to ensure all modules are downloaded and cached
-        run: deno cache --reload --lock=deno.lock
+        run: deno cache --reload --lock deno.lock
 
       - name: Generate Types for Prisma
         run: deno task prisma:generate
@@ -79,4 +79,4 @@ jobs:
         with:
           name: deno-build-artifacts
           path: dist/
-          retention-days: 7 # Keep artifacts for 7 days
+          retention-days: 7
