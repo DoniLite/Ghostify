@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-deno-
 
       - name: Cache Dependencies
-        run: deno install --reload --lock=deno.lock --frozen=true -A
+        run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
       
       - name: Generate Types for Prisma
         run: deno task prisma:generate
