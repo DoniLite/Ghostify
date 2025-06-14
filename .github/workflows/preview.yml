@@ -2,11 +2,10 @@
 name: Ghostify Preview Deployment
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
+  workflow_run:
+    workflows: ["Deno CD/CI Workflow"]
+    types:
+      - completed
     branches:
       - main
       - develop
@@ -15,15 +14,25 @@ on:
 # You might need to adjust this logic based on which specific jobs you want to gate on.
 # For simplicity, this example assumes the workflows are the gatekeepers.
 jobs:
-  build:
+  check_workflow:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        deno-version: ["2.x"]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Check workflow status
+        run: |
+          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+            echo "Previous workflow did not succeed"
+            exit 1
+          fi
+
+  deploy-preview:
+    needs: check_workflow
+    runs-on: ubuntu-latest
 
     permissions:
       pages: write # Required to deploy to GitHub Pages
       id-token: write # Required for OpenID Connect (OIDC) authentication
+      actions: read # Required to download artifacts from previous workflow
 
     environment:
       name: github-pages
@@ -33,11 +42,31 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download preview artifact
-        uses: actions/download-artifact@v4
+      - name: Download artifact from previous workflow
+        uses: actions/github-script@v7
         with:
-          name: ghostify-client-preview
-          path: dist
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+            const matchArtifact = artifacts.data.artifacts.find(
+              artifact => artifact.name === "ghostify-client-preview"
+            );
+            const download = await github.rest.actions.downloadArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: matchArtifact.id,
+              archive_format: 'zip'
+            });
+            const fs = require('fs');
+            fs.writeFileSync('artifact.zip', Buffer.from(download.data));
+      
+      - name: Unzip artifact
+        run: |
+          mkdir -p dist
+          unzip artifact.zip -d dist
 
       - name: Deploy to GitHub Pages
         id: deployment
