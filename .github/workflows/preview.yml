@@ -1,4 +1,3 @@
-# .github/workflows/preview.yml
 name: Ghostify Preview Deployment
 
 on:
@@ -10,17 +9,22 @@ on:
       - main
       - develop
 
-# Ensure the workflow only runs if ALL preceding workflows were successful
-# You might need to adjust this logic based on which specific jobs you want to gate on.
-# For simplicity, this example assumes the workflows are the gatekeepers.
 jobs:
   check_workflow:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
     steps:
       - name: Check workflow status
+        id: check
         run: |
-          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+          echo "Previous workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Workflow run ID: ${{ github.event.workflow_run.id }}"
+          if [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
             echo "Previous workflow did not succeed"
             exit 1
           fi
@@ -28,49 +32,39 @@ jobs:
   deploy-preview:
     needs: check_workflow
     runs-on: ubuntu-latest
+    if: ${{ needs.check_workflow.outputs.should_deploy == 'true' }}
 
     permissions:
-      pages: write # Required to deploy to GitHub Pages
-      id-token: write # Required for OpenID Connect (OIDC) authentication
-      actions: read # Required to download artifacts from previous workflow
+      contents: read
+      pages: write
+      id-token: write
+      actions: read
 
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Download artifact from previous workflow
-        uses: actions/github-script@v7
+        uses: actions/download-artifact@v4
         with:
-          script: |
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id
-            });
-            const matchArtifact = artifacts.data.artifacts.find(
-              artifact => artifact.name === "ghostify-client-preview"
-            );
-            const download = await github.rest.actions.downloadArtifact({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              artifact_id: matchArtifact.id,
-              archive_format: 'zip'
-            });
-            const fs = require('fs');
-            fs.writeFileSync('artifact.zip', Buffer.from(download.data));
-      
-      - name: Unzip artifact
+          name: ghostify-client-preview
+          path: ./dist
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: List downloaded files (debug)
         run: |
-          mkdir -p dist
-          unzip artifact.zip -d dist
+          echo "Contents of dist directory:"
+          ls -la ./dist/
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          folder: dist
-          branch: ghostify-preview

@@ -1,6 +1,5 @@
 # .github/workflows/deno-cd-ci.yml
 name: Deno CD/CI Workflow
-run-name: ${{ github.actor }}'s Deno CI/CD
 
 env:
   DENO_DIR: ~/.cache/deno # Still useful for consistent path reference
