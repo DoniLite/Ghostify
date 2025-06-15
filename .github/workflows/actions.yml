@@ -82,10 +82,6 @@ jobs:
       pages: write
       id-token: write
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -93,22 +89,8 @@ jobs:
           name: ghostify-client-preview
           path: ./dist
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: ./dist
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact for Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          folder: ./dist
+          branch: ghostify-preview
