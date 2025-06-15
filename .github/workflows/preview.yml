@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for CI to complete
-        uses: lewagon/wait-on-check-action@v1.3.1
+        uses: lewagon/wait-on-check-action@v1.3.4
         with:
           ref: ${{ github.sha }}
-          check-name: 'deno-backend-ci'
+          check-name: 'Build and Test'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
