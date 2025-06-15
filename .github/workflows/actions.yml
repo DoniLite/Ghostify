@@ -76,7 +76,6 @@ jobs:
     name: Deploy Preview
     needs: deno-backend-ci
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
 
     permissions:
       contents: read
