@@ -44,7 +44,8 @@ jobs:
           path: ${{ env.DENO_DIR }}
           key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
-            ${{ runner.os }}-deno-${{ runner.os }}-
+            ${{ runner.os }}-deno-
+            ${{ runner.os }}-
 
       - name: Install Dependencies
         run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
