@@ -2,26 +2,29 @@ name: Ghostify Preview Deployment
 
 on:
   workflow_run:
-    workflows: [Deno CD/CI Workflow]
+    workflows: ["Deno CD/CI Workflow"]
     types:
       - completed
     branches:
       - main
       - develop
 
-# Ensure the workflow only runs if ALL preceding workflows were successful
-# You might need to adjust this logic based on which specific jobs you want to gate on.
-# For simplicity, this example assumes the workflows are the gatekeepers.
 jobs:
   check_workflow:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
     steps:
       - name: Check workflow status
+        id: check
         run: |
           echo "Previous workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
           echo "Workflow run ID: ${{ github.event.workflow_run.id }}"
-          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+          if [ "${{ github.event.workflow_run.conclusion }}" == "success" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
             echo "Previous workflow did not succeed"
             exit 1
           fi
@@ -29,9 +32,10 @@ jobs:
   deploy-preview:
     needs: check_workflow
     runs-on: ubuntu-latest
+    if: ${{ needs.check_workflow.outputs.should_deploy == 'true' }}
 
     permissions:
-      contents: write
+      contents: read
       pages: write
       id-token: write
       actions: read
@@ -45,12 +49,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ghostify-client-preview
-          path: dist
+          path: ./dist
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: List downloaded files (debug)
+        run: |
+          echo "Contents of dist directory:"
+          ls -la ./dist/
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          folder: dist
-          branch: ghostify-preview
-          token: ${{ secrets.GITHUB_TOKEN }}
