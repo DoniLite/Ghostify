@@ -8,6 +8,14 @@ export class TestAssertions {
     }
   }
 
+  static assertNotEquals<T>(actual: T, expected: T, message?: string): void {
+    if (actual === expected) {
+      throw new Error(
+        message || `Expected not ${expected}, but got ${actual}`,
+      );
+    }
+  }
+
   static assertDeepEqual<T>(actual: T, expected: T, message?: string): void {
     const actualStr = JSON.stringify(actual);
     const expectedStr = JSON.stringify(expected);
