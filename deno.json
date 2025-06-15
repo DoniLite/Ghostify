@@ -11,7 +11,7 @@
     "start:server": "deno run --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
     "dev:server": "deno run build:watch & deno run watch:server",
     "watch:server": "deno run --watch --allow-net --allow-ffi --allow-sys --allow-read --allow-write --allow-env server.tsx",
-    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks --no-check",
+    "test": "deno test --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks",
     "test-ci": "deno test --no-check --allow-net --allow-read --allow-env --allow-sys --allow-ffi --allow-write --allow-run --trace-leaks tests/",
     "lint": "deno lint --fix --ignore=\"**/*.js\"",
     "fmt": "deno fmt",
