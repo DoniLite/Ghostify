@@ -62,19 +62,19 @@ services:
     networks:
       - ghostify_network
   redis:
-    image: redis
-    restart: always
+    image: redis:latest
+    container_name: redis-container
     ports:
-      - 6379
+      - "6379:6379"
     volumes:
-      - redis_data:/data
+      - redis-data:/data
 
 volumes:
   db-data:
   static:
   cmd:
   security:
-  redis_data:
+  redis-data:
 
 networks:
   ghostify_network:

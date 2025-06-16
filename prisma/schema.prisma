@@ -15,45 +15,75 @@ model Contact {
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  fullname      String?
-  password      String?
-  token         String?
-  service       String?
-  registration  DateTime?
-  permission    Permission
-  apiAccess     Boolean         @default(false)
-  apiCredits    Int             @default(300)
-  cvCredits     Int             @default(300)
-  posterCredits Int             @default(300)
-  provider      Provider?
-  username      String?         @unique
-  file          String?
-  providerId    String?         @unique
-  registered    Boolean         @default(false)
-  plan          UserPlan        @default(Free)
-  bio           String?
-  link          String?
-  Key           Key[]
-  notifications Notifications[]
-  CV            Resume[]
-  Document      Document[]
+  id             String           @id @default(uuid())
+  email          String           @unique
+  fullname       String?
+  password       String?
+  token          String?
+  service        String?
+  registration   DateTime         @default(now())
+  permission     Permission
+  apiAccess      Boolean          @default(false)
+  apiCredits     Int              @default(300)
+  cvCredits      Int              @default(300)
+  posterCredits  Int              @default(300)
+  provider       Provider?        @default(Ghostify)
+  username       String?          @unique
+  avatar         String?
+  providerId     String?          @unique
+  registered     Boolean          @default(false)
+  plan           UserPlan         @default(Free)
+  bio            String?
+  link           String?
+  Key            Key[]
+  notifications  Notifications[]
+  CV             Resume[]
+  Document       Document[]
+  FundingDetails FundingDetails[]
+  Wallet         Wallet?
+}
+
+model FundingDetails {
+  id       String          @id @default(ulid())
+  user     User            @relation(fields: [userId], references: [id])
+  userId   String
+  priority FundingPriority @default(P1)
+  type     FundingProvider
+  details  Json?
+}
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String?  @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  balance   Float    @default(0.0)
+  currency  String   @default("USD")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FundingProvider {
+  Stripe
+  PayPal
+  BankTransfer
+  Crypto
+  Wallet
+  Card
 }
 
 model Key {
-  id     Int     @id @default(autoincrement())
+  id     String  @id @default(uuid())
   key    String?
   iv     String?
   type   KeyType
   uid    String? @unique
   token  String?
-  userId Int?
+  userId String?
   user   User?   @relation(fields: [userId], references: [id])
 }
 
 model Admin {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   role       String
   login      String    @unique
   password   String
@@ -63,32 +93,30 @@ model Admin {
 }
 
 model Notifications {
-  id        Int              @id @default(autoincrement())
+  id        String           @id @default(uuid())
   title     String?
   type      NotificationType
   content   String
   createdAt DateTime         @default(now())
   seen      Boolean          @default(false)
-  userId    Int?
+  userId    String?
   User      User?            @relation(fields: [userId], references: [id])
 }
 
 model Document {
-  id           Int      @id @default(autoincrement())
-  uid          String   @unique @default(uuid())
+  id           String   @id @default(uuid())
   title        String?
   type         String
   downloadLink String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  userId       Int?
+  userId       String?
   User         User?    @relation(fields: [userId], references: [id])
   postId       Int?
 }
 
 model Resume {
-  id         Int      @id @default(autoincrement())
-  uid        String?  @unique
+  id         String   @id @default(uuid())
   url        String?
   type       String?
   mode       String?
@@ -100,7 +128,7 @@ model Resume {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   user       User?    @relation(fields: [userId], references: [id])
-  userId     Int?
+  userId     String?
 }
 
 enum UserPlan {
@@ -127,7 +155,7 @@ enum Provider {
   Twitter
   Instagram
   LinkedIn
-  Platform
+  Ghostify
 }
 
 enum KeyType {
@@ -157,4 +185,11 @@ enum NotificationType {
   Post
   Info
   Message
+}
+
+enum FundingPriority {
+  P1
+  P2
+  P3
+  P4
 }

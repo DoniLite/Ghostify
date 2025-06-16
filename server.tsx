@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
+import { secureHeaders } from 'hono/secure-headers'
 import { CookieStore, Session, sessionMiddleware } from 'npm:hono-sessions';
 import { type SessionData } from './src/@types/index.d.ts';
 import sessionManager from './src/hooks/sessionStorage.ts';
@@ -13,7 +14,6 @@ import { compress } from 'hono/compress';
 import type { JwtVariables } from 'hono/jwt';
 import path from 'node:path';
 import { stream } from 'hono/streaming';
-import authApp from './src/controller/auth.ts';
 import { html } from 'hono/html';
 import { termsMD } from './src/utils/templates/markdownPage.ts';
 import { unify } from './src/utils/security/purify.ts';
@@ -40,7 +40,6 @@ const app = new Hono<{
 }>();
 
 const store = new CookieStore();
-
 
 // Middlewares
 app.use(
@@ -75,32 +74,50 @@ app.use(
 );
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
+app.use('*', secureHeaders({
+  contentSecurityPolicy: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    imgSrc: ["'self'", "data:", "blob:", "https:"],
+    connectSrc: ["'self'", "wss:", "https:"],
+    fontSrc: ["'self'", "data:", "https:"],
+    objectSrc: ["'none'"],
+    mediaSrc: ["'self'"],
+    frameSrc: ["'self'"],
+    frameAncestors: ["'none'"], // don't integrate the site via iframe
+    formAction: ["'self'"],
+    baseUri: ["'self'"],
+    manifestSrc: ["'self'"],
+    workerSrc: ["'self'", "blob:"],
+    sandbox: [
+      'allow-forms',
+      'allow-scripts',
+      'allow-same-origin',
+      'allow-popups',
+      'allow-modals',
+      'allow-downloads'
+    ]
+  },
+  crossOriginEmbedderPolicy: true,
+  crossOriginOpenerPolicy: true,
+  crossOriginResourcePolicy: 'same-origin',
+  xXssProtection: true,
+}))
 app.use('*', sessionManager);
 app.use(
   '*',
   cache({
     cacheName: 'ghostify-cache',
     cacheControl: 'max-age=3600',
-    wait: true
+    wait: true,
   }),
 );
 
 // Registered Routes
-app.route('/auth/', authApp);
-app.route('/api/v1', ApiRoutes)
+app.route('/api/v1', ApiRoutes);
 
 // Routes
-app.get('/init', (c) => {
-  const session = c.get('session');
-  const lang = c.get('language') as 'en' | 'es' | 'fr';
-  const theme = session.get('Theme');
-  const layout = {
-    isHome: true,
-    currentLocal: lang,
-    theme: theme ?? {},
-  };
-  return c.json(layout);
-});
 app.get('/terms', async (c) => {
   const terms = await unify(termsMD);
   const htmlStr = html`
@@ -142,6 +159,7 @@ app.get('/download/:file', async (c) => {
     return c.text('cannot access to this resource');
   }
 });
+app.get('/download/:file/cloud', async () => {});
 app.get('/stream/:file', async (c) => {
   const file = c.req.param('file');
   const resourceDir = path.resolve(process.cwd(), './static');
@@ -163,6 +181,7 @@ app.get('/stream/:file', async (c) => {
     return c.text('cannot access to this resource');
   }
 });
+app.get('/stream/:file/cloud', async () => {});
 app.get('*', async (c) => {
   const stream = await renderToReadableStream(
     <StaticRouter location={c.req.path}>
@@ -170,7 +189,7 @@ app.get('*', async (c) => {
     </StaticRouter>,
     {
       bootstrapModules: ['/static/js/client.js'],
-      bootstrapScriptContent: getThemeScript('dark')
+      bootstrapScriptContent: getThemeScript('dark'),
     },
   );
   return c.newResponse(

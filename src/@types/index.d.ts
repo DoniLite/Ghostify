@@ -54,7 +54,7 @@ export interface Auth {
   authenticated: boolean;
   username?: string;
   fullname?: string;
-  file?: string;
+  avatar?: string;
 }
 
 export type BodyXData<T = undefined> = T extends undefined

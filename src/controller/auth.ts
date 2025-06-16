@@ -1,6 +1,5 @@
 import { factory } from '../factory.ts';
 import { authMiddleware } from '../hooks/auth.ts';
-import { z } from 'zod';
 import { validator } from 'hono/validator';
 import { prismaClient } from '../config/db.ts';
 import { HTTPException } from 'hono/http-exception';
@@ -8,13 +7,9 @@ import { setSignedCookie } from 'hono/cookie';
 import { logger } from '../logger.ts';
 import dashboardApp from './dashboard.ts';
 import { compareHash } from '../utils/security/hash.ts';
+import { LoginSchema, RegisterSchema } from '../forms/auth/schema.ts';
 
 const authApp = factory.createApp();
-
-const LoginSchema = z.object({
-  login: z.union([z.string(), z.string().email()]),
-  password: z.string().trim(),
-});
 
 const loginHandlers = factory.createHandlers(
   authMiddleware,
@@ -27,20 +22,20 @@ const loginHandlers = factory.createHandlers(
   }),
   async (c) => {
     const session = c.get('session');
-    const { login, password } = await c.req.valid('form');
+    const { login, password } = c.req.valid('form');
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const redirectUrl = session.get('RedirectUrl');
     const user = emailRegex.test(login)
       ? await prismaClient.user.findUnique({
-          where: {
-            email: login,
-          },
-        })
+        where: {
+          email: login,
+        },
+      })
       : await prismaClient.user.findUnique({
-          where: {
-            username: login,
-          },
-        });
+        where: {
+          username: login,
+        },
+      });
 
     if (!user) {
       logger.warn(
@@ -49,7 +44,7 @@ const loginHandlers = factory.createHandlers(
           ' and' +
           password +
           ' credentials',
-        [login, password]
+        [login, password],
       );
       throw new HTTPException(404, {
         message: 'Not user found with this credentials',
@@ -65,7 +60,7 @@ const loginHandlers = factory.createHandlers(
           ' and' +
           password +
           ' credentials',
-        [login, password]
+        [login, password],
       );
       throw new HTTPException(402, {
         message: 'wrong password provided',
@@ -76,9 +71,9 @@ const loginHandlers = factory.createHandlers(
       isSuperUser: false,
       login: login,
       id: user.id,
-      file: user.file!,
-      username: user.username!,
-      fullname: user.fullname!,
+      avatar: user.file ?? undefined,
+      username: user.username ?? undefined,
+      fullname: user.fullname ?? undefined,
     });
     const cookieExpiration = new Date();
     cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
@@ -88,15 +83,62 @@ const loginHandlers = factory.createHandlers(
       c,
       'connection_time',
       session.get('Token')!,
-      Deno.env.get('SIGNED_COOKIE_SECRET')!
+      Deno.env.get('SIGNED_COOKIE_SECRET')!,
     );
     if (redirectUrl) {
       return c.redirect(redirectUrl);
     }
-  }
+  },
+);
+
+const registerHandlers = factory.createHandlers(
+  validator('form', (value, c) => {
+    const parsed = RegisterSchema.safeParse(value);
+    if (!parsed.success) {
+      return c.text('Invalid!', 401);
+    }
+    return parsed.data;
+  }),
 );
 
 authApp.post('/login', ...loginHandlers);
+authApp.post(
+  '/register',
+  ...registerHandlers,
+  async (c) => {
+    const session = c.get('session');
+    const { email, fullname, password } = c.req.valid('form');
+    const user = await prismaClient.user.create({
+      data: {
+        email,
+        fullname,
+        password,
+        permission: 'User'
+      },
+    });
+
+    session.set('Auth', {
+      authenticated: true,
+      isSuperUser: false,
+      login: email,
+      id: user.id,
+      avatar: user.file ?? undefined,
+      username: user.username ?? undefined,
+      fullname: user.fullname ?? undefined,
+    });
+    const cookieExpiration = new Date();
+    cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+    session.set('Token', cookieExpiration.getTime().toString());
+
+    await setSignedCookie(
+      c,
+      'connection_time',
+      session.get('Token')!,
+      Deno.env.get('SIGNED_COOKIE_SECRET')!,
+    );
+    return c.json({ message: 'User created successfully' });
+  },
+);
 // authApp.get('/login', authMiddleware, async (c) => {
 //   const lang = c.get('language') as "fr" | "es" | "en";
 //   const loc = await getLoc(lang);
@@ -123,6 +165,6 @@ authApp.post('/login', ...loginHandlers);
 //     </TLayout>
 //   );
 // })
-authApp.route('/dashboard', dashboardApp)
+authApp.route('/dashboard', dashboardApp);
 
 export default authApp;

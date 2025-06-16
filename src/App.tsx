@@ -8,6 +8,7 @@ import Billing from './pages/Billing.tsx';
 import NotFound from './components/shared/404.tsx';
 import ScrollToTop from './components/shared/ScrollToTop.tsx';
 import Contact from './pages/Contact.tsx';
+import Editor from './pages/Editor.tsx';
 
 const MainLayout = () => {
   const defaultLocale = detectLocale();
@@ -32,6 +33,7 @@ export default function App() {
           <Route path='login' element={<Login />} />
           <Route path='pricing' element={<Billing />} />
           <Route path='contact' element={<Contact />} />
+          <Route path='/editor/:userId/:documentId' element={<Editor />} />
           <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
