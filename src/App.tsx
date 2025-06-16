@@ -33,7 +33,7 @@ export default function App() {
           <Route path='login' element={<Login />} />
           <Route path='pricing' element={<Billing />} />
           <Route path='contact' element={<Contact />} />
-          <Route path='/editor/:userId/:documentId' element={<Editor />} />
+          <Route path='editor/:userId/:documentId' element={<Editor />} />
           <Route path='*' element={<NotFound />} />
         </Route>
       </Routes>
