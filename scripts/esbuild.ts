@@ -17,6 +17,11 @@ if (flags.preview) {
   await ensureDir(path.join(Deno.cwd(), '/dist/css'));
 }
 
+const env = {
+  WEBSOCKET_BASE_URL: Deno.env.get('WEBSOCKET_BASE_URL') || 'ws://localhost:8787/ws/document/',
+  API_BASE_URL: Deno.env.get('API_BASE_URL') || 'http://localhost:8787/api',
+};
+
 try {
   if (!flags.preview) {
     // Normal build process for the application
@@ -97,7 +102,8 @@ try {
       ],
       define: {
         'process.env.DENO_ENV': flags.watch ? '"development"' : '"production"',
-        'globalThis.IS_BROWSER': 'true',
+        'window.IS_BROWSER': 'true',
+        'window.__ENV': JSON.stringify(env),
       },
     });
   } else {
@@ -130,7 +136,8 @@ try {
       ],
       define: {
         'process.env.DENO_ENV': '"production"',
-        'globalThis.IS_BROWSER': 'true',
+        'window.IS_BROWSER': 'true',
+        'window.__ENV': JSON.stringify(env),
       },
     });
 

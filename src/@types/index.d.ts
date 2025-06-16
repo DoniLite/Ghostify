@@ -1,8 +1,7 @@
 import { type Buffer } from 'node:buffer';
 
-
 interface ActorVersionClient {
-  get(): void
+  get(): void;
 }
 
 export interface Service {
@@ -22,22 +21,21 @@ export interface Service {
 }
 
 export interface SessionData {
-    Cookies?: Record<string, unknown>;
-    Token?: string;
-    ServerKeys?: {
-      secretKey: Buffer;
-      iv: Buffer;
-    };
-    Theme?: Record<string, string>;
-    Services?: Service;
-    Auth?: Auth;
-    CVData?: RawCV;
-    JobsIDs?: {
-      cvJob?: string | number;
-    };
-    RedirectUrl?: string;
-  }
-
+  Cookies?: Record<string, unknown>;
+  Token?: string;
+  ServerKeys?: {
+    secretKey: Buffer;
+    iv: Buffer;
+  };
+  Theme?: Record<string, string>;
+  Services?: Service;
+  Auth?: Auth;
+  CVData?: RawCV;
+  JobsIDs?: {
+    cvJob?: string | number;
+  };
+  RedirectUrl?: string;
+}
 
 export interface Secrets {
   key: Buffer;
@@ -45,7 +43,6 @@ export interface Secrets {
 }
 
 export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
-
 
 export interface Auth {
   id?: number;
@@ -65,7 +62,6 @@ export type QueryXData<T = undefined> = T extends undefined
   ? Record<string, unknown>
   : T;
 
-
 export type month =
   | 'Janvier'
   | 'Février'
@@ -79,7 +75,6 @@ export type month =
   | 'Octobre'
   | 'Novembre'
   | 'Décembre';
-
 
 export type PosterUserMeta = Record<
   string,
@@ -105,13 +100,13 @@ export interface HealthCheckerInterface {
   health(): Promise<Service['Platform']>;
 }
 
+export interface EnvConfig {
+  WEBSOCKET_BASE_URL: string;
+  API_BASE_URL: string;
+}
 declare global {
-
-  interface GlobalThis {
-    App: Record<string, unknown>;
-  }
-
-  const App: Record<string, unknown>;
+  var __ENV: EnvConfig
+  var App: Record<string, unknown>;
 }
 
 export interface RawCV {
