@@ -35,7 +35,7 @@ const styles = `
     animation-delay: 2s;
   }
 
-  /* Effet de blur pour les éléments glassmorphism */
+  /* Blur effect on glass elements */
   .glass {
     backdrop-filter: blur(16px);
     background: rgba(17, 24, 39, 0.7);
@@ -101,8 +101,7 @@ const Layout: FC<LayoutType> = ({ children }) => (
           content='This website is powered by Doni Lite and its contributors'
         />
         <meta name='creator' content='Doni Lite' />
-        <link rel='stylesheet' href='/static/all.min.css' />
-        <link rel='icon' type='image/svg+xml' href='/static/SVG/gostify.svg' />
+        <link rel='icon' type='image/svg+xml' href='/static/ghostify.svg' />
         <link rel='stylesheet' href='/static/css/main.css' />
         <style dangerouslySetInnerHTML={{ __html: styles }} />
         <Meta />
