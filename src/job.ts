@@ -1,7 +1,7 @@
 import Queue from 'bull';
 import { NotificationType } from '@prisma/client';
 
-export const cvQueue = new Queue<{
+export const resumeQueue = new Queue<{
   url: string;
   id: number;
   updating?: boolean;

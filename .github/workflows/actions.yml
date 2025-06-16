@@ -1,49 +1,44 @@
-# .github/workflows/deno-cd-ci.yml
 name: Deno CD/CI Workflow
+run-name: ${{ github.actor }}'s Deno CI/CD Pipeline
 
 env:
-  DENO_DIR: ~/.cache/deno # Still useful for consistent path reference
+  DENO_DIR: ~/.cache/deno
 
 on:
   push:
     branches:
       - main
-      - "octocat/**" # Consider if this is still needed
-      - "releases/**"
       - develop
+      - "releases/**"
     tags:
       - v2
       - "v1.*"
   pull_request:
     branches:
       - main
-      - "octocat/**" # Consider if this is still needed
       - develop
   schedule:
-    # Runs at 05:30 AM on Monday, Tuesday, Wednesday, Thursday
-    - cron: "30 5 * * 1-4"
+    - cron: "30 5 * * 1-4" # Runs at 05:30 AM Mon-Thu
 
 jobs:
   deno-backend-ci:
+    name: Build and Test
     runs-on: ubuntu-latest
+    
     strategy:
       matrix:
-        # Use specific patch versions or 'x' for minor/major releases
-        # to ensure stability while allowing for updates.
-        deno-version: ["2.x"] # Changed 2.3.1 to 2.x for latest Deno 2
+        deno-version: ["2.x"]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Deno and Restore Cache
-        # The denoland/setup-deno action handles caching for DENO_DIR automatically
-        # when deno-version is specified and a deno.lock is present.
+      - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: ${{ matrix.deno-version }}
 
-      - name: Cache Deno Dependencies (Explicitly if needed, but setup-deno often handles it)
+      - name: Cache Dependencies
         uses: actions/cache@v4
         with:
           path: ${{ env.DENO_DIR }}
@@ -52,15 +47,13 @@ jobs:
             ${{ runner.os }}-deno-
             ${{ runner.os }}-
 
-      - name: Download Deno Modules
-        # Using deno cache to ensure all modules are downloaded and cached
+      - name: Install Dependencies
         run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
 
-      - name: Generate Types for Prisma
+      - name: Generate Prisma Types
         run: deno task prisma:generate
 
       - name: Lint Code
-        # Consider making --fix a separate step or running it locally before commit
         run: deno lint --ignore="**/*.js"
 
       - name: Run Tests
@@ -69,8 +62,7 @@ jobs:
       - name: Build Project
         run: deno task build:preview
 
-      - name: Create dist directory (if not created by build)
-        # This step might be redundant if deno task build creates 'dist'
+      - name: Prepare Artifacts
         run: mkdir -p dist
 
       - name: Upload Build Artifacts
@@ -78,3 +70,30 @@ jobs:
         with:
           name: ghostify-client-preview
           path: dist/
+          retention-days: 1
+
+  deploy-preview:
+    name: Deploy Preview
+    needs: deno-backend-ci
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+  
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ghostify-client-preview
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./dist
+          branch: ghostify-preview

@@ -6,7 +6,7 @@ import process from 'node:process';
 import { factory } from '../factory.ts';
 import { logger } from '../logger.ts';
 import { format } from 'date-fns';
-import { cvQueue } from '../job.ts';
+import { resumeQueue } from '../job.ts';
 import { contentDownloader } from '../utils/cv/downloader.ts';
 import { renaming } from '../utils/file_system/helpers.ts';
 import { tokenGenerator } from '../utils/security/jwt.ts';
@@ -14,7 +14,7 @@ import { resumeClasses } from '../utils/styles/classes.ts';
 
 const cvApp = factory.createApp();
 
-cvQueue.process(async (job, done) => {
+resumeQueue.process(async (job, done) => {
   try {
     const downLoaderData = await contentDownloader(job.data);
     done(null, downLoaderData);
@@ -23,7 +23,7 @@ cvQueue.process(async (job, done) => {
   }
 });
 
-type CvFormFields = {
+type ResumeFormFields = {
   userProfileFile?: File;
   selectedCVType?: string;
   jsonData?: string;
@@ -32,7 +32,7 @@ type CvFormFields = {
 cvApp.post('/process', async (c) => {
   const STATIC_DIR = './static/cv';
   const date = new Date();
-  const body = (await c.req.parseBody()) as CvFormFields;
+  const body = (await c.req.parseBody()) as ResumeFormFields;
   const uid = c.req.query('uid');
   let result: false | string = '';
   const session = c.get('session');
@@ -93,7 +93,7 @@ cvApp.post('/process', async (c) => {
         updating = true;
       }
       console.log('user updated successfully:', cvUpdating.metaData);
-      const cvJob = await cvQueue.add(
+      const cvJob = await resumeQueue.add(
         { url: cvUpdating.url!, id: cvUpdating.id, docId, updating },
         {
           attempts: 5,
@@ -155,7 +155,7 @@ cvApp.post('/process', async (c) => {
       });
       console.log('user rest points:', updateUserPoints.cvCredits);
     }
-    const cvJob = await cvQueue.add(
+    const cvJob = await resumeQueue.add(
       { url: newCV.url!, id: newCV.id },
       {
         attempts: 5,
@@ -275,7 +275,7 @@ cvApp.get('/status', async (c) => {
   const session = c.get('session');
   if (session.get('JobsIDs')) {
     const jobId = session.get('JobsIDs')!.cvJob;
-    const cvJob = await cvQueue.getJob(jobId!);
+    const cvJob = await resumeQueue.getJob(jobId!);
     const status = await cvJob?.getState();
     if (status === 'completed') {
       const cvData = await prismaClient.cV.findUnique({
@@ -369,7 +369,7 @@ cvApp.get('/theme/:uid', async (c) => {
         docId = doc.id;
         updating = true;
       }
-      const newCVJob = await cvQueue.add({
+      const newCVJob = await resumeQueue.add({
         url: updatingTheme.url ?? "",
         id: updatingTheme.id,
         docId,
@@ -436,7 +436,7 @@ cvApp.get('/job', async (c) => {
     });
     console.log('user rest points:', updateUserPoints.cvCredits);
   }
-  const cvJob = await cvQueue?.add(
+  const resumeJob = await resumeQueue.add(
     { url: newCV.url!, id: newCV.id },
     {
       attempts: 5,
@@ -444,7 +444,7 @@ cvApp.get('/job', async (c) => {
   );
   session.set('JobsIDs', {
     ...session.get('JobsIDs'),
-    cvJob: cvJob.id,
+    cvJob: resumeJob.id,
   });
   return c.redirect(`${newCV.url}?mode=view`);
 })

@@ -56,6 +56,7 @@
   "imports": {
     "@deno-plc/vite-plugin-deno": "jsr:@deno-plc/vite-plugin-deno@^2.3.3",
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.4",
+    "@hono/oauth-providers": "npm:@hono/oauth-providers@^0.8.1",
     "@lexical/link": "npm:@lexical/link@^0.32.1",
     "@lexical/list": "npm:@lexical/list@^0.32.1",
     "@lexical/react": "npm:@lexical/react@^0.32.1",
@@ -81,7 +82,7 @@
     "@types/bcrypt": "npm:@types/bcrypt@^5.0.2",
     "@types/jsdom": "npm:@types/jsdom@^21.1.7",
     "glob": "npm:glob@^11.0.1",
-    "prisma": "npm:prisma@6.6.0",
+    "prisma": "npm:prisma@^6.9.0",
     "bcrypt": "npm:bcrypt@5.1.1",
     "bull": "npm:bull@4.16.5",
     "marked": "npm:marked@15.0.8",
@@ -98,7 +99,7 @@
     "@tailwindcss/cli": "npm:@tailwindcss/cli@4.1.3",
     "free-translate": "npm:free-translate@0.6.1",
     "dompurify": "npm:dompurify@3.2.5",
-    "@prisma/client": "npm:@prisma/client@6.6.0",
+    "@prisma/client": "npm:@prisma/client@^6.9.0",
     "std/": "https://deno.land/std@0.220.1/",
     "stores/": "/src/stores/",
     "zustand": "npm:zustand@^5.0.5"
