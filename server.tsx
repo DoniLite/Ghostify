@@ -3,10 +3,9 @@ import { serveStatic } from 'hono/deno';
 import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
 import { secureHeaders } from 'hono/secure-headers'
-import { CookieStore, Session, sessionMiddleware } from 'npm:hono-sessions';
-import { type SessionData } from './src/@types/index.d.ts';
+import { CookieStore, Session, sessionMiddleware } from 'hono-sessions';
+import type { SessionData } from './src/@types/index.d.ts';
 import sessionManager from './src/hooks/sessionStorage.ts';
-import dotenv from 'dotenv';
 import process from 'node:process';
 import { languageDetector } from 'hono/language';
 import { compress } from 'hono/compress';
@@ -25,10 +24,7 @@ import { StaticRouter } from 'react-router-dom';
 import { getThemeScript } from './src/components/shared/ThemeProvider.tsx';
 import ApiRoutes from './src/api.ts';
 import { cache } from 'hono/cache';
-
-if (Deno.env.get('NODE_ENV') !== 'production') {
-  dotenv.config();
-}
+import { open, readFile } from 'node:fs/promises';
 
 export type Variables = {
   session: Session<SessionData>;
@@ -46,15 +42,15 @@ app.use(
   '*',
   sessionMiddleware({
     store,
-    encryptionKey: Deno.env.get('SESSION_SECRET'), // Required for CookieStore, recommended for others
+    encryptionKey: Bun.env.SESSION_SECRET, // Required for CookieStore, recommended for others
     expireAfterSeconds: 1800, // Expire session after 15 minutes of inactivity
     cookieOptions: {
       sameSite: 'Lax', // Recommended for basic CSRF protection in modern browsers
       path: '/', // Required for this library to work properly
-      httpOnly: true, // Recommended to avoid XSS attacks
-    },
-  }),
-);
+      httpOnly: true // Recommended to avoid XSS attacks
+    }
+  })
+)
 // app.use('/api/*', (c, next) => {
 //   const jwtMiddleware = jwt({
 //     secret: Deno.env.get('JWT_SECRET')!,
@@ -142,7 +138,7 @@ app.get('/download/:file', async (c) => {
     const { path: rPath } = await verifyJWT(file);
     if (typeof rPath === 'string') {
       const resourcePath = path.join(resourceDir, rPath);
-      const fileContent = await Deno.readFile(resourcePath);
+      const fileContent = await readFile(resourcePath);
       const headers = getFileHeaders(resourcePath, true);
       c.status(200);
       return c.newResponse(
@@ -167,10 +163,12 @@ app.get('/stream/:file', async (c) => {
     const { path: rPath } = await verifyJWT(file);
     if (typeof rPath === 'string') {
       const resourcePath = path.join(resourceDir, rPath);
-      const fileContent = await Deno.open(resourcePath);
       c.status(200);
       return stream(c, async (stream) => {
-        await stream.pipe(fileContent.readable);
+        const file = await open(resourcePath)
+        const content = await file.read()
+        await file.close()
+        await stream.write(content.buffer)
       });
     }
     c.status(404);
@@ -198,6 +196,7 @@ app.get('*', async (c) => {
     { 'content-type': 'text/html' },
   );
 });
-Deno.serve({
+Bun.serve({
   port: 8080,
-}, app.fetch);
+  fetch: app.fetch,
+});
