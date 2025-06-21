@@ -1,6 +1,6 @@
-import { getEnvConfig } from '../../../config/client/env.ts';
+import { getEnvConfig } from '../../../config/client/env.ts'
 
-const config = getEnvConfig();
+const config = getEnvConfig()
 
-export const WEBSOCKET_BASE_URL = config.WEBSOCKET_BASE_URL;
-export const API_BASE_URL = config.API_BASE_URL;
+export const WEBSOCKET_BASE_URL = config.WEBSOCKET_BASE_URL
+export const API_BASE_URL = config.API_BASE_URL

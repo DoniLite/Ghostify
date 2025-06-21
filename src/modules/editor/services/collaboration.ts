@@ -1,84 +1,81 @@
-// deno-lint-ignore-file ban-types no-explicit-any
-import { WEBSOCKET_BASE_URL } from '../constants/services_url.ts';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+import { WEBSOCKET_BASE_URL } from '../constants/services_url'
 
 export class CollaborationService {
-  private ws: WebSocket | null = null;
-  private documentId: string;
-  private userId: string;
-  private callbacks: Map<string, Function[]> = new Map();
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private WEBSOCKET_BASE_URL = WEBSOCKET_BASE_URL;
+  private ws: WebSocket | null = null
+  private documentId: string
+  private userId: string
+  private callbacks: Map<string, Function[]> = new Map()
+  private reconnectAttempts = 0
+  private maxReconnectAttempts = 5
+  private WEBSOCKET_BASE_URL = WEBSOCKET_BASE_URL
 
   constructor(documentId: string, userId: string) {
-    this.documentId = documentId;
-    this.userId = userId;
-    this.connect();
+    this.documentId = documentId
+    this.userId = userId
+    this.connect()
   }
 
   private connect() {
     try {
       // Compatible websocket connection for Hono
-      this.ws = new WebSocket(
-        `${this.WEBSOCKET_BASE_URL}${this.documentId}?userId=${this.userId}`,
-      );
+      this.ws = new WebSocket(`${this.WEBSOCKET_BASE_URL}${this.documentId}?userId=${this.userId}`)
 
       this.ws.onopen = () => {
-        console.log('Connexion opened');
-        this.reconnectAttempts = 0;
-        this.emit('connected', {});
-      };
+        console.log('Connexion opened')
+        this.reconnectAttempts = 0
+        this.emit('connected', {})
+      }
 
       this.ws.onmessage = (event) => {
         try {
-          const message = JSON.parse(event.data);
+          const message = JSON.parse(event.data)
           // Don't processing self sended message
           if (message.userId !== this.userId) {
-            this.emit(message.type, message);
+            this.emit(message.type, message)
           }
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error('Error parsing WebSocket message:', error)
         }
-      };
+      }
 
       this.ws.onclose = () => {
-        console.log('Closed WebSocket Connection');
-        this.emit('disconnected', {});
-        this.handleReconnect();
-      };
+        console.log('Closed WebSocket Connection')
+        this.emit('disconnected', {})
+        this.handleReconnect()
+      }
 
       this.ws.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-      };
+        console.error('WebSocket Error:', error)
+      }
     } catch (error) {
-      console.error('WebSocket Connection Error:', error);
-      this.handleReconnect();
+      console.error('WebSocket Connection Error:', error)
+      this.handleReconnect()
     }
   }
 
   private handleReconnect() {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
+      this.reconnectAttempts++
       setTimeout(() => {
-        console.log(
-          `Connection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`,
-        );
-        this.connect();
-      }, 1000 * this.reconnectAttempts);
+        console.log(`Connection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`)
+        this.connect()
+      }, 1000 * this.reconnectAttempts)
     }
   }
 
   on(event: string, callback: Function) {
     if (!this.callbacks.has(event)) {
-      this.callbacks.set(event, []);
+      this.callbacks.set(event, [])
     }
-    this.callbacks.get(event)!.push(callback);
+    this.callbacks.get(event)!.push(callback)
   }
 
   private emit(event: string, data: any) {
-    const callbacks = this.callbacks.get(event);
+    const callbacks = this.callbacks.get(event)
     if (callbacks) {
-      callbacks.forEach((callback) => callback(data));
+      callbacks.forEach((callback) => callback(data))
     }
   }
 
@@ -89,16 +86,16 @@ export class CollaborationService {
           type,
           data,
           userId: this.userId,
-          timestamp: Date.now(),
-        }),
-      );
+          timestamp: Date.now()
+        })
+      )
     }
   }
 
   disconnect() {
     if (this.ws) {
-      this.ws.onclose = null; // Prevent reconnection on manual disconnect
-      this.ws.close();
+      this.ws.onclose = null // Prevent reconnection on manual disconnect
+      this.ws.close()
     }
   }
 }

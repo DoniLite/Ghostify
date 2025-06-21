@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import App from './src/App.tsx'
+import App from './src/App'
 
 const container = document.getElementById('root')
 if (container) {

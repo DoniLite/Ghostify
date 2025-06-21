@@ -1,6 +1,5 @@
-import { factory } from '../../../factory.ts';
+import { factory } from '../../../factory'
 
+const googleAuthApp = factory.createApp()
 
-const googleAuthApp = factory.createApp();
-
-export default googleAuthApp;
+export default googleAuthApp

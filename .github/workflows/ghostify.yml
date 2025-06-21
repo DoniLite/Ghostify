@@ -4,9 +4,9 @@ env:
 
 on:
   push:
-    branches: ["main", "develop", "releases/**"]
+    branches: ['main', 'develop', 'releases/**']
   pull_request:
-    branches: ["main", "develop", "releases/**"]
+    branches: ['main', 'develop', 'releases/**']
 
 jobs:
   test-typescript:
@@ -18,7 +18,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
+          node-version: '22.x'
 
       - name: Install deno
         uses: denoland/setup-deno@v2
@@ -35,7 +35,7 @@ jobs:
 
       - name: Cache Dependencies
         run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
-      
+
       - name: Generate Types for Prisma
         run: deno task prisma:generate
 

@@ -1,15 +1,12 @@
-import { OGImageParams } from '../@types/og.ts';
+import type { OGImageParams } from '../@types/og'
 
-export function useOGImage(
-  type: 'page' | 'document' | 'resume',
-  params: OGImageParams,
-) {
-  const searchParams = new URLSearchParams();
-  searchParams.set('type', type);
+export function useOGImage(type: 'page' | 'document' | 'resume', params: OGImageParams) {
+  const searchParams = new URLSearchParams()
+  searchParams.set('type', type)
 
   Object.entries(params).forEach(([key, value]) => {
-    if (value) searchParams.set(key, String(value));
-  });
+    if (value) searchParams.set(key, String(value))
+  })
 
-  return `/api/v1/og?${searchParams.toString()}`;
+  return `/api/v1/og?${searchParams.toString()}`
 }

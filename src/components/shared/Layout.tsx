@@ -1,17 +1,15 @@
-import Header from './Header.tsx';
-import Footer from './Footer.tsx';
-import Meta from './Meta.tsx';
-import { createContext, FC, PropsWithChildren } from 'react';
-import { defaultSeo, SeoContext } from './SEO.ts';
-import { ThemeProvider } from './ThemeProvider.tsx';
+import { createContext, FC, PropsWithChildren } from 'react'
+import Footer from './Footer.tsx'
+import Header from './Header.tsx'
+import Meta from './Meta.tsx'
+import { defaultSeo, SeoContext } from './SEO.ts'
+import { ThemeProvider } from './ThemeProvider.tsx'
 
-export const LocalsContext = createContext<
-  { default: Record<string, unknown> }
->({
-  default: {},
-});
+export const LocalsContext = createContext<{ default: Record<string, unknown> }>({
+  default: {}
+})
 
-export type LayoutType = PropsWithChildren;
+export type LayoutType = PropsWithChildren
 
 const styles = `
   @keyframes float {
@@ -85,29 +83,45 @@ const styles = `
     visibility: visible;
     opacity: 1;
   }
-`;
+`
 
 const Layout: FC<LayoutType> = ({ children }) => (
   <html
-    lang='fr'
+    lang="fr"
     // data-theme={theme?.default || theme?.userDefault || 'light'}
   >
     <SeoContext.Provider value={defaultSeo}>
       <head>
-        <meta charSet='UTF-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <meta charSet="UTF-8" />
         <meta
-          name='author'
-          content='This website is powered by Doni Lite and its contributors'
+          name="viewport"
+          content="width=device-width, initial-scale=1.0"
         />
-        <meta name='creator' content='Doni Lite' />
-        <link rel='icon' type='image/svg+xml' href='/static/ghostify.svg' />
-        <link rel='stylesheet' href='/static/css/main.css' />
+        <meta
+          name="author"
+          content="This website is powered by Doni Lite and its contributors"
+        />
+        <meta
+          name="creator"
+          content="Doni Lite"
+        />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/static/ghostify.svg"
+        />
+        <link
+          rel="stylesheet"
+          href="/static/css/main.css"
+        />
         <style dangerouslySetInnerHTML={{ __html: styles }} />
         <Meta />
       </head>
       <body>
-        <ThemeProvider defaultTheme="system" serverTheme="dark">
+        <ThemeProvider
+          defaultTheme="system"
+          serverTheme="dark"
+        >
           <LocalsContext.Provider value={{ default: {} }}>
             <Header />
             {children}
@@ -117,6 +131,6 @@ const Layout: FC<LayoutType> = ({ children }) => (
       </body>
     </SeoContext.Provider>
   </html>
-);
+)
 
-export default Layout;
+export default Layout

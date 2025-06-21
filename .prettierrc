@@ -4,15 +4,11 @@
   "useTabs": false,
   "tabWidth": 2,
   "singleQuote": true,
-  "printWidth": 100,
+  "printWidth": 80,
   "trailingComma": "none",
-  "vueIndentScriptAndStyle": false,
   "bracketSameLine": false,
   "singleAttributePerLine": true,
   "embeddedLanguageFormatting": "auto",
-  "plugins": [
-    "prettier-plugin-organize-imports",
-    "prettier-plugin-tailwindcss"
-  ],
+  "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"],
   "htmlWhitespaceSensitivity": "ignore"
 }
