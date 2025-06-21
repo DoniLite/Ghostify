@@ -1,10 +1,10 @@
 import type { Notifications, NotificationType } from '@prisma/client'
-import { DoneCallback, Job } from 'bull'
+import type { DoneCallback, Job } from 'bull'
 import { EventEmitter } from 'node:stream'
-import { prismaClient } from '../../config/db.ts'
-import { NotificationQueue } from '../../job.ts'
-import { logger } from '../../logger.ts'
-import { ee } from './eventBus.ts'
+import { prismaClient } from '../../config/db'
+import { NotificationQueue } from '../../job'
+import { logger } from '../../logger'
+import { ee } from './eventBus'
 
 export class NotificationBus {
   /**
@@ -80,7 +80,7 @@ export class NotificationBus {
    * @param user - the user id
    * @returns The list of notifications
    */
-  async loadAllNotifications(user: number): Promise<Notifications[]> {
+  async loadAllNotifications(user: string): Promise<Notifications[]> {
     return await this.#crud.findMany({
       where: {
         userId: user
@@ -101,7 +101,7 @@ export class NotificationBus {
         const d = v as {
           evenType: NotificationType
           payload: Record<string | number | symbol, unknown>
-          userId: number
+          userId: string
         }
         this.#crud
           .create({
@@ -143,8 +143,9 @@ export class NotificationBus {
    * @param func - the callback function
    * @returns an object with a call method that can be used to add a new job in the queue
    */
-  async addCallBack<T>(
+  async addCallBack(
     // deno-lint-ignore ban-types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     func: Function
   ): Promise<{ call: typeof NotificationQueue.add }> {
     this.#callBack = func as (job: Job) => Promise<unknown>
@@ -166,7 +167,7 @@ export class NotificationBus {
   addNotification(
     type: NotificationType,
     payload: Record<string | number | symbol, unknown>,
-    userId: number
+    userId: string
   ): Promise<Notifications> {
     return this.#crud.create({
       data: {
@@ -177,7 +178,7 @@ export class NotificationBus {
     })
   }
 
-  async updateNotificationView(...notificationsId: number[]) {
+  async updateNotificationView(...notificationsId: string[]) {
     return await Promise.all(
       notificationsId.map(async (id) => {
         return await this.#crud.update({

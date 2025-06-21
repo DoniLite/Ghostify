@@ -28,7 +28,7 @@ export const LinksPluginComponent: React.FC = () => {
           <LinkIcon size={16} />
         </button>
         {showLinkDialog && (
-          <div className="bg-popover border-border absolute left-0 top-full z-50 mt-1 min-w-64 rounded border p-3 shadow-lg">
+          <div className="bg-popover border-border absolute top-full left-0 z-50 mt-1 min-w-64 rounded border p-3 shadow-lg">
             <div className="space-y-2">
               <input
                 type="url"

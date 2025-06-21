@@ -121,7 +121,7 @@ export default defineConfig([
       'max-len': [
         'warn',
         {
-          code: 100,
+          code: 150,
           ignoreComments: true,
           ignoreUrls: true
         }

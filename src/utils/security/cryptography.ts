@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import { prismaClient } from '../../config/db.ts'
+import { prismaClient } from '../../config/db'
 
-const server_uid = Deno.env.get('SECRET_UID')
+const server_uid = Bun.env.SECRET_UID
 
 interface Keys {
   secretKey: string

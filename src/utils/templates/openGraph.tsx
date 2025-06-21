@@ -1,6 +1,5 @@
-import React from 'react'
-import { DocumentOGData, OGImageParams } from '../../@types/og.ts'
-import { Ghostify } from '../../components/shared/Icons.tsx'
+import type { DocumentOGData, OGImageParams } from '../../@types/og'
+import { Ghostify } from '../../components/shared/Icons'
 
 interface TemplateProps {
   params: OGImageParams
