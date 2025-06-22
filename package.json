@@ -14,8 +14,6 @@
     "start:server": "bun run server.tsx",
     "dev:server": "bun run build:watch & bun run watch:server",
     "watch:server": "bun run server.tsx",
-    "test": "bun test",
-    "test-ci": "bun test tests/",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "fmt": "prettier . --write",

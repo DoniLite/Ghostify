@@ -30,37 +30,20 @@ jobs:
         deno-version: ['2.x']
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: ${{ matrix.deno-version }}
-
-      - name: Cache Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deno-
-            ${{ runner.os }}-
-
-      - name: Install Dependencies
-        run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
+      - name: Setup and Install
+        uses: ./.github/actions/setup-install.yml
 
       - name: Generate Prisma Types
-        run: deno task prisma:generate
+        run: bun run prisma:generate
 
       - name: Lint Code
-        run: deno lint --ignore="**/*.js"
+        run: bun run lint
 
       - name: Run Tests
-        run: deno task test-ci
+        run: bun test
 
       - name: Build Project
-        run: deno task build:preview
+        run: bun run build:preview
 
       - name: Prepare Artifacts
         run: mkdir -p dist
