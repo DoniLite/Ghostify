@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 
 type ButtonPropsType = PropsWithChildren<
   {
@@ -8,7 +8,13 @@ type ButtonPropsType = PropsWithChildren<
   } & Record<string | number | symbol, unknown>
 >
 
-export const Button = ({ link, children, elClass, type, ...rest }: ButtonPropsType) => {
+export const Button = ({
+  link,
+  children,
+  elClass,
+  type,
+  ...rest
+}: ButtonPropsType) => {
   if (link) {
     return (
       <a

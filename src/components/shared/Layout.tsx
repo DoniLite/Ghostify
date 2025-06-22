@@ -1,11 +1,13 @@
-import { createContext, FC, PropsWithChildren } from 'react'
-import Footer from './Footer.tsx'
-import Header from './Header.tsx'
-import Meta from './Meta.tsx'
-import { defaultSeo, SeoContext } from './SEO.ts'
-import { ThemeProvider } from './ThemeProvider.tsx'
+import { createContext, type FC, type PropsWithChildren } from 'react'
+import Footer from './Footer'
+import Header from './Header'
+import Meta from './Meta'
+import { defaultSeo, SeoContext } from './SEO'
+import { ThemeProvider } from './ThemeProvider'
 
-export const LocalsContext = createContext<{ default: Record<string, unknown> }>({
+export const LocalsContext = createContext<{
+  default: Record<string, unknown>
+}>({
   default: {}
 })
 
@@ -110,10 +112,10 @@ const Layout: FC<LayoutType> = ({ children }) => (
           type="image/svg+xml"
           href="/static/ghostify.svg"
         />
-        <link
+        {/* <link
           rel="stylesheet"
           href="/static/css/main.css"
-        />
+        /> */}
         <style dangerouslySetInnerHTML={{ __html: styles }} />
         <Meta />
       </head>

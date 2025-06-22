@@ -1,5 +1,5 @@
-import { PropsWithChildren } from 'react'
-import Sidebar from './sidebar.tsx'
+import type { PropsWithChildren } from 'react'
+import Sidebar from './sidebar'
 
 const Wrapper = ({ children }: PropsWithChildren) => {
   return (
