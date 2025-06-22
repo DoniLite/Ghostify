@@ -1,5 +1,4 @@
 import { copyFileSync, existsSync, mkdirSync } from 'fs'
-import fs from 'fs/promises'
 import { glob } from 'glob'
 import path from 'path'
 
@@ -81,10 +80,6 @@ async function runBuild() {
       }
     })
 
-    // Copy static assets
-    await fs.cp(path.join(root, 'static/css'), path.join(root, 'dist/css'), {
-      recursive: true
-    })
     copyFileSync(
       path.join(root, 'static/ghostify.svg'),
       path.join(root, 'dist/ghostify.svg')
