@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react'
-import { Comment, User } from '../types.ts'
+import type { Comment, User } from '../types'
 
 export const CommentsPanel: React.FC<{
   comments: Comment[]
@@ -42,7 +42,9 @@ export const CommentsPanel: React.FC<{
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <p className="text-foreground mb-3 text-sm">{comment.content}</p>
+                <p className="text-foreground mb-3 text-sm">
+                  {comment.content}
+                </p>
                 <button
                   type="button"
                   onClick={() => onResolveComment(comment.id)}

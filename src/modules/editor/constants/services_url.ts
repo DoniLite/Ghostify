@@ -1,4 +1,4 @@
-import { getEnvConfig } from '../../../config/client/env.ts'
+import { getEnvConfig } from '../../../config/client/env'
 
 const config = getEnvConfig()
 

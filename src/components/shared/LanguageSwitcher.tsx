@@ -1,5 +1,5 @@
-import { Locale } from '../../@types/translation.ts'
-import { useTranslation } from './TranslationContext.tsx'
+import type { Locale } from '../../@types/translation'
+import { useTranslation } from './TranslationContext'
 
 export function LanguageSwitcher() {
   const { locale, setLocale, availableLocales } = useTranslation()

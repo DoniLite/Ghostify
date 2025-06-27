@@ -38,10 +38,14 @@ const loginHandlers = factory.createHandlers(
         })
 
     if (!user) {
-      logger.warn('not authenticated login with: ' + login + ' and' + password + ' credentials', [
-        login,
-        password
-      ])
+      logger.warn(
+        'not authenticated login with: ' +
+          login +
+          ' and' +
+          password +
+          ' credentials',
+        [login, password]
+      )
       throw new HTTPException(404, {
         message: 'Not user found with this credentials'
       })
@@ -50,10 +54,14 @@ const loginHandlers = factory.createHandlers(
     const verifiedPassword = await compareHash(password, user.password!)
 
     if (!verifiedPassword) {
-      logger.warn('not authenticated login with: ' + login + ' and' + password + ' credentials', [
-        login,
-        password
-      ])
+      logger.warn(
+        'not authenticated login with: ' +
+          login +
+          ' and' +
+          password +
+          ' credentials',
+        [login, password]
+      )
       throw new HTTPException(402, {
         message: 'wrong password provided'
       })
@@ -119,7 +127,12 @@ authApp.post('/register', ...registerHandlers, async (c) => {
   cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15)
   session.set('Token', cookieExpiration.getTime().toString())
 
-  await setSignedCookie(c, 'connection_time', session.get('Token')!, Bun.env.SIGNED_COOKIE_SECRET!)
+  await setSignedCookie(
+    c,
+    'connection_time',
+    session.get('Token')!,
+    Bun.env.SIGNED_COOKIE_SECRET!
+  )
   return c.json({ message: 'User created successfully' })
 })
 // authApp.get('/login', authMiddleware, async (c) => {

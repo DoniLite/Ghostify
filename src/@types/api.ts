@@ -1,4 +1,4 @@
-import { User } from '@prisma/client'
+import type { User } from '@prisma/client'
 
 export interface ApiResponse<T = unknown> {
   data: T
@@ -48,14 +48,6 @@ export interface UseApiState<T> {
 export interface UseApiReturn<T> extends UseApiState<T> {
   refetch: () => Promise<void>
   mutate: (newData: T) => void
-}
-
-// Configuration de tes routes API
-export interface RouteDefinition {
-  method: HttpMethod
-  response: unknown
-  params?: Record<string, unknown>
-  body?: unknown
 }
 
 export interface ApiRoutes {

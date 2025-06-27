@@ -54,9 +54,13 @@ export interface Auth {
   avatar?: string
 }
 
-export type BodyXData<T = undefined> = T extends undefined ? Record<string, unknown> : T
+export type BodyXData<T = undefined> = T extends undefined
+  ? Record<string, unknown>
+  : T
 
-export type QueryXData<T = undefined> = T extends undefined ? Record<string, unknown> : T
+export type QueryXData<T = undefined> = T extends undefined
+  ? Record<string, unknown>
+  : T
 
 export type month =
   | 'Janvier'

@@ -1,6 +1,6 @@
-import en from '../../locales/en.ts'
-import es from '../../locales/es.ts'
-import fr from '../../locales/fr.ts'
+import en from '../../locales/en'
+import es from '../../locales/es'
+import fr from '../../locales/fr'
 
 export type Join<K, P> = K extends string | number
   ? P extends string | number
@@ -12,11 +12,13 @@ export type DeepKeyOf<T> = {
   [K in keyof T]: T[K] extends object ? K | Join<K, DeepKeyOf<T[K]>> : K
 }[keyof T]
 
-export type StringToPath<S extends string> = S extends `${infer Head}.${infer Tail}`
-  ? [Head, ...StringToPath<Tail>]
-  : [S]
+export type StringToPath<S extends string> =
+  S extends `${infer Head}.${infer Tail}` ? [Head, ...StringToPath<Tail>] : [S]
 
-export type PathValue<T, Path extends readonly string[]> = Path extends [infer Head, ...infer Tail]
+export type PathValue<T, Path extends readonly string[]> = Path extends [
+  infer Head,
+  ...infer Tail
+]
   ? Head extends keyof T
     ? Tail extends string[]
       ? PathValue<T[Head], Tail>
@@ -45,9 +47,12 @@ export const translations: Translations = { fr, en, es }
 
 export type Locale = 'fr' | 'en' | 'es'
 
-export function getDeepValue<T, K extends string>(obj: T, path: K): DeepValue<T, K> {
+export function getDeepValue<T, K extends string>(
+  obj: T,
+  path: K
+): DeepValue<T, K> {
   const parts = path.split('.')
-  // deno-lint-ignore no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let result: any = obj
 
   for (const part of parts) {

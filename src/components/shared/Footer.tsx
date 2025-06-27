@@ -1,6 +1,13 @@
-import { Facebook, Github, Instagram, Linkedin, Send, Twitter } from 'lucide-react' // Assuming lucide-react for icons
-import { Button } from '../utils/button.tsx'
-import { Ghostify } from './Icons.tsx'
+import {
+  Facebook,
+  Github,
+  Instagram,
+  Linkedin,
+  Send,
+  Twitter
+} from 'lucide-react' // Assuming lucide-react for icons
+import { Button } from '../utils/button'
+import { Ghostify } from './Icons'
 
 const Footer = () => {
   return (
@@ -12,12 +19,14 @@ const Footer = () => {
             <Ghostify className="text-primary h-8 w-8" />
             <span className="font-nunito text-3xl font-bold">Ghostify.</span>
           </div>
-          <p className="text-muted-foreground font-inter mb-4">Souscris à la newsletter!</p>
+          <p className="text-muted-foreground font-inter mb-4">
+            Souscris à la newsletter!
+          </p>
           <div className="flex w-full max-w-sm">
             <input
               type="email"
               placeholder="Passez nous votre mail et on s'y"
-              className="bg-input text-foreground border-border focus:ring-ring flex-1 rounded-l-md border px-4 py-2 focus:outline-none focus:ring-2"
+              className="bg-input text-foreground border-border focus:ring-ring flex-1 rounded-l-md border px-4 py-2 focus:ring-2 focus:outline-none"
             />
             <Button className="bg-primary text-primary-foreground hover:bg-accent rounded-r-md p-3 transition-colors">
               <Send size={20} />
@@ -59,7 +68,9 @@ const Footer = () => {
 
         {/* Section 2: Services */}
         <div>
-          <h4 className="font-nunito mb-6 text-center text-xl font-bold md:text-left">Services</h4>
+          <h4 className="font-nunito mb-6 text-center text-xl font-bold md:text-left">
+            Services
+          </h4>
           <ul className="text-muted-foreground font-inter space-y-3 text-center md:text-left">
             <li>
               <a

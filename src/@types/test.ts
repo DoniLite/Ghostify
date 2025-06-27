@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface BaseTestConfig {
   timeout?: number
   locale?: string

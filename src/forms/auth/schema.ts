@@ -1,5 +1,5 @@
 import z from 'zod'
-import { COMBINED_PASSWORD_REGEX } from '../../utils/const/regex.ts'
+import { COMBINED_PASSWORD_REGEX } from '../../utils/const/regex'
 
 export const LoginSchema = z.object({
   login: z.union([z.string(), z.string().email()]),

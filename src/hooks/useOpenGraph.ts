@@ -1,6 +1,9 @@
 import type { OGImageParams } from '../@types/og'
 
-export function useOGImage(type: 'page' | 'document' | 'resume', params: OGImageParams) {
+export function useOGImage(
+  type: 'page' | 'document' | 'resume',
+  params: OGImageParams
+) {
   const searchParams = new URLSearchParams()
   searchParams.set('type', type)
 

@@ -4,17 +4,17 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
-import { EditorState, LexicalEditor } from 'lexical'
+import type { EditorState, LexicalEditor } from 'lexical'
 import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { PluginManager } from '../pluginManager.ts'
-import { CollaborationService } from '../services/collaboration.ts'
-import { DocumentService } from '../services/document.ts'
-import { DocumentState, PluginConfig } from '../types.ts'
-import { CommentsPanel } from './CommentsPanel.tsx'
-import { EditorPlaceholder } from './EditorPlaceholder.tsx'
-import { RevisionsPanel } from './RevisionPanel.tsx'
-import { Toolbar } from './ToolBar.tsx'
+import { PluginManager } from '../pluginManager'
+import { CollaborationService } from '../services/collaboration'
+import { DocumentService } from '../services/document'
+import type { DocumentState, PluginConfig } from '../types'
+import { CommentsPanel } from './CommentsPanel'
+import { EditorPlaceholder } from './EditorPlaceholder'
+import { RevisionsPanel } from './RevisionPanel'
+import { Toolbar } from './ToolBar'
 
 export const Editor: React.FC<{ documentId: string; userId: string }> = ({
   documentId,
@@ -22,7 +22,9 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
 }) => {
   const [docState, setDocState] = useState<DocumentState | null>(null)
   const [loadedPlugins, setLoadedPlugins] = useState<PluginConfig[]>([])
-  const [activeSidebar, setActiveSidebar] = useState<'comments' | 'revisions' | null>(null)
+  const [activeSidebar, setActiveSidebar] = useState<
+    'comments' | 'revisions' | null
+  >(null)
 
   const [isSaving, setIsSaving] = useState(false)
   const [isCollaborating, setIsCollaborating] = useState(false)
@@ -81,7 +83,10 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
     (pluginId: string) => {
       const plugin = pluginManager.loadPlugin(pluginId)
       if (plugin) {
-        setLoadedPlugins((prev) => [...prev.filter((p) => p.id !== pluginId), plugin])
+        setLoadedPlugins((prev) => [
+          ...prev.filter((p) => p.id !== pluginId),
+          plugin
+        ])
       }
     },
     [pluginManager]
@@ -100,7 +105,10 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
     }
   }, [docState, documentService])
 
-  const handleEditorChange = (editorState: EditorState, editor: LexicalEditor) => {
+  const handleEditorChange = (
+    editorState: EditorState,
+    editor: LexicalEditor
+  ) => {
     editorRef.current = editor
     const jsonState = JSON.stringify(editorState.toJSON())
     setDocState((prev) => (prev ? { ...prev, content: jsonState } : null))
@@ -110,9 +118,12 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
   // TODO: Implémenter la logique métier pour les commentaires et révisions
   const handleAddComment = (nodeKey: string, content: string) =>
     console.log('Add comment:', { nodeKey, content })
-  const handleResolveComment = (commentId: string) => console.log('Resolve comment:', commentId)
-  const handleAcceptRevision = (revisionId: string) => console.log('Accept revision:', revisionId)
-  const handleRejectRevision = (revisionId: string) => console.log('Reject revision:', revisionId)
+  const handleResolveComment = (commentId: string) =>
+    console.log('Resolve comment:', commentId)
+  const handleAcceptRevision = (revisionId: string) =>
+    console.log('Accept revision:', revisionId)
+  const handleRejectRevision = (revisionId: string) =>
+    console.log('Reject revision:', revisionId)
 
   const toggleSidebar = (panel: 'comments' | 'revisions') => {
     setActiveSidebar((prev) => (prev === panel ? null : panel))
@@ -156,7 +167,9 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
           loadedPlugins={loadedPlugins}
           availablePlugins={pluginManager.getAvailablePlugins()}
           onSave={handleSave}
-          onExport={(format) => documentService.exportDocument(docState.id, format)}
+          onExport={(format) =>
+            documentService.exportDocument(docState.id, format)
+          }
           onImport={() => {
             /* Logique d'upload de fichier */
           }}

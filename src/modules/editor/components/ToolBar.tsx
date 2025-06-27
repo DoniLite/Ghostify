@@ -1,6 +1,14 @@
-import { Download, GitBranch, Loader2, MessageCircle, Plus, Save, Upload } from 'lucide-react'
+import {
+  Download,
+  GitBranch,
+  Loader2,
+  MessageCircle,
+  Plus,
+  Save,
+  Upload
+} from 'lucide-react'
 import React, { useState } from 'react'
-import { Comment, PluginConfig, Revision, User } from '../types.ts'
+import type { Comment, PluginConfig, Revision, User } from '../types'
 
 export const Toolbar: React.FC<{
   onPluginLoad: (pluginId: string) => void
@@ -71,7 +79,7 @@ export const Toolbar: React.FC<{
               <Download size={16} />
             </button>
             {showExportMenu && (
-              <div className="bg-popover border-border absolute left-0 top-full z-50 mt-1 min-w-32 rounded border shadow-lg">
+              <div className="bg-popover border-border absolute top-full left-0 z-50 mt-1 min-w-32 rounded border shadow-lg">
                 <button
                   type="button"
                   onClick={() => {
@@ -117,7 +125,7 @@ export const Toolbar: React.FC<{
 
         {/* Plugins chargés */}
         {loadedPlugins.map((plugin) => {
-          // deno-lint-ignore no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const props: any = {}
           if (plugin.id === 'comments') {
             props.comments = comments
@@ -145,7 +153,7 @@ export const Toolbar: React.FC<{
             <Plus size={16} />
           </button>
           {showPluginMenu && (
-            <div className="bg-popover border-border absolute left-0 top-full z-50 mt-1 min-w-64 rounded border p-2 shadow-lg">
+            <div className="bg-popover border-border absolute top-full left-0 z-50 mt-1 min-w-64 rounded border p-2 shadow-lg">
               <h3 className="text-popover-foreground p-2 text-sm font-semibold">
                 Fonctionnalités disponibles
               </h3>
@@ -166,8 +174,12 @@ export const Toolbar: React.FC<{
                         className="text-accent-foreground"
                       />
                       <div>
-                        <p className="text-popover-foreground font-medium">{plugin.name}</p>
-                        <p className="text-muted-foreground text-xs">{plugin.description}</p>
+                        <p className="text-popover-foreground font-medium">
+                          {plugin.name}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {plugin.description}
+                        </p>
                       </div>
                     </button>
                   )
@@ -199,7 +211,7 @@ export const Toolbar: React.FC<{
         >
           <MessageCircle size={18} />
           {comments.filter((c) => !c.resolved).length > 0 && (
-            <span className="bg-primary text-primary-foreground absolute right-0 top-0 h-4 w-4 rounded-full text-xs">
+            <span className="bg-primary text-primary-foreground absolute top-0 right-0 h-4 w-4 rounded-full text-xs">
               {comments.filter((c) => !c.resolved).length}
             </span>
           )}
@@ -212,7 +224,7 @@ export const Toolbar: React.FC<{
         >
           <GitBranch size={18} />
           {revisions.filter((r) => r.accepted === undefined).length > 0 && (
-            <span className="bg-primary text-primary-foreground absolute right-0 top-0 h-4 w-4 rounded-full text-xs">
+            <span className="bg-primary text-primary-foreground absolute top-0 right-0 h-4 w-4 rounded-full text-xs">
               {revisions.filter((r) => r.accepted === undefined).length}
             </span>
           )}

@@ -1,6 +1,6 @@
-import { FC, PropsWithChildren } from 'react'
-import { LocalsContext } from './Layout.tsx'
-import Meta, { type MetaProps } from './Meta.tsx'
+import type { FC, PropsWithChildren } from 'react'
+import { LocalsContext } from './Layout'
+import Meta, { type MetaProps } from './Meta'
 
 export type TLayout = PropsWithChildren<{
   meta?: MetaProps

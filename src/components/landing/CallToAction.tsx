@@ -1,5 +1,5 @@
-import { useTranslation } from '../shared/TranslationContext.tsx'
-import { Button } from '../utils/button.tsx'
+import { useTranslation } from '../shared/TranslationContext'
+import { Button } from '../utils/button'
 
 const CtaSection = () => {
   const { t } = useTranslation()

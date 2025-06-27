@@ -1,5 +1,5 @@
 import { Check, X } from 'lucide-react'
-import { Revision, User } from '../types.ts'
+import type { Revision, User } from '../types'
 
 export const RevisionsPanel: React.FC<{
   revisions: Revision[]
@@ -25,7 +25,9 @@ export const RevisionsPanel: React.FC<{
                 className="bg-sidebar rounded-lg border-l-4 p-3"
                 style={{
                   borderColor:
-                    revision.type === 'insert' ? 'var(--color-chart-4)' : 'var(--color-destructive)'
+                    revision.type === 'insert'
+                      ? 'var(--color-chart-4)'
+                      : 'var(--color-destructive)'
                 }}
               >
                 <div className="mb-2 flex items-center justify-between">
@@ -47,7 +49,7 @@ export const RevisionsPanel: React.FC<{
                     {new Date(revision.timestamp).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-foreground mb-3 break-words text-sm">
+                <p className="text-foreground mb-3 text-sm break-words">
                   <span
                     className={`font-bold ${
                       revision.type === 'insert'

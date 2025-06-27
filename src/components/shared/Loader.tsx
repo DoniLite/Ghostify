@@ -6,13 +6,15 @@ const Loader = () => {
         className="flex h-[100vh] w-full items-center justify-center bg-gray-950 text-white"
       >
         <div id="loaderHead">
-          <h2 className="animate-bounce font-bold lg:text-2xl">Chargement veuillez patinter...</h2>
+          <h2 className="animate-bounce font-bold lg:text-2xl">
+            Chargement veuillez patinter...
+          </h2>
           <h1 className="flex items-center text-xl font-bold md:text-7xl">
             L
             <svg
               stroke="currentColor"
               fill="currentColor"
-              stroke-width="0"
+              strokeWidth="0"
               viewBox="0 0 24 24"
               className="animate-spin"
               height="1em"

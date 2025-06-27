@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 
 // Types pour le thème
 type Theme = 'light' | 'dark' | 'system'
@@ -65,7 +71,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // Fonction pour résoudre le thème système
   const getSystemTheme = useCallback((): ResolvedTheme => {
     if (typeof window === 'undefined') return 'dark'
-    return globalThis.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    return globalThis.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
   }, [])
 
   // Fonction pour résoudre le thème
@@ -117,7 +125,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     const themeOrder: Theme[] = ['dark', 'light', 'system']
     const currentIndex = themeOrder.indexOf(theme)
     const nextIndex = (currentIndex + 1) % themeOrder.length
-    setTheme(themeOrder[nextIndex])
+    setTheme(themeOrder[nextIndex]!)
   }, [theme, setTheme])
 
   // Effet d'hydratation côté client

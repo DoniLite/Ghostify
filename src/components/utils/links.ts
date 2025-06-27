@@ -4,7 +4,11 @@ type LinkClassProps = {
   isTransitioning: boolean
 }
 
-export const linkClass = ({ isActive, isPending, isTransitioning }: LinkClassProps) => {
+export const linkClass = ({
+  isActive,
+  isPending,
+  isTransitioning
+}: LinkClassProps) => {
   const defaultClass = 'hover:text-primary transition-colors font-nunito'
   return isActive
     ? `${defaultClass} text-primary`

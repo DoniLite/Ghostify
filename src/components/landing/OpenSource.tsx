@@ -1,31 +1,5 @@
-import { useTranslation } from '../shared/TranslationContext.tsx'
-import { Button } from '../utils/button.tsx'
-
-const OpenSourceSection = () => {
-  const { t } = useTranslation()
-  return (
-    <section className="bg-background text-foreground relative overflow-hidden px-6 py-20 lg:px-12">
-      <div className="container mx-auto flex flex-col items-center justify-between gap-12 lg:flex-row">
-        <div className="relative flex flex-1 justify-center lg:justify-start">
-          <div className="relative h-64 w-full max-w-md lg:h-96">
-            {/* Illustration - simplified for code, ideally an SVG */}
-            <CodingSVG className="absolute inset-0 h-full w-full" />
-          </div>
-        </div>
-
-        <div className="flex-1 text-center lg:text-left">
-          <h2 className="text-foreground font-nunito mb-8 text-5xl font-extrabold leading-tight lg:text-6xl">
-            {t('home.open_source.title.1')}{' '}
-            <span className="text-primary">{t('home.open_source.title.2')}</span>
-          </h2>
-          <Button className="bg-primary text-primary-foreground hover:bg-accent font-nunito rounded-md px-10 py-4 text-xl transition-colors">
-            {t('home.open_source.btn')}
-          </Button>
-        </div>
-      </div>
-    </section>
-  )
-}
+import { useTranslation } from '../shared/TranslationContext'
+import { Button } from '../utils/button'
 
 const svgStyle = `.st0{fill: var(--primary);} .st1{fill: var(--secondary);} .st2{fill: var(--foreground);}`
 const CodingSVG = ({ ...rest }: Record<string, unknown>) => (
@@ -626,5 +600,32 @@ const CodingSVG = ({ ...rest }: Record<string, unknown>) => (
     </g>
   </svg>
 )
+
+const OpenSourceSection = () => {
+  const { t } = useTranslation()
+  return (
+    <section className="bg-background text-foreground relative overflow-hidden px-6 py-20 lg:px-12">
+      <div className="container mx-auto flex flex-col items-center justify-between gap-12 lg:flex-row">
+        <div className="relative flex flex-1 justify-center lg:justify-start">
+          <div className="relative h-64 w-full max-w-md lg:h-96">
+            <CodingSVG className="absolute inset-0 h-full w-full" />
+          </div>
+        </div>
+
+        <div className="flex-1 text-center lg:text-left">
+          <h2 className="text-foreground font-nunito mb-8 text-5xl leading-tight font-extrabold lg:text-6xl">
+            {t('home.open_source.title.1')}{' '}
+            <span className="text-primary">
+              {t('home.open_source.title.2')}
+            </span>
+          </h2>
+          <Button className="bg-primary text-primary-foreground hover:bg-accent font-nunito rounded-md px-10 py-4 text-xl transition-colors">
+            {t('home.open_source.btn')}
+          </Button>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 export default OpenSourceSection

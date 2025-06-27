@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react'
-import { MetaProps } from './Meta.tsx'
+import type { MetaProps } from './Meta'
 
+const seoMap = new Map<string, MetaProps>()
 export interface SeoContextDef {
   getSeo: (id: string) => MetaProps | undefined
   setSeo: (id: string, meta: MetaProps) => void
@@ -24,4 +25,3 @@ export const useSeo = (id: string, meta: MetaProps) => {
   if (!ctx) throw new Error('Use the Seo hook inside a Seo Provider')
   return ctx.setSeo(id, meta)
 }
-const seoMap = new Map<string, MetaProps>()

@@ -1,19 +1,21 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Button } from '../utils/button.tsx'
-import { linkClass } from '../utils/links.ts'
-import { Ghostify } from './Icons.tsx'
-import { LanguageSwitcher } from './LanguageSwitcher.tsx'
-import { ThemeToggle } from './ThemeToogle.tsx'
-import { useLocalURI, useTranslation } from './TranslationContext.tsx'
+import { Button } from '../utils/button'
+import { linkClass } from '../utils/links'
+import { Ghostify } from './Icons'
+import { LanguageSwitcher } from './LanguageSwitcher'
+import { ThemeToggle } from './ThemeToogle'
+import { useLocalURI, useTranslation } from './TranslationContext'
 
 const Header = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   return (
-    <header className="bg-background fixed left-0 top-0 z-50 flex w-full items-center justify-between px-6 py-4 lg:px-12">
+    <header className="bg-background fixed top-0 left-0 z-50 flex w-full items-center justify-between px-6 py-4 lg:px-12">
       <div className="flex items-center space-x-2">
         <Ghostify className="h-6 w-6" />
-        <span className="text-foreground font-nunito text-2xl font-bold">Ghostify</span>
+        <span className="text-foreground font-nunito text-2xl font-bold">
+          Ghostify
+        </span>
       </div>
       <nav className="hidden items-center space-x-8 lg:flex">
         <NavLink

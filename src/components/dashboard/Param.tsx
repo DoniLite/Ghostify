@@ -1,7 +1,7 @@
 const Param = ({ hide }: { hide: boolean }) => {
   return (
     <div
-      className={`fixed left-[25%] top-8 w-[70%] py-6 sm:px-6 lg:px-8 ${
+      className={`fixed top-8 left-[25%] w-[70%] py-6 sm:px-6 lg:px-8 ${
         hide ? 'translate-x-[200%]' : 'translate-x-[0]'
       }`}
     >
@@ -10,7 +10,9 @@ const Param = ({ hide }: { hide: boolean }) => {
           {/* Sidebar Navigation */}
           <div className="mr-8 hidden w-64 md:block">
             <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h3 className="mb-4 text-lg font-medium text-gray-900">Paramètres</h3>
+              <h3 className="mb-4 text-lg font-medium text-gray-900">
+                Paramètres
+              </h3>
               <ul>
                 <li className="mb-2">
                   <a
@@ -65,7 +67,9 @@ const Param = ({ hide }: { hide: boolean }) => {
           <div className="flex-1">
             <div className="overflow-hidden rounded-lg bg-white shadow-sm">
               <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-                <h3 className="text-lg font-medium leading-6 text-gray-900">Profil Utilisateur</h3>
+                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                  Profil Utilisateur
+                </h3>
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">
                   Informations personnelles et paramètres du compte
                 </p>
@@ -79,13 +83,13 @@ const Param = ({ hide }: { hide: boolean }) => {
                     <div className="ml-5">
                       <button
                         type="button"
-                        className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                       >
                         Changer la photo
                       </button>
                       <button
                         type="button"
-                        className="ml-3 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="ml-3 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm leading-4 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                       >
                         Supprimer
                       </button>
@@ -212,7 +216,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 
                   <div className="pt-8">
                     <div>
-                      <h3 className="text-lg font-medium leading-6 text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">
                         Préférences de notification
                       </h3>
                       <p className="mt-1 text-sm text-gray-500">
@@ -238,8 +242,8 @@ const Param = ({ hide }: { hide: boolean }) => {
                             Notifications par e-mail
                           </label>
                           <p className="text-gray-500">
-                            Recevez des mises à jour sur vos projets, actions et nouvelles
-                            fonctionnalités
+                            Recevez des mises à jour sur vos projets, actions et
+                            nouvelles fonctionnalités
                           </p>
                         </div>
                       </div>
@@ -260,8 +264,8 @@ const Param = ({ hide }: { hide: boolean }) => {
                             E-mails marketing
                           </label>
                           <p className="text-gray-500">
-                            Recevez des communications sur nos offres, événements et nouvelles
-                            fonctionnalités
+                            Recevez des communications sur nos offres,
+                            événements et nouvelles fonctionnalités
                           </p>
                         </div>
                       </div>
@@ -272,13 +276,13 @@ const Param = ({ hide }: { hide: boolean }) => {
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                       >
                         Annuler
                       </button>
                       <button
                         type="submit"
-                        className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
                       >
                         Enregistrer
                       </button>

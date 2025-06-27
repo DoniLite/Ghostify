@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { useLocation } from 'react-router-dom'
-import { SeoContext } from './SEO.ts'
+import { SeoContext } from './SEO'
 
 export interface MetaProps {
   title?: string

@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { type FC } from 'react'
 
 export interface CVProps {
   fullName?: string
@@ -37,9 +37,13 @@ const CVTemplate: FC<CVProps> = ({
   mode
 }) => {
   return (
-    <div className={`min-h-[52.6rem] w-[49.6rem] ${cvTheme.bg3} mx-auto mt-4 shadow-lg`}>
+    <div
+      className={`min-h-[52.6rem] w-[49.6rem] ${cvTheme.bg3} mx-auto mt-4 shadow-lg`}
+    >
       <div className="grid grid-cols-[40%,60%] gap-0">
-        <div className={`${cvTheme.bg1} ${cvTheme.text1} flex flex-col justify-center gap-y-3 p-4`}>
+        <div
+          className={`${cvTheme.bg1} ${cvTheme.text1} flex flex-col justify-center gap-y-3 p-4`}
+        >
           <div className="flex w-full items-center justify-between">
             {img && (
               <img
@@ -78,7 +82,9 @@ const CVTemplate: FC<CVProps> = ({
         </div>
       </div>
       <div className="grid grid-cols-[40%,60%] gap-0">
-        <div className={`${cvTheme.bg2} ${cvTheme.text2} flex flex-col gap-y-3 p-4`}>
+        <div
+          className={`${cvTheme.bg2} ${cvTheme.text2} flex flex-col gap-y-3 p-4`}
+        >
           <h1 className="mb-4 text-center text-2xl font-bold">Compétences</h1>
           <ul className="mb-4 ml-8 flex list-disc flex-col gap-y-4">
             {skills.map((skill, idx) => (
@@ -98,7 +104,9 @@ const CVTemplate: FC<CVProps> = ({
             </div>
           ))}
         </div>
-        <div className={`${cvTheme.bg3} ${cvTheme.text3} flex flex-col gap-y-3 p-4`}>
+        <div
+          className={`${cvTheme.bg3} ${cvTheme.text3} flex flex-col gap-y-3 p-4`}
+        >
           <h1 className="mb-4 text-center text-2xl font-bold">Expérience</h1>
           {experience.map((el, idx) => (
             <div
@@ -124,7 +132,9 @@ const CVTemplate: FC<CVProps> = ({
               )}
             </div>
           ))}
-          <h1 className="mb-4 text-center text-2xl font-bold">Centres d'intérêt</h1>
+          <h1 className="mb-4 text-center text-2xl font-bold">
+            Centres d'intérêt
+          </h1>
           <ul className="mx-auto mb-4 flex w-[70%] list-disc flex-col gap-y-4">
             {interest.map((el, idx) => (
               <li key={idx}>{el}</li>
@@ -139,7 +149,9 @@ const CVTemplate: FC<CVProps> = ({
               >
                 <h3 className="font-bold">{language.title}</h3>
                 <div className="h-[6px] w-full rounded-lg bg-gray-300">
-                  <div className={`h-full ${cvTheme.level} rounded-lg ${language.css}`}></div>
+                  <div
+                    className={`h-full ${cvTheme.level} rounded-lg ${language.css}`}
+                  ></div>
                 </div>
                 <span>{language.level}</span>
               </li>

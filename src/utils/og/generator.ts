@@ -1,12 +1,16 @@
-import { Resvg } from 'npm:@resvg/resvg-js'
-import satori from 'npm:satori'
+import { Resvg } from '@resvg/resvg-js'
 import React from 'react'
-import { DocumentOGData, OGImageParams } from '../../@types/og.ts'
-import { loadFonts } from '../fonts.ts'
-import { DocumentTemplate, PageTemplate, ResumeTemplate } from '../templates/openGraph.tsx'
+import satori from 'satori'
+import type { DocumentOGData, OGImageParams } from '../../@types/og'
+import { loadFonts } from '../fonts'
+import {
+  DocumentTemplate,
+  PageTemplate,
+  ResumeTemplate
+} from '../templates/openGraph'
 
 export class OGImageGenerator {
-  // deno-lint-ignore no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private fonts: any[] = []
   private fontsLoaded = false
 
@@ -40,7 +44,10 @@ export class OGImageGenerator {
     }
   }
 
-  async generateImage(params: OGImageParams, data?: DocumentOGData): Promise<Uint8Array> {
+  async generateImage(
+    params: OGImageParams,
+    data?: DocumentOGData
+  ): Promise<Uint8Array> {
     // Attendre que les polices soient chargées si ce n'est pas déjà fait
     if (!this.fontsLoaded) {
       await this.initializeFonts()
@@ -82,7 +89,10 @@ export class OGImageGenerator {
   }
 
   // Méthode utilitaire pour générer une image et la retourner en base64
-  async generateImageBase64(params: OGImageParams, data?: DocumentOGData): Promise<string> {
+  async generateImageBase64(
+    params: OGImageParams,
+    data?: DocumentOGData
+  ): Promise<string> {
     const imageBuffer = await this.generateImage(params, data)
     return `data:image/png;base64,${btoa(String.fromCharCode(...imageBuffer))}`
   }
@@ -95,7 +105,10 @@ export class OGImageGenerator {
     return `og_${params.type}_${JSON.stringify(params)}_${JSON.stringify(data)}`
   }
 
-  async generateImageWithCache(params: OGImageParams, data?: DocumentOGData): Promise<Uint8Array> {
+  async generateImageWithCache(
+    params: OGImageParams,
+    data?: DocumentOGData
+  ): Promise<Uint8Array> {
     const cacheKey = this.getCacheKey(params, data)
     const cached = this.cache.get(cacheKey)
 
@@ -132,7 +145,7 @@ setInterval(() => {
   ogGenerator.cleanCache()
 }, 3600000)
 
-// deno-lint-ignore no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function validateOGParams(params: any): params is OGImageParams {
   return (
     typeof params === 'object' &&

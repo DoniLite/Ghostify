@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react'
-import { useTranslation } from '../shared/TranslationContext.tsx' // Assuming this path is correct
-import { Button } from '../utils/button.tsx'
+import { useTranslation } from '../shared/TranslationContext' // Assuming this path is correct
+import { Button } from '../utils/button'
 
 export interface PricingCardProps {
   title: string
@@ -31,7 +31,9 @@ const Card = ({
         <h2 className="text-primary text-lg font-medium">{title}</h2>
 
         <p className="mt-2 sm:mt-4">
-          <strong className="text-primary text-3xl font-bold sm:text-4xl">${price}</strong>
+          <strong className="text-primary text-3xl font-bold sm:text-4xl">
+            ${price}
+          </strong>
           <span className="text-primary text-sm font-medium">
             /<span className="sr-only">{t('common.per')}</span>
             {billingPeriod}

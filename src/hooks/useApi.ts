@@ -56,7 +56,10 @@ class ApiClient {
     return url
   }
 
-  async request<T>(path: string, config: RequestConfig = {}): Promise<ApiResponse<T>> {
+  async request<T>(
+    path: string,
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T>> {
     const { method = 'GET', headers = {}, body, params } = config
 
     const url = this.buildURL(path, method === 'GET' ? params : undefined)
@@ -72,7 +75,8 @@ class ApiClient {
     }
 
     if (body && method !== 'GET') {
-      requestConfig.body = typeof body === 'string' ? body : JSON.stringify(body)
+      requestConfig.body =
+        typeof body === 'string' ? body : JSON.stringify(body)
     }
 
     try {
@@ -136,7 +140,10 @@ class ApiClient {
     const routeConfig = ApiRoutes[route as string]?.[endpoint as string]
 
     if (!routeConfig) {
-      throw new ApiError(`Route ${String(route)}.${String(endpoint)} not found`, 404)
+      throw new ApiError(
+        `Route ${String(route)}.${String(endpoint)} not found`,
+        404
+      )
     }
 
     // Building the path depending on the endpoint
@@ -155,7 +162,9 @@ class ApiClient {
     return this.request<ExtractResponse<RouteEndpoint<R, E>>>(path, {
       method: routeConfig.method,
       params:
-        routeConfig.method === 'GET' ? (options?.params as Record<string, unknown>) : undefined,
+        routeConfig.method === 'GET'
+          ? (options?.params as Record<string, unknown>)
+          : undefined,
       body: options?.body
     })
   }
@@ -174,7 +183,9 @@ export function useApi<R extends RouteKey, E extends EndpointKey<R>>(
     dependencies?: unknown[]
   }
 ): UseApiReturn<ExtractResponse<RouteEndpoint<R, E>>> {
-  const [data, setData] = useState<ExtractResponse<RouteEndpoint<R, E>> | null>(null)
+  const [data, setData] = useState<ExtractResponse<RouteEndpoint<R, E>> | null>(
+    null
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -198,9 +209,12 @@ export function useApi<R extends RouteKey, E extends EndpointKey<R>>(
     }
   }, [route, endpoint])
 
-  const mutate = useCallback((newData: ExtractResponse<RouteEndpoint<R, E>>) => {
-    setData(newData)
-  }, [])
+  const mutate = useCallback(
+    (newData: ExtractResponse<RouteEndpoint<R, E>>) => {
+      setData(newData)
+    },
+    []
+  )
 
   useEffect(() => {
     if (options?.immediate !== false) {

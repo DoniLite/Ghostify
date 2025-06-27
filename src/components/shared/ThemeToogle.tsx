@@ -1,18 +1,23 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react' // Importe useRef et useEffect
-import { Button } from '../utils/button.tsx'
-import { useTheme } from './ThemeProvider.tsx'
-import { useTranslation } from './TranslationContext.tsx'
+import { Button } from '../utils/button'
+import { useTheme } from './ThemeProvider'
+import { useTranslation } from './TranslationContext'
 
 interface ThemeToggleProps {
   className?: string
   showLabel?: boolean
 }
 
-export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '', showLabel = false }) => {
+export const ThemeToggle: React.FC<ThemeToggleProps> = ({
+  className = '',
+  showLabel = false
+}) => {
   const { theme, toggleTheme, isHydrated } = useTheme()
   const [isAnimating, setIsAnimating] = useState(false)
-  const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>('top') // Nouvel état pour la position du tooltip
+  const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>(
+    'top'
+  ) // Nouvel état pour la position du tooltip
   const buttonRef = useRef<HTMLButtonElement>(null) // Référence au bouton
 
   const handleToggle = () => {
@@ -120,7 +125,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '', showLa
       <Button
         ref={buttonRef} // Attache la référence au bouton
         onClick={handleToggle}
-        className={`bg-card border-border hover:border-primary/20 focus:ring-ring relative h-10 w-10 overflow-hidden rounded-xl border transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${isAnimating ? 'scale-95' : 'hover:scale-105'} `}
+        className={`bg-card border-border hover:border-primary/20 focus:ring-ring relative h-10 w-10 overflow-hidden rounded-xl border transition-all duration-300 ease-out focus:ring-2 focus:ring-offset-2 focus:outline-none ${isAnimating ? 'scale-95' : 'hover:scale-105'} `}
         aria-label={`Basculer vers le ${getThemeLabel()}`}
       >
         {/* Effet de fond animé */}
@@ -156,13 +161,19 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '', showLa
 
       {/* Label optionnel */}
       {showLabel && (
-        <span className="text-foreground ml-3 text-sm font-medium">{getThemeLabel()}</span>
+        <span className="text-foreground ml-3 text-sm font-medium">
+          {getThemeLabel()}
+        </span>
       )}
 
       {/* Indicateur de thème actuel */}
       <div
-        className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 shadow-sm transition-all duration-300 ease-out ${
-          theme === 'dark' ? 'bg-slate-600' : theme === 'light' ? 'bg-amber-400' : 'bg-blue-500'
+        className={`border-background absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 shadow-sm transition-all duration-300 ease-out ${
+          theme === 'dark'
+            ? 'bg-slate-600'
+            : theme === 'light'
+              ? 'bg-amber-400'
+              : 'bg-blue-500'
         } `}
       />
     </div>

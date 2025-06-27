@@ -2,13 +2,19 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection } from 'lexical'
 import { MessageCircle } from 'lucide-react'
 import { useState } from 'react'
-import { Comment } from '../types.ts'
+import type { Comment } from '../types'
 
 export const CommentsPluginComponent: React.FC<{
   comments: Comment[]
   onAddComment: (nodeKey: string, content: string) => void
   onResolveComment: (commentId: string) => void
-}> = ({ comments: _comments, onAddComment, onResolveComment: _onResolveComment }) => {
+}> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  comments: _comments,
+  onAddComment,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onResolveComment: _onResolveComment
+}) => {
   const [editor] = useLexicalComposerContext()
   const [showCommentDialog, setShowCommentDialog] = useState(false)
   const [commentText, setCommentText] = useState('')
@@ -31,8 +37,10 @@ export const CommentsPluginComponent: React.FC<{
     editor.update(() => {
       const selection = $getSelection()
       if (selection && commentText.trim()) {
-        const nodeKey = selection.getNodes()[0].getKey()
-        onAddComment(nodeKey, commentText)
+        const nodeKey = selection.getNodes()[0]?.getKey()
+        if (nodeKey) {
+          onAddComment(nodeKey, commentText)
+        }
         setCommentText('')
         setShowCommentDialog(false)
       }
@@ -50,7 +58,7 @@ export const CommentsPluginComponent: React.FC<{
         <MessageCircle size={16} />
       </button>
       {showCommentDialog && (
-        <div className="bg-popover border-border absolute left-0 top-full z-50 mt-1 min-w-80 rounded border p-3 shadow-lg">
+        <div className="bg-popover border-border absolute top-full left-0 z-50 mt-1 min-w-80 rounded border p-3 shadow-lg">
           <div className="space-y-2">
             <textarea
               placeholder="Votre commentaire..."

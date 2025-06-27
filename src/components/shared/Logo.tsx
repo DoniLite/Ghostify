@@ -1,4 +1,4 @@
-import { Ghostify } from './Icons.tsx'
+import { Ghostify } from './Icons'
 
 const Logo = ({ ...props }: Record<string, unknown>) => (
   <div

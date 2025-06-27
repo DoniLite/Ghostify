@@ -1,13 +1,13 @@
-import { useTranslation } from '../shared/TranslationContext.tsx'
-import { Button } from '../utils/button.tsx'
+import { useTranslation } from '../shared/TranslationContext'
+import { Button } from '../utils/button'
 
 const HeroSection = () => {
   const { t } = useTranslation()
   return (
-    <section className="bg-background relative flex h-screen items-center justify-center px-6 pb-12 pt-24 lg:px-12">
+    <section className="bg-background relative flex h-screen items-center justify-center px-6 pt-24 pb-12 lg:px-12">
       <div className="container mx-auto flex flex-col items-center justify-between gap-12 lg:flex-row">
         <div className="flex-1 text-center lg:text-left">
-          <h1 className="text-foreground font-nunito mb-6 text-4xl font-extrabold leading-tight lg:text-6xl">
+          <h1 className="text-foreground font-nunito mb-6 text-4xl leading-tight font-extrabold lg:text-6xl">
             {t('home.hero.welcome_1')}{' '}
             <span className="text-primary">{t('home.hero.welcome_2')}</span>
           </h1>
@@ -36,11 +36,15 @@ const HeroSection = () => {
             <div className="bg-muted p-4">
               <div className="glass border-border rounded-lg border p-4">
                 <div className="mb-4 flex space-x-2">
-                  <div className="bg-primary rounded-md px-2 py-1 text-xs font-medium">Create</div>
+                  <div className="bg-primary rounded-md px-2 py-1 text-xs font-medium">
+                    Create
+                  </div>
                   <div className="bg-primary/10 rounded-md px-2 py-1 text-xs font-medium">
                     Convert
                   </div>
-                  <div className="bg-primary/20 rounded-md px-2 py-1 text-xs font-medium">CV</div>
+                  <div className="bg-primary/20 rounded-md px-2 py-1 text-xs font-medium">
+                    CV
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <div className="bg-secondary h-5 w-3/4 rounded"></div>
@@ -48,15 +52,15 @@ const HeroSection = () => {
                   <div className="bg-secondary h-5 w-5/6 rounded"></div>
                   <div className="bg-secondary mt-4 h-20 rounded"></div>
                 </div>
-                <div className="border-border mt-4 border-t pb-2 pt-4">
+                <div className="border-border mt-4 border-t pt-4 pb-2">
                   <div className="bg-primary h-8 w-full rounded-md"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="absolute -bottom-4 -right-4 h-32 w-32 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-          <div className="absolute -left-4 -top-4 h-32 w-32 rounded-full bg-gradient-to-r from-pink-500 to-indigo-600 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+          <div className="absolute -right-4 -bottom-4 h-32 w-32 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+          <div className="absolute -top-4 -left-4 h-32 w-32 rounded-full bg-gradient-to-r from-pink-500 to-indigo-600 opacity-20 mix-blend-multiply blur-3xl filter"></div>
         </div>
       </div>
     </section>

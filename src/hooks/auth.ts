@@ -21,11 +21,15 @@ const AUTH_ROUTES = [
 
 export const ROUTES = [...OPEN_ROUTES, ...AUTH_ROUTES]
 
-const isAuthRoute = (url: string) => AUTH_ROUTES.some((route) => url.includes(route))
+const isAuthRoute = (url: string) =>
+  AUTH_ROUTES.some((route) => url.includes(route))
 
 export const authMiddleware = factory.createMiddleware(async (c, next) => {
   const redirectToSignIn = () => c.redirect('/login')
-  const { connection_time } = await getSignedCookie(c, Bun.env.SIGNED_COOKIE_SECRET!)
+  const { connection_time } = await getSignedCookie(
+    c,
+    Bun.env.SIGNED_COOKIE_SECRET!
+  )
   const session = c.get('session')
   try {
     // Vérification du temps de connexion

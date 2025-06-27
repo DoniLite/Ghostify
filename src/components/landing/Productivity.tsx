@@ -1,4 +1,4 @@
-import { useTranslation } from '../shared/TranslationContext.tsx'
+import { useTranslation } from '../shared/TranslationContext'
 
 const ProductivitySection = () => {
   const { t } = useTranslation()
