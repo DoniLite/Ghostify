@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Setup and Install
-        uses: ./.github/actions/setup-install.yml
+        uses: ./.github/actions/setup-install
 
       - name: Generate Types for Prisma
         run: bun run prisma:generate
