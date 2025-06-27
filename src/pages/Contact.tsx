@@ -1,5 +1,6 @@
 import { Mail, MapPin, Phone } from 'lucide-react'; // Example icons
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useTranslation } from '../components/shared/TranslationContext.tsx';
 
 const Contact = () => {

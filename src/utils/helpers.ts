@@ -5,8 +5,8 @@ import {
 	// formatDuration,
 	intervalToDuration,
 } from 'date-fns';
-import { Translate, translate } from 'free-translate';
-import { month } from '../@types/index.d.ts';
+import { type Translate, translate } from 'free-translate';
+import type { month } from '../@types/index.d.ts';
 
 export const filterIncludesType = (k: string, obj: Record<string, unknown>) => {
 	if (typeof obj['title'] === 'string') {

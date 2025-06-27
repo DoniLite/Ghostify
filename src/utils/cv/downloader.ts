@@ -1,5 +1,5 @@
 import path from 'path';
-import puppeteer, { Page } from 'puppeteer';
+import puppeteer, { type Page } from 'puppeteer';
 import { z } from 'zod';
 import { tokenGenerator } from '../security/jwt.ts';
 

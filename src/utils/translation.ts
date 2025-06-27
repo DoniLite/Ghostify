@@ -1,4 +1,4 @@
-import { Locale } from '../@types/translation.ts';
+import type { Locale } from '../@types/translation.ts';
 
 export function detectLocale(request?: Request): Locale {
 	const defaultLocale: Locale = 'fr';

@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { BaseTestConfig, MockFunction } from '../../@types/test.ts';
+import type { BaseTestConfig, MockFunction } from '../../@types/test.ts';
 import { TestAssertions } from './Assertions.ts';
 import { MockFactory } from './MockFactory.ts';
 

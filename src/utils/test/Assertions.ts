@@ -56,17 +56,17 @@ export class TestAssertions {
 
 		if (expectedError) {
 			if (typeof expectedError === 'string') {
-				this.assertTrue(
+				TestAssertions.assertTrue(
 					actualError.message.includes(expectedError),
 					`Expected error message to contain "${expectedError}"`,
 				);
 			} else if (expectedError instanceof RegExp) {
-				this.assertTrue(
+				TestAssertions.assertTrue(
 					expectedError.test(actualError.message),
 					`Expected error message to match ${expectedError}`,
 				);
 			} else if (expectedError instanceof Error) {
-				this.assertEqual(
+				TestAssertions.assertEqual(
 					actualError.constructor,
 					expectedError.constructor,
 					'Expected same error type',
@@ -96,12 +96,12 @@ export class TestAssertions {
 
 		if (expectedError) {
 			if (typeof expectedError === 'string') {
-				this.assertTrue(
+				TestAssertions.assertTrue(
 					actualError.message.includes(expectedError),
 					`Expected error message to contain "${expectedError}"`,
 				);
 			} else if (expectedError instanceof RegExp) {
-				this.assertTrue(
+				TestAssertions.assertTrue(
 					expectedError.test(actualError.message),
 					`Expected error message to match ${expectedError}`,
 				);

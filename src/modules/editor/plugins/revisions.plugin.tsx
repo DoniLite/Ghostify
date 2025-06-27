@@ -2,7 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getSelection } from 'lexical';
 import { GitBranch } from 'lucide-react';
 import { useState } from 'react';
-import { Revision } from '../types.ts';
+import type { Revision } from '../types.ts';
 
 export const RevisionsPluginComponent: React.FC<{
 	revisions: Revision[];
@@ -13,7 +13,7 @@ export const RevisionsPluginComponent: React.FC<{
 	revisions: _revisions,
 	onAcceptRevision: _onAcceptRevision,
 	onRejectRevision: _onRejectRevision,
-	onAddRevision: onAddRevision,
+	onAddRevision,
 }) => {
 	const [editor] = useLexicalComposerContext();
 	const [showRevisionDialog, setShowRevisionDialog] = useState(false);

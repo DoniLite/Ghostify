@@ -1,7 +1,6 @@
-import { describe, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import { Button } from '../../src/components/utils/button';
 import { ReactTestUtils } from '../../src/utils/test/mod';
-import { expect } from 'bun:test';
 
 const reactTests = new ReactTestUtils({
 	locale: 'fr',

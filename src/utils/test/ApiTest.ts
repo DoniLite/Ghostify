@@ -1,6 +1,6 @@
 // deno-lint-ignore-file
-import { Hono } from 'hono';
-import { BaseTestConfig } from '../../@types/test.ts';
+import type { Hono } from 'hono';
+import type { BaseTestConfig } from '../../@types/test.ts';
 import { TestAssertions } from './Assertions.ts';
 import { MockFactory } from './MockFactory.ts';
 

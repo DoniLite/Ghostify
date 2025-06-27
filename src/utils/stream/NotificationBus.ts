@@ -1,6 +1,6 @@
+import type { EventEmitter } from 'node:stream';
 import type { Notifications, NotificationType } from '@prisma/client';
 import type { DoneCallback, Job } from 'bull';
-import { EventEmitter } from 'node:stream';
 import { prismaClient } from '../../config/db';
 import { NotificationQueue } from '../../job';
 import { logger } from '../../logger';

@@ -1,5 +1,5 @@
+import type { Buffer } from 'node:buffer';
 import { password } from 'bun';
-import { Buffer } from 'node:buffer';
 
 export const hashSomething = async (data: string | Buffer) => {
 	return await password.hash(data, 'bcrypt');

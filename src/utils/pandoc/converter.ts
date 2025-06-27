@@ -1,6 +1,6 @@
 // Deno standard library for path manipulation and running commands
 import { join } from 'https://deno.land/std@0.224.0/path/mod.ts';
-import { InputFormats, OutputFormats } from '../const/pandoc_enums.ts'; // ADJUST THIS PATH TO WHERE YOUR ENUMS ARE SAVED!
+import type { InputFormats, OutputFormats } from '../const/pandoc_enums.ts'; // ADJUST THIS PATH TO WHERE YOUR ENUMS ARE SAVED!
 
 /**
  * Represents a Pandoc conversion error.

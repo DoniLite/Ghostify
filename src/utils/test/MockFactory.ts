@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { MockFunction } from '../../@types/test.ts';
+import type { MockFunction } from '../../@types/test.ts';
 
 export class MockFactory {
 	private static mocks = new Map<string, any>();
@@ -30,7 +30,7 @@ export class MockFactory {
 		};
 
 		if (name) {
-			this.mocks.set(name, mockFn);
+			MockFactory.mocks.set(name, mockFn);
 		}
 
 		return mockFn;
@@ -39,14 +39,14 @@ export class MockFactory {
 	static getMock<T extends (...args: any[]) => any>(
 		name: string,
 	): MockFunction<T> | undefined {
-		return this.mocks.get(name);
+		return MockFactory.mocks.get(name);
 	}
 
 	static resetAll(): void {
-		this.mocks.forEach((mock) => mock.reset());
+		MockFactory.mocks.forEach((mock) => mock.reset());
 	}
 
 	static clearAll(): void {
-		this.mocks.clear();
+		MockFactory.mocks.clear();
 	}
 }

@@ -1,5 +1,5 @@
-import { Buffer } from 'node:buffer';
 import { describe, test } from 'bun:test';
+import { Buffer } from 'node:buffer';
 import {
 	decrypt,
 	encrypt,

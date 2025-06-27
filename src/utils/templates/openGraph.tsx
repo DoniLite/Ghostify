@@ -247,9 +247,9 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
 				</div>
 
 				{/* Contenu simulé */}
-				{[...Array(8)].map((_, i) => (
+				{[...Array(8)].map((u) => (
 					<div
-						key={i}
+						key={u}
 						style={{
 							width: `${Math.random() * 40 + 50}%`,
 							height: '4px',

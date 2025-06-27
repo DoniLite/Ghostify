@@ -1,5 +1,7 @@
-import { FC, PropsWithChildren } from 'react';
-import Card, { PricingCardProps } from '../components/pricing/PricingCard.tsx';
+import type { FC, PropsWithChildren } from 'react';
+import Card, {
+	type PricingCardProps,
+} from '../components/pricing/PricingCard.tsx';
 import { useTranslation } from '../components/shared/TranslationContext.tsx';
 
 const Billing = () => {
