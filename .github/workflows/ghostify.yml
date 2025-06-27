@@ -4,45 +4,25 @@ env:
 
 on:
   push:
-    branches: ["main", "develop", "releases/**"]
+    branches: ['main', 'develop', 'releases/**']
   pull_request:
-    branches: ["main", "develop", "releases/**"]
+    branches: ['main', 'develop', 'releases/**']
 
 jobs:
   test-typescript:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup and Install
+        uses: ./.github/actions/setup-install.yml
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.x"
-
-      - name: Install deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.DENO_DIR }}
-          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deno-
-
-      - name: Cache Dependencies
-        run: deno install --reload --lock=deno.lock --frozen=true --allow-scripts
-      
       - name: Generate Types for Prisma
-        run: deno task prisma:generate
+        run: bun run prisma:generate
 
       - name: Lint TypeScript
         run: |
-          deno lint --fix --ignore="**/*.js"
+          bun run lint
 
       - name: Run TypeScript tests
         run: |
-          deno task test-ci
+          bun test

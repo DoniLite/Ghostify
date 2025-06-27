@@ -1,6 +1,6 @@
-import { factory } from '../factory.ts';
+import { factory } from '../factory.ts'
 
-const documentApp = factory.createApp();
+const documentApp = factory.createApp()
 
 // documentApp.get('/form', async (c) => {
 //   const session = c.get('session');
@@ -32,4 +32,4 @@ const documentApp = factory.createApp();
 //   );
 // });
 
-export default documentApp;
+export default documentApp

@@ -1,19 +1,18 @@
-
 const Dashboard = () => {
   return (
-    <div className='p-5 w-full h-full transition-all overflow-y-scroll'>
+    <div className="h-full w-full overflow-y-scroll p-5 transition-all">
       {/* Header */}
-      <div className='flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-sm'>
-        <h1 className='text-2xl font-semibold'>Tableau de bord</h1>
+      <div className="mb-8 flex items-center justify-between rounded-lg bg-white p-4 shadow-sm">
+        <h1 className="text-2xl font-semibold">Tableau de bord</h1>
 
-        <div className='flex items-center gap-3'>
-          <div className='relative mr-4'>
-            <i className='fas fa-bell'></i>
-            <div className='absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center'>
+        <div className="flex items-center gap-3">
+          <div className="relative mr-4">
+            <i className="fas fa-bell"></i>
+            <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
               3
             </div>
           </div>
-          <div className='w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-semibold'>
+          <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-full font-semibold text-white">
             JD
           </div>
           <div>Jean Dupont</div>
@@ -21,115 +20,115 @@ const Dashboard = () => {
       </div>
 
       {/* Subscription Card */}
-      <div className='bg-gradient-to-r from-primary to-secondary text-gray-950 rounded-lg p-6 mb-8 relative overflow-hidden'>
-        <div className='absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full transform translate-x-1/3 -translate-y-1/3'></div>
-        <div className='text-2xl font-bold mb-2'>Plan Professionnel</div>
+      <div className="from-primary to-secondary relative mb-8 overflow-hidden rounded-lg bg-gradient-to-r p-6 text-gray-950">
+        <div className="absolute top-0 right-0 h-36 w-36 translate-x-1/3 -translate-y-1/3 transform rounded-full bg-white/10"></div>
+        <div className="mb-2 text-2xl font-bold">Plan Professionnel</div>
         <div>Votre abonnement expire dans 18 jours</div>
 
-        <div className='flex justify-between mt-5 space-x-4'>
-          <div className='bg-white/20 p-3 rounded-lg text-center'>
-            <div className='text-lg font-semibold'>500 Go</div>
-            <div className='text-xs opacity-80'>Stockage</div>
+        <div className="mt-5 flex justify-between space-x-4">
+          <div className="rounded-lg bg-white/20 p-3 text-center">
+            <div className="text-lg font-semibold">500 Go</div>
+            <div className="text-xs opacity-80">Stockage</div>
           </div>
-          <div className='bg-white/20 p-3 rounded-lg text-center'>
-            <div className='text-lg font-semibold'>10 000</div>
-            <div className='text-xs opacity-80'>Requêtes API/mois</div>
+          <div className="rounded-lg bg-white/20 p-3 text-center">
+            <div className="text-lg font-semibold">10 000</div>
+            <div className="text-xs opacity-80">Requêtes API/mois</div>
           </div>
-          <div className='bg-white/20 p-3 rounded-lg text-center'>
-            <div className='text-lg font-semibold'>Illimité</div>
-            <div className='text-xs opacity-80'>Documents</div>
+          <div className="rounded-lg bg-white/20 p-3 text-center">
+            <div className="text-lg font-semibold">Illimité</div>
+            <div className="text-xs opacity-80">Documents</div>
           </div>
-          <div className='bg-white/20 p-3 rounded-lg text-center'>
-            <div className='text-lg font-semibold'>29€</div>
-            <div className='text-xs opacity-80'>/mois</div>
+          <div className="rounded-lg bg-white/20 p-3 text-center">
+            <div className="text-lg font-semibold">29€</div>
+            <div className="text-xs opacity-80">/mois</div>
           </div>
         </div>
 
         <button
-          type='button'
-          className='mt-5 px-4 py-2 bg-white/20 text-white rounded-lg flex items-center'
+          type="button"
+          className="mt-5 flex items-center rounded-lg bg-white/20 px-4 py-2 text-white"
         >
-          <i className='fas fa-arrow-up mr-2'></i> Mettre à niveau
+          <i className="fas fa-arrow-up mr-2"></i> Mettre à niveau
         </button>
       </div>
 
       {/* Stats Grid */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8'>
+      <div className="mb-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         {/* Documents Stats */}
-        <div className='bg-white rounded-lg p-5 shadow-sm flex flex-col'>
-          <div className='flex justify-between items-center mb-5'>
-            <div className='text-slate-500 text-sm'>Documents créés</div>
-            <div className='w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white'>
-              <i className='fas fa-file-alt'></i>
+        <div className="flex flex-col rounded-lg bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="text-sm text-slate-500">Documents créés</div>
+            <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg text-white">
+              <i className="fas fa-file-alt"></i>
             </div>
           </div>
-          <div className='text-3xl font-bold mb-1'>128</div>
-          <div className='text-slate-500 text-sm'>
+          <div className="mb-1 text-3xl font-bold">128</div>
+          <div className="text-sm text-slate-500">
             +12% par rapport au mois dernier
           </div>
         </div>
 
         {/* API Stats */}
-        <div className='bg-white rounded-lg p-5 shadow-sm flex flex-col'>
-          <div className='flex justify-between items-center mb-5'>
-            <div className='text-slate-500 text-sm'>Utilisation API</div>
-            <div className='w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-white'>
-              <i className='fas fa-code'></i>
+        <div className="flex flex-col rounded-lg bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="text-sm text-slate-500">Utilisation API</div>
+            <div className="bg-secondary flex h-10 w-10 items-center justify-center rounded-lg text-white">
+              <i className="fas fa-code"></i>
             </div>
           </div>
-          <div className='text-3xl font-bold mb-1'>5,384</div>
-          <div className='text-slate-500 text-sm'>Requêtes ce mois-ci</div>
+          <div className="mb-1 text-3xl font-bold">5,384</div>
+          <div className="text-sm text-slate-500">Requêtes ce mois-ci</div>
         </div>
 
         {/* Storage Stats */}
-        <div className='bg-white rounded-lg p-5 shadow-sm flex flex-col'>
-          <div className='flex justify-between items-center mb-5'>
-            <div className='text-slate-500 text-sm'>Stockage utilisé</div>
-            <div className='w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center text-white'>
-              <i className='fas fa-database'></i>
+        <div className="flex flex-col rounded-lg bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="text-sm text-slate-500">Stockage utilisé</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500 text-white">
+              <i className="fas fa-database"></i>
             </div>
           </div>
-          <div className='text-3xl font-bold mb-1'>189 Go</div>
-          <div className='text-slate-500 text-sm'>37.8% de votre quota</div>
+          <div className="mb-1 text-3xl font-bold">189 Go</div>
+          <div className="text-sm text-slate-500">37.8% de votre quota</div>
         </div>
 
         {/* Payment Stats */}
-        <div className='bg-white rounded-lg p-5 shadow-sm flex flex-col'>
-          <div className='flex justify-between items-center mb-5'>
-            <div className='text-slate-500 text-sm'>Prochain paiement</div>
-            <div className='w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white'>
-              <i className='fas fa-calendar'></i>
+        <div className="flex flex-col rounded-lg bg-white p-5 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="text-sm text-slate-500">Prochain paiement</div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500 text-white">
+              <i className="fas fa-calendar"></i>
             </div>
           </div>
-          <div className='text-3xl font-bold mb-1'>15/03/2025</div>
-          <div className='text-slate-500 text-sm'>29€ - Plan Professionnel</div>
+          <div className="mb-1 text-3xl font-bold">15/03/2025</div>
+          <div className="text-sm text-slate-500">29€ - Plan Professionnel</div>
         </div>
       </div>
 
       {/* Services Section  */}
-      <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-lg font-semibold'>Services disponibles</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Services disponibles</h2>
         <a
-          href='#'
-          className='px-4 py-2 border border-slate-200 rounded-lg text-sm'
+          href="#"
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
         >
           Voir tout
         </a>
       </div>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8'>
+      <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Document Service */}
-        <div className='bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-md cursor-pointer'>
-          <div className='h-32 bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white text-4xl'>
-            <i className='fas fa-file-alt'></i>
+        <div className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:transform hover:shadow-md">
+          <div className="from-primary to-secondary flex h-32 items-center justify-center bg-gradient-to-r text-4xl text-white">
+            <i className="fas fa-file-alt"></i>
           </div>
-          <div className='p-4'>
-            <h3 className='font-semibold mb-2'>Traducteur de documents</h3>
-            <p className='text-sm text-slate-500 mb-4'>
+          <div className="p-4">
+            <h3 className="mb-2 font-semibold">Traducteur de documents</h3>
+            <p className="mb-4 text-sm text-slate-500">
               Convertissez vos documents en ligne avec support de plusieurs
               types de langues
             </p>
-            <span className='inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded-full'>
+            <span className="bg-primary/10 text-primary inline-block rounded-full px-2 py-1 text-xs">
               Populaires
             </span>
           </div>
@@ -148,13 +147,13 @@ const Dashboard = () => {
                 </div> */}
 
         {/* Converter Service */}
-        <div className='bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-md cursor-pointer'>
-          <div className='h-32 bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white text-4xl'>
-            <i className='fas fa-file-pdf'></i>
+        <div className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:transform hover:shadow-md">
+          <div className="from-primary to-secondary flex h-32 items-center justify-center bg-gradient-to-r text-4xl text-white">
+            <i className="fas fa-file-pdf"></i>
           </div>
-          <div className='p-4'>
-            <h3 className='font-semibold mb-2'>Convertisseur de documents</h3>
-            <p className='text-sm text-slate-500 mb-4'>
+          <div className="p-4">
+            <h3 className="mb-2 font-semibold">Convertisseur de documents</h3>
+            <p className="mb-4 text-sm text-slate-500">
               Convertissez vos documents dans différents formats en quelques
               clics
             </p>
@@ -162,13 +161,13 @@ const Dashboard = () => {
         </div>
 
         {/* CV Service */}
-        <div className='bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-md cursor-pointer'>
-          <div className='h-32 bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white text-4xl'>
-            <i className='fas fa-id-card'></i>
+        <div className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:transform hover:shadow-md">
+          <div className="from-primary to-secondary flex h-32 items-center justify-center bg-gradient-to-r text-4xl text-white">
+            <i className="fas fa-id-card"></i>
           </div>
-          <div className='p-4'>
-            <h3 className='font-semibold mb-2'>Générateur de CV</h3>
-            <p className='text-sm text-slate-500 mb-4'>
+          <div className="p-4">
+            <h3 className="mb-2 font-semibold">Générateur de CV</h3>
+            <p className="mb-4 text-sm text-slate-500">
               Créez des CV professionnels avec nos modèles optimisés pour les
               recruteurs
             </p>
@@ -177,82 +176,92 @@ const Dashboard = () => {
       </div>
 
       {/* Settings Section  */}
-      <div className='bg-white rounded-lg shadow-sm p-5 mb-8'>
-        <h2 className='text-lg font-semibold mb-4'>Paramètres du compte</h2>
+      <div className="mb-8 rounded-lg bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold">Paramètres du compte</h2>
 
         <div>
           {/* Email Notifications */}
-          <div className='flex justify-between items-center py-4 border-b border-slate-200'>
-            <div className='max-w-3/4'>
-              <div className='font-medium mb-1'>Notifications par email</div>
-              <div className='text-sm text-slate-500'>
+          <div className="flex items-center justify-between border-b border-slate-200 py-4">
+            <div className="max-w-3/4">
+              <div className="mb-1 font-medium">Notifications par email</div>
+              <div className="text-sm text-slate-500">
                 Recevez des mises à jour sur vos documents, votre abonnement et
                 les nouvelles fonctionnalités
               </div>
             </div>
-            <label className='relative inline-block w-12 h-6'>
-              <input type='checkbox' className='opacity-0 w-0 h-0' checked />
-              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-slate-200 rounded-full transition-all duration-400 before:absolute before:content-[''] before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all before:duration-400 checked:bg-primary checked:before:transform checked:before:translate-x-6"></span>
+            <label className="relative inline-block h-6 w-12">
+              <input
+                type="checkbox"
+                className="h-0 w-0 opacity-0"
+                checked
+              />
+              <span className="checked:bg-primary absolute top-0 right-0 bottom-0 left-0 cursor-pointer rounded-full bg-slate-200 transition-all duration-400 before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-400 before:content-[''] checked:before:translate-x-6 checked:before:transform"></span>
             </label>
           </div>
 
           {/* 2FA */}
-          <div className='flex justify-between items-center py-4 border-b border-slate-200'>
-            <div className='max-w-3/4'>
-              <div className='font-medium mb-1'>
+          <div className="flex items-center justify-between border-b border-slate-200 py-4">
+            <div className="max-w-3/4">
+              <div className="mb-1 font-medium">
                 Authentification à deux facteurs
               </div>
-              <div className='text-sm text-slate-500'>
+              <div className="text-sm text-slate-500">
                 Ajouter une couche supplémentaire de sécurité à votre compte
               </div>
             </div>
-            <label className='relative inline-block w-12 h-6'>
-              <input type='checkbox' className='opacity-0 w-0 h-0' />
-              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-slate-200 rounded-full transition-all duration-400 before:absolute before:content-[''] before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all before:duration-400 checked:bg-primary checked:before:transform checked:before:translate-x-6"></span>
+            <label className="relative inline-block h-6 w-12">
+              <input
+                type="checkbox"
+                className="h-0 w-0 opacity-0"
+              />
+              <span className="checked:bg-primary absolute top-0 right-0 bottom-0 left-0 cursor-pointer rounded-full bg-slate-200 transition-all duration-400 before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-400 before:content-[''] checked:before:translate-x-6 checked:before:transform"></span>
             </label>
           </div>
 
           {/* Dark Mode */}
-          <div className='flex justify-between items-center py-4'>
-            <div className='max-w-3/4'>
-              <div className='font-medium mb-1'>Mode sombre</div>
-              <div className='text-sm text-slate-500'>
+          <div className="flex items-center justify-between py-4">
+            <div className="max-w-3/4">
+              <div className="mb-1 font-medium">Mode sombre</div>
+              <div className="text-sm text-slate-500">
                 Changer l'apparence de l'interface pour réduire la fatigue
                 oculaire
               </div>
             </div>
-            <label className='relative inline-block w-12 h-6'>
-              <input type='checkbox' className='opacity-0 w-0 h-0' />
-              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-slate-200 rounded-full transition-all duration-400 before:absolute before:content-[''] before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all before:duration-400 checked:bg-primary checked:before:transform checked:before:translate-x-6"></span>
+            <label className="relative inline-block h-6 w-12">
+              <input
+                type="checkbox"
+                className="h-0 w-0 opacity-0"
+              />
+              <span className="checked:bg-primary absolute top-0 right-0 bottom-0 left-0 cursor-pointer rounded-full bg-slate-200 transition-all duration-400 before:absolute before:bottom-1 before:left-1 before:h-4 before:w-4 before:rounded-full before:bg-white before:transition-all before:duration-400 before:content-[''] checked:before:translate-x-6 checked:before:transform"></span>
             </label>
           </div>
         </div>
       </div>
 
       {/* Plans Section */}
-      <div className='bg-white rounded-lg shadow-sm p-5'>
-        <h2 className='text-lg font-semibold mb-4'>Options d'abonnement</h2>
+      <div className="rounded-lg bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold">Options d'abonnement</h2>
 
-        <div className='overflow-x-auto'>
-          <table className='min-w-full'>
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
             <thead>
               <tr>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Plan
                 </th>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Stockage
                 </th>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Requêtes API
                 </th>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Documents
                 </th>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Prix
                 </th>
-                <th className='py-4 px-4 text-left bg-slate-50 font-semibold'>
+                <th className="bg-slate-50 px-4 py-4 text-left font-semibold">
                   Action
                 </th>
               </tr>
@@ -260,20 +269,24 @@ const Dashboard = () => {
             <tbody>
               {/* Free Plan */}
               <tr>
-                <td className='py-4 px-4 border-b border-slate-200 font-medium'>
+                <td className="border-b border-slate-200 px-4 py-4 font-medium">
                   Gratuit
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>5 Go</td>
-                <td className='py-4 px-4 border-b border-slate-200'>500 / mois</td>
-                <td className='py-4 px-4 border-b border-slate-200'>5 actifs</td>
-                <td className='py-4 px-4 border-b border-slate-200'>
-                  <div className='text-xl font-bold text-primary'>0€</div>
-                  <div className='text-sm text-slate-500'>Pour toujours</div>
+                <td className="border-b border-slate-200 px-4 py-4">5 Go</td>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  500 / mois
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  5 actifs
+                </td>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  <div className="text-primary text-xl font-bold">0€</div>
+                  <div className="text-sm text-slate-500">Pour toujours</div>
+                </td>
+                <td className="border-b border-slate-200 px-4 py-4">
                   <button
-                    type='button'
-                    className='px-4 py-2 border border-slate-200 rounded-lg text-sm'
+                    type="button"
+                    className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
                   >
                     Rétrograder
                   </button>
@@ -281,23 +294,25 @@ const Dashboard = () => {
               </tr>
 
               {/* Pro Plan */}
-              <tr className='bg-secondary/5'>
-                <td className='py-4 px-4 border-b border-slate-200 font-medium'>
+              <tr className="bg-secondary/5">
+                <td className="border-b border-slate-200 px-4 py-4 font-medium">
                   Professionnel
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>500 Go</td>
-                <td className='py-4 px-4 border-b border-slate-200'>
+                <td className="border-b border-slate-200 px-4 py-4">500 Go</td>
+                <td className="border-b border-slate-200 px-4 py-4">
                   10 000 / mois
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>Illimité</td>
-                <td className='py-4 px-4 border-b border-slate-200'>
-                  <div className='text-xl font-bold text-primary'>29€</div>
-                  <div className='text-sm text-slate-500'>Par mois</div>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  Illimité
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  <div className="text-primary text-xl font-bold">29€</div>
+                  <div className="text-sm text-slate-500">Par mois</div>
+                </td>
+                <td className="border-b border-slate-200 px-4 py-4">
                   <button
-                    type='button'
-                    className='px-4 py-2 bg-primary text-white rounded-lg text-sm'
+                    type="button"
+                    className="bg-primary rounded-lg px-4 py-2 text-sm text-white"
                     disabled
                   >
                     Plan actuel
@@ -307,22 +322,24 @@ const Dashboard = () => {
 
               {/* Enterprise Plan */}
               <tr>
-                <td className='py-4 px-4 border-b border-slate-200 font-medium'>
+                <td className="border-b border-slate-200 px-4 py-4 font-medium">
                   Entreprise
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>2 To</td>
-                <td className='py-4 px-4 border-b border-slate-200'>
+                <td className="border-b border-slate-200 px-4 py-4">2 To</td>
+                <td className="border-b border-slate-200 px-4 py-4">
                   100 000 / mois
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>Illimité</td>
-                <td className='py-4 px-4 border-b border-slate-200'>
-                  <div className='text-xl font-bold text-primary'>99€</div>
-                  <div className='text-sm text-slate-500'>Par mois</div>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  Illimité
                 </td>
-                <td className='py-4 px-4 border-b border-slate-200'>
+                <td className="border-b border-slate-200 px-4 py-4">
+                  <div className="text-primary text-xl font-bold">99€</div>
+                  <div className="text-sm text-slate-500">Par mois</div>
+                </td>
+                <td className="border-b border-slate-200 px-4 py-4">
                   <button
-                    type='button'
-                    className='px-4 py-2 border border-slate-200 rounded-lg text-sm'
+                    type="button"
+                    className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
                   >
                     Mettre à niveau
                   </button>
@@ -333,7 +350,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

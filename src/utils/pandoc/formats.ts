@@ -1,4 +1,4 @@
-import { InputFormats, OutputFormats } from '../const/pandoc_enums.ts';
+import { InputFormats, OutputFormats } from '../const/pandoc_enums.ts'
 
 /**
  * A comprehensive mapping of input/output formats to their typical file extensions.
@@ -24,8 +24,8 @@ const formatToExtensionMap = {
   [InputFormats.VIMWIKI]: '.wiki',
   [OutputFormats.PDF]: '.pdf',
   [OutputFormats.PLAIN]: '.txt',
-  [OutputFormats.PPTX]: '.pptx',
-} as const;
+  [OutputFormats.PPTX]: '.pptx'
+} as const
 
 /**
  * Retrieves the file extension for a given input or output format.
@@ -33,8 +33,6 @@ const formatToExtensionMap = {
  * @param formatEnum The input or output format (e.g., InputFormats.BIBLATEX, OutputFormats.PDF).
  * @returns The file extension (e.g., ".bib", ".pdf") or `undefined` if no mapping exists.
  */
-export function getFileExtension(
-  formatEnum: InputFormats | OutputFormats,
-): string | undefined {
-  return formatToExtensionMap[formatEnum as keyof typeof formatToExtensionMap];
+export function getFileExtension(formatEnum: InputFormats | OutputFormats): string | undefined {
+  return formatToExtensionMap[formatEnum as keyof typeof formatToExtensionMap]
 }

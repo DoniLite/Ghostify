@@ -1,15 +1,15 @@
-import Queue from 'bull';
-import { NotificationType } from '@prisma/client';
+import { NotificationType } from '@prisma/client'
+import Queue from 'bull'
 
 export const resumeQueue = new Queue<{
-  url: string;
-  id: number;
-  updating?: boolean;
-  docId?: number;
-}>('cv-processor', Deno.env.get('REDIS_HOST')!);
+  url: string
+  id: number
+  updating?: boolean
+  docId?: number
+}>('cv-processor', Bun.env.REDIS_HOST!)
 
 export const NotificationQueue = new Queue<{
-  userId: number;
-  type: NotificationType;
-  payload: Record<string | number | symbol, unknown>;
-}>('notifications', Deno.env.get('REDIS_HOST')!);
+  userId: number
+  type: NotificationType
+  payload: Record<string | number | symbol, unknown>
+}>('notifications', Bun.env.REDIS_HOST!)

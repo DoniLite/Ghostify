@@ -1,10 +1,10 @@
-import { prismaClient } from '../../config/db.ts';
-import { EventEmitter } from 'node:stream';
-import type { Notifications, NotificationType } from '@prisma/client';
-import { DoneCallback, Job } from 'bull';
-import { logger } from '../../logger.ts';
-import { NotificationQueue } from '../../job.ts';
-import { ee } from './eventBus.ts';
+import type { Notifications, NotificationType } from '@prisma/client'
+import type { DoneCallback, Job } from 'bull'
+import { EventEmitter } from 'node:stream'
+import { prismaClient } from '../../config/db'
+import { NotificationQueue } from '../../job'
+import { logger } from '../../logger'
+import { ee } from './eventBus'
 
 export class NotificationBus {
   /**
@@ -15,11 +15,11 @@ export class NotificationBus {
    *  eventBus.emit()
    * ```
    */
-  eventBus: EventEmitter;
-  eventType: typeof NotificationType;
-  #crud: typeof prismaClient.notifications;
-  #callBack?: (job: Job) => Promise<unknown>;
-  #queue: typeof NotificationQueue;
+  eventBus: EventEmitter
+  eventType: typeof NotificationType
+  #crud: typeof prismaClient.notifications
+  #callBack?: (job: Job) => Promise<unknown>
+  #queue: typeof NotificationQueue
 
   /**
    * Construct a new NotificationBus instance:
@@ -60,17 +60,17 @@ export class NotificationBus {
    *
    */
   constructor() {
-    this.eventBus = ee;
-    this.#crud = prismaClient.notifications;
+    this.eventBus = ee
+    this.#crud = prismaClient.notifications
     this.eventType = {
       Alert: 'Alert',
       Reply: 'Reply',
       like: 'like',
       Post: 'Post',
       Info: 'Info',
-      Message: 'Message',
-    };
-    this.#queue = NotificationQueue;
+      Message: 'Message'
+    }
+    this.#queue = NotificationQueue
   }
 
   /**
@@ -80,60 +80,54 @@ export class NotificationBus {
    * @param user - the user id
    * @returns The list of notifications
    */
-  async loadAllNotifications(user: number): Promise<Notifications[]> {
+  async loadAllNotifications(user: string): Promise<Notifications[]> {
     return await this.#crud.findMany({
       where: {
-        userId: user,
+        userId: user
       },
       orderBy: {
         createdAt: 'desc',
-        seen: 'desc',
-      },
-    });
+        seen: 'desc'
+      }
+    })
   }
 
   #doSomethingWithAndFire<T>(job: Job<T>, done: DoneCallback): void {
     if (!this.#callBack) {
-      throw new Error('callback is not set');
+      throw new Error('callback is not set')
     }
     this.#callBack(job)
       .then((v) => {
         const d = v as {
-          evenType: NotificationType;
-          payload: Record<string | number | symbol, unknown>;
-          userId: number;
-        };
+          evenType: NotificationType
+          payload: Record<string | number | symbol, unknown>
+          userId: string
+        }
         this.#crud
           .create({
             data: {
               content: JSON.stringify(d.payload),
               type: d.evenType,
-              userId: d.userId,
-            },
+              userId: d.userId
+            }
           })
           .then((dt) => {
-            this.eventBus.emit(dt.type, dt.content);
-            done(null, dt);
+            this.eventBus.emit(dt.type, dt.content)
+            done(null, dt)
           })
           .catch((e) => {
-            logger.error(
-              `error during the task ${job.id} with data: ${job.data}`,
-              e,
-            );
-            done(e, null);
-          });
+            logger.error(`error during the task ${job.id} with data: ${job.data}`, e)
+            done(e, null)
+          })
       })
       .catch((e) => {
-        logger.error(
-          `error during the task ${job.id} with data: ${job.data}`,
-          e,
-        );
-        done(e, null);
-      });
+        logger.error(`error during the task ${job.id} with data: ${job.data}`, e)
+        done(e, null)
+      })
   }
 
   async #callBackQueue() {
-    await this.#queue.process(this.#doSomethingWithAndFire);
+    await this.#queue.process(this.#doSomethingWithAndFire)
   }
 
   /**
@@ -149,15 +143,16 @@ export class NotificationBus {
    * @param func - the callback function
    * @returns an object with a call method that can be used to add a new job in the queue
    */
-  async addCallBack<T>(
+  async addCallBack(
     // deno-lint-ignore ban-types
-    func: Function,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    func: Function
   ): Promise<{ call: typeof NotificationQueue.add }> {
-    this.#callBack = func as (job: Job) => Promise<unknown>;
-    await this.#callBackQueue();
+    this.#callBack = func as (job: Job) => Promise<unknown>
+    await this.#callBackQueue()
     return {
-      call: this.#queue.add,
-    };
+      call: this.#queue.add
+    }
   }
 
   /**
@@ -172,29 +167,29 @@ export class NotificationBus {
   addNotification(
     type: NotificationType,
     payload: Record<string | number | symbol, unknown>,
-    userId: number,
+    userId: string
   ): Promise<Notifications> {
     return this.#crud.create({
       data: {
         type: type,
         content: JSON.stringify(payload),
-        userId,
-      },
-    });
+        userId
+      }
+    })
   }
 
-  async updateNotificationView(...notificationsId: number[]) {
+  async updateNotificationView(...notificationsId: string[]) {
     return await Promise.all(
       notificationsId.map(async (id) => {
         return await this.#crud.update({
           where: {
-            id,
+            id
           },
           data: {
-            seen: true,
-          },
-        });
-      }),
-    );
+            seen: true
+          }
+        })
+      })
+    )
   }
 }

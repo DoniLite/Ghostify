@@ -1,10 +1,9 @@
-import React from 'react';
-import { DocumentOGData, OGImageParams } from '../../@types/og.ts';
-import { Ghostify } from '../../components/shared/Icons.tsx';
+import type { DocumentOGData, OGImageParams } from '../../@types/og'
+import { Ghostify } from '../../components/shared/Icons'
 
 interface TemplateProps {
-  params: OGImageParams;
-  data?: DocumentOGData;
+  params: OGImageParams
+  data?: DocumentOGData
 }
 
 export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
@@ -21,7 +20,7 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
         'radial-gradient(circle at 25px 25px, #333 2%, transparent 0%), radial-gradient(circle at 75px 75px, #333 2%, transparent 0%)',
       backgroundSize: '100px 100px',
       color: 'white',
-      padding: '40px',
+      padding: '40px'
     }}
   >
     {/* Header with logo */}
@@ -29,7 +28,7 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
       style={{
         display: 'flex',
         alignItems: 'center',
-        marginBottom: '40px',
+        marginBottom: '40px'
       }}
     >
       <div
@@ -40,7 +39,7 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginRight: '20px',
+          marginRight: '20px'
         }}
       >
         <span>
@@ -51,7 +50,7 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
         style={{
           fontSize: '32px',
           fontWeight: 'bold',
-          color: 'white',
+          color: 'white'
         }}
       >
         Ghostify
@@ -68,7 +67,7 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
         margin: '0 0 20px 0',
         background: 'linear-gradient(45deg, #ff6b35, #f7931e)',
         backgroundClip: 'text',
-        color: 'transparent',
+        color: 'transparent'
       }}
     >
       {params.title}
@@ -82,14 +81,14 @@ export const PageTemplate: React.FC<TemplateProps> = ({ params }) => (
           textAlign: 'center',
           color: '#888',
           margin: '0',
-          maxWidth: '600px',
+          maxWidth: '600px'
         }}
       >
         {params.description}
       </p>
     )}
   </div>
-);
+)
 
 export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
   <div
@@ -98,7 +97,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
       width: '100%',
       display: 'flex',
       backgroundColor: '#0a0a0a',
-      color: 'white',
+      color: 'white'
     }}
   >
     {/* Partie gauche - Informations */}
@@ -109,7 +108,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '60px',
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
       }}
     >
       {/* Logo en haut */}
@@ -117,7 +116,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         style={{
           display: 'flex',
           alignItems: 'center',
-          marginBottom: '40px',
+          marginBottom: '40px'
         }}
       >
         <div
@@ -128,7 +127,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginRight: '12px',
+            marginRight: '12px'
           }}
         >
           <span>
@@ -143,7 +142,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         style={{
           display: 'flex',
           alignItems: 'center',
-          marginBottom: '16px',
+          marginBottom: '16px'
         }}
       >
         <span
@@ -154,7 +153,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
             borderRadius: '20px',
             fontSize: '14px',
             textTransform: 'uppercase',
-            fontWeight: 'bold',
+            fontWeight: 'bold'
           }}
         >
           {data?.type || 'Document'}
@@ -168,7 +167,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           fontWeight: 'bold',
           lineHeight: 1.2,
           margin: '0 0 16px 0',
-          color: 'white',
+          color: 'white'
         }}
       >
         {params.title}
@@ -180,7 +179,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           style={{
             fontSize: '20px',
             color: '#aaa',
-            margin: '0 0 24px 0',
+            margin: '0 0 24px 0'
           }}
         >
           Par {data.author}
@@ -193,7 +192,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           style={{
             fontSize: '16px',
             color: '#888',
-            margin: '0',
+            margin: '0'
           }}
         >
           Template: {data.template}
@@ -209,7 +208,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         alignItems: 'center',
         justifyContent: 'center',
         padding: '60px',
-        position: 'relative',
+        position: 'relative'
       }}
     >
       {/* Mockup de document */}
@@ -223,7 +222,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
           display: 'flex',
           flexDirection: 'column',
-          transform: 'rotate(-2deg)',
+          transform: 'rotate(-2deg)'
         }}
       >
         {/* Header du document */}
@@ -234,7 +233,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
               height: '8px',
               backgroundColor: '#ff6b35',
               borderRadius: '4px',
-              marginBottom: '6px',
+              marginBottom: '6px'
             }}
           />
           <div
@@ -242,7 +241,7 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
               width: '40%',
               height: '6px',
               backgroundColor: '#ddd',
-              borderRadius: '3px',
+              borderRadius: '3px'
             }}
           />
         </div>
@@ -256,14 +255,14 @@ export const DocumentTemplate: React.FC<TemplateProps> = ({ params, data }) => (
               height: '4px',
               backgroundColor: '#eee',
               borderRadius: '2px',
-              marginBottom: '6px',
+              marginBottom: '6px'
             }}
           />
         ))}
       </div>
     </div>
   </div>
-);
+)
 
 export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
   <div
@@ -272,7 +271,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
       width: '100%',
       display: 'flex',
       backgroundColor: '#f8f9fa',
-      position: 'relative',
+      position: 'relative'
     }}
   >
     {/* Background pattern */}
@@ -285,7 +284,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         bottom: 0,
         backgroundImage:
           'radial-gradient(circle at 2px 2px, rgba(255,107,53,0.1) 1px, transparent 0)',
-        backgroundSize: '40px 40px',
+        backgroundSize: '40px 40px'
       }}
     />
 
@@ -298,7 +297,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         justifyContent: 'center',
         alignItems: 'center',
         padding: '60px',
-        zIndex: 1,
+        zIndex: 1
       }}
     >
       {/* Badge CV */}
@@ -312,7 +311,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           fontWeight: 'bold',
           marginBottom: '24px',
           textTransform: 'uppercase',
-          letterSpacing: '1px',
+          letterSpacing: '1px'
         }}
       >
         Curriculum Vitae
@@ -326,7 +325,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           textAlign: 'center',
           lineHeight: 1.1,
           margin: '0 0 16px 0',
-          color: '#1a1a1a',
+          color: '#1a1a1a'
         }}
       >
         {data?.author || params.title}
@@ -338,7 +337,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           fontSize: '24px',
           textAlign: 'center',
           color: '#666',
-          margin: '0 0 40px 0',
+          margin: '0 0 40px 0'
         }}
       >
         {params.description || 'Professionnel expérimenté'}
@@ -349,7 +348,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
         style={{
           display: 'flex',
           alignItems: 'center',
-          opacity: 0.7,
+          opacity: 0.7
         }}
       >
         <div
@@ -360,7 +359,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginRight: '12px',
+            marginRight: '12px'
           }}
         >
           <span>
@@ -371,7 +370,7 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
           style={{
             fontSize: '18px',
             fontWeight: 'bold',
-            color: '#1a1a1a',
+            color: '#1a1a1a'
           }}
         >
           Made by Ghostify.
@@ -379,4 +378,4 @@ export const ResumeTemplate: React.FC<TemplateProps> = ({ params, data }) => (
       </div>
     </div>
   </div>
-);
+)

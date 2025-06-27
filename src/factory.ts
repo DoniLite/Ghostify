@@ -1,7 +1,7 @@
-import { createFactory } from 'hono/factory';
-import { Variables } from '../server.tsx';
-import type { JwtVariables } from 'hono/jwt';
+import { createFactory } from 'hono/factory'
+import type { JwtVariables } from 'hono/jwt'
+import type { Variables } from '../server'
 
 export const factory = createFactory<{
-  Variables: Variables & JwtVariables;
-}>();
+  Variables: Variables & JwtVariables
+}>()
