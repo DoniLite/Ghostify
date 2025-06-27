@@ -32,7 +32,7 @@ We are not liable for any damages resulting from the use or inability to use the
 ## 5. **💬 Contact Us**
 
 If you have any questions, suggestions, or feedback, don’t hesitate to contact us via **<support@ghostify.site>** or **[contact](/home?pagination=5)**.
-`
+`;
 
 export const conditionsMD = `
 # 📑 **Conditions d'Utilisation**
@@ -68,7 +68,7 @@ Nous pouvons mettre à jour ces conditions à tout moment. Vous serez averti par
 ## 5. **📧 Nous Contacter**
 
 Pour toute question, vous pouvez nous joindre à **<contact@votre-site.com>**.
-`
+`;
 
 export const privacyMD = `
 # 🔐 **Privacy Policy**
@@ -105,7 +105,7 @@ You have full control over your data! You can request access, correction, or del
 
 Feel free to contact our privacy team at **<privacy@yourwebsite.com>** for any questions.
 
-`
+`;
 
 export const FAQMD = `
 # ❓ **Frequently Asked Questions (FAQ)**
@@ -142,7 +142,7 @@ Our support team is available 24/7. You can reach them via **<support@yourwebsit
 
 Make sure to check out our latest updates and follow us on social media for tips and tricks to enhance your experience!
 
-`
+`;
 
 export const AboutMD = `
 # À propos de notre plateforme
@@ -199,4 +199,4 @@ Pour toute question ou suggestion, n'hésitez pas à nous contacter à l'adresse
 ---
 
 Merci de faire partie de notre aventure !
-`
+`;

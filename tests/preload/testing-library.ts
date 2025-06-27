@@ -6,5 +6,5 @@ expect.extend(matchers);
 
 // Optional: cleans up `render` after each test
 afterEach(() => {
-  cleanup();
+	cleanup();
 });

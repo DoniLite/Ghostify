@@ -1,3 +1,3 @@
-const Registration = () => <>Hello</>
+const Registration = () => <>Hello</>;
 
-export default Registration
+export default Registration;

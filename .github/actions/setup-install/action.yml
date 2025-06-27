@@ -1,0 +1,22 @@
+name: Setup and Install Dependencies
+description: Composite action to set up Bun and install dependencies
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+
+    - name: Cache Dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+
+    - name: Install Dependencies
+      run: bun install
+      shell: bash
