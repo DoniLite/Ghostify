@@ -39,7 +39,6 @@ export const LinksPluginComponent: React.FC = () => {
 								value={linkUrl}
 								onChange={(e) => setLinkUrl(e.target.value)}
 								className="border-border bg-input text-foreground w-full rounded border p-2"
-								autoFocus
 							/>
 							<div className="flex gap-2">
 								<button

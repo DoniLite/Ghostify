@@ -7,9 +7,10 @@ const DocumentEditor = () => {
 
 	if (typeof userId !== 'string' || typeof documentId !== 'string') {
 		navigate('/api/v1/document/new');
+		return
 	}
 
-	return <Editor userId={userId!} documentId={documentId!} />;
+	return <Editor userId={userId} documentId={documentId} />;
 };
 
 export default DocumentEditor;

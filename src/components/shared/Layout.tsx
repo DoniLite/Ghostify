@@ -2,8 +2,6 @@ import { createContext, type FC, type PropsWithChildren } from 'react';
 import Footer from './Footer';
 import Header from './Header';
 import Meta from './Meta';
-import { defaultSeo, SeoContext } from './SEO';
-import { ThemeProvider } from './ThemeProvider';
 
 export const LocalsContext = createContext<{
 	default: Record<string, unknown>;
@@ -87,12 +85,12 @@ const styles = `
   }
 `;
 
-const Layout: FC<LayoutType> = ({ children }) => (
-	<html
-		lang="fr"
-		// data-theme={theme?.default || theme?.userDefault || 'light'}
-	>
-		<SeoContext.Provider value={defaultSeo}>
+const Layout: FC<LayoutType> = ({ children }) => {
+	return (
+		<html
+			lang="en"
+			// data-theme={theme?.default || theme?.userDefault || 'light'}
+		>
 			<head>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -102,24 +100,21 @@ const Layout: FC<LayoutType> = ({ children }) => (
 				/>
 				<meta name="creator" content="Doni Lite" />
 				<link rel="icon" type="image/svg+xml" href="/static/ghostify.svg" />
-				{/* <link
+				<link
           rel="stylesheet"
-          href="/static/css/main.css"
-        /> */}
+          href="/static/js/client.css"
+        />
+				{/** biome-ignore lint/security/noDangerouslySetInnerHtml: The style injected here is constructed in code only */}
 				<style dangerouslySetInnerHTML={{ __html: styles }} />
 				<Meta />
 			</head>
 			<body>
-				<ThemeProvider defaultTheme="system" serverTheme="dark">
-					<LocalsContext.Provider value={{ default: {} }}>
-						<Header />
-						{children}
-						<Footer />
-					</LocalsContext.Provider>
-				</ThemeProvider>
+				<Header />
+				{children}
+				<Footer />
 			</body>
-		</SeoContext.Provider>
-	</html>
-);
+		</html>
+	);
+};
 
 export default Layout;

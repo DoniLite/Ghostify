@@ -1,7 +1,7 @@
 import type { Locale } from '../@types/translation.ts';
 
 export function detectLocale(request?: Request): Locale {
-	const defaultLocale: Locale = 'fr';
+	const defaultLocale: Locale = 'en';
 
 	if (typeof window !== 'undefined') {
 		const saved = localStorage.getItem('preferred-locale') as Locale;
@@ -30,7 +30,8 @@ export function detectLocale(request?: Request): Locale {
 		if (acceptLanguage) {
 			const languages = acceptLanguage
 				.split(',')
-				.map((lang) => lang.split(';')[0].split('-')[0].trim())
+				.map((lang) => lang.split(';')[0]?.split('-')[0]?.trim())
+				.filter((lang) => lang !== undefined)
 				.filter((lang) => ['fr', 'en', 'es'].includes(lang));
 
 			if (languages.length > 0) {
@@ -41,7 +42,7 @@ export function detectLocale(request?: Request): Locale {
 		const cookies = request.headers.get('Cookie');
 		if (cookies) {
 			const localeMatch = cookies.match(/locale=([^;]+)/);
-			if (localeMatch && ['fr', 'en', 'es'].includes(localeMatch[1])) {
+			if (localeMatch && ['fr', 'en', 'es'].includes(localeMatch[1] ?? '')) {
 				return localeMatch[1] as Locale;
 			}
 		}

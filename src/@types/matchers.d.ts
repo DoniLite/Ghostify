@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
-// eslint-disable-next-line import/no-unresolved
+import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 import 'bun:test';
 
 declare module 'bun:test' {

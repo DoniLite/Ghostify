@@ -1,18 +1,13 @@
-import { join } from 'std/path/mod';
+import { join } from 'node:path';
 
-const { readFile, cwd } = Deno;
-
-const projectRoot = cwd();
+const projectRoot = process.cwd();
 
 export async function loadFonts() {
 	try {
-		// Solution A: Utiliser Google Fonts via fetch (recommandé)
 		const fonts = await loadLocalFonts();
 		if (fonts.length > 0) {
 			return fonts;
 		}
-
-		// Solution B: Utiliser des polices locales si disponibles
 		return await loadGoogleFonts();
 	} catch (error) {
 		console.warn('Failed to load fonts, using system fallback:', error);
@@ -20,7 +15,6 @@ export async function loadFonts() {
 	}
 }
 
-// Solution A: Charger depuis Google Fonts (plus fiable)
 async function loadGoogleFonts() {
 	try {
 		const [regularResponse, boldResponse] = await Promise.all([
@@ -68,12 +62,12 @@ async function loadLocalFonts() {
 			join(projectRoot, 'static/fonts/Inter_bold.ttf'),
 		];
 
-		const fontBuffers = [];
+		const fontBuffers: Array<ArrayBuffer> = [];
 		for (const fontPath of fontFiles) {
 			try {
-				const buffer = await readFile(fontPath);
-				// Validation basique du format
-				if (isValidFontBuffer(buffer)) {
+				const file = Bun.file(fontPath);
+				const buffer = await file.arrayBuffer();
+				if (isValidFontBuffer(new Uint8Array(buffer))) {
 					fontBuffers.push(buffer);
 				} else {
 					console.warn(`Invalid font file: ${fontPath}`);
@@ -115,7 +109,6 @@ function isValidFontBuffer(buffer: Uint8Array): boolean {
 	if (buffer.length < 4) return false;
 
 	const signature = new TextDecoder().decode(buffer.slice(0, 4));
-
 	const validSignatures = ['wOFF', 'OTTO', 'true', 'typ1', '\x00\x01\x00\x00'];
 
 	return (
@@ -162,7 +155,7 @@ export async function downloadGoogleFonts() {
 			const response = await fetch(font.url);
 			if (response.ok) {
 				const buffer = await response.arrayBuffer();
-				await Deno.writeFile(
+				await Bun.write(
 					`./src/assets/fonts/${font.filename}`,
 					new Uint8Array(buffer),
 				);

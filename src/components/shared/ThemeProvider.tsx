@@ -6,7 +6,6 @@ import {
 	useState,
 } from 'react';
 
-// Types pour le thème
 type Theme = 'light' | 'dark' | 'system';
 type ResolvedTheme = 'light' | 'dark';
 
@@ -18,10 +17,8 @@ interface ThemeContextType {
 	isHydrated: boolean;
 }
 
-// Context du thème
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Hook pour utiliser le context
 export const useTheme = () => {
 	const context = useContext(ThemeContext);
 	if (context === undefined) {
@@ -30,7 +27,6 @@ export const useTheme = () => {
 	return context;
 };
 
-// Script à injecter côté serveur pour éviter le flash
 export const getThemeScript = (defaultTheme: Theme = 'dark') => {
 	return `
     (function() {
@@ -46,13 +42,12 @@ export const getThemeScript = (defaultTheme: Theme = 'dark') => {
         document.body.classList.add(resolvedTheme);
         document.documentElement.setAttribute('data-theme', resolvedTheme);
       } catch (e) {
-        console.error('Erreur lors de l\\'initialisation du thème:', e);
+        console.error('Error during the theme initialization:', e);
       }
     })();
   `;
 };
 
-// Provider du thème
 interface ThemeProviderProps {
 	children: React.ReactNode;
 	defaultTheme?: Theme;
@@ -69,7 +64,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		useState<ResolvedTheme>(serverTheme);
 	const [isHydrated, setIsHydrated] = useState(false);
 
-	// Fonction pour résoudre le thème système
 	const getSystemTheme = useCallback((): ResolvedTheme => {
 		if (typeof window === 'undefined') return 'dark';
 		return globalThis.matchMedia('(prefers-color-scheme: dark)').matches
@@ -77,7 +71,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 			: 'light';
 	}, []);
 
-	// Fonction pour résoudre le thème
 	const resolveTheme = useCallback(
 		(themeValue: Theme): ResolvedTheme => {
 			return themeValue === 'system' ? getSystemTheme() : themeValue;
@@ -85,31 +78,27 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		[getSystemTheme],
 	);
 
-	// Fonction pour appliquer le thème au DOM
 	const applyTheme = useCallback((resolved: ResolvedTheme) => {
 		if (typeof window === 'undefined') return;
 
 		const html = document.documentElement;
 		const { body } = document;
 
-		// Supprimer les anciennes classes
 		html.classList.remove('light', 'dark');
 		body.classList.remove('light', 'dark');
 
-		// Appliquer le nouveau thème
 		html.classList.add(resolved);
 		body.classList.add(resolved);
 		html.setAttribute('data-theme', resolved);
 	}, []);
 
-	// Fonction pour définir le thème
 	const setTheme = useCallback(
 		(newTheme: Theme) => {
 			if (typeof window !== 'undefined') {
 				try {
 					localStorage.setItem('theme', newTheme);
 				} catch (error) {
-					console.error('Erreur lors de la sauvegarde du thème:', error);
+					console.error('Error during the Theme saving:', error);
 				}
 			}
 
@@ -121,18 +110,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		[resolveTheme, applyTheme],
 	);
 
-	// Fonction pour basculer entre les thèmes
 	const toggleTheme = useCallback(() => {
 		const themeOrder: Theme[] = ['dark', 'light', 'system'];
 		const currentIndex = themeOrder.indexOf(theme);
 		const nextIndex = (currentIndex + 1) % themeOrder.length;
-		setTheme(themeOrder[nextIndex]!);
+		setTheme(themeOrder[nextIndex] ?? 'light');
 	}, [theme, setTheme]);
 
-	// Effet d'hydratation côté client
 	useEffect(() => {
-		if (typeof window === 'undefined') return;
-
 		let savedTheme: Theme = defaultTheme;
 
 		try {
@@ -141,7 +126,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 				savedTheme = stored;
 			}
 		} catch (error) {
-			console.error('Erreur lors de la récupération du thème:', error);
+			console.error('Error to get the theme:', error);
 		}
 
 		const resolved = resolveTheme(savedTheme);
@@ -151,7 +136,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 		applyTheme(resolved);
 		setIsHydrated(true);
 
-		// Écouter les changements de préférence système
 		const mediaQuery = globalThis.matchMedia('(prefers-color-scheme: dark)');
 		const handleChange = () => {
 			if (savedTheme === 'system') {

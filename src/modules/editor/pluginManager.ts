@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
@@ -22,6 +21,7 @@ import type { PluginConfig } from './types';
 export class PluginManager {
 	private loadedPlugins = new Map<string, PluginConfig>();
 	private pluginRegistry: Record<string, PluginConfig>;
+	// biome-ignore lint/suspicious/noExplicitAny: There are various Type of Nodes
 	private pluginNodes: any[] = [];
 
 	constructor() {
@@ -87,11 +87,9 @@ export class PluginManager {
 		};
 	}
 
-	// NOTE: Dans une vraie application, cela pourrait être un appel API asynchrone
-	// pour charger les définitions des plugins depuis un serveur.
-	loadPlugin(pluginId: string): PluginConfig | null {
+	loadPlugin(pluginId: string): PluginConfig | undefined {
 		if (this.loadedPlugins.has(pluginId)) {
-			return this.loadedPlugins.get(pluginId)!;
+			return this.loadedPlugins.get(pluginId);
 		}
 
 		const plugin = this.pluginRegistry[pluginId];
@@ -103,7 +101,7 @@ export class PluginManager {
 			}
 			return plugin;
 		}
-		return null;
+		return undefined;
 	}
 
 	getAvailablePlugins(): PluginConfig[] {
@@ -114,8 +112,8 @@ export class PluginManager {
 		return Array.from(this.loadedPlugins.values());
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: Type assignment can cause compatibility problems
 	getAllNodes(): any[] {
-		// Toujours inclure les noeuds de base
 		const baseNodes = [
 			HeadingNode,
 			QuoteNode,

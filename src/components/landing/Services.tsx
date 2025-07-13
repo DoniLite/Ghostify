@@ -23,14 +23,15 @@ const ServiceCard = ({
 		</h3>
 		<p className="text-muted-foreground font-inter mb-4">{description}</p>
 		<ul className="text-muted-foreground font-inter mb-6 space-y-2 text-sm">
-			{features.map((feature, index) => (
-				<li key={index} className="flex items-center">
+			{features.map((feature) => (
+				<li key={feature} className="flex items-center">
 					<svg
 						className="mr-2 h-4 w-4 text-green-500"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
 					>
+						<title>Feature icon</title>
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"

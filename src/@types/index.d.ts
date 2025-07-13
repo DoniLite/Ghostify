@@ -1,9 +1,5 @@
 import type { Buffer } from 'node:buffer';
 
-interface ActorVersionClient {
-	get(): void;
-}
-
 export interface Service {
 	APIs?: {
 		name: string;
@@ -11,7 +7,7 @@ export interface Service {
 		docs?: string | null;
 		isSecure?: boolean;
 	}[];
-	chekHealth?: (service: string, endpoint: string) => boolean;
+	checkHealth?: (service: string, endpoint: string) => boolean;
 	Platform?: {
 		internals: boolean;
 		externals?: boolean;
@@ -61,20 +57,6 @@ export type BodyXData<T = undefined> = T extends undefined
 export type QueryXData<T = undefined> = T extends undefined
 	? Record<string, unknown>
 	: T;
-
-export type month =
-	| 'Janvier'
-	| 'Février'
-	| 'Mars'
-	| 'Avril'
-	| 'Mai'
-	| 'Juin'
-	| 'Juillet'
-	| 'Aout'
-	| 'Septembre'
-	| 'Octobre'
-	| 'Novembre'
-	| 'Décembre';
 
 export type PosterUserMeta = Record<
 	string,

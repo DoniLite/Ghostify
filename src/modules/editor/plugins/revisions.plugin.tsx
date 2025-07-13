@@ -24,8 +24,8 @@ export const RevisionsPluginComponent: React.FC<{
 			const selection = $getSelection();
 			if (selection) {
 				const nodes = selection.getNodes();
-				const nodeText = nodes[0].getTextContent();
-				if (nodes.length > 0) {
+				const nodeText = nodes[0]?.getTextContent();
+				if (nodeText) {
 					setRevisionText(nodeText);
 					setShowRevisionDialog(true);
 				} else {
@@ -39,8 +39,10 @@ export const RevisionsPluginComponent: React.FC<{
 		editor.update(() => {
 			const selection = $getSelection();
 			if (selection && revisionText.trim()) {
-				const nodeKey = selection.getNodes()[0].getKey();
-				onAddRevision(nodeKey, revisionText);
+				const nodeKey = selection.getNodes()[0]?.getKey();
+				if (nodeKey) {
+					onAddRevision(nodeKey, revisionText);
+				}
 				setRevisionText('');
 				setShowRevisionDialog(false);
 			}
@@ -65,7 +67,6 @@ export const RevisionsPluginComponent: React.FC<{
 							value={revisionText}
 							onChange={(e) => setRevisionText(e.target.value)}
 							className="border-border bg-input text-foreground min-h-20 w-full resize-none rounded border p-2"
-							autoFocus
 						/>
 						<div className="flex gap-2">
 							<button

@@ -65,7 +65,6 @@ export const CommentsPluginComponent: React.FC<{
 							value={commentText}
 							onChange={(e) => setCommentText(e.target.value)}
 							className="border-border bg-input text-foreground min-h-20 w-full resize-none rounded border p-2"
-							autoFocus
 						/>
 						<div className="flex gap-2">
 							<button

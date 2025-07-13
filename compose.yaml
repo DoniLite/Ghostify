@@ -28,7 +28,7 @@ services:
       - ghostify_network
 
   db:
-    image: postgres:latest
+    image: postgres:17
     container_name: ghostify_db
     restart: always
     volumes:

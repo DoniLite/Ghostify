@@ -38,6 +38,19 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
 		[documentId, userId],
 	);
 
+	const handlePluginLoad = useCallback(
+		(pluginId: string) => {
+			const plugin = pluginManager.loadPlugin(pluginId);
+			if (plugin) {
+				setLoadedPlugins((prev) => [
+					...prev.filter((p) => p.id !== pluginId),
+					plugin,
+				]);
+			}
+		},
+		[pluginManager],
+	);
+
 	// Chargement initial du document et configuration de la collaboration
 	useEffect(() => {
 		const loadData = async () => {
@@ -77,20 +90,7 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
 		// TODO: Ajouter les listeners pour 'comment-update' et 'revision-update'
 
 		return () => collaborationService.disconnect();
-	}, [documentId, documentService, collaborationService, pluginManager]);
-
-	const handlePluginLoad = useCallback(
-		(pluginId: string) => {
-			const plugin = pluginManager.loadPlugin(pluginId);
-			if (plugin) {
-				setLoadedPlugins((prev) => [
-					...prev.filter((p) => p.id !== pluginId),
-					plugin,
-				]);
-			}
-		},
-		[pluginManager],
-	);
+	}, [documentId, documentService, collaborationService, handlePluginLoad]);
 
 	const handleSave = useCallback(async () => {
 		if (!docState) return;
@@ -141,7 +141,7 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
 			editorState: docState?.content,
 			nodes: pluginManager.getAllNodes(),
 		}),
-		[docState?.content, loadedPlugins],
+		[docState?.content, pluginManager.getAllNodes],
 	); // La clé sur LexicalComposer forcera la re-création si les nodes changent
 
 	if (!docState) {

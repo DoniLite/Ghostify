@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import AuthApp from './controller/auth';
 import { factory } from './factory';
 import OgRoutes from './routes/og';

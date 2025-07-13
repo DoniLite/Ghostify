@@ -17,8 +17,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [tooltipPosition, setTooltipPosition] = useState<'top' | 'bottom'>(
 		'top',
-	); // Nouvel état pour la position du tooltip
-	const buttonRef = useRef<HTMLButtonElement>(null); // Référence au bouton
+	);
+	const { t } = useTranslation();
+	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	const handleToggle = () => {
 		setIsAnimating(true);
@@ -32,30 +33,21 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 				return Sun;
 			case 'system':
 				return Monitor;
-			case 'dark':
 			default:
 				return Moon;
 		}
 	};
 
 	const getThemeLabel = () => {
-		const { t } = useTranslation();
 		return t(`common.mode.${theme}`);
 	};
 
-	// Logique pour déterminer la position du tooltip
 	useEffect(() => {
 		const checkTooltipPosition = () => {
 			if (buttonRef.current) {
 				const buttonRect = buttonRef.current.getBoundingClientRect();
-				// Taille approximative du tooltip (prends en compte la hauteur et le padding)
-				// Ici, j'estime une hauteur de 48px pour le tooltip (px-3 py-1.5 + margin + flèche)
-				const tooltipHeight = showLabel ? 64 : 48; // -top-16 (64px) ou -top-12 (48px) approximativement
+				const tooltipHeight = showLabel ? 64 : 48;
 
-				// Si le haut du bouton est trop proche du bord supérieur de la fenêtre
-				// pour que le tooltip puisse s'afficher en haut (-top-X),
-				// on le place en bas. On ajoute une petite marge (e.g., 20px)
-				// pour éviter qu'il ne soit collé au bord.
 				if (buttonRect.top < tooltipHeight + 20) {
 					setTooltipPosition('bottom');
 				} else {
@@ -64,22 +56,17 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 			}
 		};
 
-		// Exécute la vérification au montage du composant
 		checkTooltipPosition();
 
-		// Ajoute un écouteur d'événement pour le scroll et le redimensionnement de la fenêtre
-		// pour ajuster la position si l'utilisateur scroll ou redimensionne
 		globalThis.addEventListener('scroll', checkTooltipPosition);
 		globalThis.addEventListener('resize', checkTooltipPosition);
 
-		// Nettoyage : retire les écouteurs d'événements lors du démontage du composant
 		return () => {
 			globalThis.removeEventListener('scroll', checkTooltipPosition);
 			globalThis.removeEventListener('resize', checkTooltipPosition);
 		};
-	}, [showLabel, isHydrated]); // Dépendances : s'exécute si showLabel ou isHydrated change
+	}, [showLabel]);
 
-	// Affichage neutre pendant l'hydratation pour éviter le flash
 	if (!isHydrated) {
 		return (
 			<div className={`relative inline-flex items-center ${className}`}>
@@ -103,37 +90,33 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
     z-50
   `;
 
-	// Classes de positionnement spécifiques
 	const tooltipPositionClasses =
 		tooltipPosition === 'top'
-			? `${showLabel ? '-top-16' : '-top-12'}` // Anciennes positions pour le haut
-			: `${showLabel ? 'top-full mt-4' : 'top-full mt-3'}`; // Nouvelle position pour le bas (ajustée pour la flèche)
+			? `${showLabel ? '-top-16' : '-top-12'}`
+			: `${showLabel ? 'top-full mt-4' : 'top-full mt-3'}`;
 
 	const tooltipArrowClasses =
 		tooltipPosition === 'top'
-			? 'absolute top-full left-1/2 transform -translate-x-1/2' // Flèche en bas pour tooltip en haut
-			: 'absolute bottom-full left-1/2 transform -translate-x-1/2'; // Flèche en haut pour tooltip en bas
+			? 'absolute top-full left-1/2 transform -translate-x-1/2'
+			: 'absolute bottom-full left-1/2 transform -translate-x-1/2';
 
 	const tooltipArrowInnerClasses =
 		tooltipPosition === 'top'
 			? 'w-2 h-2 bg-popover border-r border-b border-border transform rotate-45 -mt-1'
-			: 'w-2 h-2 bg-popover border-l border-t border-border transform rotate-45 mt-1'; // Flèche tournée pour le bas
+			: 'w-2 h-2 bg-popover border-l border-t border-border transform rotate-45 mt-1';
 
 	return (
 		<div className={`group relative inline-flex items-center ${className}`}>
-			{/* Bouton principal */}
 			<Button
-				ref={buttonRef} // Attache la référence au bouton
+				ref={buttonRef}
 				onClick={handleToggle}
 				className={`bg-card border-border hover:border-primary/20 focus:ring-ring relative h-10 w-10 overflow-hidden rounded-xl border transition-all duration-300 ease-out focus:ring-2 focus:ring-offset-2 focus:outline-none ${isAnimating ? 'scale-95' : 'hover:scale-105'} `}
 				aria-label={`Basculer vers le ${getThemeLabel()}`}
 			>
-				{/* Effet de fond animé */}
 				<div
 					className={`from-primary/10 to-accent/10 absolute inset-0 rounded-xl bg-gradient-to-br opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
 				/>
 
-				{/* Container pour l'icône avec animation */}
 				<div
 					className={`relative z-10 flex h-full w-full items-center justify-center ${isAnimating ? 'animate-spin' : ''} transition-transform duration-500 ease-out`}
 				>
@@ -143,30 +126,25 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 					/>
 				</div>
 
-				{/* Effet de ripple au clic */}
 				<div
 					className={`bg-primary/20 absolute inset-0 scale-0 transform rounded-xl opacity-0 ${isAnimating ? 'scale-100 animate-ping opacity-100' : ''} transition-all duration-500 ease-out`}
 				/>
 			</Button>
 
-			{/* Tooltip */}
 			<div className={`${tooltipClasses} ${tooltipPositionClasses}`}>
 				{getThemeLabel()}
 
-				{/* Flèche du tooltip */}
 				<div className={tooltipArrowClasses}>
 					<div className={tooltipArrowInnerClasses} />
 				</div>
 			</div>
 
-			{/* Label optionnel */}
 			{showLabel && (
 				<span className="text-foreground ml-3 text-sm font-medium">
 					{getThemeLabel()}
 				</span>
 			)}
 
-			{/* Indicateur de thème actuel */}
 			<div
 				className={`border-background absolute -right-1 -bottom-1 h-4 w-4 rounded-full border-2 shadow-sm transition-all duration-300 ease-out ${
 					theme === 'dark'

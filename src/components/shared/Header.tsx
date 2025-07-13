@@ -9,6 +9,7 @@ import { useLocalURI, useTranslation } from './TranslationContext';
 const Header = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
+	const login = useLocalURI('/login');
 	return (
 		<header className="bg-background fixed top-0 left-0 z-50 flex w-full items-center justify-between px-6 py-4 lg:px-12">
 			<div className="flex items-center space-x-2">
@@ -22,7 +23,7 @@ const Header = () => {
 					{t('common.home')}
 				</NavLink>
 				<a
-					href="#"
+					href="/"
 					className="text-foreground hover:text-primary font-nunito transition-colors"
 				>
 					{t('common.products')}
@@ -41,7 +42,7 @@ const Header = () => {
 				<Button
 					className="bg-secondary text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary font-nunito cursor-pointer rounded-md px-5 py-2 transition-colors"
 					onClick={() => {
-						navigate(useLocalURI('/login'));
+						navigate(login);
 					}}
 				>
 					{t('header.buttons.login')}

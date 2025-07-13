@@ -52,7 +52,7 @@ export function getDeepValue<T, K extends string>(
 	path: K,
 ): DeepValue<T, K> {
 	const parts = path.split('.');
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// biome-ignore lint/suspicious/noExplicitAny: Object is used here to construct a recursive array
 	let result: any = obj;
 
 	for (const part of parts) {

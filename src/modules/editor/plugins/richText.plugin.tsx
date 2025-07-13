@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
-import { $getSelection } from 'lexical';
+import { $getSelection, type LexicalNode } from 'lexical';
 import { Bold, Heading1, Heading2, Italic, Underline } from 'lucide-react';
 
 export const RichTextPluginComponent: React.FC = () => {
@@ -17,7 +17,7 @@ export const RichTextPluginComponent: React.FC = () => {
 		editor.update(() => {
 			const selection = $getSelection();
 			if (selection) {
-				let node;
+				let node: LexicalNode | undefined;
 				if (type === 'h1') node = $createHeadingNode('h1');
 				if (type === 'h2') node = $createHeadingNode('h2');
 				if (type === 'quote') node = $createQuoteNode();

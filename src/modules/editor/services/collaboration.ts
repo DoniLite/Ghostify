@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+/** biome-ignore-all lint/complexity/noBannedTypes: Functions type definition will be a little complex here */
 import { WEBSOCKET_BASE_URL } from '../constants/services_url';
 
 export class CollaborationService {
@@ -73,17 +72,17 @@ export class CollaborationService {
 		if (!this.callbacks.has(event)) {
 			this.callbacks.set(event, []);
 		}
-		this.callbacks.get(event)!.push(callback);
+		this.callbacks.get(event)?.push(callback);
 	}
 
-	private emit(event: string, data: any) {
+	private emit<T>(event: string, data: T) {
 		const callbacks = this.callbacks.get(event);
 		if (callbacks) {
 			callbacks.forEach((callback) => callback(data));
 		}
 	}
 
-	send(type: string, data: any) {
+	send<T>(type: string, data: T) {
 		if (this.ws && this.ws.readyState === WebSocket.OPEN) {
 			this.ws.send(
 				JSON.stringify({

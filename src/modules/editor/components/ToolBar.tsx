@@ -122,7 +122,7 @@ export const Toolbar: React.FC<{
 
 				{/* Plugins chargés */}
 				{loadedPlugins.map((plugin) => {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					// biome-ignore lint/suspicious/noExplicitAny: Props cannot be extended
 					const props: any = {};
 					if (plugin.id === 'comments') {
 						props.comments = comments;

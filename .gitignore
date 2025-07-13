@@ -8,7 +8,6 @@ prod.env
 /blob-report/
 /playwright/.cache/
 /src/public/output.css
-/.vscode
 /articles
 /data
 node_modules/

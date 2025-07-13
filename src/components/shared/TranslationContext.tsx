@@ -46,7 +46,6 @@ export function TranslationProvider({
 		(newLocale: Locale) => {
 			setLocaleState(newLocale);
 
-			// Côté client seulement
 			if (!serverSide && typeof window !== 'undefined') {
 				localStorage.setItem('preferred-locale', newLocale);
 
@@ -79,7 +78,6 @@ export function TranslationProvider({
 
 				let result = String(translation);
 
-				// Remplacer les variables si fournies
 				if (variables) {
 					Object.entries(variables).forEach(([varKey, varValue]) => {
 						result = result.replace(
@@ -116,7 +114,9 @@ export function useTranslation(): TranslationContextType {
 	const context = useContext(TranslationContext);
 
 	if (!context) {
-		throw new Error('useI18n must be used within an I18nProvider');
+		throw new Error(
+			'useTranslation must be used within an TranslationProvider',
+		);
 	}
 
 	return context;

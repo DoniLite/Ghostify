@@ -19,6 +19,7 @@ const CodingSVG = ({ ...rest }: Record<string, unknown>) => (
 		<title>Coding</title>
 		<style
 			type="text/css"
+			// biome-ignore lint/security/noDangerouslySetInnerHtml: false
 			dangerouslySetInnerHTML={{ __html: svgStyle }}
 		></style>
 		<g id="screen">

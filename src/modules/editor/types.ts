@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/** biome-ignore-all lint/suspicious/noExplicitAny: Types can't be inferred here */
 export interface User {
 	id: string;
 	name: string;

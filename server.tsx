@@ -2,10 +2,10 @@ import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 // import { jwt } from 'hono/jwt';
 import { cache } from 'hono/cache';
-import { compress } from 'hono/compress';
-import { serveStatic } from 'hono/deno';
+// import { compress } from 'hono/compress';
 import { html } from 'hono/html';
 import type { JwtVariables } from 'hono/jwt';
 import { languageDetector } from 'hono/language';
@@ -19,12 +19,14 @@ import { StaticRouter } from 'react-router-dom';
 import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
-import { getThemeScript } from './src/components/shared/ThemeProvider';
+// import { getThemeScript } from './src/components/shared/ThemeProvider';
 import sessionManager from './src/hooks/sessionStorage';
 import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
+
+const SERVER_PORT = 8080;
 
 export type Variables = {
 	session: Session<SessionData>;
@@ -57,7 +59,7 @@ app.use(
 //   });
 //   return jwtMiddleware(c, next);
 // });
-app.use(compress());
+// app.use(compress());
 app.use(
 	'/*',
 	languageDetector({
@@ -70,46 +72,47 @@ app.use(
 );
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('*', logger(), poweredBy({ serverName: 'Ghostify' }));
-app.use(
-	'*',
-	secureHeaders({
-		contentSecurityPolicy: {
-			defaultSrc: ["'self'"],
-			scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-			styleSrc: ["'self'", "'unsafe-inline'"],
-			imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-			connectSrc: ["'self'", 'wss:', 'https:'],
-			fontSrc: ["'self'", 'data:', 'https:'],
-			objectSrc: ["'none'"],
-			mediaSrc: ["'self'"],
-			frameSrc: ["'self'"],
-			frameAncestors: ["'none'"], // don't integrate the site via iframe
-			formAction: ["'self'"],
-			baseUri: ["'self'"],
-			manifestSrc: ["'self'"],
-			workerSrc: ["'self'", 'blob:'],
-			sandbox: [
-				'allow-forms',
-				'allow-scripts',
-				'allow-same-origin',
-				'allow-popups',
-				'allow-modals',
-				'allow-downloads',
-			],
-		},
-		crossOriginEmbedderPolicy: true,
-		crossOriginOpenerPolicy: true,
-		crossOriginResourcePolicy: 'same-origin',
-		xXssProtection: true,
-	}),
-);
+// app.use(
+// 	'*',
+// 	secureHeaders({
+// 		contentSecurityPolicy: {
+// 			defaultSrc: ["'self'"],
+// 			scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+// 			styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+// 			fontSrc: ["'self'", 'data:', 'fonts.gstatic.com'],
+// 			imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+// 			connectSrc: ["'self'", 'wss:', 'https:'],
+// 			objectSrc: ["'none'"],
+// 			mediaSrc: ["'self'"],
+// 			frameSrc: ["'self'"],
+// 			frameAncestors: ["'none'"],
+// 			formAction: ["'self'"],
+// 			baseUri: ["'self'"],
+// 			manifestSrc: ["'self'"],
+// 			workerSrc: ["'self'", 'blob:'],
+// 			sandbox: [
+// 				'allow-forms',
+// 				'allow-scripts',
+// 				'allow-popups',
+// 				'allow-modals',
+// 				'allow-downloads',
+// 			],
+// 		},
+// 		crossOriginEmbedderPolicy: true,
+// 		crossOriginOpenerPolicy: true,
+// 		crossOriginResourcePolicy: 'same-origin',
+// 		xXssProtection: true,
+// 		// crossOriginEmbedderPolicy: false,
+// 		// crossOriginOpenerPolicy: false,
+// 		// crossOriginResourcePolicy: false,
+// 	}),
+// );
 app.use('*', sessionManager);
 app.use(
 	'*',
 	cache({
 		cacheName: 'ghostify-cache',
 		cacheControl: 'max-age=3600',
-		wait: true,
 	}),
 );
 
@@ -124,10 +127,7 @@ app.get('/terms', async (c) => {
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
       </head>
       <body>
@@ -185,16 +185,17 @@ app.get('/stream/:file/cloud', async () => {});
 app.get('*', async (c) => {
 	const s = await renderToReadableStream(
 		<StaticRouter location={c.req.path}>
-			<App />
+			<App request={c.req.raw} />
 		</StaticRouter>,
 		{
 			bootstrapModules: ['/static/js/client.js'],
-			bootstrapScriptContent: getThemeScript('dark'),
+			// bootstrapScriptContent: getThemeScript(),
 		},
 	);
 	return c.newResponse(s, 200, { 'content-type': 'text/html' });
 });
 Bun.serve({
-	port: 8080,
+	port: SERVER_PORT,
 	fetch: app.fetch,
 });
+console.log('Server is running on the port: ', SERVER_PORT);
