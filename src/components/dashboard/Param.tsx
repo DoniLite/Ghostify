@@ -16,7 +16,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 							<ul>
 								<li className="mb-2">
 									<a
-										href="#"
+										href="/"
 										className="flex items-center font-medium text-indigo-600 hover:text-indigo-800"
 									>
 										<i className="fas fa-user-circle mr-2"></i>
@@ -25,7 +25,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 								</li>
 								<li className="mb-2">
 									<a
-										href="#"
+										href="/"
 										className="flex items-center text-gray-600 hover:text-indigo-600"
 									>
 										<i className="fas fa-lock mr-2"></i>
@@ -34,7 +34,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 								</li>
 								<li className="mb-2">
 									<a
-										href="#"
+										href="/"
 										className="flex items-center text-gray-600 hover:text-indigo-600"
 									>
 										<i className="fas fa-bell mr-2"></i>
@@ -43,7 +43,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 								</li>
 								<li className="mb-2">
 									<a
-										href="#"
+										href="/"
 										className="flex items-center text-gray-600 hover:text-indigo-600"
 									>
 										<i className="fas fa-credit-card mr-2"></i>
@@ -52,7 +52,7 @@ const Param = ({ hide }: { hide: boolean }) => {
 								</li>
 								<li>
 									<a
-										href="#"
+										href="/"
 										className="flex items-center text-gray-600 hover:text-indigo-600"
 									>
 										<i className="fas fa-key mr-2"></i>

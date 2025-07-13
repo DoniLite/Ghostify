@@ -109,7 +109,7 @@ const Dashboard = () => {
 			<div className="mb-4 flex items-center justify-between">
 				<h2 className="text-lg font-semibold">Services disponibles</h2>
 				<a
-					href="#"
+					href="/"
 					className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
 				>
 					Voir tout

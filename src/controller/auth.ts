@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: All assertions will be always available */
 import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';

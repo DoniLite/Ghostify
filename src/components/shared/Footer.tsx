@@ -34,31 +34,31 @@ const Footer = () => {
 					</div>
 					<div className="mt-6 flex space-x-6">
 						<a
-							href="#"
+							href="/"
 							className="text-muted-foreground hover:text-primary transition-colors"
 						>
 							<Facebook size={24} />
 						</a>
 						<a
-							href="#"
+							href="/"
 							className="text-muted-foreground hover:text-primary transition-colors"
 						>
 							<Instagram size={24} />
 						</a>
 						<a
-							href="#"
+							href="/"
 							className="text-muted-foreground hover:text-primary transition-colors"
 						>
 							<Twitter size={24} />
 						</a>
 						<a
-							href="#"
+							href="/"
 							className="text-muted-foreground hover:text-primary transition-colors"
 						>
 							<Github size={24} />
 						</a>
 						<a
-							href="#"
+							href="/"
 							className="text-muted-foreground hover:text-primary transition-colors"
 						>
 							<Linkedin size={24} />
@@ -73,27 +73,27 @@ const Footer = () => {
 					</h4>
 					<ul className="text-muted-foreground font-inter space-y-3 text-center md:text-left">
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Poster for blog and documents parsing
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Try the basic web search
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Gaming & Testing
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Marketing & Data-analyzes support
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Web Dev &gt; backend &amp; front &amp; security &amp; smart net
 							</a>
 						</li>
@@ -107,22 +107,22 @@ const Footer = () => {
 					</h4>
 					<ul className="text-muted-foreground font-inter space-y-3 text-center md:text-left">
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Contact
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								About
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								FAQ
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Contact
 							</a>
 						</li>{' '}
@@ -132,21 +132,23 @@ const Footer = () => {
 
 				{/* Section 4: Legal */}
 				<div>
-					<h4 className="font-nunito mb-6 text-center text-xl font-bold md:text-left"></h4>{' '}
+					<h4 className="font-nunito mb-6 text-center text-xl font-bold md:text-left">
+						Terms
+					</h4>
 					{/* Placeholder for alignment */}
 					<ul className="text-muted-foreground font-inter space-y-3 text-center md:text-left">
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Terms & Conditions
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Privacy Policy
 							</a>
 						</li>
 						<li>
-							<a href="#" className="hover:text-primary transition-colors">
+							<a href="/" className="hover:text-primary transition-colors">
 								Conditions of use
 							</a>
 						</li>

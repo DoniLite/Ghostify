@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: All assertions will be always available */
 import {
 	deleteCookie,
 	// getCookie,

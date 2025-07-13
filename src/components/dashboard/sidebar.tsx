@@ -23,7 +23,7 @@ const Sidebar = () => {
 					Principal
 				</div>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary before:bg-primary relative flex items-center bg-white/10 px-5 py-3 text-gray-950 before:absolute before:top-0 before:left-0 before:h-full before:w-1 hover:bg-white/10"
 				>
 					<i className="fas fa-home mr-3 text-lg"></i>
@@ -32,7 +32,7 @@ const Sidebar = () => {
 					</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-file-alt mr-3 text-lg"></i>
@@ -41,14 +41,14 @@ const Sidebar = () => {
 					</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-code mr-3 text-lg"></i>
 					<span className="showOrHide hidden transition-all">Développeurs</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-file-pdf mr-3 text-lg"></i>
@@ -57,7 +57,7 @@ const Sidebar = () => {
 					</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-id-card mr-3 text-lg"></i>
@@ -71,28 +71,28 @@ const Sidebar = () => {
 					Compte
 				</div>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-credit-card mr-3 text-lg"></i>
 					<span className="showOrHide hidden transition-all">Abonnement</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-cog mr-3 text-lg"></i>
 					<span className="showOrHide hidden transition-all">Paramètres</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-question-circle mr-3 text-lg"></i>
 					<span className="showOrHide hidden transition-all">Aide ?</span>
 				</a>
 				<a
-					href="#"
+					href="/"
 					className="hover:text-primary relative flex items-center px-5 py-3 text-gray-950 hover:bg-white/10"
 				>
 					<i className="fas fa-sign-out-alt mr-3 text-lg"></i>

@@ -27,7 +27,7 @@ const $404 = () => {
 							>
 								Go back home
 							</a>
-							<a href="#" className="text-sm font-semibold text-gray-900">
+							<a href="/support" className="text-sm font-semibold text-gray-900">
 								Contact support <span aria-hidden="true">&rarr;</span>
 							</a>
 						</div>

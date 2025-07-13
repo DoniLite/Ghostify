@@ -61,8 +61,8 @@ const CVTemplate: FC<CVProps> = ({
 							{ icon: 'phone', text: phoneNumber },
 							{ icon: 'location-dot', text: location },
 							{ icon: 'calendar', text: birthday },
-						].map((item, idx) => (
-							<div key={idx} className="flex items-center gap-x-4 font-bold">
+						].map((item) => (
+							<div key={item.text} className="flex items-center gap-x-4 font-bold">
 								<img
 									src={`/static/SVG/${item.icon}.svg`}
 									className="flex h-8 w-8 rounded-full bg-white object-contain p-0.5"
@@ -84,13 +84,13 @@ const CVTemplate: FC<CVProps> = ({
 				>
 					<h1 className="mb-4 text-center text-2xl font-bold">Compétences</h1>
 					<ul className="mb-4 ml-8 flex list-disc flex-col gap-y-4">
-						{skills.map((skill, idx) => (
-							<li key={idx}>{skill}</li>
+						{skills.map((skill) => (
+							<li key={skill}>{skill}</li>
 						))}
 					</ul>
 					<h1 className="mb-4 text-center text-2xl font-bold">Formations</h1>
-					{formations.map((formation, idx) => (
-						<div key={idx} className="mb-2 flex flex-col gap-y-1">
+					{formations.map((formation) => (
+						<div key={formation.title} className="mb-2 flex flex-col gap-y-1">
 							<h3 className="font-bold">{formation.title}</h3>
 							<p>
 								{formation.description} : {formation.date}
@@ -102,13 +102,13 @@ const CVTemplate: FC<CVProps> = ({
 					className={`${cvTheme.bg3} ${cvTheme.text3} flex flex-col gap-y-3 p-4`}
 				>
 					<h1 className="mb-4 text-center text-2xl font-bold">Expérience</h1>
-					{experience.map((el, idx) => (
-						<div key={idx} className="mb-2 flex flex-col gap-y-4">
+					{experience.map((el) => (
+						<div key={el.title} className="mb-2 flex flex-col gap-y-4">
 							<h3 className="text-center text-lg font-bold">{el.title}</h3>
 							{el.contents && (
 								<ul className="mx-auto flex w-[90%] list-disc flex-col items-center justify-center gap-y-3">
-									{el.contents.map((content, subIdx) => (
-										<li key={subIdx} className="flex gap-x-4">
+									{el.contents.map((content) => (
+										<li key={content.description} className="flex gap-x-4">
 											<span>
 												<span className="font-bold">- </span>
 												{content.description} :
@@ -124,14 +124,14 @@ const CVTemplate: FC<CVProps> = ({
 						Centres d'intérêt
 					</h1>
 					<ul className="mx-auto mb-4 flex w-[70%] list-disc flex-col gap-y-4">
-						{interest.map((el, idx) => (
-							<li key={idx}>{el}</li>
+						{interest.map((el) => (
+							<li key={el}>{el}</li>
 						))}
 					</ul>
 					<h1 className="mb-4 text-center text-2xl font-bold">Langues</h1>
 					<ul className="mx-auto mb-4 flex w-[70%] list-disc flex-col gap-y-4">
-						{languages.map((language, idx) => (
-							<li key={idx} className="flex flex-col gap-2">
+						{languages.map((language) => (
+							<li key={language.title} className="flex flex-col gap-2">
 								<h3 className="font-bold">{language.title}</h3>
 								<div className="h-[6px] w-full rounded-lg bg-gray-300">
 									<div

@@ -220,7 +220,7 @@ export function useApi<R extends RouteKey, E extends EndpointKey<R>>(
 		if (options?.immediate !== false) {
 			fetchData();
 		}
-	}, [fetchData, options?.dependencies, options?.immediate]);
+	}, [fetchData, options?.immediate]);
 
 	return {
 		data,

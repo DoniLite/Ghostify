@@ -26,8 +26,8 @@ const Billing = () => {
 		<>
 			<div className="container mx-auto mt-[6rem]">
 				<BillingWrapper>
-					{billingData.map((data, id) => (
-						<Card key={id} {...data} />
+					{billingData.map((data) => (
+						<Card key={data.title} {...data} />
 					))}
 				</BillingWrapper>
 			</div>
@@ -72,6 +72,7 @@ const Billing = () => {
 									viewBox="0 0 24 24"
 									stroke="currentColor"
 								>
+									<title>Button icon</title>
 									<path
 										strokeLinecap="round"
 										strokeLinejoin="round"
