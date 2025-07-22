@@ -1,4 +1,4 @@
-name: Deno CD/CI Workflow
+name: Bun CD/CI Workflow
 run-name: ${{ github.actor }}'s Deno CI/CD Pipeline
 
 env:
@@ -35,9 +35,6 @@ jobs:
         
       - name: Setup and Install
         uses: ./.github/actions/setup-install
-
-      - name: Generate Prisma Types
-        run: bun run prisma:generate
 
       - name: Lint Code
         run: bun run lint

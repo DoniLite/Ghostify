@@ -19,9 +19,6 @@ jobs:
       - name: Setup and Install
         uses: ./.github/actions/setup-install
 
-      - name: Generate Types for Prisma
-        run: bun run prisma:generate
-
       - name: Lint TypeScript
         run: |
           bun run lint
