@@ -1,4 +1,5 @@
-// deno-lint-ignore-file no-explicit-any
+/** biome-ignore-all lint/complexity/noStaticOnlyClass: Abstraction is necessary */
+/** biome-ignore-all lint/suspicious/noExplicitAny: Keeping type to any to be flexible */
 import type { MockFunction } from '../../@types/test.ts';
 
 export class MockFactory {

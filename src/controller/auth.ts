@@ -21,72 +21,67 @@ const loginHandlers = factory.createHandlers(
 		return parsed.data;
 	}),
 	async (c) => {
-		const session = c.get('session');
-		const { login, password } = c.req.valid('form');
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		const redirectUrl = session.get('RedirectUrl');
-		const user = emailRegex.test(login)
-			? await prismaClient.user.findUnique({
-					where: {
-						email: login,
-					},
-				})
-			: await prismaClient.user.findUnique({
-					where: {
-						username: login,
-					},
+		try {
+			const session = c.get('session');
+			const { login, password } = c.req.valid('form');
+			const userService = ServiceFactory.getUserService();
+			const redirectUrl = session.get('RedirectUrl');
+			const user = await userService.login(login, password);
+
+			if (!user) {
+				logger.warn(
+					'not authenticated login with: ' +
+						login +
+						' and' +
+						password +
+						' credentials',
+					[login, password],
+				);
+				throw new HTTPException(404, {
+					message: 'Not user found with this credentials',
 				});
+			}
 
-		if (!user) {
-			logger.warn(
-				'not authenticated login with: ' +
-					login +
-					' and' +
-					password +
-					' credentials',
-				[login, password],
-			);
-			throw new HTTPException(404, {
-				message: 'Not user found with this credentials',
+			const verifiedPassword = await compareHash(password, user.password!);
+
+			if (!verifiedPassword) {
+				logger.warn(
+					'not authenticated login with: ' +
+						login +
+						' and' +
+						password +
+						' credentials',
+					[login, password],
+				);
+				throw new HTTPException(402, {
+					message: 'wrong password provided',
+				});
+			}
+			session.set('Auth', {
+				authenticated: true,
+				isSuperUser: false,
+				login: login,
+				id: user.id,
+				avatar: user.avatar ?? undefined,
+				username: user.username ?? undefined,
+				fullname: user.fullname ?? undefined,
 			});
-		}
+			const cookieExpiration = new Date();
+			cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+			session.set('Token', cookieExpiration.getTime().toString());
 
-		const verifiedPassword = await compareHash(password, user.password!);
-
-		if (!verifiedPassword) {
-			logger.warn(
-				'not authenticated login with: ' +
-					login +
-					' and' +
-					password +
-					' credentials',
-				[login, password],
+			await setSignedCookie(
+				c,
+				'connection_time',
+				session.get('Token')!,
+				Bun.env.SIGNED_COOKIE_SECRET!,
 			);
-			throw new HTTPException(402, {
-				message: 'wrong password provided',
-			});
-		}
-		session.set('Auth', {
-			authenticated: true,
-			isSuperUser: false,
-			login: login,
-			id: user.id,
-			avatar: user.avatar ?? undefined,
-			username: user.username ?? undefined,
-			fullname: user.fullname ?? undefined,
-		});
-		const cookieExpiration = new Date();
-		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-		session.set('Token', cookieExpiration.getTime().toString());
-
-		await setSignedCookie(
-			c,
-			'connection_time',
-			session.get('Token')!,
-			Bun.env.SIGNED_COOKIE_SECRET!,
-		);
-		if (redirectUrl) {
-			return c.redirect(redirectUrl);
+			if (redirectUrl) {
+				return c.redirect(redirectUrl);
+			}
+		} catch (err) {
+			logger.error('Login error:', err);
+			return c.json({ error: 'Login failed' }, 500);
 		}
 	},
 );
@@ -106,12 +101,15 @@ authApp.post('/register', ...registerHandlers, async (c) => {
 	const session = c.get('session');
 	const userService = ServiceFactory.getUserService();
 	const { email, fullname, password } = c.req.valid('form');
-	const user = await userService.createUser({
-		email,
-		fullname,
-		password,
-		permission: 'User',
-	}, c);
+	const user = await userService.createUser(
+		{
+			email,
+			fullname,
+			password,
+			permission: 'User',
+		},
+		c,
+	);
 
 	session.set('Auth', {
 		authenticated: true,

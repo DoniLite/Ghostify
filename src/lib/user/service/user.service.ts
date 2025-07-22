@@ -4,6 +4,7 @@ import type { User } from "@/db";
 import type { CreateUserDTO, UpdateUserDTO } from "../dto/user.entity";
 import { UserRepository } from "../repository/user.repository";
 import type { Context } from "hono";
+import { compareHash } from "@/utils/security/hash";
 
 @Service()
 export class UserService extends BaseService<
@@ -40,4 +41,26 @@ export class UserService extends BaseService<
 
 		return this.create(dto, _context);
 	}
+
+    async login(login: string, password: string): Promise<User | null> {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const user = emailRegex.test(login) ? await this.findByEmail(login) : await this.findByUsername(login);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (!user.password) {
+            throw new Error('User does not have a password set');
+        }
+        const isValid = await this.verifyPassword(password, user.password);
+        if (!isValid) {
+            throw new Error('Invalid password');
+        }
+
+        return user;
+    }
+
+    async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+        return compareHash(password, hashedPassword);
+    }
 }

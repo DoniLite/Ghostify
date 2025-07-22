@@ -1,4 +1,4 @@
-// deno-lint-ignore-file
+/** biome-ignore-all lint/suspicious/noExplicitAny: Keeping type to any to be flexible */
 import type { Hono } from 'hono';
 import type { BaseTestConfig } from '../../@types/test.ts';
 import { TestAssertions } from './Assertions.ts';
@@ -188,7 +188,7 @@ export class ApiTestUtils {
 			update: (id: any, updates: Partial<T>) => {
 				const index = data.findIndex((item: any) => item.id === id);
 				if (index >= 0) {
-					data[index] = { ...data[index], ...updates };
+					data[index] = { ...data[index], ...updates } as T;
 					return data[index];
 				}
 				return null;
@@ -197,7 +197,8 @@ export class ApiTestUtils {
 			delete: (id: any) => {
 				const index = data.findIndex((item: any) => item.id === id);
 				if (index >= 0) {
-					return data.splice(index, 1)[0];
+					const deleted = data.splice(index, 1)[0];
+					return deleted !== undefined ? deleted : null;
 				}
 				return null;
 			},
@@ -218,6 +219,7 @@ export class ApiTestUtils {
 		expectedEffect: (response: Response) => void | Promise<void>,
 	): Promise<void> {
 		const methodName = method.toLowerCase() as keyof ApiTestUtils;
+		// biome-ignore lint/complexity/noBannedTypes: cannot determine function signature
 		const response = await (this[methodName] as Function)(path);
 		await expectedEffect(response);
 	}

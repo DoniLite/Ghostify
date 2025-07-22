@@ -10,13 +10,19 @@ import {
 } from '../templates/openGraph';
 
 export class OGImageGenerator {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// biome-ignore lint/suspicious/noExplicitAny: Dynamic font loading
 	private fonts: any[] = [];
 	private fontsLoaded = false;
 
 	constructor() {
 		this.initializeFonts();
 	}
+
+	
+	public get getCache(): Map<string, { data: Uint8Array; timestamp: number }> {
+		return this.cache;
+	}
+	
 
 	private async initializeFonts() {
 		try {
@@ -48,7 +54,6 @@ export class OGImageGenerator {
 		params: OGImageParams,
 		data?: DocumentOGData,
 	): Promise<Uint8Array> {
-		// Attendre que les polices soient chargées si ce n'est pas déjà fait
 		if (!this.fontsLoaded) {
 			await this.initializeFonts();
 		}
@@ -56,7 +61,6 @@ export class OGImageGenerator {
 		const template = this.getTemplate(params, data);
 
 		try {
-			// Générer le SVG avec Satori
 			const svg = await satori(template, {
 				width: 1200,
 				height: 630,
@@ -74,7 +78,6 @@ export class OGImageGenerator {
 							],
 			});
 
-			// Convertir le SVG en PNG avec resvg
 			const resvgInstance = new Resvg(svg);
 			const pngData = resvgInstance.render();
 
@@ -88,7 +91,6 @@ export class OGImageGenerator {
 		}
 	}
 
-	// Méthode utilitaire pour générer une image et la retourner en base64
 	async generateImageBase64(
 		params: OGImageParams,
 		data?: DocumentOGData,
@@ -97,9 +99,8 @@ export class OGImageGenerator {
 		return `data:image/png;base64,${btoa(String.fromCharCode(...imageBuffer))}`;
 	}
 
-	// Cache simple en mémoire (à améliorer avec Redis/KV en production)
 	private cache = new Map<string, { data: Uint8Array; timestamp: number }>();
-	private readonly CACHE_TTL = 3600000; // 1 heure
+	private readonly CACHE_TTL = 3600000;
 
 	private getCacheKey(params: OGImageParams, data?: DocumentOGData): string {
 		return `og_${params.type}_${JSON.stringify(params)}_${JSON.stringify(data)}`;
@@ -145,7 +146,7 @@ setInterval(() => {
 	ogGenerator.cleanCache();
 }, 3600000);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: the params is validated
 export function validateOGParams(params: any): params is OGImageParams {
 	return (
 		typeof params === 'object' &&

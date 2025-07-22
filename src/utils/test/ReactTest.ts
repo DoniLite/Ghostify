@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/** biome-ignore-all lint/suspicious/noExplicitAny: Keeping type to any to be flexible */
 import {
 	cleanup,
 	type RenderOptions,

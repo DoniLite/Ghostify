@@ -1,4 +1,4 @@
-// deno-lint-ignore-file no-explicit-any
+/** biome-ignore-all lint/suspicious/noExplicitAny: Keeping type to any to be flexible */
 import type { BaseTestConfig, MockFunction } from '../../@types/test.ts';
 import { TestAssertions } from './Assertions.ts';
 import { MockFactory } from './MockFactory.ts';

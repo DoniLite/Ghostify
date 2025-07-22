@@ -27,7 +27,6 @@ og.get('/', async (c) => {
 			brandColor: searchParams.get('brandColor') || '#ff6b35',
 		};
 
-		// Validation des paramètres
 		if (!validateOGParams(params)) {
 			throw new ValidationError(
 				'Invalidated params for the OG image generator',
@@ -103,11 +102,9 @@ og.get('/preview', async (c) => {
 
 		const imageBuffer = await ogGenerator.generateImage(params, mockData);
 
-		return new Response(imageBuffer, {
-			headers: {
-				'Content-Type': 'image/png',
-				'Cache-Control': 'no-cache',
-			},
+		return c.newResponse(imageBuffer, 200, {
+			'Content-Type': 'image/png',
+			'Cache-Control': 'no-cache',
 		});
 	} catch (error) {
 		console.error('Preview generation error:', error);
@@ -115,7 +112,6 @@ og.get('/preview', async (c) => {
 	}
 });
 
-// Route pour les pages statiques du site
 og.get('/page/:pageType', async (c) => {
 	const pageType = c.req.param('pageType');
 
@@ -123,22 +119,22 @@ og.get('/page/:pageType', async (c) => {
 		home: {
 			type: 'page',
 			title: 'Boost your productivity',
-			description: 'Plateforme de création et partage de documents et CV',
+			description: 'Resume creation made easy with Ghostify',
 		},
 		pricing: {
 			type: 'page',
 			title: 'Pricing',
-			description: 'Choisissez le plan qui vous convient',
+			description: 'Choose the plan that suits you best',
 		},
 		features: {
 			type: 'page',
 			title: 'Features',
-			description: 'Découvrez toutes les fonctionnalités de Ghostify',
+			description: 'Discover the features of Ghostify',
 		},
 		templates: {
 			type: 'page',
 			title: 'Templates',
-			description: 'Modèles professionnels pour vos documents et CV',
+			description: 'Professional templates for your documents and resumes',
 		},
 	};
 
@@ -150,19 +146,16 @@ og.get('/page/:pageType', async (c) => {
 	try {
 		const imageBuffer = await ogGenerator.generateImageWithCache(config);
 
-		return new Response(imageBuffer, {
-			headers: {
-				'Content-Type': 'image/png',
-				'Cache-Control': 'public, max-age=86400', // 24h pour les pages statiques
-			},
+		return c.newResponse(imageBuffer, 200, {
+			'Content-Type': 'image/png',
+			'Cache-Control': 'public, max-age=86400',
 		});
 	} catch (error) {
 		console.error('Static page OG generation error:', error);
-		return c.json({ error: 'Erreur lors de la génération' }, 500);
+		return c.json({ error: 'Error during the image generation' }, 500);
 	}
 });
 
-// Fonction utilitaire pour récupérer les données d'un document
 // async function getDocumentData(
 function getDocumentData(
 	_documentId: string,
@@ -170,15 +163,8 @@ function getDocumentData(
 	// ): Promise<DocumentOGData | undefined> {
 ): DocumentOGData | undefined {
 	try {
-		// Ici tu intègres ta logique de récupération depuis ta base de données
-		// Exemple avec une API ou une base de données
-
-		// const response = await fetch(`/api/documents/${documentId}?userId=${userId}`);
-		// const document = await response.json();
-
-		// Pour l'exemple, retour de données factices
 		return {
-			title: 'Mon Document Professionnel',
+			title: 'My professional document',
 			author: 'John Doe',
 			type: 'document',
 			createdAt: new Date().toISOString(),
@@ -190,13 +176,12 @@ function getDocumentData(
 	}
 }
 
-// Route de santé/debug
 og.get('/health', (c) => {
 	return c.json({
 		status: 'ok',
 		service: 'og-image-generator',
 		timestamp: new Date().toISOString(),
-		cache_size: ogGenerator['cache']?.size || 0,
+		cache_size: ogGenerator.getCache?.size || 0,
 	});
 });
 
