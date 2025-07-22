@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/complexity/noBannedTypes: Functions type definition will be a little complex here */
+import { ensureUrlEnd } from '@/utils/shared.helpers';
 import { WEBSOCKET_BASE_URL } from '../constants/services_url';
 
 export class CollaborationService {
@@ -20,7 +21,7 @@ export class CollaborationService {
 		try {
 			// Compatible websocket connection for Hono
 			this.ws = new WebSocket(
-				`${this.WEBSOCKET_BASE_URL}${this.documentId}?userId=${this.userId}`,
+				`${this.WEBSOCKET_BASE_URL}${ensureUrlEnd(this.documentId)}?userId=${this.userId}`,
 			);
 
 			this.ws.onopen = () => {

@@ -4,7 +4,7 @@ import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
 import { factory, ServiceFactory } from '../factory';
 import { LoginSchema, RegisterSchema } from '../forms/auth/schema';
-import { authMiddleware } from '../hooks/auth';
+import { authMiddleware } from '../hooks/server/auth';
 import { logger } from '../logger';
 import { compareHash } from '../utils/security/hash';
 import dashboardApp from './dashboard';

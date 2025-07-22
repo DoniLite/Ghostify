@@ -3,7 +3,7 @@
     // Environment setup & latest features
     "lib": ["ESNext", "DOM", "DOM.Iterable", "DOM.AsyncIterable", "WebWorker"],
     "target": "ESNext",
-    "module": "Preserve",
+    "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
@@ -24,6 +24,7 @@
     // Some stricter flags (disabled by default)
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "noUnusedLocals": false,
     "noUnusedParameters": false,

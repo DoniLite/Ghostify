@@ -1,4 +1,4 @@
-import type { OGImageParams } from '../@types/og';
+import type { OGImageParams } from '../../@types/og';
 
 export function useOGImage(
 	type: 'page' | 'document' | 'resume',
@@ -8,7 +8,9 @@ export function useOGImage(
 	searchParams.set('type', type);
 
 	Object.entries(params).forEach(([key, value]) => {
-		if (value) searchParams.set(key, String(value));
+		if (value) {
+			searchParams.set(key, String(value));
+		}
 	});
 
 	return `/api/v1/og?${searchParams.toString()}`;

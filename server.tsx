@@ -2,7 +2,7 @@ import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/bun';
+import { createBunWebSocket, serveStatic } from 'hono/bun';
 // import { jwt } from 'hono/jwt';
 import { cache } from 'hono/cache';
 // import { compress } from 'hono/compress';
@@ -20,11 +20,12 @@ import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
 // import { getThemeScript } from './src/components/shared/ThemeProvider';
-import sessionManager from './src/hooks/sessionStorage';
+import sessionManager from './src/hooks/server/sessionStorage';
 import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
+import type { ServerWebSocket } from 'bun';
 
 const SERVER_PORT = 8080;
 
@@ -38,6 +39,31 @@ const app = new Hono<{
 }>();
 
 const store = new CookieStore();
+
+const { upgradeWebSocket, websocket } = createBunWebSocket<ServerWebSocket>();
+
+app.get(
+	'/ws/document/:docId',
+	upgradeWebSocket((c) => {
+		// Example: pass ?id=123 to join a specific doc room
+		const docId = c.req.query('id') ?? 'default';
+
+		return {
+			onOpen(_evt, ws) {
+				// Bun’s native pub/sub helpers
+				ws.raw?.subscribe(`doc:${docId}`);
+				ws.send(`Joined document ${docId}`);
+			},
+			onMessage(evt, ws) {
+				// Broadcast edit to everyone in the room
+				ws.raw?.publish(`doc:${docId}`, evt.data.toString());
+			},
+			onClose() {
+				console.log(`Socket closed for doc ${docId}`);
+			},
+		};
+	}),
+);
 
 // Middlewares
 app.use(
@@ -197,5 +223,6 @@ app.get('*', async (c) => {
 Bun.serve({
 	port: SERVER_PORT,
 	fetch: app.fetch,
+	websocket,
 });
 console.log('Server is running on the port: ', SERVER_PORT);

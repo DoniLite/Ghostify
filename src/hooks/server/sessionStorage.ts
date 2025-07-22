@@ -1,4 +1,4 @@
-import { factory } from '../factory';
+import { factory } from '../../factory';
 
 const sessionMiddleware = factory.createMiddleware(async (c, next) => {
 	const session = c.get('session');

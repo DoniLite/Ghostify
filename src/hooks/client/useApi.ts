@@ -11,7 +11,7 @@ import {
 	type RouteEndpoint,
 	type RouteKey,
 	type UseApiReturn,
-} from '../@types/api';
+} from '../../@types/api';
 
 class ApiClient {
 	private baseURL: string;

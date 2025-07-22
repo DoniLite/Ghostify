@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Manipulation of method params is needed here due to the fact that there inference are complex we will keep this */
-import { Context } from 'node_modules/hono/dist/types/context';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
+import type { Context } from 'hono';
 
 const REPOSITORY_METADATA = Symbol('repository');
 const SERVICE_METADATA = Symbol('service');
@@ -24,6 +24,7 @@ export function Service() {
 
 export function DTO() {
 	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
+		console.log(`Marking ${cons.name} as DTO`);
 		Reflect.defineMetadata(DTO_METADATA, true, cons);
 		return cons;
 	};
@@ -50,7 +51,9 @@ export function ValidateDTO(provider: 'json' | 'formData' | 'query' = 'json') {
 		}
 
 		descriptor.value = async function (...args: any[]) {
-			const c: Context | undefined = args.find((arg) => arg instanceof Context);
+			const c: Context | undefined = args.find(
+				(arg) => arg && typeof arg === 'object' && 'req' in arg && 'json' in arg
+			);
 
 			if (!c) {
 				throw new Error(

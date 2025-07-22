@@ -13,7 +13,9 @@ const flags = {
 const root = process.cwd();
 
 function ensureDirSync(dir: string) {
-	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+	if (!existsSync(dir)) {
+		mkdirSync(dir, { recursive: true });
+	}
 }
 
 ensureDirSync(path.join(root, 'static/js'));
@@ -35,8 +37,6 @@ async function buildNormal() {
 			'src/client/**/*.{ts,js,jsx,tsx}',
 		])
 		.map((file) => path.resolve(root, file));
-	
-		console.dir('Entry points', entryPoints)
 
 	if (entryPoints.length > 0) {
 		await Bun.build({

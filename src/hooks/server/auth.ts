@@ -6,7 +6,7 @@ import {
 	// setCookie,
 	setSignedCookie,
 } from 'hono/cookie';
-import { factory } from '../factory';
+import { factory } from '../../factory';
 
 const OPEN_ROUTES = ['/home'];
 const AUTH_ROUTES = [

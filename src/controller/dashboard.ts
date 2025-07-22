@@ -1,5 +1,5 @@
 import { factory } from '../factory';
-import { authMiddleware } from '../hooks/auth';
+import { authMiddleware } from '../hooks/server/auth';
 
 const dashboardApp = factory.createApp();
 
