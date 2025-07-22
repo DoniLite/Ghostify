@@ -38,7 +38,7 @@ services:
       POSTGRES_PASSWORD: doni_lite_is_the_server_owner_password
       POSTGRES_DB: ghostify_db
     ports:
-      - '5433:5432'
+      - '5436:5432'
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', 'ghostify', '-d', 'ghostify']
       interval: 10s

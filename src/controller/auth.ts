@@ -2,8 +2,7 @@
 import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
-import { prismaClient } from '../config/db';
-import { factory } from '../factory';
+import { factory, ServiceFactory } from '../factory';
 import { LoginSchema, RegisterSchema } from '../forms/auth/schema';
 import { authMiddleware } from '../hooks/auth';
 import { logger } from '../logger';
@@ -105,15 +104,14 @@ const registerHandlers = factory.createHandlers(
 authApp.post('/login', ...loginHandlers);
 authApp.post('/register', ...registerHandlers, async (c) => {
 	const session = c.get('session');
+	const userService = ServiceFactory.getUserService();
 	const { email, fullname, password } = c.req.valid('form');
-	const user = await prismaClient.user.create({
-		data: {
-			email,
-			fullname,
-			password,
-			permission: 'User',
-		},
-	});
+	const user = await userService.createUser({
+		email,
+		fullname,
+		password,
+		permission: 'User',
+	}, c);
 
 	session.set('Auth', {
 		authenticated: true,

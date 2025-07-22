@@ -1,14 +1,7 @@
 import { factory } from '../factory';
-import { loadKeys, saveKeys } from '../utils/security/cryptography';
 
 const sessionMiddleware = factory.createMiddleware(async (c, next) => {
 	const session = c.get('session');
-	const keys = await loadKeys();
-	if (!keys) {
-		await saveKeys();
-		session.set('ServerKeys', await loadKeys());
-	}
-	session.set('ServerKeys', keys);
 	if (!session.get('Auth')) {
 		session.set('Auth', {
 			authenticated: false,

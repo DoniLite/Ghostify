@@ -41,7 +41,7 @@ export interface Secrets {
 export type Actions<T, U extends keyof T = keyof T> = Pick<T, U>;
 
 export interface Auth {
-	id?: number | string;
+	id?: string;
 	login?: string;
 	isSuperUser?: boolean;
 	authenticated: boolean;
