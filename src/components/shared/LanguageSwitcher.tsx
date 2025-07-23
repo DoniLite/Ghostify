@@ -1,5 +1,11 @@
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import type { Locale } from '../../@types/translation';
 import { useTranslation } from './TranslationContext';
+import {
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 export function LanguageSwitcher() {
 	const { locale, setLocale, availableLocales } = useTranslation();
@@ -11,16 +17,23 @@ export function LanguageSwitcher() {
 	};
 
 	return (
-		<select
-			value={locale}
-			onChange={(e) => setLocale(e.target.value as Locale)}
-			className="border-border bg-card text-card-foreground rounded-md border px-3 py-2"
-		>
-			{availableLocales.map((loc) => (
-				<option key={loc} value={loc}>
-					{localeNames[loc]}
-				</option>
-			))}
-		</select>
+		<DropdownMenu>
+			<DropdownMenuTrigger className="border-border border w-10 h-10 rounded-md bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+				{locale}
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className="border-border bg-card text-card-foreground rounded-md border">
+				{availableLocales
+					.filter((loc) => loc !== locale)
+					.map((loc) => (
+						<DropdownMenuItem
+							key={loc}
+							onSelect={() => setLocale(loc)}
+							className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
+						>
+							{localeNames[loc]}
+						</DropdownMenuItem>
+					))}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
