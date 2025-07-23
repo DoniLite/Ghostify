@@ -24,14 +24,14 @@ export const useAuthStore = create<AuthStore>()((set) => ({
 	setConnected: () =>
 		set((state) => ({
 			...state,
-			auth: { ...state['auth'], authenticated: true },
+			auth: { ...state.auth, authenticated: true },
 		})),
 	disconnect: async () => {},
 	setPayload: (payload) =>
 		set((state) => ({
 			...state,
 			auth: {
-				...state['auth'],
+				...state.auth,
 				payload,
 			},
 		})),
@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
 		set((state) => ({
 			...state,
 			auth: {
-				...state['auth'],
+				...state.auth,
 				payload: undefined,
 			},
 		})),

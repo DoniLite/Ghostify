@@ -1,11 +1,11 @@
 import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import type { Locale } from '../../@types/translation';
-import { useTranslation } from './TranslationContext';
 import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { useTranslation } from './TranslationContext';
 
 export function LanguageSwitcher() {
 	const { locale, setLocale, availableLocales } = useTranslation();

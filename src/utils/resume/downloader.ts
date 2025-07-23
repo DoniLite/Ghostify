@@ -1,9 +1,8 @@
-import path from 'path';
+import path from 'node:path';
 import puppeteer, { type Page } from 'puppeteer';
 import { z } from 'zod';
 import { tokenGenerator } from '../security/jwt.ts';
 
-// Schéma de validation des options
 const ContentDownloaderSchema = z.object({
 	url: z.string().optional(),
 	content: z.string().optional(),
@@ -15,7 +14,6 @@ const ContentDownloaderSchema = z.object({
 		.optional(),
 });
 
-// Type générique pour les options de téléchargement
 export type ContentDownloaderOptions = {
 	url?: string;
 	content?: string;
@@ -25,12 +23,10 @@ export type ContentDownloaderOptions = {
 	};
 };
 
-// Type générique pour la fonction de transformation
 export type PageTransformFn<TReturn = void> = (
 	page: Page,
 ) => TReturn | Promise<TReturn>;
 
-// Type utilitaire pour inférer le type de retour conditionnel
 type InferDownloadResult<
 	TOptions extends ContentDownloaderOptions,
 	TFn extends PageTransformFn | undefined,
@@ -53,20 +49,17 @@ type InferDownloadResult<
 /**
  * @unsafe
  *
- * Fonction de téléchargement de contenu hautement générique
+ * Content downloading function with generic types
  */
 export async function contentDownloader<
 	TOptions extends ContentDownloaderOptions,
 	TFn extends PageTransformFn | undefined = undefined,
 >(opts: TOptions, fn?: TFn): Promise<InferDownloadResult<TOptions, TFn>> {
-	// Validation des options
 	ContentDownloaderSchema.parse(opts);
 
-	// Chemins statiques
-	const STATIC_DIR = path.resolve(Deno.cwd(), './static/downloads/doc');
-	const STATIC_IMG_DIR = path.resolve(Deno.cwd(), './static/downloads/cv');
+	const STATIC_DIR = path.resolve(process.cwd(), './static/downloads/doc');
+	const STATIC_IMG_DIR = path.resolve(process.cwd(), './static/downloads/cv');
 
-	// Lancement du navigateur
 	const browser = await puppeteer.launch({
 		args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
 	});
@@ -76,14 +69,12 @@ export async function contentDownloader<
 	try {
 		page = await browser.newPage();
 
-		// Chargement du contenu
 		if (opts.content) {
 			await page.setContent(opts.content, { waitUntil: 'networkidle0' });
 		} else if (opts.url) {
 			await page.goto(opts.url, { waitUntil: 'networkidle0' });
 		}
 
-		// Gestion des chemins de fichiers
 		if (opts.path) {
 			const { pdf, png } = opts.path;
 			const pdfFilePath = path.join(STATIC_DIR, pdf);
@@ -103,7 +94,6 @@ export async function contentDownloader<
 				}),
 			]);
 
-			// Génération des tokens
 			const [imageToken, pdfToken] = await Promise.all([
 				tokenGenerator({ path: `download/${png}` }),
 				tokenGenerator({ path: `download/${pdf}` }),
@@ -117,7 +107,6 @@ export async function contentDownloader<
 			} as InferDownloadResult<TOptions, TFn>;
 		}
 
-		// Exécution de la fonction personnalisée
 		if (fn) {
 			const result = await fn(page);
 			await page.close();

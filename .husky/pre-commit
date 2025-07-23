@@ -1,1 +1,4 @@
+echo "Running test suite..."
 bun test
+echo "Running linting and formatting..."
+bun fmt:check

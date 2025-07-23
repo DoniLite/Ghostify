@@ -1,8 +1,8 @@
 import { BaseRepository } from '@/core/base.repository';
 import { Repository } from '@/core/decorators';
 import { type User, UserTable } from '@/db';
-import type { CreateUserDTO, UpdateUserDTO } from '../dto/user.dto';
 import { DocumentRepository } from '../../document/repository/document.repository';
+import type { CreateUserDTO, UpdateUserDTO } from '../dto/user.dto';
 
 @Repository('user')
 export class UserRepository extends BaseRepository<

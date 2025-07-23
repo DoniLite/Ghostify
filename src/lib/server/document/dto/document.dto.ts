@@ -1,6 +1,6 @@
+import { IsObject, IsOptional, IsString } from 'class-validator';
 import { DTO } from '@/core/decorators';
 import { BaseCreateDTO, BaseUpdateDTO } from '@/core/dto';
-import { IsObject, IsOptional, IsString } from 'class-validator';
 
 @DTO()
 export class CreateDocumentDto extends BaseCreateDTO {
@@ -33,7 +33,7 @@ export class UpdateDocumentDto extends BaseUpdateDTO {
 	@IsOptional()
 	downLoadLink?: string;
 
-    @IsObject()
-    @IsOptional()
-    data?: Record<string| number, unknown>;
+	@IsObject()
+	@IsOptional()
+	data?: Record<string | number, unknown>;
 }

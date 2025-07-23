@@ -5,7 +5,7 @@ import { cors } from 'hono/cors';
  * Allowed origins are sourced from the CORS_ORIGINS environment variable (comma-separated).
  */
 export const allowedOrigins = Bun.env.CORS_ORIGINS
-	? Bun.env.CORS_ORIGINS!.split(',').map((origin) => origin.trim())
+	? (Bun.env.CORS_ORIGINS ?? '').split(',').map((origin) => origin.trim())
 	: [];
 
 export const serverCors = () =>
