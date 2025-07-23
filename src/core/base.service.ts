@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
 import type { BaseRepository } from './base.repository';
-import type { BaseEntity } from './types/base';
 import { ValidateDTO } from './decorators';
+import type { BaseEntity } from './types/base';
 
 export abstract class BaseService<
 	T extends BaseEntity,

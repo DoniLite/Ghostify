@@ -1,7 +1,7 @@
 import { createFactory } from 'hono/factory';
 import type { Variables } from '../server';
-import { UserService } from './lib/server/user/service/user.service';
 import { DocumentService } from './lib/server/document/service/document.service';
+import { UserService } from './lib/server/user/service/user.service';
 
 export const factory = createFactory<{
 	Variables: Variables;

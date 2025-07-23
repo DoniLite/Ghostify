@@ -18,6 +18,7 @@ import { stream } from 'hono/streaming';
 import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
+import { ValidationError } from '@/core/decorators';
 import authApp from '@/routes/auth/auth';
 import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
@@ -28,7 +29,6 @@ import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
-import { ValidationError } from '@/core/decorators';
 
 const SERVER_PORT = 8080;
 
