@@ -1,5 +1,5 @@
 import { factory } from './factory';
-import OgRoutes from './routes/og';
+import OgRoutes from './routes/services/og';
 import { serverCors } from './utils/security/cors';
 
 const ApiRoutes = factory.createApp();

@@ -3,12 +3,11 @@ import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
 import { ValidationError } from '@/core/decorators';
-import { factory, ServiceFactory } from '../factory';
-import { LoginSchema } from '../forms/auth/schema';
-import { authMiddleware } from '../hooks/server/auth';
-import { logger } from '../logger';
-import { compareHash } from '../utils/security/hash';
-import dashboardApp from './dashboard';
+import { factory, ServiceFactory } from '../../factory';
+import { LoginSchema } from '../../forms/auth/schema';
+import { authMiddleware } from '../../hooks/server/auth';
+import { logger } from '../../logger';
+import { compareHash } from '../../utils/security/hash';
 
 const authApp = factory.createApp();
 
@@ -131,7 +130,5 @@ authApp.post('/register', async (c) => {
 		return c.json({ error: 'Internal server error' }, 500);
 	}
 });
-
-authApp.route('/dashboard', dashboardApp);
 
 export default authApp;

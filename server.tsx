@@ -18,7 +18,7 @@ import { stream } from 'hono/streaming';
 import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import authApp from '@/controller/auth';
+import authApp from '@/routes/auth/auth';
 import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
