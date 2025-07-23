@@ -1,10 +1,10 @@
-import { factory } from '../factory.ts';
-import { authMiddleware } from '../hooks/auth.ts';
+import { factory } from '../factory';
+import { authMiddleware } from '../hooks/server/auth';
 
 const dashboardApp = factory.createApp();
 
 dashboardApp.get('/', authMiddleware, (c) => {
-  return c.html('');
+	return c.html('');
 });
 
 export default dashboardApp;

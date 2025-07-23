@@ -1,5 +1,4 @@
-import { factory } from '../../../factory.ts';
-
+import { factory } from '../../../factory';
 
 const googleAuthApp = factory.createApp();
 

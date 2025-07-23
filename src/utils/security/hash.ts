@@ -1,15 +1,10 @@
-import { Buffer } from 'node:buffer';
-import bcrypt from 'bcrypt';
+import type { Buffer } from 'node:buffer';
+import { password } from 'bun';
 
-export const hashSomething = async (
-  data: string | Buffer,
-  saltRound?: number,
-) => {
-  const round = saltRound || 14;
-  const salt = await bcrypt.genSalt(round);
-  return await bcrypt.hash(data, salt);
+export const hashSomething = async (data: string | Buffer) => {
+	return await password.hash(data, 'bcrypt');
 };
 
 export const compareHash = async (data: string | Buffer, hash: string) => {
-  return await bcrypt.compare(data, hash);
+	return await password.verify(data, hash, 'bcrypt');
 };

@@ -1,0 +1,2 @@
+echo "Running commit message linting..."
+bunx commitlint --edit $1

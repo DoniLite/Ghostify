@@ -1,7 +1,9 @@
-export { ApiTestUtils } from './ApiTest.ts';
-export { UnitTestUtils } from './UnitTest.ts';
-export { TestAssertions } from './Assertions.ts';
-export { MockFactory } from './MockFactory.ts';
-export type { ApiTestConfig } from './ApiTest.ts';
-export type { UnitTestConfig } from './UnitTest.ts';
-export type { BaseTestConfig, MockFunction } from '../../@types/test.ts';
+export type { BaseTestConfig, MockFunction } from '../../@types/test';
+export type { ApiTestConfig } from './ApiTest';
+export { ApiTestUtils } from './ApiTest';
+export { TestAssertions } from './Assertions';
+export { MockFactory } from './MockFactory';
+export type { ReactTestConfig } from './ReactTest';
+export { ReactTestUtils } from './ReactTest';
+export type { UnitTestConfig } from './UnitTest';
+export { UnitTestUtils } from './UnitTest';

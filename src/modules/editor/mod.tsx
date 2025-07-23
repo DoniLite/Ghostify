@@ -1,1 +1,1 @@
-export { Editor } from './components/Editor.tsx';
+export { Editor } from './components/Editor';

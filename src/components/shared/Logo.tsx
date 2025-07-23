@@ -1,12 +1,12 @@
-import { Ghostify } from './Icons.tsx';
+import { Ghostify } from './Icons';
 
-const Logo = ({...props}: Record<string, unknown>) => (
-  <div className='flex flex-col justify-center h-full items-center' {...props}>
-    <h1 className='text-xl text-bold dark:text-white text-gray-950 font-cookie bg-transparent'>
-      Ghostify
-    </h1>
-    <Ghostify color='w-6 h-6' />
-  </div>
+const Logo = ({ ...props }: Record<string, unknown>) => (
+	<div className="flex h-full flex-col items-center justify-center" {...props}>
+		<h1 className="text-bold font-cookie bg-transparent text-xl text-gray-950 dark:text-white">
+			Ghostify
+		</h1>
+		<Ghostify color="w-6 h-6" />
+	</div>
 );
 
 export default Logo;

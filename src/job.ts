@@ -1,15 +1,16 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: Redis host will never be undefined because it's injected in the env vars on the server startup */
+import type { NotificationType } from '@prisma/client';
 import Queue from 'bull';
-import { NotificationType } from '@prisma/client';
 
 export const resumeQueue = new Queue<{
-  url: string;
-  id: number;
-  updating?: boolean;
-  docId?: number;
-}>('cv-processor', Deno.env.get('REDIS_HOST')!);
+	url: string;
+	id: string;
+	updating?: boolean;
+	docId?: string;
+}>('cv-processor', Bun.env.REDIS_HOST!);
 
 export const NotificationQueue = new Queue<{
-  userId: number;
-  type: NotificationType;
-  payload: Record<string | number | symbol, unknown>;
-}>('notifications', Deno.env.get('REDIS_HOST')!);
+	userId: string;
+	type: NotificationType;
+	payload: Record<string | number | symbol, unknown>;
+}>('notifications', Bun.env.REDIS_HOST!);

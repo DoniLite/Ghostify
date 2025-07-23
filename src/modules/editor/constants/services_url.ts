@@ -1,6 +1,4 @@
-import { getEnvConfig } from '../../../config/client/env.ts';
+import { ensureUrlEnd } from '@/utils/shared.helpers';
 
-const config = getEnvConfig();
-
-export const WEBSOCKET_BASE_URL = config.WEBSOCKET_BASE_URL;
-export const API_BASE_URL = config.API_BASE_URL;
+export const WEBSOCKET_BASE_URL = `${ensureUrlEnd(process.env.WEBSOCKET_BASE_URL ?? '')}document`;
+export const API_BASE_URL = ensureUrlEnd(process.env.API_BASE_URL ?? '');

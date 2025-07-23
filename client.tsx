@@ -1,15 +1,15 @@
 import { hydrateRoot } from 'react-dom/client';
-import App from './src/App.tsx';
 import { BrowserRouter } from 'react-router-dom';
+import App from './src/App';
 
 hydrateRoot(
-  document,
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-  {
-    onCaughtError(err) {
-      console.error('error during the rendering ====> ', err)
-    }
-  }
+	document,
+	<BrowserRouter>
+		<App />
+	</BrowserRouter>,
+	{
+		onCaughtError(err) {
+			console.error('error during the rendering ====> ', err);
+		},
+	},
 );

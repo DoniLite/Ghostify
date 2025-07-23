@@ -1,170 +1,137 @@
-import { factory } from '../factory.ts';
-import { authMiddleware } from '../hooks/auth.ts';
-import { validator } from 'hono/validator';
-import { prismaClient } from '../config/db.ts';
-import { HTTPException } from 'hono/http-exception';
+/** biome-ignore-all lint/style/noNonNullAssertion: All assertions will be always available */
 import { setSignedCookie } from 'hono/cookie';
-import { logger } from '../logger.ts';
-import dashboardApp from './dashboard.ts';
-import { compareHash } from '../utils/security/hash.ts';
-import { LoginSchema, RegisterSchema } from '../forms/auth/schema.ts';
+import { HTTPException } from 'hono/http-exception';
+import { validator } from 'hono/validator';
+import { ValidationError } from '@/core/decorators';
+import { factory, ServiceFactory } from '../factory';
+import { LoginSchema } from '../forms/auth/schema';
+import { authMiddleware } from '../hooks/server/auth';
+import { logger } from '../logger';
+import { compareHash } from '../utils/security/hash';
+import dashboardApp from './dashboard';
 
 const authApp = factory.createApp();
 
 const loginHandlers = factory.createHandlers(
-  authMiddleware,
-  validator('form', (value, c) => {
-    const parsed = LoginSchema.safeParse(value);
-    if (!parsed.success) {
-      return c.text('Invalid!', 401);
-    }
-    return parsed.data;
-  }),
-  async (c) => {
-    const session = c.get('session');
-    const { login, password } = c.req.valid('form');
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const redirectUrl = session.get('RedirectUrl');
-    const user = emailRegex.test(login)
-      ? await prismaClient.user.findUnique({
-        where: {
-          email: login,
-        },
-      })
-      : await prismaClient.user.findUnique({
-        where: {
-          username: login,
-        },
-      });
+	authMiddleware,
+	validator('form', (value, c) => {
+		const parsed = LoginSchema.safeParse(value);
+		if (!parsed.success) {
+			return c.text('Invalid!', 401);
+		}
+		return parsed.data;
+	}),
+	async (c) => {
+		try {
+			const session = c.get('session');
+			const { login, password } = c.req.valid('form');
+			const userService = ServiceFactory.getUserService();
+			const redirectUrl = session.get('RedirectUrl');
+			const user = await userService.login(login, password);
 
-    if (!user) {
-      logger.warn(
-        'not authenticated login with: ' +
-          login +
-          ' and' +
-          password +
-          ' credentials',
-        [login, password],
-      );
-      throw new HTTPException(404, {
-        message: 'Not user found with this credentials',
-      });
-    }
+			if (!user) {
+				logger.warn(
+					'not authenticated login with: ' +
+						login +
+						' and' +
+						password +
+						' credentials',
+					[login, password],
+				);
+				throw new HTTPException(404, {
+					message: 'Not user found with this credentials',
+				});
+			}
 
-    const verifiedPassword = await compareHash(password, user.password!);
+			const verifiedPassword = await compareHash(password, user.password!);
 
-    if (!verifiedPassword) {
-      logger.warn(
-        'not authenticated login with: ' +
-          login +
-          ' and' +
-          password +
-          ' credentials',
-        [login, password],
-      );
-      throw new HTTPException(402, {
-        message: 'wrong password provided',
-      });
-    }
-    session.set('Auth', {
-      authenticated: true,
-      isSuperUser: false,
-      login: login,
-      id: user.id,
-      avatar: user.file ?? undefined,
-      username: user.username ?? undefined,
-      fullname: user.fullname ?? undefined,
-    });
-    const cookieExpiration = new Date();
-    cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-    session.set('Token', cookieExpiration.getTime().toString());
+			if (!verifiedPassword) {
+				logger.warn(
+					'not authenticated login with: ' +
+						login +
+						' and' +
+						password +
+						' credentials',
+					[login, password],
+				);
+				throw new HTTPException(402, {
+					message: 'wrong password provided',
+				});
+			}
+			session.set('Auth', {
+				authenticated: true,
+				isSuperUser: false,
+				login: login,
+				id: user.id,
+				avatar: user.avatar ?? undefined,
+				username: user.username ?? undefined,
+				fullname: user.fullname ?? undefined,
+			});
+			const cookieExpiration = new Date();
+			cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+			session.set('Token', cookieExpiration.getTime().toString());
 
-    await setSignedCookie(
-      c,
-      'connection_time',
-      session.get('Token')!,
-      Deno.env.get('SIGNED_COOKIE_SECRET')!,
-    );
-    if (redirectUrl) {
-      return c.redirect(redirectUrl);
-    }
-  },
-);
-
-const registerHandlers = factory.createHandlers(
-  validator('form', (value, c) => {
-    const parsed = RegisterSchema.safeParse(value);
-    if (!parsed.success) {
-      return c.text('Invalid!', 401);
-    }
-    return parsed.data;
-  }),
+			await setSignedCookie(
+				c,
+				'connection_time',
+				session.get('Token')!,
+				Bun.env.SIGNED_COOKIE_SECRET!,
+			);
+			if (redirectUrl) {
+				return c.redirect(redirectUrl);
+			}
+		} catch (err) {
+			logger.error('Login error:', err);
+			return c.json({ error: 'Login failed' }, 500);
+		}
+	},
 );
 
 authApp.post('/login', ...loginHandlers);
-authApp.post(
-  '/register',
-  ...registerHandlers,
-  async (c) => {
-    const session = c.get('session');
-    const { email, fullname, password } = c.req.valid('form');
-    const user = await prismaClient.user.create({
-      data: {
-        email,
-        fullname,
-        password,
-        permission: 'User'
-      },
-    });
+authApp.post('/register', async (c) => {
+	try {
+		const session = c.get('session');
+		const userService = ServiceFactory.getUserService();
+		const { email, fullname, password } = await c.req.json();
+		const user = await userService.createUser(
+			{
+				email,
+				fullname,
+				password,
+				permission: 'User',
+			},
+			c,
+		);
+		console.log('Created User ===> ', user);
 
-    session.set('Auth', {
-      authenticated: true,
-      isSuperUser: false,
-      login: email,
-      id: user.id,
-      avatar: user.file ?? undefined,
-      username: user.username ?? undefined,
-      fullname: user.fullname ?? undefined,
-    });
-    const cookieExpiration = new Date();
-    cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-    session.set('Token', cookieExpiration.getTime().toString());
+		session.set('Auth', {
+			authenticated: true,
+			isSuperUser: false,
+			login: user.email,
+			id: user.id,
+			avatar: user.avatar ?? undefined,
+			username: user.username ?? undefined,
+			fullname: user.fullname ?? undefined,
+		});
+		const cookieExpiration = new Date();
+		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+		session.set('Token', cookieExpiration.getTime().toString());
 
-    await setSignedCookie(
-      c,
-      'connection_time',
-      session.get('Token')!,
-      Deno.env.get('SIGNED_COOKIE_SECRET')!,
-    );
-    return c.json({ message: 'User created successfully' });
-  },
-);
-// authApp.get('/login', authMiddleware, async (c) => {
-//   const lang = c.get('language') as "fr" | "es" | "en";
-//   const loc = await getLoc(lang);
-//   const props = {
-//     title: 'Ghostify | Login',
-//     description: 'Login to your account',
-//   }
-//   return c.html(
-//     <TLayout meta={props} locales={loc} currentLocal={lang}>
-//       <Login />
-//     </TLayout>
-//   );
-// });
-// authApp.get('/register', async (c) => {
-//   const lang = c.get('language') as 'fr' | 'es' | 'en';
-//   const loc = await getLoc(lang);
-//    const props = {
-//     title: 'Ghostify | Login',
-//     description: 'Login to your account',
-//   }
-//   return c.html(
-//     <TLayout meta={props} locales={loc} currentLocal={lang}>
-//       <Register />
-//     </TLayout>
-//   );
-// })
+		await setSignedCookie(
+			c,
+			'connection_time',
+			session.get('Token')!,
+			Bun.env.SIGNED_COOKIE_SECRET!,
+		);
+		return c.json({ message: 'User created successfully' });
+	} catch (e) {
+		if (e instanceof ValidationError) {
+			return c.json({ errors: e.errors, message: e.message }, 400);
+		}
+		return c.json({ error: 'Internal server error' }, 500);
+	}
+});
+
 authApp.route('/dashboard', dashboardApp);
 
 export default authApp;
