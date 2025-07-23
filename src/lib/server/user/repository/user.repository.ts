@@ -1,7 +1,7 @@
-import { BaseRepository } from "@/core/base.repository";
-import { Repository } from "@/core/decorators";
-import { UserTable, type User } from "@/db";
-import type { CreateUserDTO, UpdateUserDTO } from "../dto/user.entity";
+import { BaseRepository } from '@/core/base.repository';
+import { Repository } from '@/core/decorators';
+import { type User, UserTable } from '@/db';
+import type { CreateUserDTO, UpdateUserDTO } from '../dto/user.entity';
 
 @Repository('user')
 export class UserRepository extends BaseRepository<

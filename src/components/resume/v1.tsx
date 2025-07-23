@@ -62,7 +62,10 @@ const CVTemplate: FC<CVProps> = ({
 							{ icon: 'location-dot', text: location },
 							{ icon: 'calendar', text: birthday },
 						].map((item) => (
-							<div key={item.text} className="flex items-center gap-x-4 font-bold">
+							<div
+								key={item.text}
+								className="flex items-center gap-x-4 font-bold"
+							>
 								<img
 									src={`/static/SVG/${item.icon}.svg`}
 									className="flex h-8 w-8 rounded-full bg-white object-contain p-0.5"

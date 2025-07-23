@@ -9,7 +9,7 @@ export const ensureUrlEnd = (url: string) =>
 
 export function getTimeElapsed(date: Date) {
 	const duration = intervalToDuration({ start: date, end: new Date() });
-    
+
 	if (duration.months && duration.months >= 1) return `${duration.months}M`;
 	if (duration.weeks && duration.weeks >= 1) return `${duration.weeks}W`;
 	if (duration.days && duration.days >= 1) return `${duration.days}d`;

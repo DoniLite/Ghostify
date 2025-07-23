@@ -1,18 +1,18 @@
-import { DTO } from '@/core/decorators';
-import { BaseCreateDTO, BaseUpdateDTO } from '@/core/dto';
 import {
 	IsEmail,
-	IsNotEmpty,
-	IsString,
-	IsOptional,
-	MinLength,
 	IsIn,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	MinLength,
 } from 'class-validator';
+import { DTO } from '@/core/decorators';
+import { BaseCreateDTO, BaseUpdateDTO } from '@/core/dto';
 
 @DTO()
 export class CreateUserDTO extends BaseCreateDTO {
-	@IsEmail({}, { message: "Invalid provided email" })
-	@IsNotEmpty({ message: "Email is required." })
+	@IsEmail({}, { message: 'Invalid provided email' })
+	@IsNotEmpty({ message: 'Email is required.' })
 	email!: string;
 
 	@IsString()
@@ -34,7 +34,7 @@ export class CreateUserDTO extends BaseCreateDTO {
 
 	@IsString()
 	@MinLength(3, {
-		message: "Username must be at least 3 characters long.",
+		message: 'Username must be at least 3 characters long.',
 	})
 	@IsNotEmpty()
 	@IsOptional()

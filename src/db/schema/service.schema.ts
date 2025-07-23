@@ -1,5 +1,5 @@
-import { pgTable } from 'drizzle-orm/pg-core';
 import * as T from 'drizzle-orm/pg-core';
+import { pgTable } from 'drizzle-orm/pg-core';
 import { BaseRow, Timestamp } from './shared.schema';
 import { UserTable } from './user.schema';
 

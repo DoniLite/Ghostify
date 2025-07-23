@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 const ScrollToTop = () => {
-
 	useEffect(() => {
 		globalThis.scrollTo(0, 0);
 	}, []);

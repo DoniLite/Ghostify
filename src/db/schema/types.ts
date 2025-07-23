@@ -1,9 +1,9 @@
-import type { AdminTable, KeyTable } from "./admin.schema";
-import type { ContactTable } from "./contact.schema";
-import type { FundingDetailsTable, WalletTable } from "./funding.schema";
-import type { NotificationTable } from "./notification.schema";
-import type { DocumentTable, ResumeTable } from "./service.schema";
-import type { UserTable } from "./user.schema";
+import type { AdminTable, KeyTable } from './admin.schema';
+import type { ContactTable } from './contact.schema';
+import type { FundingDetailsTable, WalletTable } from './funding.schema';
+import type { NotificationTable } from './notification.schema';
+import type { DocumentTable, ResumeTable } from './service.schema';
+import type { UserTable } from './user.schema';
 
 export type Contact = typeof ContactTable.$inferSelect;
 export type NewContact = typeof ContactTable.$inferInsert;

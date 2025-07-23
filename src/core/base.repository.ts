@@ -1,13 +1,13 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Type inference for all the any definition isn't applicable with an easy way */
-import { eq, and } from 'drizzle-orm';
-import { DatabaseConnection } from './database';
-import type { BaseEntity, BaseTable, CrudOperations } from './types/base';
+import { and, eq } from 'drizzle-orm';
 import type {
 	PgInsertValue,
 	PgTable,
 	PgTableWithColumns,
 	PgUpdateSetSource,
 } from 'drizzle-orm/pg-core';
+import { DatabaseConnection } from './database';
+import type { BaseEntity, BaseTable, CrudOperations } from './types/base';
 
 export abstract class BaseRepository<
 	T extends BaseEntity,

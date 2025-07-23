@@ -18,11 +18,9 @@ export class OGImageGenerator {
 		this.initializeFonts();
 	}
 
-	
 	public get getCache(): Map<string, { data: Uint8Array; timestamp: number }> {
 		return this.cache;
 	}
-	
 
 	private async initializeFonts() {
 		try {

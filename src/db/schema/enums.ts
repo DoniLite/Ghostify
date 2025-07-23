@@ -1,4 +1,4 @@
-import { pgEnum } from "drizzle-orm/pg-core";
+import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const userPlanEnum = pgEnum('UserPlan', ['Starter', 'Pro', 'Free']);
 export const serviceEnum = pgEnum('Service', ['Poster', 'CVMaker', 'APIs']);

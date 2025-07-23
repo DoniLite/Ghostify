@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import type { ServerWebSocket } from 'bun';
 import { Hono } from 'hono';
 import { createBunWebSocket, serveStatic } from 'hono/bun';
 // import { jwt } from 'hono/jwt';
@@ -17,6 +18,7 @@ import { stream } from 'hono/streaming';
 import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
+import authApp from '@/controller/auth';
 import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
@@ -26,8 +28,6 @@ import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
-import type { ServerWebSocket } from 'bun';
-import authApp from '@/controller/auth';
 
 const SERVER_PORT = 8080;
 

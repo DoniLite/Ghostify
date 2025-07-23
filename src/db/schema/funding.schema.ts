@@ -1,7 +1,7 @@
-import { pgTable } from 'drizzle-orm/pg-core';
 import * as T from 'drizzle-orm/pg-core';
-import { BaseRow, Timestamp } from './shared.schema';
+import { pgTable } from 'drizzle-orm/pg-core';
 import { fundingPriorityEnum, fundingProviderEnum } from './enums';
+import { BaseRow, Timestamp } from './shared.schema';
 import { UserTable } from './user.schema';
 
 export const FundingDetailsTable = pgTable('FundingDetails', {
@@ -12,7 +12,7 @@ export const FundingDetailsTable = pgTable('FundingDetails', {
 	priority: fundingPriorityEnum('priority').default('P1').notNull(),
 	type: fundingProviderEnum('type').notNull(),
 	details: T.json('details'),
-    ...Timestamp
+	...Timestamp,
 });
 
 export const WalletTable = pgTable('Wallet', {
@@ -22,5 +22,5 @@ export const WalletTable = pgTable('Wallet', {
 		.references(() => UserTable.id),
 	balance: T.real('balance').default(0.0).notNull(),
 	currency: T.text('currency').default('USD').notNull(),
-	...Timestamp
+	...Timestamp,
 });

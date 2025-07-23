@@ -1,9 +1,9 @@
-import { relations } from "drizzle-orm/relations";
-import { UserTable } from "./user.schema";
-import { KeyTable } from "./admin.schema";
-import { NotificationTable } from "./notification.schema";
-import { DocumentTable, ResumeTable } from "./service.schema";
-import { FundingDetailsTable, WalletTable } from "./funding.schema";
+import { relations } from 'drizzle-orm/relations';
+import { KeyTable } from './admin.schema';
+import { FundingDetailsTable, WalletTable } from './funding.schema';
+import { NotificationTable } from './notification.schema';
+import { DocumentTable, ResumeTable } from './service.schema';
+import { UserTable } from './user.schema';
 
 export const userRelations = relations(UserTable, ({ many, one }) => ({
 	keys: many(KeyTable),
@@ -21,12 +21,15 @@ export const keyRelations = relations(KeyTable, ({ one }) => ({
 	}),
 }));
 
-export const notificationsRelations = relations(NotificationTable, ({ one }) => ({
-	user: one(UserTable, {
-		fields: [NotificationTable.userId],
-		references: [UserTable.id],
+export const notificationsRelations = relations(
+	NotificationTable,
+	({ one }) => ({
+		user: one(UserTable, {
+			fields: [NotificationTable.userId],
+			references: [UserTable.id],
+		}),
 	}),
-}));
+);
 
 export const documentRelations = relations(DocumentTable, ({ one }) => ({
 	user: one(UserTable, {
@@ -42,12 +45,15 @@ export const resumeRelations = relations(ResumeTable, ({ one }) => ({
 	}),
 }));
 
-export const fundingDetailsRelations = relations(FundingDetailsTable, ({ one }) => ({
-	user: one(UserTable, {
-		fields: [FundingDetailsTable.userId],
-		references: [UserTable.id],
+export const fundingDetailsRelations = relations(
+	FundingDetailsTable,
+	({ one }) => ({
+		user: one(UserTable, {
+			fields: [FundingDetailsTable.userId],
+			references: [UserTable.id],
+		}),
 	}),
-}));
+);
 
 export const walletRelations = relations(WalletTable, ({ one }) => ({
 	user: one(UserTable, {

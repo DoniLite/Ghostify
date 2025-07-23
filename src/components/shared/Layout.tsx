@@ -100,10 +100,7 @@ const Layout: FC<LayoutType> = ({ children }) => {
 				/>
 				<meta name="creator" content="Doni Lite" />
 				<link rel="icon" type="image/svg+xml" href="/static/ghostify.svg" />
-				<link
-          rel="stylesheet"
-          href="/static/js/client.css"
-        />
+				<link rel="stylesheet" href="/static/js/client.css" />
 				{/** biome-ignore lint/security/noDangerouslySetInnerHtml: The style injected here is constructed in code only */}
 				<style dangerouslySetInnerHTML={{ __html: styles }} />
 				<Meta />

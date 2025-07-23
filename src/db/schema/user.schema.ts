@@ -1,7 +1,7 @@
-import { pgTable } from "drizzle-orm/pg-core";
-import * as T from 'drizzle-orm/pg-core'
-import { permissionEnum, providerEnum, userPlanEnum } from "./enums";
-import { BaseRow, Timestamp } from "./shared.schema";
+import * as T from 'drizzle-orm/pg-core';
+import { pgTable } from 'drizzle-orm/pg-core';
+import { permissionEnum, providerEnum, userPlanEnum } from './enums';
+import { BaseRow, Timestamp } from './shared.schema';
 
 export const UserTable = pgTable('User', {
 	...BaseRow,
@@ -24,5 +24,5 @@ export const UserTable = pgTable('User', {
 	plan: userPlanEnum('plan').default('Free').notNull(),
 	bio: T.text('bio'),
 	link: T.text('link'),
-    ...Timestamp
+	...Timestamp,
 });

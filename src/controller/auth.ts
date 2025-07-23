@@ -2,13 +2,13 @@
 import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
+import { ValidationError } from '@/core/decorators';
 import { factory, ServiceFactory } from '../factory';
 import { LoginSchema } from '../forms/auth/schema';
 import { authMiddleware } from '../hooks/server/auth';
 import { logger } from '../logger';
 import { compareHash } from '../utils/security/hash';
 import dashboardApp from './dashboard';
-import { ValidationError } from '@/core/decorators';
 
 const authApp = factory.createApp();
 
@@ -131,32 +131,7 @@ authApp.post('/register', async (c) => {
 		return c.json({ error: 'Internal server error' }, 500);
 	}
 });
-// authApp.get('/login', authMiddleware, async (c) => {
-//   const lang = c.get('language') as "fr" | "es" | "en";
-//   const loc = await getLoc(lang);
-//   const props = {
-//     title: 'Ghostify | Login',
-//     description: 'Login to your account',
-//   }
-//   return c.html(
-//     <TLayout meta={props} locales={loc} currentLocal={lang}>
-//       <Login />
-//     </TLayout>
-//   );
-// });
-// authApp.get('/register', async (c) => {
-//   const lang = c.get('language') as 'fr' | 'es' | 'en';
-//   const loc = await getLoc(lang);
-//    const props = {
-//     title: 'Ghostify | Login',
-//     description: 'Login to your account',
-//   }
-//   return c.html(
-//     <TLayout meta={props} locales={loc} currentLocal={lang}>
-//       <Register />
-//     </TLayout>
-//   );
-// })
+
 authApp.route('/dashboard', dashboardApp);
 
 export default authApp;

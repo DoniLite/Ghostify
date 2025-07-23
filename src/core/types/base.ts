@@ -1,4 +1,4 @@
-import type { PgColumn } from "drizzle-orm/pg-core";
+import type { PgColumn } from 'drizzle-orm/pg-core';
 
 export interface BaseEntity {
 	id: string | number;

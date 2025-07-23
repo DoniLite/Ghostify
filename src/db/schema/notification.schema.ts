@@ -1,8 +1,8 @@
-import { pgTable } from "drizzle-orm/pg-core";
 import * as T from 'drizzle-orm/pg-core';
-import { BaseRow, Timestamp } from "./shared.schema";
-import { notificationTypeEnum } from "./enums";
-import { UserTable } from "./user.schema";
+import { pgTable } from 'drizzle-orm/pg-core';
+import { notificationTypeEnum } from './enums';
+import { BaseRow, Timestamp } from './shared.schema';
+import { UserTable } from './user.schema';
 
 export const NotificationTable = pgTable('Notifications', {
 	...BaseRow,
@@ -11,5 +11,5 @@ export const NotificationTable = pgTable('Notifications', {
 	content: T.text('content').notNull(),
 	seen: T.boolean('seen').default(false).notNull(),
 	userId: T.text('user_id').references(() => UserTable.id),
-    ...Timestamp
+	...Timestamp,
 });
