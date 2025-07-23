@@ -28,6 +28,7 @@ import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
+import { ValidationError } from '@/core/decorators';
 
 const SERVER_PORT = 8080;
 
@@ -39,6 +40,13 @@ export type Variables = {
 const app = new Hono<{
 	Variables: Variables;
 }>();
+
+app.onError((e, c) => {
+	if (e instanceof ValidationError) {
+		return c.json({ errors: e.errors, message: e.message }, 400);
+	}
+	return c.json({ error: 'Internal server error' }, 500);
+});
 
 const store = new CookieStore();
 
@@ -186,7 +194,9 @@ app.get('/download/:file', async (c) => {
 		return c.text('cannot access to this resource');
 	}
 });
-app.get('/download/:file/cloud', async () => {});
+app.get('/download/:file/cloud', async (c) => {
+	return c.text('Not implemented yet', 501);
+});
 app.get('/stream/:file', async (c) => {
 	const file = c.req.param('file');
 	const resourceDir = path.resolve(process.cwd(), './static');
@@ -210,7 +220,9 @@ app.get('/stream/:file', async (c) => {
 		return c.text('cannot access to this resource');
 	}
 });
-app.get('/stream/:file/cloud', async () => {});
+app.get('/stream/:file/cloud', async (c) => {
+	return c.text('Not implemented yet', 501);
+});
 app.get('*', async (c) => {
 	const s = await renderToReadableStream(
 		<StaticRouter location={c.req.path}>
