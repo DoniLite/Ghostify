@@ -12,7 +12,7 @@ const og = factory.createApp();
 og.get('/', async (c) => {
 	try {
 		const url = new URL(c.req.url);
-		const searchParams = url.searchParams;
+		const { searchParams } = url;
 
 		const params: Partial<OGImageParams> = {
 			type:
@@ -71,7 +71,7 @@ og.get('/', async (c) => {
 og.get('/preview', async (c) => {
 	try {
 		const url = new URL(c.req.url);
-		const searchParams = url.searchParams;
+		const { searchParams } = url;
 
 		const params: Partial<OGImageParams> = {
 			type:

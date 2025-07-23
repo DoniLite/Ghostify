@@ -21,7 +21,7 @@ export class CollaborationService {
 		try {
 			// Compatible websocket connection for Hono
 			this.ws = new WebSocket(
-				`${this.WEBSOCKET_BASE_URL}${ensureUrlEnd(this.documentId)}?userId=${this.userId}`,
+				`${ensureUrlEnd(this.WEBSOCKET_BASE_URL)}${this.documentId}?userId=${this.userId}`,
 			);
 
 			this.ws.onopen = () => {

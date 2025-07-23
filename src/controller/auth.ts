@@ -3,11 +3,12 @@ import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
 import { factory, ServiceFactory } from '../factory';
-import { LoginSchema, RegisterSchema } from '../forms/auth/schema';
+import { LoginSchema } from '../forms/auth/schema';
 import { authMiddleware } from '../hooks/server/auth';
 import { logger } from '../logger';
 import { compareHash } from '../utils/security/hash';
 import dashboardApp from './dashboard';
+import { ValidationError } from '@/core/decorators';
 
 const authApp = factory.createApp();
 
@@ -86,51 +87,49 @@ const loginHandlers = factory.createHandlers(
 	},
 );
 
-const registerHandlers = factory.createHandlers(
-	validator('form', (value, c) => {
-		const parsed = RegisterSchema.safeParse(value);
-		if (!parsed.success) {
-			return c.text('Invalid!', 401);
-		}
-		return parsed.data;
-	}),
-);
-
 authApp.post('/login', ...loginHandlers);
-authApp.post('/register', ...registerHandlers, async (c) => {
-	const session = c.get('session');
-	const userService = ServiceFactory.getUserService();
-	const { email, fullname, password } = c.req.valid('form');
-	const user = await userService.createUser(
-		{
-			email,
-			fullname,
-			password,
-			permission: 'User',
-		},
-		c,
-	);
+authApp.post('/register', async (c) => {
+	try {
+		const session = c.get('session');
+		const userService = ServiceFactory.getUserService();
+		const { email, fullname, password } = await c.req.json();
+		const user = await userService.createUser(
+			{
+				email,
+				fullname,
+				password,
+				permission: 'User',
+			},
+			c,
+		);
+		console.log('Created User ===> ', user);
 
-	session.set('Auth', {
-		authenticated: true,
-		isSuperUser: false,
-		login: email,
-		id: user.id,
-		avatar: user.avatar ?? undefined,
-		username: user.username ?? undefined,
-		fullname: user.fullname ?? undefined,
-	});
-	const cookieExpiration = new Date();
-	cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-	session.set('Token', cookieExpiration.getTime().toString());
+		session.set('Auth', {
+			authenticated: true,
+			isSuperUser: false,
+			login: user.email,
+			id: user.id,
+			avatar: user.avatar ?? undefined,
+			username: user.username ?? undefined,
+			fullname: user.fullname ?? undefined,
+		});
+		const cookieExpiration = new Date();
+		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+		session.set('Token', cookieExpiration.getTime().toString());
 
-	await setSignedCookie(
-		c,
-		'connection_time',
-		session.get('Token')!,
-		Bun.env.SIGNED_COOKIE_SECRET!,
-	);
-	return c.json({ message: 'User created successfully' });
+		await setSignedCookie(
+			c,
+			'connection_time',
+			session.get('Token')!,
+			Bun.env.SIGNED_COOKIE_SECRET!,
+		);
+		return c.json({ message: 'User created successfully' });
+	} catch (e) {
+		if (e instanceof ValidationError) {
+			return c.json({ errors: e.errors, message: e.message }, 400);
+		}
+		return c.json({ error: 'Internal server error' }, 500);
+	}
 });
 // authApp.get('/login', authMiddleware, async (c) => {
 //   const lang = c.get('language') as "fr" | "es" | "en";

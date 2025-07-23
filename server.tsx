@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
@@ -26,6 +27,7 @@ import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
 import type { ServerWebSocket } from 'bun';
+import authApp from '@/controller/auth';
 
 const SERVER_PORT = 8080;
 
@@ -46,13 +48,13 @@ app.get(
 	'/ws/document/:docId',
 	upgradeWebSocket((c) => {
 		// Example: pass ?id=123 to join a specific doc room
-		const docId = c.req.query('id') ?? 'default';
+		const docId = c.req.param('docId');
 
 		return {
 			onOpen(_evt, ws) {
 				// Bun’s native pub/sub helpers
 				ws.raw?.subscribe(`doc:${docId}`);
-				ws.send(`Joined document ${docId}`);
+				ws.send(JSON.stringify({ message: `Joined doc room ${docId}` }));
 			},
 			onMessage(evt, ws) {
 				// Broadcast edit to everyone in the room
@@ -144,6 +146,7 @@ app.use(
 
 // Registered Routes
 app.route('/api/v1', ApiRoutes);
+app.route('/auth', authApp);
 
 // Routes
 app.get('/terms', async (c) => {

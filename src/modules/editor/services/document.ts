@@ -9,7 +9,7 @@ export class DocumentService {
 		docId: string,
 		doc: Partial<DocumentState>,
 	): Promise<DocumentState> {
-		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}/documents/${docId}`, {
+		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}documents/${docId}`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(doc),
@@ -21,7 +21,7 @@ export class DocumentService {
 	}
 
 	async loadDocument(id: string): Promise<DocumentState> {
-		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}/documents/${id}`);
+		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}documents/${id}`);
 		if (!response.ok) {
 			throw new Error('Failed to load document');
 		}
@@ -33,7 +33,7 @@ export class DocumentService {
 		format: 'docx' | 'pdf' | 'html',
 	): Promise<Blob> {
 		const response = await fetch(
-			`${ensureUrlEnd(this.baseUrl)}/documents/${id}/export?format=${format}`,
+			`${ensureUrlEnd(this.baseUrl)}documents/${id}/export?format=${format}`,
 		);
 		if (!response.ok) {
 			throw new Error('Failed to export document');
@@ -45,7 +45,7 @@ export class DocumentService {
 		const formData = new FormData();
 		formData.append('file', file);
 
-		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}/documents/import`, {
+		const response = await fetch(`${ensureUrlEnd(this.baseUrl)}documents/import`, {
 			method: 'POST',
 			body: formData,
 		});

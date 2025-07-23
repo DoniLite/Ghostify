@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import plugin from 'bun-plugin-tailwind';
@@ -24,12 +25,6 @@ ensureDirSync(path.join(root, 'static/js'));
 // 	ensureDirSync(path.join(root, 'dist/css'));
 // }
 
-const env = {
-	WEBSOCKET_BASE_URL:
-		process.env.WEBSOCKET_BASE_URL || 'ws://localhost:8787/ws/',
-	API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8787/api',
-};
-
 async function buildNormal() {
 	const entryPoints = glob
 		.sync([
@@ -46,6 +41,7 @@ async function buildNormal() {
 			plugins: [plugin],
 			minify: !flags.watch,
 			sourcemap: flags.watch ? 'linked' : 'none',
+			env: 'inline',
 			define: {
 				'process.env.NODE_ENV': flags.watch ? '"development"' : '"production"',
 				'globalThis.IS_BROWSER': 'true',
@@ -60,11 +56,8 @@ async function buildNormal() {
 		minify: !flags.watch,
 		plugins: [plugin],
 		sourcemap: flags.watch ? 'linked' : 'none',
-		define: {
-			'process.env.NODE_ENV': flags.watch ? '"development"' : '"production"',
-			'window.IS_BROWSER': 'true',
-			'window.__ENV': JSON.stringify(env),
-		},
+		env: 'inline',
+		define: {},
 	});
 }
 
@@ -75,12 +68,9 @@ async function buildPreview() {
 		target: 'browser',
 		minify: true,
 		sourcemap: 'none',
+		env: 'inline',
 		plugins: [plugin],
-		define: {
-			'process.env.NODE_ENV': '"production"',
-			'window.IS_BROWSER': 'true',
-			'window.__ENV': JSON.stringify(env),
-		},
+		define: {},
 	});
 
 	// copyFileSync(

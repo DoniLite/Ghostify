@@ -1,7 +1,7 @@
 import { BaseService } from "@/core/base.service";
 import { Service, ValidateDTO } from "@/core/decorators";
 import type { User } from "@/db";
-import type { CreateUserDTO, UpdateUserDTO } from "../dto/user.entity";
+import { CreateUserDTO, type UpdateUserDTO } from "../dto/user.entity";
 import { UserRepository } from "../repository/user.repository";
 import type { Context } from "hono";
 import { compareHash } from "@/utils/security/hash";
@@ -25,7 +25,7 @@ export class UserService extends BaseService<
 		return this.repository.findByUsername(username);
 	}
 
-	@ValidateDTO()
+	@ValidateDTO(CreateUserDTO)
 	async createUser(dto: CreateUserDTO, _context: Context): Promise<User> {
 		const existingUser = await this.findByEmail(dto.email);
 		if (existingUser) {

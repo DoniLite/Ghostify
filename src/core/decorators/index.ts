@@ -1,12 +1,23 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Manipulation of method params is needed here due to the fact that there inference are complex we will keep this */
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import 'reflect-metadata';
 import type { Context } from 'hono';
+
+
+export class ValidationError extends Error {
+	constructor(
+		public statusCode: number,
+		public errors: Array<{ property: string; constraints: any; value: any }>,
+	) {
+		super('Validation failed');
+		this.name = 'ValidationError';
+	}
+}
 
 const REPOSITORY_METADATA = Symbol('repository');
 const SERVICE_METADATA = Symbol('service');
 const DTO_METADATA = Symbol('dto');
+const DTO_CLASSES = new Map<string, any>();
 
 export function Repository(tableName: string) {
 	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
@@ -24,63 +35,83 @@ export function Service() {
 
 export function DTO() {
 	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
-		console.log(`Marking ${cons.name} as DTO`);
+		console.log(`Saving ${cons.name} as DTO`);
+
+		DTO_CLASSES.set(cons.name, cons);
+
 		Reflect.defineMetadata(DTO_METADATA, true, cons);
 		return cons;
 	};
 }
 
-export function ValidateDTO(provider: 'json' | 'formData' | 'query' = 'json') {
+export function ValidateDTO<T>(
+	dtoClassName?: new (...args: any[]) => T,
+	provider: 'json' | 'formData' | 'query' = 'json',
+) {
 	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
-		const paramTypes = Reflect.getMetadata(
-			'design:paramtypes',
-			target,
-			propertyKey,
-		);
-
-		const dtoParamIndex = paramTypes.findIndex((param: any) =>
-			Reflect.getMetadata(DTO_METADATA, param),
-		);
-
-		if (dtoParamIndex === -1) {
-			console.warn(
-				`the decorator @ValidateDTO on ${target.constructor.name}.${propertyKey} found no parameter of type DTO.`,
-			);
-			return;
-		}
 
 		descriptor.value = async function (...args: any[]) {
 			const c: Context | undefined = args.find(
-				(arg) => arg && typeof arg === 'object' && 'req' in arg && 'json' in arg
+				(arg) =>
+					arg && typeof arg === 'object' && 'req' in arg && 'json' in arg,
 			);
 
 			if (!c) {
 				throw new Error(
-					`method ${propertyKey} decorated with @ValidateDTO must receive the Hono context (c) as an argument.`,
+					`The method ${propertyKey} decorated with @ValidateDTO must receive the Hono context (c) as an argument.`,
 				);
 			}
 
 			const body = await c.req[provider]();
 
-			args[dtoParamIndex] = body;
+			let dtoClass: any;
 
-			const dtoClass = paramTypes[dtoParamIndex];
-			const dtoInstance = plainToInstance(dtoClass, args[dtoParamIndex]);
+			if (dtoClassName) {
+				dtoClass = DTO_CLASSES.get(dtoClassName.name);
+				if (!dtoClass) {
+					throw new Error(`DTO class "${dtoClassName}" not found in registry`);
+				}
+			} else {
+				const paramTypes = Reflect.getMetadata(
+					'design:paramtypes',
+					target,
+					propertyKey,
+				);
+				dtoClass = paramTypes?.find((param: any) =>
+					DTO_CLASSES.has(param.name),
+				);
 
+				if (!dtoClass) {
+					throw new Error(
+						`No DTO class found for ${target.constructor.name}.${propertyKey}`,
+					);
+				}
+			}
+
+			const dtoInstance = plainToInstance(dtoClass, body);
 			const errors = await validate(dtoInstance);
 
 			if (errors.length > 0) {
-				const errorResponse = {
-					statusCode: 400,
-					message: 'Validation failed',
-					errors: errors.map((err) => ({
+				throw new ValidationError(
+					400,
+					errors.map((err) => ({
 						property: err.property,
 						constraints: err.constraints,
+						value: err.value,
 					})),
-				};
-				return c.json(errorResponse, 400);
+				);
 			}
+
+			const paramTypes = Reflect.getMetadata(
+				'design:paramtypes',
+				target,
+				propertyKey,
+			);
+			const dtoParamIndex =
+				paramTypes?.findIndex(
+					(param: any) => param === dtoClass || DTO_CLASSES.has(param.name),
+				) ?? 0;
 
 			args[dtoParamIndex] = dtoInstance;
 
