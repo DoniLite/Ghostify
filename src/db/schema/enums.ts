@@ -52,3 +52,8 @@ export const fundingProviderEnum = pgEnum('FundingProvider', [
 	'Wallet',
 	'Card',
 ]);
+export const revisionTypeEnum = pgEnum('RevisionType', [
+	'insert',
+	'format',
+	'delete',
+]);
