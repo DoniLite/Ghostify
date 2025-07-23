@@ -13,7 +13,7 @@ import type { JwtVariables } from 'hono/jwt';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
-import { secureHeaders } from 'hono/secure-headers';
+// import { secureHeaders } from 'hono/secure-headers';
 import { stream } from 'hono/streaming';
 import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';

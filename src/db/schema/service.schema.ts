@@ -9,7 +9,7 @@ export const DocumentTable = pgTable('Document', {
 	type: T.text('type').notNull(),
 	downloadLink: T.text('downloadLink'),
 	userId: T.text('user_id').references(() => UserTable.id),
-	postId: T.integer('postId'),
+	data: T.json('data'),
 	...Timestamp,
 });
 

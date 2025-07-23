@@ -19,22 +19,22 @@ const SERVICE_METADATA = Symbol('service');
 const DTO_METADATA = Symbol('dto');
 const DTO_CLASSES = new Map<string, any>();
 
-export function Repository(tableName: string) {
-	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
+export function Repository<T>(tableName: string) {
+	return (cons: new (...args: unknown[]) => T) => {
 		Reflect.defineMetadata(REPOSITORY_METADATA, tableName, cons);
 		return cons;
 	};
 }
 
-export function Service() {
-	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
+export function Service<T>() {
+	return (cons: new (...args: unknown[]) => T) => {
 		Reflect.defineMetadata(SERVICE_METADATA, true, cons);
 		return cons;
 	};
 }
 
-export function DTO() {
-	return <T extends { new (...args: unknown[]): object }>(cons: T) => {
+export function DTO<T>() {
+	return (cons: new (...args: unknown[]) => T) => {
 		console.log(`Saving ${cons.name} as DTO`);
 
 		DTO_CLASSES.set(cons.name, cons);
