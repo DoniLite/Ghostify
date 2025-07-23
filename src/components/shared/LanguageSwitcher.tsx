@@ -18,7 +18,7 @@ export function LanguageSwitcher() {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className="border-border border w-10 h-10 rounded-md bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+			<DropdownMenuTrigger className="border-border border cursor-pointer w-10 h-10 rounded-md bg-card text-card-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
 				{locale}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="border-border bg-card text-card-foreground rounded-md border">
