@@ -37,8 +37,6 @@ export function Service<T>() {
 
 export function DTO<T>() {
 	return (cons: new (...args: unknown[]) => T) => {
-		console.log(`Saving ${cons.name} as DTO`);
-
 		DTO_CLASSES.set(cons.name, cons);
 
 		Reflect.defineMetadata(DTO_METADATA, true, cons);

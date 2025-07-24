@@ -158,7 +158,7 @@ export const Editor: React.FC<{ documentId: string; userId: string }> = ({
 			initialConfig={initialConfig}
 			key={pluginManager.getAllNodes().length}
 		>
-			<div className="bg-background text-foreground font-inter flex h-screen flex-col">
+			<div className="container mx-auto bg-background text-foreground font-inter mt-24 flex h-screen flex-col">
 				<Toolbar
 					onPluginLoad={handlePluginLoad}
 					loadedPlugins={loadedPlugins}

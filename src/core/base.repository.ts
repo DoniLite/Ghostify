@@ -20,7 +20,7 @@ export abstract class BaseRepository<
 	protected abstract table: Tb;
 
 	async create(dto: CreateDTO): Promise<T> {
-		const result = await this.db.insert(this.table).values(dto).returning();
+		const [result] = await this.db.insert(this.table).values(dto).returning();
 		return result as unknown as T;
 	}
 

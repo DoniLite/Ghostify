@@ -1,8 +1,10 @@
 import { BaseService } from '@/core/base.service';
-import { Service } from '@/core/decorators';
+import { Service, ValidateDTO } from '@/core/decorators';
 import type { Document } from '@/db';
-import type { CreateDocumentDto, UpdateDocumentDto } from '../dto/document.dto';
+import { CreateDocumentDto, UpdateDocumentDto } from '../dto/document.dto';
 import { DocumentRepository } from '../repository/document.repository';
+import type { Context } from 'hono';
+import mime from '@/modules/mime';
 
 @Service()
 export class DocumentService extends BaseService<
@@ -21,5 +23,30 @@ export class DocumentService extends BaseService<
 
 	async loadAllRevisions(documentId: string) {
 		return this.repository.loadAllRevisions(documentId);
+	}
+
+	@ValidateDTO(CreateDocumentDto)
+	override async create(
+		dto: CreateDocumentDto,
+		_context: Context,
+	): Promise<Document> {
+		return this.repository.create(dto);
+	}
+
+	async newDocument() {
+		return this.repository.create({
+			data: {},
+			type: mime.getType('.html') || 'text/html',
+			title: 'New Document',
+		})
+	}
+
+	@ValidateDTO(UpdateDocumentDto)
+	override async update(
+		id: string | number,
+		dto: UpdateDocumentDto,
+		_context: Context,
+	): Promise<Document[] | null> {
+		return this.repository.update(id, dto);
 	}
 }
