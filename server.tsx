@@ -29,6 +29,7 @@ import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
+import { HTTPException } from 'hono/http-exception';
 
 const SERVER_PORT = 8080;
 
@@ -43,7 +44,10 @@ const app = new Hono<{
 
 app.onError((e, c) => {
 	if (e instanceof ValidationError) {
-		return c.json({ errors: e.errors, message: e.message }, 400);
+		return c.json({ errors: e.errors, message: e.message }, e.statusCode);
+	}
+	if (e instanceof HTTPException) {
+		return e.getResponse()
 	}
 	return c.json({ error: 'Internal server error' }, 500);
 });

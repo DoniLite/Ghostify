@@ -1,12 +1,14 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Manipulation of method params is needed here due to the fact that there inference are complex we will keep this */
 
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance, type ClassConstructor } from 'class-transformer';
 import { validate } from 'class-validator';
 import type { Context } from 'hono';
+import type { bodyGetter, ContextInstance } from '../types/base';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 export class ValidationError extends Error {
 	constructor(
-		public statusCode: number,
+		public statusCode: ContentfulStatusCode,
 		public errors: Array<{ property: string; constraints: any; value: any }>,
 	) {
 		super('Validation failed');
@@ -44,9 +46,9 @@ export function DTO<T>() {
 	};
 }
 
-export function ValidateDTO<T>(
+export function ValidateDTO<T extends object, B extends bodyGetter>(
 	dtoClassName?: new (...args: any[]) => T,
-	provider: 'json' | 'formData' | 'query' = 'json',
+	provider: B = 'json' as B,
 ) {
 	return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
 		const originalMethod = descriptor.value;
@@ -63,10 +65,17 @@ export function ValidateDTO<T>(
 				);
 			}
 
-			const body = await c.req[provider]();
+			const rawBody = await c.req[provider]() as ContextInstance<B>;
+			let body: Record<string, unknown> = {};
 
-			let dtoClass: any;
-
+			let dtoClass: new (...args: any[]) => T;
+			if (provider === 'json') {
+				body = rawBody as Record<string, unknown>;
+			} else if (provider === 'formData') {
+				body = Object.fromEntries((rawBody as FormData).entries());
+			} else if (provider === 'query') {
+				body = rawBody as Record<string, unknown>;
+			}
 			if (dtoClassName) {
 				dtoClass = DTO_CLASSES.get(dtoClassName.name);
 				if (!dtoClass) {
@@ -110,7 +119,7 @@ export function ValidateDTO<T>(
 			);
 			const dtoParamIndex =
 				paramTypes?.findIndex(
-					(param: any) => param === dtoClass || DTO_CLASSES.has(param.name),
+					(param: ClassConstructor<unknown>) => param === dtoClass || DTO_CLASSES.has(param.name),
 				) ?? 0;
 
 			args[dtoParamIndex] = dtoInstance;

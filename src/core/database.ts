@@ -7,6 +7,7 @@ import * as FundingSchema from '../db/schema/funding.schema';
 import * as NotificationSchema from '../db/schema/notification.schema';
 import * as ServiceSchema from '../db/schema/service.schema';
 import * as UserSchema from '../db/schema/user.schema';
+import * as Relations from '../db/schema/relations'
 export class DatabaseConnection {
 	private static instance: DatabaseConnection;
 	private db;
@@ -23,6 +24,7 @@ export class DatabaseConnection {
 				...FundingSchema,
 				...NotificationSchema,
 				...ServiceSchema,
+        ...Relations
 			},
 		});
 	}
