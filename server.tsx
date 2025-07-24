@@ -9,6 +9,7 @@ import { createBunWebSocket, serveStatic } from 'hono/bun';
 import { cache } from 'hono/cache';
 // import { compress } from 'hono/compress';
 import { html } from 'hono/html';
+import { HTTPException } from 'hono/http-exception';
 import type { JwtVariables } from 'hono/jwt';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
@@ -29,7 +30,6 @@ import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
-import { HTTPException } from 'hono/http-exception';
 
 const SERVER_PORT = 8080;
 
@@ -47,7 +47,7 @@ app.onError((e, c) => {
 		return c.json({ errors: e.errors, message: e.message }, e.statusCode);
 	}
 	if (e instanceof HTTPException) {
-		return e.getResponse()
+		return e.getResponse();
 	}
 	return c.json({ error: 'Internal server error' }, 500);
 });

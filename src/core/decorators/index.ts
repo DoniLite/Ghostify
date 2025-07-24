@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Manipulation of method params is needed here due to the fact that there inference are complex we will keep this */
 
-import { plainToInstance, type ClassConstructor } from 'class-transformer';
+import { type ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import type { Context } from 'hono';
-import type { bodyGetter, ContextInstance } from '../types/base';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
+import type { bodyGetter, ContextInstance } from '../types/base';
 
 export class ValidationError extends Error {
 	constructor(
@@ -65,7 +65,7 @@ export function ValidateDTO<T extends object, B extends bodyGetter>(
 				);
 			}
 
-			const rawBody = await c.req[provider]() as ContextInstance<B>;
+			const rawBody = (await c.req[provider]()) as ContextInstance<B>;
 			let body: Record<string, unknown> = {};
 
 			let dtoClass: new (...args: any[]) => T;
@@ -119,7 +119,8 @@ export function ValidateDTO<T extends object, B extends bodyGetter>(
 			);
 			const dtoParamIndex =
 				paramTypes?.findIndex(
-					(param: ClassConstructor<unknown>) => param === dtoClass || DTO_CLASSES.has(param.name),
+					(param: ClassConstructor<unknown>) =>
+						param === dtoClass || DTO_CLASSES.has(param.name),
 				) ?? 0;
 
 			args[dtoParamIndex] = dtoInstance;
