@@ -1,10 +1,10 @@
+import type { Context } from 'hono';
 import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { Document } from '@/db';
+import mime from '@/modules/mime';
 import { CreateDocumentDto, UpdateDocumentDto } from '../dto/document.dto';
 import { DocumentRepository } from '../repository/document.repository';
-import type { Context } from 'hono';
-import mime from '@/modules/mime';
 
 @Service()
 export class DocumentService extends BaseService<
@@ -38,7 +38,7 @@ export class DocumentService extends BaseService<
 			data: {},
 			type: mime.getType('.html') || 'text/html',
 			title: 'New Document',
-		})
+		});
 	}
 
 	@ValidateDTO(UpdateDocumentDto)
