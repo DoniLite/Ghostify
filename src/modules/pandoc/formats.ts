@@ -1,4 +1,4 @@
-import { InputFormats, OutputFormats } from '../const/pandoc_enums.ts';
+import { InputFormats, OutputFormats } from '../../utils/const/pandoc_enums.ts';
 
 /**
  * A comprehensive mapping of input/output formats to their typical file extensions.
