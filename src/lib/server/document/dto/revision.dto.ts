@@ -1,7 +1,7 @@
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { DTO } from '@/core/decorators';
 import { BaseCreateDTO, BaseUpdateDTO } from '@/core/dto';
 import type { NewRevision } from '@/db';
-import { IsString, IsOptional, IsBoolean, IsEnum } from 'class-validator';
 
 @DTO()
 export class CreateRevisionDto extends BaseCreateDTO {
