@@ -14,4 +14,8 @@ export abstract class BaseUpdateDTO {
 	@IsDate()
 	@IsOptional()
 	deletedAt?: Date;
+
+	@IsDate()
+	@IsOptional()
+	updatedAt?: Date;
 }

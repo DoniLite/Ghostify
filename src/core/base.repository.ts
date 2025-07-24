@@ -50,6 +50,25 @@ export abstract class BaseRepository<
 		return query as Promise<T[]>;
 	}
 
+	async findOne(filters?: Partial<T>): Promise<T> {
+		const query = this.db.select().from(this.table as PgTable);
+
+		if (filters) {
+			const conditions = Object.entries(filters)
+				.filter(([_, value]) => value !== undefined)
+				.map(([key, value]) => eq((this.table as any)[key], value));
+
+			if (conditions.length > 0) {
+				const [result] = await query.where(and(...conditions)).limit(1);
+				return result as T;
+			}
+		}
+
+		const [queryResult] = await query;
+
+		return queryResult as T;
+	}
+
 	async update(id: string | number, dto: UpdateDTO): Promise<T[] | null> {
 		const result = await this.db
 			.update(this.table)

@@ -2,7 +2,7 @@ import type { AdminTable, KeyTable } from './admin.schema';
 import type { ContactTable } from './contact.schema';
 import type { FundingDetailsTable, WalletTable } from './funding.schema';
 import type { NotificationTable } from './notification.schema';
-import type { DocumentTable, ResumeTable } from './service.schema';
+import type { DocumentCommentTable, DocumentRevisionTable, DocumentTable, ResumeTable } from './service.schema';
 import type { UserTable } from './user.schema';
 
 export type Contact = typeof ContactTable.$inferSelect;
@@ -31,3 +31,9 @@ export type NewDocument = typeof DocumentTable.$inferInsert;
 
 export type Resume = typeof ResumeTable.$inferSelect;
 export type NewResume = typeof ResumeTable.$inferInsert;
+
+export type Revision = typeof DocumentRevisionTable.$inferSelect;
+export type NewRevision = typeof DocumentRevisionTable.$inferInsert;
+
+export type Comment = typeof DocumentCommentTable.$inferSelect;
+export type newComment = typeof DocumentCommentTable.$inferInsert;
