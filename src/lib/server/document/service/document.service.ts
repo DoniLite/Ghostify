@@ -14,4 +14,12 @@ export class DocumentService extends BaseService<
 	constructor() {
 		super(new DocumentRepository());
 	}
+
+	async loadAllComments(documentId: string) {
+		return this.repository.loadAllComments(documentId);
+	}
+
+	async loadAllRevisions(documentId: string) {
+		return this.repository.loadAllRevisions(documentId);
+	}
 }

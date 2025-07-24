@@ -12,4 +12,6 @@ documentApp.get('/:id', async (c) => {
 	return c.json(document);
 });
 
+documentApp.put('/:id');
+
 export default documentApp;
