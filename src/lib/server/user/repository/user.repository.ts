@@ -30,4 +30,8 @@ export class UserRepository extends BaseRepository<
 	async findUserDocuments(id: string) {
 		return this.documentRepository.findAll({ userId: id });
 	}
+
+	async findAnyUserDocument(userId: string, documentId: string) {
+		return this.documentRepository.findOne({ id: documentId, userId });
+	}
 }

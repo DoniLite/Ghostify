@@ -9,6 +9,7 @@ import { createBunWebSocket, serveStatic } from 'hono/bun';
 import { cache } from 'hono/cache';
 // import { compress } from 'hono/compress';
 import { html } from 'hono/html';
+import { HTTPException } from 'hono/http-exception';
 import type { JwtVariables } from 'hono/jwt';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
@@ -18,7 +19,8 @@ import { stream } from 'hono/streaming';
 import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
-import authApp from '@/controller/auth';
+import { ValidationError } from '@/core/decorators';
+import authApp from '@/routes/auth/auth';
 import type { SessionData } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
@@ -39,6 +41,16 @@ export type Variables = {
 const app = new Hono<{
 	Variables: Variables;
 }>();
+
+app.onError((e, c) => {
+	if (e instanceof ValidationError) {
+		return c.json({ errors: e.errors, message: e.message }, e.statusCode);
+	}
+	if (e instanceof HTTPException) {
+		return e.getResponse();
+	}
+	return c.json({ error: 'Internal server error' }, 500);
+});
 
 const store = new CookieStore();
 
@@ -186,7 +198,9 @@ app.get('/download/:file', async (c) => {
 		return c.text('cannot access to this resource');
 	}
 });
-app.get('/download/:file/cloud', async () => {});
+app.get('/download/:file/cloud', async (c) => {
+	return c.text('Not implemented yet', 501);
+});
 app.get('/stream/:file', async (c) => {
 	const file = c.req.param('file');
 	const resourceDir = path.resolve(process.cwd(), './static');
@@ -210,7 +224,9 @@ app.get('/stream/:file', async (c) => {
 		return c.text('cannot access to this resource');
 	}
 });
-app.get('/stream/:file/cloud', async () => {});
+app.get('/stream/:file/cloud', async (c) => {
+	return c.text('Not implemented yet', 501);
+});
 app.get('*', async (c) => {
 	const s = await renderToReadableStream(
 		<StaticRouter location={c.req.path}>

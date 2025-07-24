@@ -1,4 +1,5 @@
 import type { Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { User } from '@/db';
@@ -29,13 +30,15 @@ export class UserService extends BaseService<
 	async createUser(dto: CreateUserDTO, _context: Context): Promise<User> {
 		const existingUser = await this.findByEmail(dto.email);
 		if (existingUser) {
-			throw new Error('User with this email already exists');
+			throw new HTTPException(400, {
+				message: 'User with this email already exists',
+			});
 		}
 
 		if (dto.username) {
 			const existingUsername = await this.findByUsername(dto.username);
 			if (existingUsername) {
-				throw new Error('Username already taken');
+				throw new HTTPException(400, { message: 'Username already taken' });
 			}
 		}
 
@@ -48,15 +51,17 @@ export class UserService extends BaseService<
 			? await this.findByEmail(login)
 			: await this.findByUsername(login);
 		if (!user) {
-			throw new Error('User not found');
+			throw new HTTPException(404, { message: 'User not found' });
 		}
 
 		if (!user.password) {
-			throw new Error('User does not have a password set');
+			throw new HTTPException(400, {
+				message: 'User does not have a password set',
+			});
 		}
 		const isValid = await this.verifyPassword(password, user.password);
 		if (!isValid) {
-			throw new Error('Invalid password');
+			throw new HTTPException(400, { message: 'Invalid password' });
 		}
 
 		return user;

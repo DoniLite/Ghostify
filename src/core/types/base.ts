@@ -26,3 +26,11 @@ export interface CrudOperations<T, CreateDTO, UpdateDTO> {
 	update(id: string | number, dto: UpdateDTO): Promise<T[] | null>;
 	delete(id: string | number): Promise<boolean>;
 }
+
+export type bodyGetter = 'query' | 'formData' | 'json';
+
+export type ContextInstance<T extends bodyGetter> = {
+	query: Record<string, string | string[]>;
+	formData: FormData;
+	json: Record<string, unknown>;
+}[T];

@@ -42,10 +42,7 @@ async function buildNormal() {
 			minify: !flags.watch,
 			sourcemap: flags.watch ? 'linked' : 'none',
 			env: 'inline',
-			define: {
-				'process.env.NODE_ENV': flags.watch ? '"development"' : '"production"',
-				'globalThis.IS_BROWSER': 'true',
-			},
+			define: {},
 		});
 	}
 

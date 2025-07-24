@@ -189,7 +189,7 @@ export const Toolbar: React.FC<{
 			{/* Indicateurs de collaboration */}
 			<div className="flex items-center gap-4">
 				<div className="flex items-center -space-x-2">
-					{collaborators.map((user) => (
+					{collaborators?.map((user) => (
 						<div
 							key={user.id}
 							title={user.name}
@@ -207,7 +207,7 @@ export const Toolbar: React.FC<{
 					title="Commentaires"
 				>
 					<MessageCircle size={18} />
-					{comments.filter((c) => !c.resolved).length > 0 && (
+					{comments?.filter((c) => !c.resolved).length > 0 && (
 						<span className="bg-primary text-primary-foreground absolute top-0 right-0 h-4 w-4 rounded-full text-xs">
 							{comments.filter((c) => !c.resolved).length}
 						</span>
@@ -220,7 +220,7 @@ export const Toolbar: React.FC<{
 					title="Suivi des modifications"
 				>
 					<GitBranch size={18} />
-					{revisions.filter((r) => r.accepted === undefined).length > 0 && (
+					{revisions?.filter((r) => r.accepted === undefined).length > 0 && (
 						<span className="bg-primary text-primary-foreground absolute top-0 right-0 h-4 w-4 rounded-full text-xs">
 							{revisions.filter((r) => r.accepted === undefined).length}
 						</span>

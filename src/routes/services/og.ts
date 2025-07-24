@@ -1,11 +1,11 @@
-import type { DocumentOGData, OGImageParams } from '../@types/og.ts';
-import { factory } from '../factory.ts';
+import type { DocumentOGData, OGImageParams } from '../../@types/og.ts';
+import { factory } from '../../factory.ts';
 import {
 	GenerationError,
 	ogGenerator,
 	ValidationError,
 	validateOGParams,
-} from '../utils/og/generator.ts';
+} from '../../utils/og/generator.ts';
 
 const og = factory.createApp();
 

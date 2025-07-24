@@ -1,4 +1,4 @@
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString, IsUrl } from 'class-validator';
 import { DTO } from '@/core/decorators';
 import { BaseCreateDTO, BaseUpdateDTO } from '@/core/dto';
 
@@ -8,10 +8,12 @@ export class CreateDocumentDto extends BaseCreateDTO {
 	@IsOptional()
 	title?: string;
 
-	@IsString()
+	@IsString({ message: 'You must provide the document mime type' })
 	type!: string;
 
-	@IsObject()
+	@IsObject({
+		message: 'The document data must be a valid key -> value object',
+	})
 	@IsOptional()
 	data?: Record<string | number, unknown>;
 
@@ -20,20 +22,23 @@ export class CreateDocumentDto extends BaseCreateDTO {
 	userId?: string;
 }
 
+@DTO()
 export class UpdateDocumentDto extends BaseUpdateDTO {
 	@IsString()
 	@IsOptional()
 	title?: string;
 
-	@IsString()
+	@IsString({ message: 'You must provide the document mime type' })
 	@IsOptional()
 	type?: string;
 
-	@IsString()
+	@IsUrl()
 	@IsOptional()
 	downLoadLink?: string;
 
-	@IsObject()
+	@IsObject({
+		message: 'The document data must be a valid key -> value object',
+	})
 	@IsOptional()
 	data?: Record<string | number, unknown>;
 }

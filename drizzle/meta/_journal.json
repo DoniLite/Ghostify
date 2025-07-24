@@ -15,6 +15,13 @@
       "when": 1753260853964,
       "tag": "0001_regular_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753298467524,
+      "tag": "0002_brown_baron_zemo",
+      "breakpoints": true
     }
   ]
 }
