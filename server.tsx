@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import { open, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
@@ -31,7 +32,7 @@ import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
 
-const SERVER_PORT = 8080;
+const SERVER_PORT = process.env.PORT || 8080;
 
 export type Variables = {
 	session: Session<SessionData>;

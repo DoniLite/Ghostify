@@ -12,21 +12,44 @@ import Index from './pages/Index';
 import Login from './pages/Login';
 import { detectLocale } from './utils/translation';
 import './assets/tailwind.css';
+import type { PropsWithChildren } from 'react';
+import TLayout from './components/shared/TLayout';
 
-const MainLayout = ({ request }: { request?: Request }) => {
+const Providers = ({
+	request,
+	children,
+}: PropsWithChildren<{ request?: Request }>) => {
 	const defaultLocale = detectLocale(request);
 	return (
 		<LocalsContext.Provider value={{ default: {} }}>
 			<SeoContext.Provider value={defaultSeo}>
 				<ThemeProvider>
 					<TranslationProvider initialLocale={defaultLocale}>
-						<Wrapper>
-							<Outlet />
-						</Wrapper>
+						{children}
 					</TranslationProvider>
 				</ThemeProvider>
 			</SeoContext.Provider>
 		</LocalsContext.Provider>
+	);
+};
+
+const MainLayout = ({ request }: { request?: Request }) => {
+	return (
+		<Providers request={request}>
+			<Wrapper>
+				<Outlet />
+			</Wrapper>
+		</Providers>
+	);
+};
+
+const MiniLayout = ({ request }: { request?: Request }) => {
+	return (
+		<Providers request={request}>
+			<TLayout>
+				<Outlet />
+			</TLayout>
+		</Providers>
 	);
 };
 
@@ -37,11 +60,13 @@ export default function App({ request }: { request?: Request }) {
 			<Routes>
 				<Route element={<MainLayout request={request} />}>
 					<Route index element={<Index />} />
-					<Route path="login" element={<Login />} />
 					<Route path="pricing" element={<Billing />} />
 					<Route path="contact" element={<Contact />} />
-					<Route path="editor/:userId/:documentId" element={<Editor />} />
 					<Route path="*" element={<NotFound />} />
+				</Route>
+				<Route element={<MiniLayout request={request} />}>
+					<Route path="login" element={<Login />} />
+					<Route path="editor/:userId/:documentId" element={<Editor />} />
 				</Route>
 			</Routes>
 		</>
