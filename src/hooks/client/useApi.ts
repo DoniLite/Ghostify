@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ensureUrlEnd } from '@/utils/shared.helpers';
 import {
 	ApiError,
 	type ApiResponse,
@@ -12,13 +13,14 @@ import {
 	type RouteKey,
 	type UseApiReturn,
 } from '../../@types/api';
-import { ensureUrlEnd } from '@/utils/shared.helpers';
 
 class ApiClient {
 	private baseURL: string;
 	private defaultHeaders: Record<string, string>;
 
-	constructor(baseURL: string = process.env.APP_HOST ?? 'http://localhost:8080/') {
+	constructor(
+		baseURL: string = process.env.APP_HOST ?? 'http://localhost:8080/',
+	) {
 		this.baseURL = ensureUrlEnd(baseURL);
 		this.defaultHeaders = {
 			'Content-Type': 'application/json',

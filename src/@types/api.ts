@@ -1,5 +1,5 @@
-import type { User } from "@/db";
-import type { CreateUserDTO } from "@/lib/server/user";
+import type { User } from '@/db';
+import type { CreateUserDTO } from '@/lib/server/user';
 
 export interface ApiResponse<T = unknown> {
 	data: T;
