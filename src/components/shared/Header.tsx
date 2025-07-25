@@ -75,7 +75,7 @@ const Header = () => {
 							href="/"
 							className="text-foreground hover:text-primary font-nunito transition-colors"
 						>
-							{t('common.products')}
+							{t('common.documentation')}
 						</a>
 						<NavLink to={useLocalURI('/pricing')} className={linkClass}>
 							{t('common.pricing')}

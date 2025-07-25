@@ -1,18 +1,18 @@
-const locales = {
+const fr = {
 	common: {
 		home: 'Accueil',
 		contact: 'Contact',
-		pricing: 'Tarification',
+		pricing: 'Tarifs',
+		documentation: 'Documentation',
 		get_started: 'Commencer',
 		per: 'Par',
 		month: 'Mois',
 		year: 'Année',
 		day: 'Jour',
-		documentation: 'Documentation',
 		mode: {
-			system: 'Mode système',
-			light: 'Mode clair',
-			dark: 'Mode sombre',
+			system: 'Mode Système',
+			light: 'Mode Clair',
+			dark: 'Mode Sombre',
 		},
 	},
 	home: {
@@ -20,17 +20,17 @@ const locales = {
 			welcome_1: 'Une plateforme pour booster votre',
 			welcome_2: 'productivité',
 			description:
-				'Ghostify est une plateforme de création et de partage de contenu, incluant des services comme la création et la conversion de documents et de CV.',
+				'Ghostify est une plateforme de production et de partage de contenu, incluant des services comme la création et la conversion de documents et de CV.',
 			cta: {
 				'1': 'Essayer gratuitement',
 				'2': 'Voir la documentation',
 			},
 		},
 		services: {
-			id: 'Nos services',
-			title: 'Solutions de documentation complètes pour les développeurs',
+			id: 'Nos Services',
+			title: 'Solutions complètes de documentation pour les développeurs',
 			description:
-				'Intégrez des fonctionnalités avancées de gestion de documents dans vos applications avec nos API performantes et évolutives.',
+				'Intégrez des fonctionnalités avancées de gestion documentaire à vos applications grâce à nos API performantes et évolutives.',
 			translation_service: {
 				title: 'Traduction et création de documents',
 				description:
@@ -44,10 +44,10 @@ const locales = {
 			conversion_service: {
 				title: 'Conversion de documents',
 				description:
-					'Convertissez vos documents entre différents formats tout en préservant la mise en page et les éléments complexes.',
+					'Convertissez vos documents entre différents formats tout en conservant la mise en page et les éléments complexes.',
 				fields: [
 					'PDF, DOCX, HTML, Markdown',
-					'Préservation de la mise en page',
+					'Conservation de la mise en page',
 					'Traitement par lots',
 				],
 			},
@@ -62,28 +62,27 @@ const locales = {
 			first_cta: {
 				title: 'Lancez votre carrière professionnelle',
 				description:
-					"Créez dès maintenant un CV de qualité, adapté à vos besoins et au marché, grâce à notre générateur de CV, qui vous offre la possibilité de le personnaliser. Vous pouvez également choisir de les créer en masse ou d'utiliser notre API pour l'intégrer à vos propres solutions.",
+					'Créez un CV de qualité dès maintenant, adapté à vos besoins et au marché, grâce à notre générateur de CV personnalisable. Vous pouvez aussi créer des CV en masse ou utiliser notre API pour l’intégrer à vos propres solutions.',
 				btns: {
 					1: 'Découvrir',
 					2: 'En savoir plus',
 				},
 			},
 			second_cta: {
-				title:
-					'Nous prenons en charge plus de 30 types de documents en termes de conversion',
+				title: 'Nous prenons en charge +30 types de documents',
 				description:
-					"Notre logiciel de conversion vous permet d'obtenir des résultats satisfaisants, quel que soit le format d'entrée ou de sortie souhaité. Grâce à des outils performants, nous préservons le format et la qualité d'origine de vos documents. Vous pouvez également choisir de les convertir en masse ou d'utiliser notre API si vous souhaitez l'intégrer à vos propres solutions.",
-				btn: 'Essai gratuit',
+					'Notre logiciel de conversion vous garantit des résultats satisfaisants quel que soit le format d’entrée ou de sortie. Grâce à des outils puissants, nous préservons la mise en page et la qualité originale de vos documents. Conversion en masse possible ou via notre API.',
+				btn: 'Essayer gratuitement',
 			},
 		},
 		productivity: {
-			title: 'Tout ce dont vous avez besoin pour booster votre productivité',
+			title: 'Tout ce qu’il vous faut pour booster votre productivité',
 			description:
-				"Ghostify est une plateforme de productivité qui vous permet non seulement de vous inspirer du contenu des autres utilisateurs, mais aussi de bénéficier de l'assistance de l'IA pour vos différentes tâches, tout en tenant compte de vos préférences.",
+				"Ghostify est une plateforme de productivité qui vous permet de vous inspirer du contenu d'autres utilisateurs tout en bénéficiant d'une aide intelligente adaptée à vos préférences.",
 		},
 		open_source: {
 			title: {
-				1: 'nous sommes en',
+				1: 'nous sommes',
 				2: 'Open Source',
 			},
 			btn: 'Voir sur Github',
@@ -95,6 +94,43 @@ const locales = {
 			login: 'Connexion',
 		},
 	},
+	billing: {
+		pro: {
+			id: 'Pro',
+			pack: [
+				'Kit de base : Création de documents, 30 Go de stockage gratuit, Partage en équipe (5 espaces, 10 connexions max)',
+				'Convertisseur de documents illimité',
+				'50k tokens/mo Traduction de documents',
+				'Création de CV illimitée',
+				'CV hébergés et partageables',
+			],
+		},
+		stater: {
+			id: 'Starter',
+			pack: [
+				'Kit de base : Création de documents, 15 Go de stockage gratuit, Partage en équipe (2 espaces, 5 connexions max)',
+				'Convertisseur 10 Go/mo',
+				'Création de CV illimitée',
+				'CV hébergés et partageables',
+			],
+		},
+	},
+	contact: {
+		title: 'Nous contacter',
+		subtitle:
+			'Nous serions ravis de vous lire ! Envoyez-nous un message ou retrouvez nos coordonnées ci-dessous.',
+		form_heading: 'Envoyez-nous un message',
+		form_name: 'Votre nom',
+		form_email: 'Votre email',
+		form_subject: 'Sujet',
+		form_message: 'Votre message',
+		form_submit: 'Envoyer le message',
+		form_sending: 'Envoi en cours...',
+		form_success: 'Message envoyé avec succès ! Nous vous répondrons bientôt.',
+		form_error: "Échec de l'envoi du message. Veuillez réessayer plus tard.",
+	},
+	footer: {},
+	not_found: {},
 };
 
-export default locales;
+export default fr;
