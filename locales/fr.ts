@@ -8,7 +8,7 @@ const locales = {
 		month: 'Mois',
 		year: 'Année',
 		day: 'Jour',
-		products: 'Produits',
+		documentation: 'Documentation',
 		mode: {
 			system: 'Mode système',
 			light: 'Mode clair',

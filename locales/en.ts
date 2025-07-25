@@ -3,7 +3,7 @@ const locales = {
 		home: 'Home',
 		contact: 'Contact',
 		pricing: 'Pricing',
-		products: 'Products',
+		documentation: 'Documentation',
 		get_started: 'Get started',
 		per: 'By',
 		month: 'Month',
