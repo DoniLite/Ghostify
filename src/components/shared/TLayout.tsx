@@ -3,12 +3,9 @@ import Meta from './Meta';
 
 export type LayoutType = PropsWithChildren;
 
-
 const TLayout: FC<LayoutType> = ({ children }) => {
 	return (
-		<html
-			lang="en"
-		>
+		<html lang="en">
 			<head>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,9 +18,7 @@ const TLayout: FC<LayoutType> = ({ children }) => {
 				<link rel="stylesheet" href="/static/js/client.css" />
 				<Meta />
 			</head>
-			<body>
-				{children}
-			</body>
+			<body>{children}</body>
 		</html>
 	);
 };
