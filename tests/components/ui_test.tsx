@@ -20,6 +20,7 @@ describe('UI Test Suite', () => {
 		}
 
 		expect(button).toBeInTheDocument();
+		expect(button).toHaveTextContent('Loading Button');
 
 		reactTests.cleanup();
 	});
