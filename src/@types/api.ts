@@ -1,4 +1,5 @@
-import type { User } from '@prisma/client';
+import type { User } from "@/db";
+import type { CreateUserDTO } from "@/lib/server/user";
 
 export interface ApiResponse<T = unknown> {
 	data: T;
@@ -69,7 +70,7 @@ export interface ApiRoutes {
 				name: User['fullname'];
 				email: User['email'];
 			};
-			body: { name: string; email: string };
+			body: CreateUserDTO;
 		};
 		update: {
 			method: 'PUT';

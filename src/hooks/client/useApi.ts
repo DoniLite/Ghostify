@@ -12,13 +12,14 @@ import {
 	type RouteKey,
 	type UseApiReturn,
 } from '../../@types/api';
+import { ensureUrlEnd } from '@/utils/shared.helpers';
 
 class ApiClient {
 	private baseURL: string;
 	private defaultHeaders: Record<string, string>;
 
-	constructor(baseURL: string = 'http://localhost:3000/api') {
-		this.baseURL = baseURL;
+	constructor(baseURL: string = process.env.APP_HOST ?? 'http://localhost:8080/') {
+		this.baseURL = ensureUrlEnd(baseURL);
 		this.defaultHeaders = {
 			'Content-Type': 'application/json',
 		};
