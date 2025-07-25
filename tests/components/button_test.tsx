@@ -8,8 +8,8 @@ const reactTests = new ReactTestUtils({
 	timeout: 3000,
 });
 
-describe('UI Test Suite', () => {
-	test('Button test', () => {
+describe('UI Test Suite for the Button component', () => {
+	test('Accessibility testing', () => {
 		const { container } = reactTests.render(
 			<Button disabled={true}>Loading Button</Button>,
 		);
