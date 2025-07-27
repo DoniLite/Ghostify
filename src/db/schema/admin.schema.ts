@@ -9,8 +9,6 @@ export const KeyTable = pgTable('Key', {
 	key: T.text('key'),
 	iv: T.text('iv'),
 	type: keyTypeEnum('type').notNull(),
-	uid: T.text('uid').unique(),
-	token: T.text('token'),
 	userId: T.text('userId').references(() => UserTable.id),
 	...Timestamp,
 });
@@ -20,8 +18,7 @@ export const AdminTable = pgTable('Admin', {
 	role: T.text('role').notNull(),
 	login: T.text('login').unique().notNull(),
 	password: T.text('password').notNull(),
-	token: T.text('token').notNull(),
-	activities: T.text('activities'),
+	activities: T.json('activities'),
 	connection: T.timestamp('connection'),
 	...Timestamp,
 });
