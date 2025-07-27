@@ -22,6 +22,13 @@
       "when": 1753298467524,
       "tag": "0002_brown_baron_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1753611918447,
+      "tag": "0003_striped_wendell_rand",
+      "breakpoints": true
     }
   ]
 }
