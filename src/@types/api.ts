@@ -1,5 +1,6 @@
-import type { User } from '@/db';
+import type { Document, User } from '@/db';
 import type { CreateUserDTO } from '@/lib/server/user';
+import type { AuthStore } from '@/stores/auth.store';
 
 export interface ApiResponse<T = unknown> {
 	data: T;
@@ -8,15 +9,22 @@ export interface ApiResponse<T = unknown> {
 }
 
 export class ApiError extends Error {
-	constructor(
-		message: string,
-		public status: number,
-		public code?: string,
-	) {
-		super(message);
-		this.name = 'ApiError';
+		constructor(
+			message: string,
+			public status: number,
+			public code?: string,
+			public details?:
+				| Record<string, unknown>
+				| {
+						property: string;
+						constraints: unknown;
+						value: unknown;
+				  }[],
+		) {
+			super(message);
+			this.name = 'ApiError';
+		}
 	}
-}
 
 export interface ApiErrorInterface {
 	message: string;
@@ -56,7 +64,7 @@ export interface ApiRoutes {
 		list: {
 			method: 'GET';
 			response: User[];
-			params?: { page?: number; limit?: number };
+			params: { page?: number; limit?: number };
 		};
 		get: {
 			method: 'GET';
@@ -84,26 +92,28 @@ export interface ApiRoutes {
 			params: { id: number };
 		};
 	};
-	documents: {
+	'api/v1/document': {
 		list: {
 			method: 'GET';
-			response: {
-				id: number;
-				title: string;
-				content: string;
-				userId: number;
-			}[];
-			params?: { userId?: number; category?: string };
+			response: Document[];
+			params: { userId?: number; category?: string };
 		};
 		get: {
 			method: 'GET';
-			response: { id: number; title: string; content: string; userId: number };
-			params: { id: number };
+			response: Document;
+			params: { id: string };
 		};
 		create: {
 			method: 'POST';
 			response: { id: number; title: string; content: string; userId: number };
 			body: { title: string; content: string; userId: number };
+		};
+	};
+	'auth/login': {
+		make: {
+			method: 'POST';
+			response: AuthStore['auth']['payload'];
+			body: { login: string; password: string };
 		};
 	};
 }

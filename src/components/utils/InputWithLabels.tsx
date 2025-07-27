@@ -25,6 +25,7 @@ interface InputFieldProps<T = string> {
 	name?: string;
 	required?: boolean;
 	type?: InputTypeHTMLAttribute;
+	error?: string;
 	value: T;
 	onChange?: (value: T) => void;
 	onFocus?: () => void;
@@ -37,6 +38,7 @@ export function InputField<T = string>({
 	name = '',
 	required = false,
 	type = 'text',
+	error,
 	value,
 	onChange,
 	onFocus,
@@ -75,6 +77,7 @@ export function InputField<T = string>({
 				onBlur={handleBlur}
 				className="ring-muted focus:ring-primary rounded-md bg-transparent px-4 py-2 ring outline-none"
 			/>
+			{error && <span className="text-red-400">{error}</span>}
 		</div>
 	);
 }

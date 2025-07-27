@@ -14,6 +14,7 @@ import { detectLocale } from './utils/translation';
 import './assets/tailwind.css';
 import type { PropsWithChildren } from 'react';
 import TLayout from './components/shared/TLayout';
+import { Toaster } from '@/components/ui/sonner';
 
 const Providers = ({
 	request,
@@ -26,6 +27,7 @@ const Providers = ({
 				<ThemeProvider>
 					<TranslationProvider initialLocale={defaultLocale}>
 						{children}
+						<Toaster richColors />
 					</TranslationProvider>
 				</ThemeProvider>
 			</SeoContext.Provider>

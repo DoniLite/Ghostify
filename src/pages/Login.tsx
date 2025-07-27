@@ -1,6 +1,6 @@
 import { Github } from 'lucide-react';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Google } from '@/components/shared/Icons';
 import {
 	useLocalURI,
@@ -8,11 +8,51 @@ import {
 } from '@/components/shared/TranslationContext';
 import { Button } from '@/components/utils/button';
 import { InputField } from '@/components/utils/InputWithLabels';
+import { useAuthStore } from '@/stores/auth.store';
+import { toast } from 'sonner';
 
 const Login = () => {
 	const { t } = useTranslation();
 	const [login, setLogin] = useState('');
+	const auth = useAuthStore((s) => s.auth);
+	const loginFn = useAuthStore((s) => s.login);
+	const [loginFieldError, setLoginFieldError] = useState<string | undefined>(
+		undefined,
+	);
+	const [passwordFieldError, setPasswordFieldError] = useState<
+		string | undefined
+	>(undefined);
 	const [password, setPassword] = useState('');
+	const navigate = useNavigate();
+	const handleAuth = async () => {
+		const res = await loginFn({
+			login,
+			password,
+		});
+		if (auth.authenticationError && 'details' in auth.authenticationError) {
+			const errors = auth.authenticationError.details as {
+				property: string;
+				constraints: string;
+				[key: string]: unknown;
+			}[];
+			console.log('errors =====> ', errors);
+			errors.forEach((e) => {
+				if (e.property === 'login') {
+					setLoginFieldError(e.constraints);
+				}
+				if (e.property === 'password') {
+					setPasswordFieldError(e.constraints);
+				}
+			});
+			toast.error(
+				auth.authenticationError.message ??
+					'Authentication failed please try again',
+			);
+		}
+		if (res?.redirectUrl) {
+			navigate(res.redirectUrl);
+		}
+	};
 	return (
 		<div className="flex min-h-screen w-full items-center justify-center">
 			<div className="bg-card min-w-[300px] rounded-lg dark:border dark:border-border p-8 shadow-lg md:min-w-md lg:min-w-lg xl:min-w-xl">
@@ -33,18 +73,25 @@ const Login = () => {
 					</div>
 					<InputField
 						value={login}
+						error={loginFieldError}
 						onChange={(v) => setLogin(v)}
 						label={t('login.form.login.label')}
+						onFocus={() => setLoginFieldError(undefined)}
 						placeholder={t('login.form.login.placeholder')}
 					/>
 					<InputField
 						value={password}
+						error={passwordFieldError}
 						onChange={(v) => setPassword(v)}
+						onFocus={() => setPasswordFieldError(undefined)}
 						label={t('login.form.password.label')}
 						placeholder={t('login.form.password.placeholder')}
 						type="password"
 					/>
-					<Button className="w-full bg-primary cursor-pointer text-white hover:bg-accent rounded-md px-5 py-2 transition-colors">
+					<Button
+						onClick={handleAuth}
+						className="w-full bg-primary cursor-pointer text-white hover:bg-accent rounded-md px-5 py-2 transition-colors"
+					>
 						{t('login.form_submit')}
 					</Button>
 					<div className="w-full flex items-center justify-between">
