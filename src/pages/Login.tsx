@@ -72,6 +72,7 @@ const Login = () => {
 						</Button>
 					</div>
 					<InputField
+						name="login"
 						value={login}
 						error={loginFieldError}
 						onChange={(v) => setLogin(v)}
@@ -80,6 +81,7 @@ const Login = () => {
 						placeholder={t('login.form.login.placeholder')}
 					/>
 					<InputField
+						name="password"
 						value={password}
 						error={passwordFieldError}
 						onChange={(v) => setPassword(v)}
@@ -90,9 +92,10 @@ const Login = () => {
 					/>
 					<Button
 						onClick={handleAuth}
+						disabled={auth.isLoading}
 						className="w-full bg-primary cursor-pointer text-white hover:bg-accent rounded-md px-5 py-2 transition-colors"
 					>
-						{t('login.form_submit')}
+						{auth.isLoading ? t('login.form_sending') : t('login.form_submit')}
 					</Button>
 					<div className="w-full flex items-center justify-between">
 						<NavLink

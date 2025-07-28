@@ -30,6 +30,7 @@ interface InputFieldProps<T = string> {
 	onChange?: (value: T) => void;
 	onFocus?: () => void;
 	onBlur?: () => void;
+	[key: string]: unknown; // Allow additional props
 }
 
 export function InputField<T = string>({
@@ -43,6 +44,7 @@ export function InputField<T = string>({
 	onChange,
 	onFocus,
 	onBlur,
+	...rest
 }: InputFieldProps<T>) {
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const val = e.target.value as unknown as T;
@@ -75,6 +77,7 @@ export function InputField<T = string>({
 				onChange={handleChange}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
+				{...rest}
 				className="ring-muted focus:ring-primary rounded-md bg-transparent px-4 py-2 ring outline-none"
 			/>
 			{error && <span className="text-red-400">{error}</span>}

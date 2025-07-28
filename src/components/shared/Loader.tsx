@@ -1,12 +1,15 @@
+import { useTranslation } from './TranslationContext';
+
 const Loader = () => {
+	const { t } = useTranslation();
 	return (
 		<div
 			id="pageLoader"
-			className="flex h-[100vh] w-full items-center justify-center bg-gray-950 text-white"
+			className="flex h-screen w-full items-center justify-center bg-background text-primary"
 		>
 			<div id="loaderHead">
 				<h2 className="animate-bounce font-bold lg:text-2xl">
-					Chargement veuillez patinter...
+					{t('common.loading')}
 				</h2>
 				<h1 className="flex items-center text-xl font-bold md:text-7xl">
 					L

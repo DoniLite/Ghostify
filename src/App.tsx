@@ -15,6 +15,9 @@ import './assets/tailwind.css';
 import type { PropsWithChildren } from 'react';
 import TLayout from './components/shared/TLayout';
 import { Toaster } from '@/components/ui/sonner';
+import Register from './pages/Register';
+import Dashboard from '@/components/dashboard/Wrapper';
+import DashIndex from '@/pages/panel/Index';
 
 const Providers = ({
 	request,
@@ -55,6 +58,7 @@ const MiniLayout = ({ request }: { request?: Request }) => {
 	);
 };
 
+
 export default function App({ request }: { request?: Request }) {
 	return (
 		<>
@@ -68,7 +72,11 @@ export default function App({ request }: { request?: Request }) {
 				</Route>
 				<Route element={<MiniLayout request={request} />}>
 					<Route path="login" element={<Login />} />
+					<Route path="/register" element={<Register />} />
 					<Route path="editor/:userId/:documentId" element={<Editor />} />
+					<Route path="/dashboard" element={<Dashboard />}>
+						<Route index element={<DashIndex />} />
+					</Route>
 				</Route>
 			</Routes>
 		</>
