@@ -5,13 +5,14 @@ const locales = {
 		pricing: 'Tarification',
 		documentation: 'Documentation',
 		login: 'Connexion',
+		register: 'Inscription',
 		github: 'Github',
 		loading: 'Chargement...',
 		google: 'Google',
 		get_started: 'Commencer',
 		per: 'Par',
 		month: 'Mois',
-		year: 'Année',
+		year: 'An',
 		day: 'Jour',
 		mode: {
 			system: 'Mode Système',
@@ -24,7 +25,7 @@ const locales = {
 			welcome_1: 'Une plateforme pour booster votre',
 			welcome_2: 'productivité',
 			description:
-				'Ghostify est une plateforme de production et de partage de contenu, incluant des services tels que la création et la conversion de documents et de CV.',
+				'Ghostify est une plateforme de production et de partage de contenu, incluant des services de création et de conversion de documents et de CV.',
 			cta: {
 				'1': 'Essayer gratuitement',
 				'2': 'Voir la documentation',
@@ -34,7 +35,7 @@ const locales = {
 			id: 'Nos Services',
 			title: 'Solutions complètes de documentation pour développeurs',
 			description:
-				'Intégrez des fonctionnalités avancées de gestion documentaire dans vos applications grâce à nos API performantes et évolutives.',
+				'Intégrez des fonctionnalités avancées de gestion de documents dans vos applications grâce à nos API performantes et évolutives.',
 			translation_service: {
 				title: 'Traduction et création de documents',
 				description:
@@ -48,10 +49,10 @@ const locales = {
 			conversion_service: {
 				title: 'Conversion de documents',
 				description:
-					'Convertissez vos documents entre différents formats tout en conservant la mise en page et les éléments complexes.',
+					'Convertissez vos documents entre différents formats tout en préservant la mise en page et les éléments complexes.',
 				fields: [
 					'PDF, DOCX, HTML, Markdown',
-					'Conservation de la mise en page',
+					'Préservation de la mise en page',
 					'Traitement par lot',
 				],
 			},
@@ -64,9 +65,9 @@ const locales = {
 		},
 		cta: {
 			first_cta: {
-				title: 'Lancez votre carrière professionnelle',
+				title: 'Lance ta carrière professionnelle',
 				description:
-					'Créez dès maintenant un CV de qualité, adapté à vos besoins et au marché, grâce à notre générateur personnalisable. Vous pouvez aussi les générer en masse ou intégrer notre API dans vos propres solutions.',
+					'Crée dès maintenant un CV de qualité, adapté à tes besoins et au marché, grâce à notre générateur de CV. Tu peux le personnaliser, le créer en masse ou utiliser notre API pour l’intégrer à tes solutions.',
 				btns: {
 					1: 'Découvrir',
 					2: 'En savoir plus',
@@ -75,14 +76,14 @@ const locales = {
 			second_cta: {
 				title: 'Nous prenons en charge +30 types de documents',
 				description:
-					'Notre logiciel de conversion vous permet d’obtenir des résultats satisfaisants quel que soit le format d’entrée ou de sortie. Grâce à des outils puissants, nous préservons la mise en page et la qualité originale de vos documents. Conversion en masse ou via notre API.',
+					'Notre logiciel de conversion vous garantit des résultats fiables quel que soit votre format d’entrée ou de sortie. Grâce à des outils puissants, nous préservons la qualité d’origine. Vous pouvez aussi convertir en masse ou utiliser notre API.',
 				btn: 'Essayer gratuitement',
 			},
 		},
 		productivity: {
-			title: 'Tout ce dont vous avez besoin pour booster votre productivité',
+			title: 'Tout ce qu’il faut pour booster ta productivité',
 			description:
-				"Ghostify est une plateforme de productivité qui vous permet de vous inspirer du contenu d'autres utilisateurs, tout en bénéficiant d'une aide IA adaptée à vos préférences.",
+				'Ghostify est une plateforme de productivité qui t’aide à t’inspirer du contenu des autres, mais aussi à bénéficier de l’aide de l’IA pour tes tâches, selon tes préférences.',
 		},
 		open_source: {
 			title: {
@@ -102,20 +103,20 @@ const locales = {
 		pro: {
 			id: 'Pro',
 			pack: [
-				'Kit de base : Création de documents, 30 Go de stockage gratuit, Partage en équipe (5 espaces, 10 connexions max)',
+				'Outils de base : Création de documents, 30 Go de stockage, partage en équipe (5 espaces de travail, 10 connexions max)',
 				'Convertisseur de documents illimité',
-				'50k tokens/mois pour la traduction de documents',
+				'50k jetons/mois pour la traduction',
 				'Création de CV illimitée',
-				'CV hébergés et partageables',
+				'CV hébergé et partageable',
 			],
 		},
 		stater: {
-			id: 'Starter',
+			id: 'Débutant',
 			pack: [
-				'Kit de base : Création de documents, 15 Go de stockage gratuit, Partage en équipe (2 espaces, 5 connexions max)',
-				'Convertisseur 10 Go/mois',
+				'Outils de base : Création, 15 Go de stockage, partage en équipe (2 espaces de travail, 5 connexions max)',
+				'10 Go/mois de conversion',
 				'Création de CV illimitée',
-				'CV hébergés et partageables',
+				'CV hébergé et partageable',
 			],
 		},
 	},
@@ -125,12 +126,13 @@ const locales = {
 			'Nous serions ravis de vous lire ! Envoyez-nous un message ou trouvez nos coordonnées ci-dessous.',
 		form_heading: 'Envoyez-nous un message',
 		form_name: 'Votre nom',
-		form_email: 'Votre e-mail',
+		form_email: 'Votre email',
 		form_subject: 'Sujet',
 		form_message: 'Votre message',
 		form_submit: 'Envoyer le message',
 		form_sending: 'Envoi en cours...',
-		form_success: 'Message envoyé avec succès ! Nous vous répondrons bientôt.',
+		form_success:
+			'Message envoyé avec succès ! Nous reviendrons vers vous bientôt.',
 		form_error: "Échec de l'envoi. Veuillez réessayer plus tard.",
 	},
 	login: {
@@ -146,12 +148,29 @@ const locales = {
 				placeholder: 'Entrez votre mot de passe.',
 			},
 		},
-		form_submit: 'Soumettre',
+		form_submit: 'Valider',
 		form_forgot_password: 'Mot de passe oublié ?',
 		form_create_account: 'Créer un compte',
-		form_sending: 'Connexion...',
-		form_success: 'Connexion réussie ! Redirection...',
-		form_error: 'Échec de la connexion. Vérifiez vos identifiants.',
+		form_sending: 'Connexion en cours...',
+	},
+	register: {
+		form_heading: 'Créer un nouveau compte sur Ghostify',
+		form: {
+			email: {
+				label: 'Email',
+				placeholder: 'Entrez votre email',
+			},
+			password: {
+				label: 'Mot de passe',
+				placeholder: 'Entrez un mot de passe',
+			},
+			validate_password: {
+				label: 'Confirmez le mot de passe',
+				placeholder: 'Confirmez votre mot de passe',
+			},
+		},
+		form_login_account: 'Déjà inscrit ? Essayez de vous connecter',
+		password_field_error: 'Les mots de passe doivent correspondre',
 	},
 	footer: {},
 	not_found: {},

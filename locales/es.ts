@@ -5,10 +5,11 @@ const locales = {
 		pricing: 'Precios',
 		documentation: 'Documentación',
 		login: 'Iniciar sesión',
+		register: 'Registrarse',
 		github: 'Github',
 		loading: 'Cargando...',
 		google: 'Google',
-		get_started: 'Empezar',
+		get_started: 'Comenzar',
 		per: 'Por',
 		month: 'Mes',
 		year: 'Año',
@@ -24,7 +25,7 @@ const locales = {
 			welcome_1: 'Una plataforma para impulsar tu',
 			welcome_2: 'productividad',
 			description:
-				'Ghostify es una plataforma de creación y compartición de contenido, que incluye servicios como la creación y conversión de documentos y currículums.',
+				'Ghostify es una plataforma para crear y compartir contenido, que incluye servicios como creación y conversión de documentos y currículums.',
 			cta: {
 				'1': 'Probar gratis',
 				'2': 'Ver documentación',
@@ -34,11 +35,11 @@ const locales = {
 			id: 'Nuestros Servicios',
 			title: 'Soluciones completas de documentación para desarrolladores',
 			description:
-				'Integra funciones avanzadas de gestión documental en tus aplicaciones con nuestras APIs de alto rendimiento y escalabilidad.',
+				'Integra funciones avanzadas de gestión de documentos en tus aplicaciones con nuestras APIs potentes y escalables.',
 			translation_service: {
 				title: 'Traducción y creación de documentos',
 				description:
-					'Traduce tus documentos a diferentes formatos y crea documentos de trabajo para colaborar con tu equipo.',
+					'Traduce tus documentos a diferentes formatos, crea documentos colaborativos para trabajar con tu equipo.',
 				fields: [
 					'Rendimiento y optimización',
 					'Formatos PDF, DOCX, HTML',
@@ -48,7 +49,7 @@ const locales = {
 			conversion_service: {
 				title: 'Conversión de documentos',
 				description:
-					'Convierte tus documentos entre diferentes formatos conservando el diseño y los elementos complejos.',
+					'Convierte tus documentos entre diferentes formatos manteniendo el formato y los elementos complejos.',
 				fields: [
 					'PDF, DOCX, HTML, Markdown',
 					'Preservación del diseño',
@@ -58,7 +59,7 @@ const locales = {
 			cv_service: {
 				title: 'Creación de currículums',
 				description:
-					'Genera currículums profesionales con plantillas personalizables para aplicaciones de RRHH y sitios de empleo.',
+					'Genera currículums profesionales con plantillas personalizables para apps de RRHH y sitios de empleo.',
 				fields: ['Plantillas modernas', 'Personalización avanzada'],
 			},
 		},
@@ -66,7 +67,7 @@ const locales = {
 			first_cta: {
 				title: 'Lanza tu carrera profesional',
 				description:
-					'Crea ahora un currículum de alta calidad, adaptado a tus necesidades y al mercado, gracias a nuestro generador personalizable. También puedes generarlos en masa o integrar nuestra API en tus propias soluciones.',
+					'Crea un currículum de alta calidad ahora mismo, adaptado a tus necesidades y al mercado, con nuestro generador de CV. Puedes personalizarlo, crearlo en masa o usar nuestra API para integrarlo en tus soluciones.',
 				btns: {
 					1: 'Descubrir',
 					2: 'Saber más',
@@ -75,14 +76,14 @@ const locales = {
 			second_cta: {
 				title: 'Soportamos más de 30 tipos de documentos',
 				description:
-					'Nuestro software de conversión permite obtener resultados satisfactorios independientemente del formato de entrada o salida. Gracias a herramientas potentes, preservamos el formato y la calidad original de tus documentos. También puedes convertirlos en masa o usar nuestra API.',
+					'Nuestro software de conversión garantiza resultados óptimos sin importar el formato de entrada o salida. Gracias a herramientas potentes, preservamos el formato y la calidad original. También puedes convertir en masa o usar nuestra API.',
 				btn: 'Probar gratis',
 			},
 		},
 		productivity: {
 			title: 'Todo lo que necesitas para aumentar tu productividad',
 			description:
-				'Ghostify es una plataforma de productividad que te permite inspirarte en contenido de otros usuarios y beneficiarte de asistencia IA adaptada a tus preferencias.',
+				'Ghostify es una plataforma de productividad que te permite inspirarte en el contenido de otros y beneficiarte de la ayuda de la IA para tus tareas, respetando tus preferencias.',
 		},
 		open_source: {
 			title: {
@@ -94,7 +95,7 @@ const locales = {
 	},
 	header: {
 		buttons: {
-			get_started: 'Empezar',
+			get_started: 'Comenzar',
 			login: 'Iniciar sesión',
 		},
 	},
@@ -102,27 +103,27 @@ const locales = {
 		pro: {
 			id: 'Pro',
 			pack: [
-				'Kit básico: Creación de documentos, 30 GB de almacenamiento gratuito, Espacio de equipo (5 espacios, 10 conexiones máx)',
-				'Conversión ilimitada de documentos',
+				'Kit básico de documentos: creación, 30GB de almacenamiento gratuito, colaboración en equipo (5 espacios, 10 conexiones máx.)',
+				'Conversión de documentos ilimitada',
 				'50k tokens/mes para traducción de documentos',
-				'Creación ilimitada de currículums',
-				'Currículums alojados y compartibles',
+				'Creación de currículums ilimitada',
+				'Currículum alojado y compartible',
 			],
 		},
 		stater: {
-			id: 'Starter',
+			id: 'Inicial',
 			pack: [
-				'Kit básico: Creación de documentos, 15 GB de almacenamiento gratuito, Espacio de equipo (2 espacios, 5 conexiones máx)',
-				'Conversión de 10 GB/mes',
-				'Creación ilimitada de currículums',
-				'Currículums alojados y compartibles',
+				'Kit básico: creación de documentos, 15GB de almacenamiento, colaboración en equipo (2 espacios, 5 conexiones máx.)',
+				'10GB/mes de conversión de documentos',
+				'Creación de currículums ilimitada',
+				'Currículum alojado y compartible',
 			],
 		},
 	},
 	contact: {
-		title: 'Contáctanos',
+		title: 'Ponte en contacto',
 		subtitle:
-			'¡Nos encantaría saber de ti! Envíanos un mensaje o consulta nuestros datos de contacto a continuación.',
+			'¡Nos encantaría saber de ti! Envíanos un mensaje o encuentra nuestros datos de contacto abajo.',
 		form_heading: 'Envíanos un mensaje',
 		form_name: 'Tu nombre',
 		form_email: 'Tu correo electrónico',
@@ -135,11 +136,11 @@ const locales = {
 	},
 	login: {
 		subtitle: 'Accede a tu cuenta',
-		form_heading: 'Iniciar sesión en tu cuenta',
+		form_heading: 'Inicia sesión en tu cuenta',
 		form: {
 			login: {
 				label: 'Usuario',
-				placeholder: 'Ingresa tu correo o nombre de usuario.',
+				placeholder: 'Ingresa tu correo/usuario.',
 			},
 			password: {
 				label: 'Contraseña',
@@ -150,8 +151,25 @@ const locales = {
 		form_forgot_password: '¿Olvidaste tu contraseña?',
 		form_create_account: 'Crear una cuenta',
 		form_sending: 'Iniciando sesión...',
-		form_success: '¡Inicio de sesión exitoso! Redireccionando...',
-		form_error: 'Error al iniciar sesión. Verifica tus credenciales.',
+	},
+	register: {
+		form_heading: 'Crea una nueva cuenta en Ghostify',
+		form: {
+			email: {
+				label: 'Correo electrónico',
+				placeholder: 'Ingresa tu correo',
+			},
+			password: {
+				label: 'Contraseña',
+				placeholder: 'Ingresa una contraseña',
+			},
+			validate_password: {
+				label: 'Confirmar contraseña',
+				placeholder: 'Confirma tu contraseña',
+			},
+		},
+		form_login_account: '¿Ya tienes una cuenta? Inicia sesión',
+		password_field_error: 'Las contraseñas deben coincidir',
 	},
 	footer: {},
 	not_found: {},
