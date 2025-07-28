@@ -56,11 +56,10 @@ authApp.post('/register', async (c) => {
 	const session = c.get('session');
 	const redirectUrl = session.get('RedirectUrl');
 	const userService = ServiceFactory.getUserService();
-	const { email, fullname, password } = await c.req.json();
+	const { email, password } = await c.req.json();
 	const user = await userService.createUser(
 		{
 			email,
-			fullname,
 			password,
 			permission: 'User',
 		},

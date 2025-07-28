@@ -23,6 +23,7 @@ export class CreateUserDTO extends BaseCreateDTO {
 	@MinLength(8, {
 		message: 'Password must be at least 8 characters long.',
 	})
+	@IsNotEmpty()
 	password!: string;
 
 	@IsIn(['User', 'Admin', 'Root'])

@@ -50,6 +50,7 @@ app.onError((e, c) => {
 	if (e instanceof HTTPException) {
 		return e.getResponse();
 	}
+	console.error(e)
 	return c.json({ error: 'Internal server error' }, 500);
 });
 

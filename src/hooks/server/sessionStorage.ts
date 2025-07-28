@@ -15,7 +15,6 @@ const sessionMiddleware = factory.createMiddleware(async (c, next) => {
 			},
 		});
 	}
-	session.set('RedirectUrl', '/home');
 	await next();
 });
 
