@@ -11,16 +11,21 @@ export interface AuthStore {
 		authenticated: boolean;
 		payload?: {
 			login: User['email'] | User['username'];
-			token: string;
+			token: string | null;
 		};
 		authenticationError?: Error;
 		isLoading?: boolean;
+		_hasHydrated: boolean;
 	};
 	disconnect(): Promise<void>;
-	login: (payload: AuthBodyInit) => Promise<{ redirectUrl?: string } | undefined>;
-	register: (payload: CreateUserDTO) => Promise<User | null>;
+	login: (
+		payload: AuthBodyInit,
+	) => Promise<{ redirectUrl?: string } | undefined>;
+	register: (payload: {
+		email: CreateUserDTO['email'];
+		password: CreateUserDTO['password'];
+	}) => Promise<{ redirectUrl?: string } | undefined>;
 	checkLoginState(): boolean;
-	setLoading: (loading: boolean) => void;
 }
 
 interface AuthBodyInit {
@@ -35,12 +40,8 @@ export const useAuthStore = create<AuthStore>()(
 				auth: {
 					authenticated: false,
 					isLoading: false,
-				},
-
-				setLoading: (loading: boolean) => {
-					set((state) => ({
-						auth: { ...state.auth, isLoading: loading },
-					}));
+					authenticationError: undefined,
+					_hasHydrated: false,
 				},
 
 				login: async (payload: AuthBodyInit) => {
@@ -70,7 +71,10 @@ export const useAuthStore = create<AuthStore>()(
 							auth: {
 								...state.auth,
 								isLoading: false,
-								payload: response.data,
+								payload: {
+									login: response.data?.login ?? null,
+									token: response.data?.token ?? null,
+								},
 								authenticated: true,
 							},
 						}));
@@ -97,53 +101,67 @@ export const useAuthStore = create<AuthStore>()(
 					}
 				},
 
-				register: async (payload: CreateUserDTO) => {
+				register: async (payload) => {
 					set((state) => ({
-						auth: { ...state.auth, isLoading: true },
+						auth: {
+							...state.auth,
+							isLoading: true,
+							authenticationError: undefined,
+						},
 					}));
 
 					try {
-						const response = await fetch('/api/auth/register', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify(payload),
+						const response = await apiClient.call('auth/register', 'make', {
+							body: {
+								...payload,
+								permission: 'User',
+							},
 						});
 
-						if (!response.ok) {
-							throw new Error('Registration failed');
+						if (!response || response.status >= 400) {
+							set((state) => ({
+								auth: {
+									...state.auth,
+									isLoading: false,
+								},
+							}));
 						}
 
-						const data = await response.json();
-
-						set((state) => ({
-							auth: { ...state.auth, isLoading: false },
-						}));
-
-						toast.success('Registration successful!');
-						return data;
-					} catch (error) {
 						set((state) => ({
 							auth: {
 								...state.auth,
 								isLoading: false,
-								authenticationError: error as Error,
+								payload: {
+									login: response.data?.login ?? null,
+									token: response.data?.token ?? null,
+								},
+								authenticated: true,
 							},
 						}));
-
-						toast.error('Registration failed');
-						return null;
+						if (
+							response.data &&
+							'redirectUrl' in response.data &&
+							typeof response.data.redirectUrl === 'string'
+						) {
+							return { redirectUrl: response.data.redirectUrl };
+						}
+					} catch (e) {
+						if (e instanceof ApiError) {
+							set((state) => ({
+								auth: {
+									...state.auth,
+									isLoading: false,
+									authenticationError: e,
+								},
+							}));
+						}
+						toast.error(
+							e instanceof Error ? e.message : 'Authentication failed',
+						);
 					}
 				},
 
 				disconnect: async () => {
-					set(() => ({
-						auth: {
-							authenticated: false,
-							payload: undefined,
-							authenticationError: undefined,
-							isLoading: false,
-						},
-					}));
 					toast.success('Logged out successfully');
 				},
 
@@ -154,6 +172,11 @@ export const useAuthStore = create<AuthStore>()(
 			}),
 			{
 				name: 'auth-store',
+				onRehydrateStorage: () => (state) => {
+					if (state) {
+						state.auth._hasHydrated = true;
+					}
+				},
 			},
 		),
 	),
