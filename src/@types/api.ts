@@ -128,6 +128,12 @@ export interface ApiRoutes {
 			body: { email: string; password: string; permission: User['permission'] };
 		};
 	};
+	'auth/me': {
+		make: {
+			method: 'GET';
+			response: { redirectUrl: string } | { token: string };
+		};
+	};
 }
 
 // Utilitaires de types

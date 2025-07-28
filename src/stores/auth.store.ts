@@ -25,7 +25,7 @@ export interface AuthStore {
 		email: CreateUserDTO['email'];
 		password: CreateUserDTO['password'];
 	}) => Promise<{ redirectUrl?: string } | undefined>;
-	checkLoginState(): boolean;
+	checkLoginState(): Promise<{ redirectUrl: string } | undefined>;
 }
 
 interface AuthBodyInit {
@@ -36,7 +36,7 @@ interface AuthBodyInit {
 export const useAuthStore = create<AuthStore>()(
 	devtools(
 		persist(
-			(set, get) => ({
+			(set) => ({
 				auth: {
 					authenticated: false,
 					isLoading: false,
@@ -165,9 +165,40 @@ export const useAuthStore = create<AuthStore>()(
 					toast.success('Logged out successfully');
 				},
 
-				checkLoginState: () => {
-					const { auth } = get();
-					return auth.authenticated && !!auth.payload?.token;
+				checkLoginState: async () => {
+					try {
+						const response = await apiClient.call('auth/me', 'make');
+						if (
+							response.status === 200 &&
+							response.data &&
+							'token' in response.data &&
+							typeof response.data.token === 'string'
+						) {
+							set((state) => ({
+								auth: {
+									...state.auth,
+									payload: {
+										login: state.auth.payload?.login ?? null,
+										token: (response.data as { token: string }).token as string,
+									},
+								},
+							}));
+						}
+
+						return response.data as { redirectUrl: string };
+					} catch (e) {
+						if (e instanceof ApiError) {
+							set((state) => ({
+								auth: {
+									...state.auth,
+									authenticationError: e,
+								},
+							}));
+						}
+						return {
+							redirectUrl: '/login',
+						};
+					}
 				},
 			}),
 			{

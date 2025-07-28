@@ -155,6 +155,11 @@ export class ApiClient {
 					method: 'POST',
 				},
 			},
+			'auth/me': {
+				make: {
+					method: 'GET'
+				}
+			},
 			users: {
 				list: {
 					method: 'GET',
