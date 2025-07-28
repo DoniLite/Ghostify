@@ -5,7 +5,7 @@ A modern real-time collaborative web application built with Bun, Hono, and React
 ## 🚀 Features
 
 - **Real-time Collaboration** - Collaborative document editing via WebSockets
-- **Resume creation** - Create attractive resume with a friendly interface
+- **Resume creation** - Create an attractive resume with a friendly interface
 - **Secure Authentication** - Session system with key rotation
 - **File Streaming** - Secure file download and streaming
 - **Modern React Interface** - Client-side application with React Router

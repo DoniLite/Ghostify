@@ -6,7 +6,9 @@ import {
 	// setCookie,
 	setSignedCookie,
 } from 'hono/cookie';
-import { factory } from '../../factory';
+import { factory, type AppContext } from '../../factory';
+import type { Session } from 'hono-sessions';
+import type { SessionData } from '@/@types';
 
 const OPEN_ROUTES = ['/home'];
 const AUTH_ROUTES = [
@@ -27,9 +29,10 @@ const isAuthRoute = (url: string) =>
 
 export const authMiddleware = factory.createMiddleware(async (c, next) => {
 	const redirectToSignIn = () => c.redirect('/login');
-	const { connection_time } = await getSignedCookie(
+	const connection_time = await getSignedCookie(
 		c,
 		Bun.env.SIGNED_COOKIE_SECRET!,
+		'connection_time',
 	);
 	const session = c.get('session');
 	try {
@@ -39,9 +42,6 @@ export const authMiddleware = factory.createMiddleware(async (c, next) => {
 			typeof connection_time === 'string' &&
 			Date.now() > Number(connection_time)
 		) {
-			session.set('Auth', { authenticated: false });
-			session.set('RedirectUrl', c.req.url);
-			deleteCookie(c, 'connection_time');
 			console.log(c.req.url);
 			return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
 		}
@@ -74,3 +74,22 @@ export const authMiddleware = factory.createMiddleware(async (c, next) => {
 		return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
 	}
 });
+
+const clearUserSession = async (
+	session: Session<SessionData>,
+	c: AppContext,
+) => {
+	session.set('Auth', { authenticated: false });
+	session.set('RedirectUrl', c.req.url);
+	deleteCookie(c, 'connection_time');
+};
+const checkUserSession = async (
+	session: Session<SessionData>,
+	c: AppContext,
+) => {
+	if (!session.get('Auth') || session.get('Auth')?.authenticated === false) {
+		session.set('RedirectUrl', c.req.url);
+		deleteCookie(c, 'connection_time');
+		return isAuthRoute(c.req.url);
+	}
+};

@@ -1,6 +1,6 @@
-import type { Context } from 'hono';
 import type { BaseRepository } from './base.repository';
 import type { BaseEntity } from './types/base';
+import type { AppContext } from '@/factory';
 
 export abstract class BaseService<
 	T extends BaseEntity,
@@ -14,7 +14,7 @@ export abstract class BaseService<
 	 * @param dto - The data transfer object for creating the entity.
 	 * @param _context - The Hono context, required for validation.
 	 */
-	async create(dto: CreateDTO, _context: Context): Promise<T> {
+	async create(dto: CreateDTO, _context: AppContext): Promise<T> {
 		return this.repository.create(dto);
 	}
 
@@ -29,7 +29,7 @@ export abstract class BaseService<
 	async update(
 		id: string | number,
 		dto: UpdateDTO,
-		_context: Context,
+		_context: AppContext,
 	): Promise<T[] | null> {
 		const exists = await this.repository.exists(id);
 		if (!exists) {

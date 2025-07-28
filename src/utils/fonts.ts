@@ -106,7 +106,9 @@ async function loadLocalFonts() {
 }
 
 function isValidFontBuffer(buffer: Uint8Array): boolean {
-	if (buffer.length < 4) return false;
+	if (buffer.length < 4) {
+		return false;
+	}
 
 	const signature = new TextDecoder().decode(buffer.slice(0, 4));
 	const validSignatures = ['wOFF', 'OTTO', 'true', 'typ1', '\x00\x01\x00\x00'];

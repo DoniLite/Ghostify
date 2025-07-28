@@ -1,10 +1,10 @@
-import type { Context } from 'hono';
 import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { Document } from '@/db';
 import mime from '@/modules/mime';
 import { CreateDocumentDto, UpdateDocumentDto } from '../dto/document.dto';
 import { DocumentRepository } from '../repository/document.repository';
+import type { AppContext } from '@/factory';
 
 @Service()
 export class DocumentService extends BaseService<
@@ -28,7 +28,7 @@ export class DocumentService extends BaseService<
 	@ValidateDTO(CreateDocumentDto)
 	override async create(
 		dto: CreateDocumentDto,
-		_context: Context,
+		_context: AppContext,
 	): Promise<Document> {
 		return this.repository.create(dto);
 	}
@@ -45,7 +45,7 @@ export class DocumentService extends BaseService<
 	override async update(
 		id: string | number,
 		dto: UpdateDocumentDto,
-		_context: Context,
+		_context: AppContext,
 	): Promise<Document[] | null> {
 		return this.repository.update(id, dto);
 	}

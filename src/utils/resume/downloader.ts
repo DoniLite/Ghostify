@@ -1,7 +1,7 @@
 import path from 'node:path';
 import puppeteer, { type Page } from 'puppeteer';
 import { z } from 'zod';
-import { tokenGenerator } from '../security/jwt.ts';
+import { generateToken as tokenGenerator } from '../security/jwt.ts';
 
 const ContentDownloaderSchema = z.object({
 	url: z.string().optional(),
