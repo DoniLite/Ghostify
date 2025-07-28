@@ -6,12 +6,10 @@ import {
 	// setCookie,
 	setSignedCookie,
 } from 'hono/cookie';
-import { factory, type AppContext } from '../../factory';
+import { type AppContext, factory } from '../../factory';
 
 const OPEN_ROUTES = ['/'];
-const AUTH_ROUTES = [
-	'/dashboard',
-];
+const AUTH_ROUTES = ['/dashboard'];
 
 export const ROUTES = [...OPEN_ROUTES, ...AUTH_ROUTES];
 

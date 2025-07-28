@@ -121,7 +121,6 @@ export const resumeClasses = {
 	},
 } as const;
 
-
 export const cvStyles = {
 	cv1: {
 		mode1: {

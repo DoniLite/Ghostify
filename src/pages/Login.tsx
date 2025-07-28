@@ -1,6 +1,7 @@
 import { Github } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Google } from '@/components/shared/Icons';
 import {
 	useLocalURI,
@@ -9,7 +10,6 @@ import {
 import { Button } from '@/components/utils/button';
 import { InputField } from '@/components/utils/InputWithLabels';
 import { useAuthStore } from '@/stores/auth.store';
-import { toast } from 'sonner';
 
 const Login = () => {
 	const { t } = useTranslation();

@@ -150,26 +150,26 @@ const locales = {
 		form_submit: 'Submit',
 		form_forgot_password: 'Forgot your password?',
 		form_create_account: 'Create an account',
-		form_sending: 'Logging in...'
+		form_sending: 'Logging in...',
 	},
 	register: {
 		form_heading: 'Create a new account on Ghostify',
 		form: {
 			email: {
 				label: 'Email',
-				placeholder: 'Enter your mail'
+				placeholder: 'Enter your mail',
 			},
 			password: {
 				label: 'Password',
-				placeholder: 'Enter a password'
+				placeholder: 'Enter a password',
 			},
 			validate_password: {
 				label: 'Validate password',
-				placeholder: 'Validate your password'
-			}
+				placeholder: 'Validate your password',
+			},
 		},
 		form_login_account: 'Already have an account ? Try to login',
-		password_field_error: 'Your password should match'
+		password_field_error: 'Your password should match',
 	},
 	footer: {},
 	not_found: {},

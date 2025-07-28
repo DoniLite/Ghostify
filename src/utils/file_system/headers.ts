@@ -6,9 +6,7 @@ export function getFileHeaders(filePath: string, download?: boolean) {
 
 	const contentType = mime.getType(fileName) || 'application/octet-stream';
 
-	const disposition = download
-		? 'attachment'
-		: 'inline';
+	const disposition = download ? 'attachment' : 'inline';
 
 	return {
 		'Content-Disposition': `${disposition}; filename="${fileName}"`,

@@ -9,22 +9,22 @@ export interface ApiResponse<T = unknown> {
 }
 
 export class ApiError extends Error {
-		constructor(
-			message: string,
-			public status: number,
-			public code?: string,
-			public details?:
-				| Record<string, unknown>
-				| {
-						property: string;
-						constraints: unknown;
-						value: unknown;
-				  }[],
-		) {
-			super(message);
-			this.name = 'ApiError';
-		}
+	constructor(
+		message: string,
+		public status: number,
+		public code?: string,
+		public details?:
+			| Record<string, unknown>
+			| {
+					property: string;
+					constraints: unknown;
+					value: unknown;
+			  }[],
+	) {
+		super(message);
+		this.name = 'ApiError';
 	}
+}
 
 export interface ApiErrorInterface {
 	message: string;
@@ -60,75 +60,75 @@ export interface UseApiReturn<T> extends UseApiState<T> {
 }
 
 export interface ApiRoutes {
-		users: {
-			list: {
-				method: 'GET';
-				response: User[];
-				params: { page?: number; limit?: number };
-			};
-			get: {
-				method: 'GET';
-				response: User;
-				params: { id: number };
-			};
-			create: {
-				method: 'POST';
-				response: {
-					id: User['id'];
-					name: User['fullname'];
-					email: User['email'];
-				};
-				body: CreateUserDTO;
-			};
-			update: {
-				method: 'PUT';
-				response: { id: number; name: string; email: string };
-				params: { id: number };
-				body: Partial<User>;
-			};
-			delete: {
-				method: 'DELETE';
-				response: { success: boolean };
-				params: { id: number };
-			};
+	users: {
+		list: {
+			method: 'GET';
+			response: User[];
+			params: { page?: number; limit?: number };
 		};
-		'api/v1/document': {
-			list: {
-				method: 'GET';
-				response: Document[];
-				params: { userId?: number; category?: string };
-			};
-			get: {
-				method: 'GET';
-				response: Document;
-				params: { id: string };
-			};
-			create: {
-				method: 'POST';
-				response: {
-					id: number;
-					title: string;
-					content: string;
-					userId: number;
-				};
-				body: { title: string; content: string; userId: number };
-			};
+		get: {
+			method: 'GET';
+			response: User;
+			params: { id: number };
 		};
-		'auth/login': {
-			make: {
-				method: 'POST';
-				response: AuthStore['auth']['payload'];
-				body: { login: string; password: string };
+		create: {
+			method: 'POST';
+			response: {
+				id: User['id'];
+				name: User['fullname'];
+				email: User['email'];
 			};
+			body: CreateUserDTO;
 		};
-		'auth/register': {
-			make: {
-				method: 'POST';
-				response: AuthStore['auth']['payload'];
-				body: { email: string; password: string; permission: User['permission'] };
+		update: {
+			method: 'PUT';
+			response: { id: number; name: string; email: string };
+			params: { id: number };
+			body: Partial<User>;
+		};
+		delete: {
+			method: 'DELETE';
+			response: { success: boolean };
+			params: { id: number };
+		};
+	};
+	'api/v1/document': {
+		list: {
+			method: 'GET';
+			response: Document[];
+			params: { userId?: number; category?: string };
+		};
+		get: {
+			method: 'GET';
+			response: Document;
+			params: { id: string };
+		};
+		create: {
+			method: 'POST';
+			response: {
+				id: number;
+				title: string;
+				content: string;
+				userId: number;
 			};
+			body: { title: string; content: string; userId: number };
 		};
-	}
+	};
+	'auth/login': {
+		make: {
+			method: 'POST';
+			response: AuthStore['auth']['payload'];
+			body: { login: string; password: string };
+		};
+	};
+	'auth/register': {
+		make: {
+			method: 'POST';
+			response: AuthStore['auth']['payload'];
+			body: { email: string; password: string; permission: User['permission'] };
+		};
+	};
+}
 
 // Utilitaires de types
 export type ExtractResponse<T> = T extends { response: infer R } ? R : never;

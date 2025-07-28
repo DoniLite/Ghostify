@@ -1,6 +1,6 @@
+import type { AppContext } from '@/factory';
 import type { BaseRepository } from './base.repository';
 import type { BaseEntity } from './types/base';
-import type { AppContext } from '@/factory';
 
 export abstract class BaseService<
 	T extends BaseEntity,

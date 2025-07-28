@@ -1,10 +1,10 @@
+import { toast } from 'sonner';
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 import { ApiError } from '@/@types/api';
 import type { User } from '@/db';
 import { apiClient } from '@/hooks/client/useApi';
 import type { CreateUserDTO } from '@/lib/server/user';
-import { toast } from 'sonner';
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
 
 export interface AuthStore {
 	auth: {

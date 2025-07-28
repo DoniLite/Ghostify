@@ -1,14 +1,14 @@
+import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { User } from '@/db';
-import { compareHash, hashSomething } from '@/utils/security/hash';
-import { CreateUserDTO, type UpdateUserDTO } from '../dto/user.dto';
-import { UserRepository } from '../repository/user.repository';
-import { generateToken, verifyJWT } from '@/utils/security/jwt';
-import { setSignedCookie } from 'hono/cookie';
 import type { AppContext } from '@/factory';
 import { checkUserSession } from '@/hooks/server/auth';
+import { compareHash, hashSomething } from '@/utils/security/hash';
+import { generateToken, verifyJWT } from '@/utils/security/jwt';
+import { CreateUserDTO, type UpdateUserDTO } from '../dto/user.dto';
+import { UserRepository } from '../repository/user.repository';
 
 @Service()
 export class UserService extends BaseService<
@@ -165,7 +165,6 @@ export class UserService extends BaseService<
 		});
 		await this.setUserSession(user, token, context);
 
-
 		return {
 			login,
 			token,
@@ -193,7 +192,7 @@ export class UserService extends BaseService<
 		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
 		const connection_time = cookieExpiration.getTime().toString();
 
-		session.set('Token', token)
+		session.set('Token', token);
 
 		session.set('Auth', {
 			authenticated: true,
@@ -217,7 +216,7 @@ export class UserService extends BaseService<
 	async decodeUserToken(token: string) {
 		return verifyJWT<{
 			email: User['email'];
-			permission: User['permission']
-		}>(token)
+			permission: User['permission'];
+		}>(token);
 	}
 }

@@ -1,9 +1,9 @@
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
+import { generateToken } from '@/utils/security/jwt';
 import { factory, ServiceFactory } from '../../factory';
 import { LoginSchema } from '../../forms/auth/schema';
 import { authMiddleware } from '../../hooks/server/auth';
-import { generateToken } from '@/utils/security/jwt';
 
 const authApp = factory.createApp();
 

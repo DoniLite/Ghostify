@@ -1,10 +1,10 @@
 import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { Document } from '@/db';
+import type { AppContext } from '@/factory';
 import mime from '@/modules/mime';
 import { CreateDocumentDto, UpdateDocumentDto } from '../dto/document.dto';
 import { DocumentRepository } from '../repository/document.repository';
-import type { AppContext } from '@/factory';
 
 @Service()
 export class DocumentService extends BaseService<

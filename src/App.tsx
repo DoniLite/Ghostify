@@ -13,11 +13,11 @@ import Login from './pages/Login';
 import { detectLocale } from './utils/translation';
 import './assets/tailwind.css';
 import type { PropsWithChildren } from 'react';
-import TLayout from './components/shared/TLayout';
-import { Toaster } from '@/components/ui/sonner';
-import Register from './pages/Register';
 import Dashboard from '@/components/dashboard/Wrapper';
+import { Toaster } from '@/components/ui/sonner';
 import DashIndex from '@/pages/panel/Index';
+import TLayout from './components/shared/TLayout';
+import Register from './pages/Register';
 
 const Providers = ({
 	request,
@@ -57,7 +57,6 @@ const MiniLayout = ({ request }: { request?: Request }) => {
 		</Providers>
 	);
 };
-
 
 export default function App({ request }: { request?: Request }) {
 	return (

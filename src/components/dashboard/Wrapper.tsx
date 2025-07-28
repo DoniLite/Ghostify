@@ -1,9 +1,9 @@
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import AppSidebar from './sidebar';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/auth.store';
 import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { useAuthStore } from '@/stores/auth.store';
 import Loader from '../shared/Loader';
+import AppSidebar from './sidebar';
 
 export default function Layout() {
 	const { authenticated, _hasHydrated } = useAuthStore((s) => s.auth);
