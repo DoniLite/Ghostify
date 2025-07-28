@@ -3,6 +3,7 @@ import { validator } from 'hono/validator';
 import { factory, ServiceFactory } from '../../factory';
 import { LoginSchema } from '../../forms/auth/schema';
 import { authMiddleware } from '../../hooks/server/auth';
+import { generateToken } from '@/utils/security/jwt';
 
 const authApp = factory.createApp();
 
@@ -71,6 +72,26 @@ authApp.post('/register', async (c) => {
 	return c.json({
 		...user,
 		redirectUrl: '/dashboard',
+	});
+});
+
+authApp.get('/me', async (c) => {
+	const userService = ServiceFactory.getUserService();
+	const verified = await userService.checkUserSession(c);
+	const session = c.get('session');
+	const token = session.get('Token');
+	if (verified && token) {
+		const decodedUserToken = await userService.decodeUserToken(token);
+		const refreshToken = await generateToken({
+			email: decodedUserToken.email,
+			permission: decodedUserToken.permission,
+		});
+		return c.json({
+			token: refreshToken,
+		});
+	}
+	return c.json({
+		redirectUrl: '/login',
 	});
 });
 

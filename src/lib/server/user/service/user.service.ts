@@ -5,9 +5,10 @@ import type { User } from '@/db';
 import { compareHash, hashSomething } from '@/utils/security/hash';
 import { CreateUserDTO, type UpdateUserDTO } from '../dto/user.dto';
 import { UserRepository } from '../repository/user.repository';
-import { generateToken } from '@/utils/security/jwt';
+import { generateToken, verifyJWT } from '@/utils/security/jwt';
 import { setSignedCookie } from 'hono/cookie';
 import type { AppContext } from '@/factory';
+import { checkUserSession } from '@/hooks/server/auth';
 
 @Service()
 export class UserService extends BaseService<
@@ -81,11 +82,13 @@ export class UserService extends BaseService<
 			},
 			context,
 		);
-		await this.setUserSession(user, context);
 		const token = await generateToken({
 			email: user.email,
 			permission: user.permission,
 		});
+
+		await this.setUserSession(user, token, context);
+
 		return {
 			login: user.email,
 			token,
@@ -156,11 +159,12 @@ export class UserService extends BaseService<
 				),
 			});
 		}
-		await this.setUserSession(user, context);
 		const token = await generateToken({
 			email: user.email,
 			permission: user.permission,
 		});
+		await this.setUserSession(user, token, context);
+
 
 		return {
 			login,
@@ -180,14 +184,16 @@ export class UserService extends BaseService<
 	}
 
 	async checkUserSession(context: AppContext) {
-		
+		return checkUserSession(context);
 	}
 
-	private async setUserSession(user: User, context: AppContext) {
+	private async setUserSession(user: User, token: string, context: AppContext) {
 		const session = context.get('session');
 		const cookieExpiration = new Date();
 		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
 		const connection_time = cookieExpiration.getTime().toString();
+
+		session.set('Token', token)
 
 		session.set('Auth', {
 			authenticated: true,
@@ -206,5 +212,12 @@ export class UserService extends BaseService<
 			// biome-ignore lint/style/noNonNullAssertion: this variable is injected during the server starting
 			Bun.env.SIGNED_COOKIE_SECRET!,
 		);
+	}
+
+	async decodeUserToken(token: string) {
+		return verifyJWT<{
+			email: User['email'];
+			permission: User['permission']
+		}>(token)
 	}
 }

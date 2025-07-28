@@ -7,19 +7,10 @@ import {
 	setSignedCookie,
 } from 'hono/cookie';
 import { factory, type AppContext } from '../../factory';
-import type { Session } from 'hono-sessions';
-import type { SessionData } from '@/@types';
 
-const OPEN_ROUTES = ['/home'];
+const OPEN_ROUTES = ['/'];
 const AUTH_ROUTES = [
-	'/poster/docs',
-	'/poster/parser',
-	'/poster/view',
-	'/cv/maker',
-	'/poster/new',
-	'/service',
-	'/poster/update/:post',
-	'/poster/load/:uid',
+	'/dashboard',
 ];
 
 export const ROUTES = [...OPEN_ROUTES, ...AUTH_ROUTES];
@@ -29,67 +20,68 @@ const isAuthRoute = (url: string) =>
 
 export const authMiddleware = factory.createMiddleware(async (c, next) => {
 	const redirectToSignIn = () => c.redirect('/login');
-	const connection_time = await getSignedCookie(
-		c,
-		Bun.env.SIGNED_COOKIE_SECRET!,
-		'connection_time',
-	);
 	const session = c.get('session');
 	try {
-		// Vérification du temps de connexion
-		if (
-			connection_time &&
-			typeof connection_time === 'string' &&
-			Date.now() > Number(connection_time)
-		) {
-			console.log(c.req.url);
-			return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
+		const verification = await checkUserSession(c);
+
+		if (verification) {
+			return redirectToSignIn();
 		}
-
-		// Vérification de l'authentification
-		if (!session.get('Auth') || session.get('Auth')?.authenticated === false) {
-			session.set('RedirectUrl', c.req.url);
-			deleteCookie(c, 'connection_time');
-			return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
-		}
-
-		// Renouvellement du token
-		const cookieExpiration = new Date();
-		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-
-		session.set('Token', cookieExpiration.getTime().toString());
-
-		await setSignedCookie(
-			c,
-			'connection_time',
-			session.get('Token')!,
-			Bun.env.SIGNED_COOKIE_SECRET!,
-		);
 
 		await next();
 	} catch (error) {
 		console.error('Authentication middleware error:', error);
 		session.set('RedirectUrl', c.req.url);
-		console.log(c.req.url);
 		return isAuthRoute(c.req.url) ? redirectToSignIn() : await next();
 	}
 });
 
-const clearUserSession = async (
-	session: Session<SessionData>,
-	c: AppContext,
-) => {
+const clearUserSession = async (c: AppContext) => {
+	const session = c.get('session');
 	session.set('Auth', { authenticated: false });
 	session.set('RedirectUrl', c.req.url);
 	deleteCookie(c, 'connection_time');
 };
-const checkUserSession = async (
-	session: Session<SessionData>,
-	c: AppContext,
-) => {
-	if (!session.get('Auth') || session.get('Auth')?.authenticated === false) {
-		session.set('RedirectUrl', c.req.url);
-		deleteCookie(c, 'connection_time');
+/**
+ * Checks if the user session is authenticated and handles unauthenticated access.
+ * If the user is not authenticated, sets a redirect URL and clears the connection cookie.
+ *
+ * Args:
+ *   session (Session<SessionData>): The session object containing user authentication data.
+ *   c (AppContext): The application context, including the current request.
+ *
+ * Returns:
+ *   boolean: Returns true if the current route requires authentication and the user is not authenticated, otherwise false.
+ */
+export const checkUserSession = async (c: AppContext) => {
+	const session = c.get('session');
+	const connection_time = await getSignedCookie(
+		c,
+		Bun.env.SIGNED_COOKIE_SECRET!,
+		'connection_time',
+	);
+	if (!session.get('Auth') || !!session.get('Auth')?.authenticated) {
+		await clearUserSession(c);
 		return isAuthRoute(c.req.url);
 	}
+	if (
+		connection_time &&
+		typeof connection_time === 'string' &&
+		Date.now() > Number(connection_time)
+	) {
+		await refreshUserCookie(c);
+		return false;
+	}
+	return false;
+};
+
+export const refreshUserCookie = async (c: AppContext) => {
+	const cookieExpiration = new Date();
+	cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
+	await setSignedCookie(
+		c,
+		'connection_time',
+		cookieExpiration.getTime().toString(),
+		Bun.env.SIGNED_COOKIE_SECRET!,
+	);
 };
