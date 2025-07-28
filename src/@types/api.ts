@@ -60,63 +60,75 @@ export interface UseApiReturn<T> extends UseApiState<T> {
 }
 
 export interface ApiRoutes {
-	users: {
-		list: {
-			method: 'GET';
-			response: User[];
-			params: { page?: number; limit?: number };
-		};
-		get: {
-			method: 'GET';
-			response: User;
-			params: { id: number };
-		};
-		create: {
-			method: 'POST';
-			response: {
-				id: User['id'];
-				name: User['fullname'];
-				email: User['email'];
+		users: {
+			list: {
+				method: 'GET';
+				response: User[];
+				params: { page?: number; limit?: number };
 			};
-			body: CreateUserDTO;
+			get: {
+				method: 'GET';
+				response: User;
+				params: { id: number };
+			};
+			create: {
+				method: 'POST';
+				response: {
+					id: User['id'];
+					name: User['fullname'];
+					email: User['email'];
+				};
+				body: CreateUserDTO;
+			};
+			update: {
+				method: 'PUT';
+				response: { id: number; name: string; email: string };
+				params: { id: number };
+				body: Partial<User>;
+			};
+			delete: {
+				method: 'DELETE';
+				response: { success: boolean };
+				params: { id: number };
+			};
 		};
-		update: {
-			method: 'PUT';
-			response: { id: number; name: string; email: string };
-			params: { id: number };
-			body: Partial<User>;
+		'api/v1/document': {
+			list: {
+				method: 'GET';
+				response: Document[];
+				params: { userId?: number; category?: string };
+			};
+			get: {
+				method: 'GET';
+				response: Document;
+				params: { id: string };
+			};
+			create: {
+				method: 'POST';
+				response: {
+					id: number;
+					title: string;
+					content: string;
+					userId: number;
+				};
+				body: { title: string; content: string; userId: number };
+			};
 		};
-		delete: {
-			method: 'DELETE';
-			response: { success: boolean };
-			params: { id: number };
+		'auth/login': {
+			make: {
+				method: 'POST';
+				response: AuthStore['auth']['payload'];
+				body: { login: string; password: string };
+			};
 		};
-	};
-	'api/v1/document': {
-		list: {
-			method: 'GET';
-			response: Document[];
-			params: { userId?: number; category?: string };
+		'auth/register': {
+			make: {
+				method: 'POST';
+				response: AuthStore['auth']['payload'];
+				body: { email: string; password: string; permission: User['permission'] };
+			};
 		};
-		get: {
-			method: 'GET';
-			response: Document;
-			params: { id: string };
-		};
-		create: {
-			method: 'POST';
-			response: { id: number; title: string; content: string; userId: number };
-			body: { title: string; content: string; userId: number };
-		};
-	};
-	'auth/login': {
-		make: {
-			method: 'POST';
-			response: AuthStore['auth']['payload'];
-			body: { login: string; password: string };
-		};
-	};
-}
+	}
 
 // Utilitaires de types
 export type ExtractResponse<T> = T extends { response: infer R } ? R : never;

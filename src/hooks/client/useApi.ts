@@ -139,6 +139,11 @@ export class ApiClient {
 					method: 'POST',
 				},
 			},
+			'auth/register': {
+				make: {
+					method: 'POST',
+				},
+			},
 			'api/v1/document': {
 				list: {
 					method: 'GET',
