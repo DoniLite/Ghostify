@@ -1,4 +1,11 @@
+import type { Session } from 'hono-sessions';
+import type { JwtVariables } from 'hono/jwt';
 import type { Buffer } from 'node:buffer';
+
+export type Variables = {
+	session: Session<SessionData>;
+	session_key_rotation: boolean;
+} & JwtVariables;
 
 export interface Service {
 	APIs?: {
