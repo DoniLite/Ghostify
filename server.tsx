@@ -11,33 +11,27 @@ import { cache } from 'hono/cache';
 // import { compress } from 'hono/compress';
 import { html } from 'hono/html';
 import { HTTPException } from 'hono/http-exception';
-import type { JwtVariables } from 'hono/jwt';
 import { languageDetector } from 'hono/language';
 import { logger } from 'hono/logger';
 import { poweredBy } from 'hono/powered-by';
 // import { secureHeaders } from 'hono/secure-headers';
 import { stream } from 'hono/streaming';
-import { CookieStore, type Session, sessionMiddleware } from 'hono-sessions';
+import { CookieStore, sessionMiddleware } from 'hono-sessions';
 import { renderToReadableStream } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ValidationError } from '@/core/decorators';
 import authApp from '@/routes/auth/auth';
-import type { SessionData } from './src/@types/index.d';
+import type { Variables } from './src/@types/index.d';
 import App from './src/App';
 import ApiRoutes from './src/api';
 // import { getThemeScript } from './src/components/shared/ThemeProvider';
-import sessionManager from './src/hooks/server/sessionStorage';
+import sessionManager from './src/hooks/server/session.middleware';
 import { getFileHeaders } from './src/utils/file_system/headers';
 import { verifyJWT } from './src/utils/security/jwt';
 import { unify } from './src/utils/security/purify';
 import { termsMD } from './src/utils/templates/markdownPage';
 
 const SERVER_PORT = process.env.PORT || 8080;
-
-export type Variables = {
-	session: Session<SessionData>;
-	session_key_rotation: boolean;
-} & JwtVariables;
 
 const app = new Hono<{
 	Variables: Variables;
@@ -157,6 +151,7 @@ app.use(
 		cacheControl: 'max-age=3600',
 	}),
 );
+// app.use('GET', ROUTES, authMiddleware);
 
 // Registered Routes
 app.route('/api/v1', ApiRoutes);

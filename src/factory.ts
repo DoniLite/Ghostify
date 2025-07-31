@@ -1,14 +1,14 @@
 import type { Context } from 'hono';
 import { createFactory } from 'hono/factory';
-import type { Variables } from '../server';
+import type { Variables } from './@types';
 import { DocumentService } from './lib/server/document/service/document.service';
 import { UserService } from './lib/server/user/service/user.service';
+
+export type AppContext = Context<{ Variables: Variables }>;
 
 export const factory = createFactory<{
 	Variables: Variables;
 }>();
-
-export type AppContext = Context<{ Variables: Variables }>;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: This instance will be shared across the application
 export class ServiceFactory {
