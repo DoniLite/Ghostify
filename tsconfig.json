@@ -34,5 +34,5 @@
     },
     "types": ["bun-types", "reflect-metadata"]
   },
-	"include": ["src", "scripts", "tests"]
+	"include": ["src", "scripts", "tests", "server.tsx"],
 }

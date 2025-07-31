@@ -1,6 +1,5 @@
-import type { Context } from 'hono';
+import type { AppContext } from '@/factory';
 import type { BaseRepository } from './base.repository';
-import { ValidateDTO } from './decorators';
 import type { BaseEntity } from './types/base';
 
 export abstract class BaseService<
@@ -15,8 +14,7 @@ export abstract class BaseService<
 	 * @param dto - The data transfer object for creating the entity.
 	 * @param _context - The Hono context, required for validation.
 	 */
-	@ValidateDTO()
-	async create(dto: CreateDTO, _context: Context): Promise<T> {
+	async create(dto: CreateDTO, _context: AppContext): Promise<T> {
 		return this.repository.create(dto);
 	}
 
@@ -28,11 +26,10 @@ export abstract class BaseService<
 		return this.repository.findAll(filters);
 	}
 
-	@ValidateDTO()
 	async update(
 		id: string | number,
 		dto: UpdateDTO,
-		_context: Context,
+		_context: AppContext,
 	): Promise<T[] | null> {
 		const exists = await this.repository.exists(id);
 		if (!exists) {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ensureUrlEnd } from '@/utils/shared.helpers';
 import {
 	ApiError,
 	type ApiResponse,
@@ -13,12 +14,14 @@ import {
 	type UseApiReturn,
 } from '../../@types/api';
 
-class ApiClient {
+export class ApiClient {
 	private baseURL: string;
 	private defaultHeaders: Record<string, string>;
 
-	constructor(baseURL: string = 'http://localhost:3000/api') {
-		this.baseURL = baseURL;
+	constructor(
+		baseURL: string = process.env.APP_HOST ?? 'http://localhost:8080/',
+	) {
+		this.baseURL = ensureUrlEnd(baseURL);
 		this.defaultHeaders = {
 			'Content-Type': 'application/json',
 		};
@@ -83,13 +86,20 @@ class ApiClient {
 			const response = await fetch(url, requestConfig);
 
 			if (!response.ok) {
-				const errorData: { message?: string; code?: string } = await response
-					.json()
-					.catch(() => ({}));
+				const errorData: {
+					message?: string;
+					code?: string;
+					errors?: {
+						property: string;
+						constraints: unknown;
+						value: unknown;
+					}[];
+				} = await response.json().catch(() => ({}));
 				throw new ApiError(
 					errorData.message || `HTTP Error: ${response.status}`,
 					response.status,
 					errorData.code,
+					errorData.errors,
 				);
 			}
 
@@ -124,20 +134,53 @@ class ApiClient {
 		},
 	): Promise<ApiResponse<ExtractResponse<RouteEndpoint<R, E>>>> {
 		const ApiRoutes: Record<string, Record<string, { method: HttpMethod }>> = {
-			users: {
-				list: { method: 'GET' },
-				get: { method: 'GET' },
-				create: { method: 'POST' },
-				update: { method: 'PUT' },
-				delete: { method: 'DELETE' },
+			'auth/login': {
+				make: {
+					method: 'POST',
+				},
 			},
-			posts: {
-				list: { method: 'GET' },
-				get: { method: 'GET' },
-				create: { method: 'POST' },
+			'auth/register': {
+				make: {
+					method: 'POST',
+				},
+			},
+			'api/v1/document': {
+				list: {
+					method: 'GET',
+				},
+				get: {
+					method: 'GET',
+				},
+				create: {
+					method: 'POST',
+				},
+			},
+			'auth/me': {
+				make: {
+					method: 'GET',
+				},
+			},
+			users: {
+				list: {
+					method: 'GET',
+				},
+				get: {
+					method: 'GET',
+				},
+				create: {
+					method: 'POST',
+				},
+				update: {
+					method: 'PUT',
+				},
+				delete: {
+					method: 'DELETE',
+				},
 			},
 		};
-		const routeConfig = ApiRoutes[route as string]?.[endpoint as string];
+		const routeConfig = ApiRoutes[route]?.[
+			endpoint as keyof (typeof ApiRoutes)[R]
+		] as { method: HttpMethod };
 
 		if (!routeConfig) {
 			throw new ApiError(
@@ -147,7 +190,7 @@ class ApiClient {
 		}
 
 		// Building the path depending on the endpoint
-		let path = `/${String(route)}`;
+		let path = String(route);
 
 		// If not a list or have an ID in the param
 		if (

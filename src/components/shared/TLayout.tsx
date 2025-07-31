@@ -1,20 +1,11 @@
 import type { FC, PropsWithChildren } from 'react';
-import { LocalsContext } from './Layout';
-import Meta, { type MetaProps } from './Meta';
+import Meta from './Meta';
 
-export type TLayout = PropsWithChildren<{
-	meta?: MetaProps;
-	locales?: { default: Record<string, unknown> };
-	currentLocal?: string;
-	theme?: Record<string, string>;
-}>;
+export type LayoutType = PropsWithChildren;
 
-const Layout: FC<TLayout> = ({ children, locales, currentLocal, theme }) => {
+const TLayout: FC<LayoutType> = ({ children }) => {
 	return (
-		<html
-			lang={currentLocal}
-			data-theme={theme?.default || theme?.userDefault || 'light'}
-		>
+		<html lang="en">
 			<head>
 				<meta charSet="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,19 +14,13 @@ const Layout: FC<TLayout> = ({ children, locales, currentLocal, theme }) => {
 					content="This website is powered by Doni Lite and its contributors"
 				/>
 				<meta name="creator" content="Doni Lite" />
-				<link rel="stylesheet" href="/static/all.min.css" />
-				<link rel="icon" type="image/svg+xml" href="/static/SVG/gostify.svg" />
-				<link rel="stylesheet" href="/static/css/main.css" />
+				<link rel="icon" type="image/svg+xml" href="/static/ghostify.svg" />
+				<link rel="stylesheet" href="/static/js/client.css" />
 				<Meta />
 			</head>
-			<body>
-				<LocalsContext.Provider value={locales ?? { default: {} }}>
-					{children}
-					<div id="backToTop"></div>
-				</LocalsContext.Provider>
-			</body>
+			<body>{children}</body>
 		</html>
 	);
 };
 
-export default Layout;
+export default TLayout;

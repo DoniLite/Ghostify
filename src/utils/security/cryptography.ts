@@ -50,21 +50,15 @@ export const generateKeys = () => {
 // 	};
 // }
 
-// export async function loadKeys(): Promise<{ secretKey: Buffer; iv: Buffer }> {
-// 	const keys = await prismaClient.key.findUnique({
-// 		where: {
-// 			uid: server_uid,
-// 		},
-// 	});
-// 	if (!keys || !keys.key || !keys.iv) {
-// 		return await saveKeys();
-// 	}
-
-// 	return {
-// 		secretKey: Buffer.from(keys.key, 'hex'),
-// 		iv: Buffer.from(keys.iv, 'hex'),
-// 	};
-// }
+export async function loadKeys(keys: {
+	key: string;
+	iv: string;
+}): Promise<{ secretKey: Buffer; iv: Buffer }> {
+	return {
+		secretKey: Buffer.from(keys.key, 'hex'),
+		iv: Buffer.from(keys.iv, 'hex'),
+	};
+}
 
 export function encrypt(text: string, secretKey: Buffer, iv: Buffer): string {
 	const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);

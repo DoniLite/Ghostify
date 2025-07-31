@@ -9,11 +9,13 @@ if (!JWT_SECRET) {
 	);
 }
 
-export const verifyJWT = async (token: string) => {
-	return await verify(token, JWT_SECRET);
+export const verifyJWT = async <T extends Record<string, unknown>>(
+	token: string,
+) => {
+	return (await verify(token, JWT_SECRET)) as T;
 };
 
-export const tokenGenerator = async <T extends Record<string, unknown>>(
+export const generateToken = async <T extends Record<string, unknown>>(
 	payload: T,
 ) => {
 	return await sign(payload, JWT_SECRET);

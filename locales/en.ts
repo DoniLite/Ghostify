@@ -3,7 +3,12 @@ const locales = {
 		home: 'Home',
 		contact: 'Contact',
 		pricing: 'Pricing',
-		products: 'Products',
+		documentation: 'Documentation',
+		login: 'Login',
+		register: 'Register',
+		github: 'Github',
+		loading: 'Loading...',
+		google: 'Google',
 		get_started: 'Get started',
 		per: 'By',
 		month: 'Month',
@@ -128,6 +133,43 @@ const locales = {
 		form_sending: 'Sending...',
 		form_success: "Message sent successfully! We'll get back to you soon.",
 		form_error: 'Failed to send message. Please try again later.',
+	},
+	login: {
+		subtitle: 'Access your account',
+		form_heading: 'Login to your account',
+		form: {
+			login: {
+				label: 'Login',
+				placeholder: 'Enter your email/username.',
+			},
+			password: {
+				label: 'Password',
+				placeholder: 'Enter your password.',
+			},
+		},
+		form_submit: 'Submit',
+		form_forgot_password: 'Forgot your password?',
+		form_create_account: 'Create an account',
+		form_sending: 'Logging in...',
+	},
+	register: {
+		form_heading: 'Create a new account on Ghostify',
+		form: {
+			email: {
+				label: 'Email',
+				placeholder: 'Enter your mail',
+			},
+			password: {
+				label: 'Password',
+				placeholder: 'Enter a password',
+			},
+			validate_password: {
+				label: 'Validate password',
+				placeholder: 'Validate your password',
+			},
+		},
+		form_login_account: 'Already have an account ? Try to login',
+		password_field_error: 'Your password should match',
 	},
 	footer: {},
 	not_found: {},

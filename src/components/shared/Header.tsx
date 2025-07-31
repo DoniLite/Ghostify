@@ -28,12 +28,9 @@ const Header = () => {
 				<NavLink to={useLocalURI('/')} className={linkClass}>
 					{t('common.home')}
 				</NavLink>
-				<a
-					href="/"
-					className="text-foreground hover:text-primary font-nunito transition-colors"
-				>
-					{t('common.products')}
-				</a>
+				<NavLink to={useLocalURI('/')} className={linkClass}>
+					{t('common.documentation')}
+				</NavLink>
 				<NavLink to={useLocalURI('/pricing')} className={linkClass}>
 					{t('common.pricing')}
 				</NavLink>
@@ -71,12 +68,9 @@ const Header = () => {
 						<NavLink to={useLocalURI('/')} className={linkClass}>
 							{t('common.home')}
 						</NavLink>
-						<a
-							href="/"
-							className="text-foreground hover:text-primary font-nunito transition-colors"
-						>
-							{t('common.products')}
-						</a>
+						<NavLink to={useLocalURI('/')} className={linkClass}>
+							{t('common.documentation')}
+						</NavLink>
 						<NavLink to={useLocalURI('/pricing')} className={linkClass}>
 							{t('common.pricing')}
 						</NavLink>

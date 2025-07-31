@@ -1,121 +1,101 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: All assertions will be always available */
-import { setSignedCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { validator } from 'hono/validator';
+import { generateToken } from '@/utils/security/jwt';
 import { factory, ServiceFactory } from '../../factory';
 import { LoginSchema } from '../../forms/auth/schema';
-import { authMiddleware } from '../../hooks/server/auth';
-import { logger } from '../../logger';
-import { compareHash } from '../../utils/security/hash';
+import { authMiddleware } from '../../hooks/server/auth.middleware';
 
 const authApp = factory.createApp();
 
 const loginHandlers = factory.createHandlers(
-	authMiddleware,
-	validator('form', (value, c) => {
+	authMiddleware(),
+	validator('json', (value) => {
 		const parsed = LoginSchema.safeParse(value);
+		console.log('validation begin');
 		if (!parsed.success) {
-			return c.text('Invalid!', 401);
+			console.log('validation failed');
+			const err = parsed.error;
+			throw new HTTPException(400, {
+				message: 'Validation failed',
+				res: new Response(
+					JSON.stringify({
+						message: 'Invalid form field provided',
+						errors: err.errors.map((e) => ({
+							property: e.path.join('.'),
+							constraints: e.message,
+							value: value[e.path.join('.')],
+						})),
+					}),
+					{
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					},
+				),
+			});
 		}
 		return parsed.data;
 	}),
 	async (c) => {
 		const session = c.get('session');
-		const { login, password } = c.req.valid('form');
+		const { login, password } = c.req.valid('json');
 		const userService = ServiceFactory.getUserService();
 		const redirectUrl = session.get('RedirectUrl');
-		const user = await userService.login(login, password);
-
-		if (!user) {
-			logger.warn(
-				'not authenticated login with: ' +
-					login +
-					' and' +
-					password +
-					' credentials',
-				[login, password],
-			);
-			throw new HTTPException(404, {
-				message: 'Not user found with this credentials',
-			});
-		}
-
-		const verifiedPassword = await compareHash(password, user.password!);
-
-		if (!verifiedPassword) {
-			logger.warn(
-				'not authenticated login with: ' +
-					login +
-					' and' +
-					password +
-					' credentials',
-				[login, password],
-			);
-			throw new HTTPException(402, {
-				message: 'wrong password provided',
-			});
-		}
-		session.set('Auth', {
-			authenticated: true,
-			isSuperUser: false,
-			login: login,
-			id: user.id,
-			avatar: user.avatar ?? undefined,
-			username: user.username ?? undefined,
-			fullname: user.fullname ?? undefined,
-		});
-		const cookieExpiration = new Date();
-		cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-		session.set('Token', cookieExpiration.getTime().toString());
-
-		await setSignedCookie(
-			c,
-			'connection_time',
-			session.get('Token')!,
-			Bun.env.SIGNED_COOKIE_SECRET!,
-		);
+		const user = await userService.login({ login, password }, c);
 		if (redirectUrl) {
-			return c.redirect(redirectUrl);
+			return c.json({ ...user, redirectUrl });
 		}
+		return c.json({
+			...user,
+			redirectUrl: '/dashboard',
+		});
 	},
 );
 
 authApp.post('/login', ...loginHandlers);
 authApp.post('/register', async (c) => {
 	const session = c.get('session');
+	const redirectUrl = session.get('RedirectUrl');
 	const userService = ServiceFactory.getUserService();
-	const { email, fullname, password } = await c.req.json();
+	const { email, password } = await c.req.json();
 	const user = await userService.createUser(
 		{
 			email,
-			fullname,
 			password,
 			permission: 'User',
 		},
 		c,
 	);
-	console.log('Created User ===> ', user);
-
-	session.set('Auth', {
-		authenticated: true,
-		isSuperUser: false,
-		login: user.email,
-		id: user.id,
-		avatar: user.avatar ?? undefined,
-		username: user.username ?? undefined,
-		fullname: user.fullname ?? undefined,
+	if (redirectUrl) {
+		return c.json({ ...user, redirectUrl });
+	}
+	return c.json({
+		...user,
+		redirectUrl: '/dashboard',
 	});
-	const cookieExpiration = new Date();
-	cookieExpiration.setMinutes(cookieExpiration.getMinutes() + 15);
-	session.set('Token', cookieExpiration.getTime().toString());
+});
 
-	await setSignedCookie(
-		c,
-		'connection_time',
-		session.get('Token')!,
-		Bun.env.SIGNED_COOKIE_SECRET!,
-	);
-	return c.json({ message: 'User created successfully' });
+authApp.get('/me', async (c) => {
+	const userService = ServiceFactory.getUserService();
+	const verified = await userService.checkUserSession(c);
+	const session = c.get('session');
+	const token = session.get('Token');
+	if (verified && token) {
+		const decodedUserToken = await userService.decodeUserToken(token);
+		const refreshToken = await generateToken({
+			email: decodedUserToken.email,
+			permission: decodedUserToken.permission,
+		});
+		return c.json(
+			{
+				token: refreshToken,
+			},
+			200,
+		);
+	}
+	return c.json({
+		redirectUrl: '/login',
+	});
 });
 
 export default authApp;

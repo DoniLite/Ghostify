@@ -66,7 +66,7 @@ Thank you for your interest in contributing to Ghostify! We welcome contribution
    ```
 
 6. **Create a Pull Request** on GitHub:
-Notice that your pull request have to target the **develop** branch
+Notice that your pull request has to target the **develop** branch
 
 ## 📝 Coding Standards
 
@@ -75,7 +75,7 @@ Notice that your pull request have to target the **develop** branch
 - Use **TypeScript** for all new code
 - Follow **Biome** rules (run `bun run lint`)
 - Use **meaningful variable names** and add comments for complex logic
-- Prefer **async/await** over promises chains
+- Prefer **async/await** over promise chains
 - Use **destructuring** where appropriate
 - All services are using **DTO -> Repository -> Service** logic for data validation and CRUD operations
 

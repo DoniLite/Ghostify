@@ -1,4 +1,6 @@
-import type { User } from '@prisma/client';
+import type { Document, User } from '@/db';
+import type { CreateUserDTO } from '@/lib/server/user';
+import type { AuthStore } from '@/stores/auth.store';
 
 export interface ApiResponse<T = unknown> {
 	data: T;
@@ -11,6 +13,13 @@ export class ApiError extends Error {
 		message: string,
 		public status: number,
 		public code?: string,
+		public details?:
+			| Record<string, unknown>
+			| {
+					property: string;
+					constraints: unknown;
+					value: unknown;
+			  }[],
 	) {
 		super(message);
 		this.name = 'ApiError';
@@ -55,7 +64,7 @@ export interface ApiRoutes {
 		list: {
 			method: 'GET';
 			response: User[];
-			params?: { page?: number; limit?: number };
+			params: { page?: number; limit?: number };
 		};
 		get: {
 			method: 'GET';
@@ -69,7 +78,7 @@ export interface ApiRoutes {
 				name: User['fullname'];
 				email: User['email'];
 			};
-			body: { name: string; email: string };
+			body: CreateUserDTO;
 		};
 		update: {
 			method: 'PUT';
@@ -83,26 +92,46 @@ export interface ApiRoutes {
 			params: { id: number };
 		};
 	};
-	documents: {
+	'api/v1/document': {
 		list: {
 			method: 'GET';
+			response: Document[];
+			params: { userId?: number; category?: string };
+		};
+		get: {
+			method: 'GET';
+			response: Document;
+			params: { id: string };
+		};
+		create: {
+			method: 'POST';
 			response: {
 				id: number;
 				title: string;
 				content: string;
 				userId: number;
-			}[];
-			params?: { userId?: number; category?: string };
-		};
-		get: {
-			method: 'GET';
-			response: { id: number; title: string; content: string; userId: number };
-			params: { id: number };
-		};
-		create: {
-			method: 'POST';
-			response: { id: number; title: string; content: string; userId: number };
+			};
 			body: { title: string; content: string; userId: number };
+		};
+	};
+	'auth/login': {
+		make: {
+			method: 'POST';
+			response: AuthStore['auth']['payload'];
+			body: { login: string; password: string };
+		};
+	};
+	'auth/register': {
+		make: {
+			method: 'POST';
+			response: AuthStore['auth']['payload'];
+			body: { email: string; password: string; permission: User['permission'] };
+		};
+	};
+	'auth/me': {
+		make: {
+			method: 'GET';
+			response: { redirectUrl: string } | { token: string };
 		};
 	};
 }
