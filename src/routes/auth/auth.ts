@@ -3,12 +3,12 @@ import { validator } from 'hono/validator';
 import { generateToken } from '@/utils/security/jwt';
 import { factory, ServiceFactory } from '../../factory';
 import { LoginSchema } from '../../forms/auth/schema';
-import { authMiddleware } from '../../hooks/server/auth';
+import { authMiddleware } from '../../hooks/server/auth.middleware';
 
 const authApp = factory.createApp();
 
 const loginHandlers = factory.createHandlers(
-	authMiddleware,
+	authMiddleware(),
 	validator('json', (value) => {
 		const parsed = LoginSchema.safeParse(value);
 		console.log('validation begin');
@@ -86,9 +86,12 @@ authApp.get('/me', async (c) => {
 			email: decodedUserToken.email,
 			permission: decodedUserToken.permission,
 		});
-		return c.json({
-			token: refreshToken,
-		});
+		return c.json(
+			{
+				token: refreshToken,
+			},
+			200,
+		);
 	}
 	return c.json({
 		redirectUrl: '/login',

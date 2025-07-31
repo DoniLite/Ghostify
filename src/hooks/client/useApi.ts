@@ -157,8 +157,8 @@ export class ApiClient {
 			},
 			'auth/me': {
 				make: {
-					method: 'GET'
-				}
+					method: 'GET',
+				},
 			},
 			users: {
 				list: {

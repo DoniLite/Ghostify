@@ -4,7 +4,7 @@ import { BaseService } from '@/core/base.service';
 import { Service, ValidateDTO } from '@/core/decorators';
 import type { User } from '@/db';
 import type { AppContext } from '@/factory';
-import { checkUserSession } from '@/hooks/server/auth';
+import { checkUserSession } from '@/hooks/server/auth.middleware';
 import { compareHash, hashSomething } from '@/utils/security/hash';
 import { generateToken, verifyJWT } from '@/utils/security/jwt';
 import { CreateUserDTO, type UpdateUserDTO } from '../dto/user.dto';
