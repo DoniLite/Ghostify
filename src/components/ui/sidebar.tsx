@@ -255,15 +255,16 @@ function SidebarTrigger({
 	className,
 	onClick,
 	...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<'div'> & React.ComponentProps<typeof Button>) {
 	const { toggleSidebar } = useSidebar();
 
 	return (
-		<Button
+		// biome-ignore lint/a11y/noStaticElementInteractions: need to do it
+		// biome-ignore lint/a11y/useKeyWithClickEvents: same here
+		<div
 			data-sidebar="trigger"
 			data-slot="sidebar-trigger"
 			variant="ghost"
-			size="icon"
 			className={cn('size-7', className)}
 			onClick={(event) => {
 				onClick?.(event);
@@ -271,9 +272,9 @@ function SidebarTrigger({
 			}}
 			{...props}
 		>
-			<Menu />
+			<Menu className="h-6 w-6" />
 			<span className="sr-only">Toggle Sidebar</span>
-		</Button>
+		</div>
 	);
 }
 
