@@ -20,7 +20,6 @@
 		"generate:migrations": "bunx drizzle-kit generate",
 		"docker:build": "docker build -t ghostify:latest .",
 		"docker:start": "docker run -p 3081:3081 ghostify:latest",
-		"postinstall": "bun prepare",
 		"prepare": "husky"
 	},
 	"dependencies": {
