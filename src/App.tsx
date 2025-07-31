@@ -30,7 +30,7 @@ const Providers = ({
 				<ThemeProvider>
 					<TranslationProvider initialLocale={defaultLocale}>
 						{children}
-						<Toaster richColors />
+						<Toaster richColors closeButton />
 					</TranslationProvider>
 				</ThemeProvider>
 			</SeoContext.Provider>
